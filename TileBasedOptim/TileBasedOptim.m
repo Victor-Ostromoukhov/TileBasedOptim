@@ -5,7 +5,18 @@
 (****************** params *******************)
 SetOptions[Graphics, ImageSize -> { 1024, Automatic}];
 
-mf := MatrixForm;
+mf := MatrixForm
+T :=  Transpose
+PI = Pi//N;
+known := ValueQ
+i2s[n_,len_:6] := ToString[NumberForm[n, len-1, NumberPadding -> "0"]]
+r2s[n_,len_:6,dec_:5] := ToString[NumberForm[n, {len,dec}]]
+tab2s[tab_] := StringJoin @ Table[" "<>ToString[tab[[i]]]<>" ",{i,Length[tab]}]
+tab2snosep[tab_] := StringJoin @ Table[ ToString[tab[[i]]] ,{i,Length[tab]}]
+tab2ssep[tab_] := StringJoin @ Table["_"<>ToString[tab[[i]]],{i,Length[tab]}]
+tab2ssepComma[tab_] := StringJoin[ToString[tab[[1]]], Table[","<>ToString[tab[[i]]],{i,Min[2,Length[tab]], Length[tab]}] ]
+digits2str[digits_] := StringJoin[ToString /@ digits] 
+str2n[str_] := FromDigits[#, 2] & @ Table[StringTake[str, {i}] // ToExpression, {i, StringLength[str]}]
 
 (*------------------------- new code 2022-04 vo, based on fibo-hilbert.m (version 2002/12/14) -------------------------*)
 (*------------------------- constants -------------------------*)
@@ -24,157 +35,112 @@ type3 = 3;
 type4 = 4;
 type5 = 5;
 type6 = 6;
-(*------------------------- end of constants -------------------------*)
 
-demoFiboSFC[] :=
+(* debugging flags *)
+showTileType = 1;
+showTilefcode = 2;
+showSFC = 4;
+showValue = 8;
+
+(*------------------------- end of constants -------------------------*)
+FIBOF[symbols_] := With[ {s = Reverse[symbols]}, Total@Table[Fibonacci[i+1 ] s[[i]], {i, Length[s]}] ]
+FIBOFinv[symbols_] := Total@Table[Fibonacci[i+1 ] symbols[[i]], {i, Length[symbols]}]
+FIBOFxy[symbols_] := FIBOF/@symbols
+
+FIBOphitab = Table[phi^-i, {i, 32}] // N;
+FIBOPhi[s_] := Sum[FIBOphitab[[i]] s[[i]], {i, Length[s]}] 
+
+
+demoFiboSFC[niters_:15] :=
     Module[ {},
+    	dbg = False;
 		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
 		Graphics[ getFiboSFCTilesGL[tlst] ]//Print;
-		tlst = subdivFiboSFCTiles @ tlst;
-		Graphics[ getFiboSFCTilesGL[tlst] ]//Print;
-		tlst//mf//Print;
+		Do[
+			tlst = subdivFiboSFCTiles @ tlst;
+			Graphics[ getFiboSFCTilesGL[tlst], PlotLabel-> iter ]//Print;
+			If[dbg, tlst//mf//Print];
+		,{iter,niters}];
 ]
 
 
 subdivFiboSFCTiles[tlst_] :=
-    Block[ {res={} },
+    Block[ {res={}, tileType,refPt,v1,v2,samplingPt,fcode },
     	Table[
 			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
             Switch[tileType
-              ,1, {t1,t3} = {z1,z3};
-                  AppendTo[res,{type4,refPt,{oneoverphi v1,v2},samplingPt,Append[fcode,0]}];
-                  AppendTo[res,{type4,refPt+oneoverphi v1+v2,{ (mxRot270.v1),oneoverphi2 (mxRot270.v2)},samplingPt,Append[fcode,1]}];
-              ,2, {t1,t3} = {z1,z3};
-                  du = (t1-z0)/tau^(scalefactor+1);
-                  dv = (t3-z0)/tau^(scalefactor+1);
-                  end = z1;
-              ,3, {t1,t3} = {z3,z1};
-                  du = (t1-z0)/tau^(scalefactor+1);
-                  dv = (t3-z0)/tau^(scalefactor+1);
-                  end = z3;
-              ,4, {t1,t3} = {z3,z1};
-                  du = (t1-z0)/tau^(scalefactor+1);
-                  dv = (t3-z0)/tau^(scalefactor+1);
-                  end = z3;
-              ,5, {t1,t3} = {z1,z3};
-                  du = (t1-z0)/tau^(scalefactor+1);
-                  dv = (t3-z0)/tau^(scalefactor);
-                  end = z2;
-              ,6, {t1,t3} = {z1,z3};
-                  du = (t1-z0)/tau^(scalefactor+2);
-                  dv = (t3-z0)/tau^(scalefactor+1);
+              ,1, If[fcode == {} || Last[fcode] == 0,
+	                  AppendTo[res,{type4,refPt,{oneoverphi v1,v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type5,refPt+oneoverphi v1+v2,{ (mxRot270.v1),oneoverphi2 (mxRot270.v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+              ,2, If[Last[fcode] == 0,
+	                  AppendTo[res,{type3,refPt,{ v1, oneoverphi v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type6,refPt+oneoverphi v2+v1,{oneoverphi2 (mxRot90.v1), (mxRot90.v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+              ,3, If[Last[fcode] == 0,
+	                  AppendTo[res,{type1,refPt,{oneoverphi v1, v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type4,refPt+oneoverphi v1,{ (oneoverphi2 v1), (v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+              ,4, If[Last[fcode] == 0,
+	                  AppendTo[res,{type2,refPt,{v1,oneoverphi v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type3,refPt+oneoverphi v2,{ (v1), (oneoverphi2 v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+              ,5, If[Last[fcode] == 0,
+	                  AppendTo[res,{type3,refPt,{oneoverphi v1, v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type2,refPt+oneoverphi v1 + v2,		{ oneoverphi2 (mxRot270.v1),  (mxRot270.v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+              ,6, If[Last[fcode] == 0,
+	                  AppendTo[res,{type4,refPt,{v1,oneoverphi v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type1,refPt+oneoverphi v2 + v1,{ (mxRot90.v1),oneoverphi2 (mxRot90.v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
             ];
     	,{ind,Length[tlst]}];
     	Return[res]
     ] (* subdivFiboSFCTiles *)
 
 getsfcFiboSFC[tlst_] :=
-    Block[ {sfc={}},
+    Block[ {sfc={}, tileType,refPt,v1,v2,samplingPt,fcode,delta=7},
     	Table[
 			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
-   				AppendTo[sfc,refPt + (v1/Norm[v1]+v2/Norm[v2])/1/phi^((Length[fcode]+8)/2) ];
+   			AppendTo[sfc,refPt + (v1/Norm[v1]+v2/Norm[v2])/1/phi^((Length[fcode]+delta)/2) ];
             Switch[tileType
               ,1, 
-  				AppendTo[sfc,refPt + v1 + (v2/Norm[v2]-v1/Norm[v1])/1/phi^((Length[fcode]+8)/2) ];
+  				AppendTo[sfc,refPt + v1 + (v2/Norm[v2]-v1/Norm[v1])/1/phi^((Length[fcode]+delta)/2) ];
               ,2, 
-  				AppendTo[sfc,refPt + v2 + (v1/Norm[v1]-v2/Norm[v2])/1/phi^((Length[fcode]+8)/2) ];
+  				AppendTo[sfc,refPt + v2 + (v1/Norm[v1]-v2/Norm[v2])/1/phi^((Length[fcode]+delta)/2) ];
               ,_, 
-  				AppendTo[sfc,refPt + v1 + v2 - (v1/Norm[v1]+v2/Norm[v2])/1/phi^((Length[fcode]+8)/2) ];
+  				AppendTo[sfc,refPt + v1 + v2 - (v1/Norm[v1]+v2/Norm[v2])/1/phi^((Length[fcode]+delta)/2) ];
             ];
     	,{ind,Length[tlst]}];
     	Return[sfc]
     ] (* getsfcFiboSFC *)
 
-getFiboSFCTilesGL[tlst_,params_:{}] :=
-    Block[ {gl={},bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
-    	sfc = getsfcFiboSFC[tlst];
-    	AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}];
+getFiboSFCTilesGL[tlst_,params_:showValue+showSFC] :=
+    Block[ {gl={},tileType,refPt,v1,v2,samplingPt,fcode,cont,
+    		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
     	Table[
 			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
-			AppendTo[gl,Flatten[#,1]& @ {bortedStyle,Line[{refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt}] } ];
+			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
+    		If[BitAnd[params,showValue] > 0, AppendTo[gl,{GrayLevel[FIBOPhi[Reverse@fcode]],Polygon@cont}] ];
+			AppendTo[gl,Flatten[#,1]& @ {bortedStyle,Line[cont] } ];
+			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{-1,-1}]} ] ];		
+			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2)/2,{0,1}]} ] ];
     	,{ind,Length[tlst]}];
+    	sfc = getsfcFiboSFC[tlst];
+    	If[BitAnd[params,showSFC] > 0, AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}] ];
     	Return[gl]
     ] (* getFiboSFCTilesGL *)
     
-         (*cont = {z0,z1,z2,z3} = getTileShape[fig];
-        If[ showdir,
-            col = Magenta;
-            Switch[tileType
-              ,1, {t1,t3} = {z1,z3};
-                  du = (t1-z0)/tau^(scalefactor+1);
-                  dv = (t3-z0)/tau^(scalefactor+1);
-                  end = z1;
-              ,2, {t1,t3} = {z1,z3};
-                  du = (t1-z0)/tau^(scalefactor+1);
-                  dv = (t3-z0)/tau^(scalefactor+1);
-                  end = z1;
-              ,3, {t1,t3} = {z3,z1};
-                  du = (t1-z0)/tau^(scalefactor+1);
-                  dv = (t3-z0)/tau^(scalefactor+1);
-                  end = z3;
-              ,4, {t1,t3} = {z3,z1};
-                  du = (t1-z0)/tau^(scalefactor+1);
-                  dv = (t3-z0)/tau^(scalefactor+1);
-                  end = z3;
-              ,5, {t1,t3} = {z1,z3};
-                  du = (t1-z0)/tau^(scalefactor+1);
-                  dv = (t3-z0)/tau^(scalefactor);
-                  end = z2;
-              ,6, {t1,t3} = {z1,z3};
-                  du = (t1-z0)/tau^(scalefactor+2);
-                  dv = (t3-z0)/tau^(scalefactor+1);
-                  end = z2;
-              ,7, {t1,t3} = {z3,z1};
-                  du = (t1-z0)/tau^(scalefactor+1);
-                  dv = (t3-z0)/tau^(scalefactor);
-                  end = z2;
-              ,8, {t1,t3} = {z3,z1};
-                  du = (t1-z0)/tau^(scalefactor+2);
-                  dv = (t3-z0)/tau^(scalefactor+1);
-                  end = z2;
-              ,9, {t1,t3} = {z1,z3};
-                  du = (t1-z0)/tau^(scalefactor+2);
-                  dv = (t3-z0)/tau^(scalefactor);
-                  end = z2;
-              ,10,{t1,t3} = {z1,z3};
-                  du = (t1-z0)/tau^(scalefactor+2);
-                  dv = (t3-z0)/tau^(scalefactor);
-                  end = z2;
-              ,11,{t1,t3} = {z3,z1};
-                  du = (t1-z0)/tau^(scalefactor+2);
-                  dv = (t3-z0)/tau^(scalefactor);
-                  end = z2;
-              ,12,{t1,t3} = {z3,z1};
-                  du = (t1-z0)/tau^(scalefactor+2);
-                  dv = (t3-z0)/tau^(scalefactor);
-                  end = z2;
-            ];
-            If[ 1 <= tileType <= 4,
-                AppendTo[gl,{{col,arr[{z0+du+dv,end-du+dv}]},Point[z0+du+dv],Point[end-du+dv]}];,(*ELSE*)
-                AppendTo[gl,{{col,arr[{z0+du+dv,end-du-dv}]},Point[z0+du+dv],Point[end-du-dv]}];
-            ];
-        ]; (* If[showdir, *)
-        If[ showRefPt,
-            AppendTo[gl,{refPtCol,Point[refPt]}];
-        ];
-        If[ showSamplingPt,
-            AppendTo[gl,{samplingPtCol,Point[getSamplingPt[fig]]}];
-        ];
-        If[ showTileShape,
-            AppendTo[gl,{tileShapeCol,Thickness[tileShapeTh],Line@@{Append[cont,First[cont]]}}];
-            AppendTo[border,{tileShapeCol,Thickness[tileShapeTh],Line@@{Append[cont,First[cont]]}}];
-        ];
-        If[ showThVal,
-            AppendTo[gl,{GrayLevel[thval],Polygon@@{Append[cont,First[cont]]}}];
-        ];
-        If[ showThValTxt,
-            AppendTo[gl,Text[ToString[thval],refPt,{-1,-1}] ]
-        ];
-        If[ labelOrdinalNumber,
-            AppendTo[gl,Text[ToString[i],(z0+z2)/2,{-1,-1}] ]
-        ];
-        If[ labelTileTypes,
-            AppendTo[gl,{Red,Text[ToString[inflationRules[[tileType,1]]],(z0+z2)/2,{1,1}]} ]
-        ];
-        Return[gl]*)
 
