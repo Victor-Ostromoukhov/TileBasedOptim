@@ -501,16 +501,79 @@ type5 = 5;
 type6 = 6;
 (*------------------------- end of constants -------------------------*)
 
+demoFiboSFC[] :=
+    Module[ {},
+		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
+		tlst = subdivFiboSFCTiles @ tlst;
+]
 
-tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
 
-getTilesGL[tlst_,params_] :=
-    Block[ {},
+subdivFiboSFCTiles[tlst_] :=
+    Block[ {res={} },
     	Table[
 			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
-			
-    	,{ind,Length[]}];
-         cont = {z0,z1,z2,z3} = getTileShape[fig];
+            Switch[tileType
+              ,1, {t1,t3} = {z1,z3};
+                  AppendTo[res,{type4,refPt,{oneoverphi v1,v2},samplingPt,AppendTo[fcode,0]}];
+                  AppendTo[res,{type4,refPt,{oneoverphi v1,v2},samplingPt,AppendTo[fcode,1]}];
+              ,2, {t1,t3} = {z1,z3};
+                  du = (t1-z0)/tau^(scalefactor+1);
+                  dv = (t3-z0)/tau^(scalefactor+1);
+                  end = z1;
+              ,3, {t1,t3} = {z3,z1};
+                  du = (t1-z0)/tau^(scalefactor+1);
+                  dv = (t3-z0)/tau^(scalefactor+1);
+                  end = z3;
+              ,4, {t1,t3} = {z3,z1};
+                  du = (t1-z0)/tau^(scalefactor+1);
+                  dv = (t3-z0)/tau^(scalefactor+1);
+                  end = z3;
+              ,5, {t1,t3} = {z1,z3};
+                  du = (t1-z0)/tau^(scalefactor+1);
+                  dv = (t3-z0)/tau^(scalefactor);
+                  end = z2;
+              ,6, {t1,t3} = {z1,z3};
+                  du = (t1-z0)/tau^(scalefactor+2);
+                  dv = (t3-z0)/tau^(scalefactor+1);
+            ];
+                  end = z2;
+    	,{ind,Length[tlst]}];
+    	Return[res]
+    ] (* subdivFiboSFCTiles *)
+
+getFiboSFCTilesGL[tlst_,params_] :=
+    Block[ {res={};},
+    	Table[
+			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
+            Switch[tileType
+              ,1, {t1,t3} = {z1,z3};
+                  AppendTo[res,{type4,refPt,{oneoverphi v1,v2},samplingPt,AppendTo[fcode,0]}];
+                  AppendTo[res,{type4,refPt,{oneoverphi v1,v2},samplingPt,AppendTo[fcode,1]}];
+              ,2, {t1,t3} = {z1,z3};
+                  du = (t1-z0)/tau^(scalefactor+1);
+                  dv = (t3-z0)/tau^(scalefactor+1);
+                  end = z1;
+              ,3, {t1,t3} = {z3,z1};
+                  du = (t1-z0)/tau^(scalefactor+1);
+                  dv = (t3-z0)/tau^(scalefactor+1);
+                  end = z3;
+              ,4, {t1,t3} = {z3,z1};
+                  du = (t1-z0)/tau^(scalefactor+1);
+                  dv = (t3-z0)/tau^(scalefactor+1);
+                  end = z3;
+              ,5, {t1,t3} = {z1,z3};
+                  du = (t1-z0)/tau^(scalefactor+1);
+                  dv = (t3-z0)/tau^(scalefactor);
+                  end = z2;
+              ,6, {t1,t3} = {z1,z3};
+                  du = (t1-z0)/tau^(scalefactor+2);
+                  dv = (t3-z0)/tau^(scalefactor+1);
+            ];
+                  end = z2;
+    	,{ind,Length[tlst]}];
+    ] (* getFiboSFCTilesGL *)
+    
+         (*cont = {z0,z1,z2,z3} = getTileShape[fig];
         If[ showdir,
             col = Magenta;
             Switch[tileType
@@ -590,6 +653,5 @@ getTilesGL[tlst_,params_] :=
         If[ labelTileTypes,
             AppendTo[gl,{Red,Text[ToString[inflationRules[[tileType,1]]],(z0+z2)/2,{1,1}]} ]
         ];
-        Return[gl]
-    ] (* getGFigure *)
+        Return[gl]*)
 
