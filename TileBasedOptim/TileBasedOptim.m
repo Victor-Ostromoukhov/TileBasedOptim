@@ -3,7 +3,7 @@
 *)
  
 (****************** params *******************)
-SetOptions[Graphics, ImageSize -> { 2 1024, Automatic}];
+SetOptions[Graphics, ImageSize -> { 1024, Automatic}];
 
 mf := MatrixForm;
 
@@ -29,9 +29,10 @@ type6 = 6;
 demoFiboSFC[] :=
     Module[ {},
 		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
-		tlst = subdivFiboSFCTiles @ tlst;
-		tlst//mf//Print;
 		Graphics[ getFiboSFCTilesGL[tlst] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst] ]//Print;
+		tlst//mf//Print;
 ]
 
 
@@ -41,8 +42,8 @@ subdivFiboSFCTiles[tlst_] :=
 			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
             Switch[tileType
               ,1, {t1,t3} = {z1,z3};
-                  AppendTo[res,{type4,refPt,{oneoverphi v1,v2},samplingPt,AppendTo[fcode,0]}];
-                  AppendTo[res,{type4,refPt+oneoverphi v1+v2,{ (mxRot270.v1),oneoverphi2 (mxRot270.v2)},samplingPt,AppendTo[fcode,1]}];
+                  AppendTo[res,{type4,refPt,{oneoverphi v1,v2},samplingPt,Append[fcode,0]}];
+                  AppendTo[res,{type4,refPt+oneoverphi v1+v2,{ (mxRot270.v1),oneoverphi2 (mxRot270.v2)},samplingPt,Append[fcode,1]}];
               ,2, {t1,t3} = {z1,z3};
                   du = (t1-z0)/tau^(scalefactor+1);
                   dv = (t3-z0)/tau^(scalefactor+1);
@@ -67,13 +68,32 @@ subdivFiboSFCTiles[tlst_] :=
     	Return[res]
     ] (* subdivFiboSFCTiles *)
 
-getFiboSFCTilesGL[tlst_,params_] :=
-    Block[ {gl={},bortedStyle={Cyan,AbsoluteThickness[1]} },
+getsfcFiboSFC[tlst_] :=
+    Block[ {sfc={}},
     	Table[
 			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
-			AppendTo[gl,{bortedStyle,Line[{refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt}] } ];
+   				AppendTo[sfc,refPt + (v1/Norm[v1]+v2/Norm[v2])/1/phi^((Length[fcode]+8)/2) ];
+            Switch[tileType
+              ,1, 
+  				AppendTo[sfc,refPt + v1 + (v2/Norm[v2]-v1/Norm[v1])/1/phi^((Length[fcode]+8)/2) ];
+              ,2, 
+  				AppendTo[sfc,refPt + v2 + (v1/Norm[v1]-v2/Norm[v2])/1/phi^((Length[fcode]+8)/2) ];
+              ,_, 
+  				AppendTo[sfc,refPt + v1 + v2 - (v1/Norm[v1]+v2/Norm[v2])/1/phi^((Length[fcode]+8)/2) ];
+            ];
     	,{ind,Length[tlst]}];
-    	Reurn[gl]
+    	Return[sfc]
+    ] (* getsfcFiboSFC *)
+
+getFiboSFCTilesGL[tlst_,params_:{}] :=
+    Block[ {gl={},bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
+    	sfc = getsfcFiboSFC[tlst];
+    	AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}];
+    	Table[
+			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
+			AppendTo[gl,Flatten[#,1]& @ {bortedStyle,Line[{refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt}] } ];
+    	,{ind,Length[tlst]}];
+    	Return[gl]
     ] (* getFiboSFCTilesGL *)
     
          (*cont = {z0,z1,z2,z3} = getTileShape[fig];
