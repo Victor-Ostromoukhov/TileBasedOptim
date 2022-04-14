@@ -61,6 +61,8 @@ demoFiboSFC[niters_:15] :=
 			Graphics[ getFiboSFCTilesGL[tlst], PlotLabel-> iter ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,niters}];
+		Graphics[ getFiboSFCTilesGL[tlst,showSFC] ]//Print;
+		Graphics[ getFiboSFCTilesGL[tlst,showValue] ]//Print;
 ]
 
 
