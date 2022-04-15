@@ -58,10 +58,11 @@ demoFiboSFC[niters_:15] :=
 		Graphics[ getFiboSFCTilesGL[tlst] ]//Print;
 		Do[
 			tlst = subdivFiboSFCTiles @ tlst;
-			Graphics[ getFiboSFCTilesGL[tlst], PlotLabel-> iter ]//Print;
+			flags = If[iter < 10, showTileType+showTilefcode+showSFC, showSFC];
+			Graphics[ getFiboSFCTilesGL[tlst,flags], PlotLabel-> iter ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,niters}];
-		Graphics[ getFiboSFCTilesGL[tlst,showSFC] ]//Print;
+
 		Graphics[ getFiboSFCTilesGL[tlst,showValue] ]//Print;
 ]
 
@@ -129,7 +130,8 @@ getsfcFiboSFC[tlst_] :=
     	Return[sfc]
     ] (* getsfcFiboSFC *)
 
-getFiboSFCTilesGL[tlst_,params_:showValue+showSFC] :=
+
+getFiboSFCTilesGL[tlst_,params_:showSFC] :=
     Block[ {gl={},tileType,refPt,v1,v2,samplingPt,fcode,cont,
     		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
     	Table[
