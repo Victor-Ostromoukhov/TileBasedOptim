@@ -134,7 +134,7 @@ getsfcFiboSFC[tlst_] :=
 
 
 getFiboSFCTilesGL[tlst_,params_:showSFC] :=
-    Module[ {gl={AbsolutePointSize[10]},tileType,refPt,v1,v2,samplingPt,fcode,cont,sfc,norm1,norm2,k1,k2,
+    Module[ {gl={AbsolutePointSize[5]},tileType,refPt,v1,v2,samplingPt,fcode,cont,sfc,norm1,norm2,k1,k2,
     		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
     	Do[
 			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
@@ -184,6 +184,22 @@ demoFiboSFC[niters_:15] :=
 		Graphics[ getFiboSFCTilesGL[tlst,showValue] ]//Print;
 		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
 		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = setSamplingPtFiboSFCTiles @ tlst;
 		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
 	] (* demoFiboSFC *)
 
