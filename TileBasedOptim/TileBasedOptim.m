@@ -3,7 +3,7 @@
 *)
  
 (****************** globals *******************)
-SetOptions[Graphics, ImageSize -> { 1024, Automatic}];
+SetOptions[Graphics, ImageSize -> {3/2 1024, Automatic}];
 
 mf := MatrixForm
 T :=  Transpose
@@ -42,6 +42,10 @@ showTileType = 1;
 showTilefcode = 2;
 showSFC = 4;
 showValue = 8;
+showArrows = 16;
+showFrame = 32;
+showOrdinalNumber = 64;
+showSamplingPt = 128;
 
 (*------------------------- end of constants -------------------------*)
 FIBOF[symbols_] := With[ {s = Reverse[symbols]}, Total@Table[Fibonacci[i+1 ] s[[i]], {i, Length[s]}] ]
@@ -63,21 +67,6 @@ getGeneralizedL2discrepancy[pts_, dbg_:False] :=
         Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
         discrepancy
    ] (* getGeneralizedL2discrepancy *)
-
-demoFiboSFC[niters_:15] :=
-    Module[ {dbg},
-    	dbg = False;
-		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
-		Graphics[ getFiboSFCTilesGL[tlst] ]//Print;
-		Do[
-			tlst = subdivFiboSFCTiles @ tlst;
-			flags = If[iter < 10, showTileType+showTilefcode+showSFC, showSFC];
-			Graphics[ getFiboSFCTilesGL[tlst,flags], PlotLabel-> iter ]//Print;
-			If[dbg, tlst//mf//Print];
-		,{iter,niters}];
-
-		Graphics[ getFiboSFCTilesGL[tlst,showValue] ]//Print;
-	] (* demoFiboSFC *)
 
 
 subdivFiboSFCTiles[tlst_] :=
@@ -145,18 +134,57 @@ getsfcFiboSFC[tlst_] :=
 
 
 getFiboSFCTilesGL[tlst_,params_:showSFC] :=
-    Module[ {gl={},tileType,refPt,v1,v2,samplingPt,fcode,cont,sfc,
+    Module[ {gl={AbsolutePointSize[10]},tileType,refPt,v1,v2,samplingPt,fcode,cont,sfc,norm1,norm2,k1,k2,
     		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
     	Do[
-			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
+			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
+			{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/phi^((Length[fcode]+Mod[Length[fcode],2])/2);
 			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
+			samplingPt = refPt + k1 v1 + k2 v2;
     		If[BitAnd[params,showValue] > 0, AppendTo[gl,{GrayLevel[FIBOPhi[Reverse@fcode]],Polygon@cont}] ];
 			AppendTo[gl,Flatten[#,1]& @ {bortedStyle,Line@cont } ];
-			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{-1,-1}]} ] ];		
+			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{1.9,-1}]} ] ];		
+			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FIBOPhi[Reverse@fcode],Bold,14,Red],refPt+(v1+v2)/2,{-1.9,-1}]} ] ];		
 			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2)/2,{0,1}]} ] ];
+			If[BitAnd[params,showFrame] > 0, AppendTo[gl, {Arrowheads[1/phi^(6+(Length[fcode]+Mod[Length[fcode],2])/2)],Red,Arrow[{refPt+(norm1+norm2)/10,refPt+norm1/2+norm2/10}],Blue,Arrow[{refPt+(norm1+norm2)/10,refPt+norm2/2+norm1/10}]} ] ];
+			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, Point@samplingPt ] ];
     	,{ind,Length[tlst]}];
-    	If[BitAnd[params,showSFC] > 0, sfc = getsfcFiboSFC[tlst]; AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}] ];
+    	If[BitAnd[params,showSFC] > 0, sfc = getsfcFiboSFC[tlst]; 
+    		AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}];
+    		If[BitAnd[params,showArrows] > 0, AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Arrow/@(Partition[#,2]&@sfc)}] ] ];    	
     	Return[gl]
     ] (* getFiboSFCTilesGL *)
-    
+
+
+setSamplingPtFiboSFCTiles[tlst_] :=
+    Module[ {res={}, tileType,refPt,v1,v2,k1,k2,fcode},
+    	Do[
+			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
+			k1 = k2 = FIBOPhi[Reverse@fcode];
+			If[Min[v1] < 0, k1 = 1-k1];
+			If[Min[v2] < 0, k2 = 1-k2];
+   			AppendTo[res,{tileType,refPt,{v1,v2},{k1,k2},fcode}];
+    	,{ind,Length[tlst]}];
+    	Return[res]
+    ] (* setSamplingPtFiboSFCTiles *)
+
+demoFiboSFC[niters_:15] :=
+    Module[ {dbg},
+    	dbg = False;
+		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
+		Graphics[ getFiboSFCTilesGL[tlst] ]//Print;
+		Do[
+			tlst = subdivFiboSFCTiles @ tlst;
+			tlst = setSamplingPtFiboSFCTiles @ tlst;
+			flags = If[iter < 10, showTileType+showTilefcode+showSFC+showArrows+showFrame+showOrdinalNumber+showSamplingPt, showSFC];
+			Graphics[ getFiboSFCTilesGL[tlst,flags], PlotLabel-> iter ]//Print;
+			If[dbg, tlst//mf//Print];
+		,{iter,niters}];
+
+		Graphics[ getFiboSFCTilesGL[tlst,showValue] ]//Print;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+	] (* demoFiboSFC *)
+
 
