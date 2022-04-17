@@ -375,6 +375,7 @@ makeStratStarDiscrepancy[nlevels_:9, ntrials_:64] :=
     ]
 
  (*
+ gitpull
  math
  <<TileBasedOptim/TileBasedOptim.m
  makeWNStarDiscrepancy[]
