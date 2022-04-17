@@ -3,6 +3,7 @@
 *)
  
 (****************** globals *******************)
+SetDirectory[ToFileName[$HomeDirectory,"TileBasedOptim/"]];
 SetOptions[Graphics, ImageSize -> {3/2 1024, Automatic}];
 
 mf := MatrixForm
@@ -156,7 +157,7 @@ getFiboSFCTilesGL[tlst_,params_:showSFC] :=
     ] (* getFiboSFCTilesGL *)
 
 
-setSamplingPtFiboSFCTiles[tlst_] :=
+setSamplingPtsFiboSFCTiles[tlst_] :=
     Module[ {res={}, tileType,refPt,v1,v2,k1,k2,fcode},
     	Do[
 			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
@@ -166,7 +167,16 @@ setSamplingPtFiboSFCTiles[tlst_] :=
    			AppendTo[res,{tileType,refPt,{v1,v2},{k1,k2},fcode}];
     	,{ind,Length[tlst]}];
     	Return[res]
-    ] (* setSamplingPtFiboSFCTiles *)
+    ] (* setSamplingPtsFiboSFCTiles *)
+
+getSamplingPtsFiboSFCTiles[tlst_] :=
+    Module[ {tileType,refPt,v1,v2,k1,k2,fcode},
+    	Parallelize @ Table[
+			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
+			(*{k1,k2} = {RandomReal[],RandomReal[]};*)
+			refPt + k1 v1 + k2 v2
+    	,{ind,Length[tlst]}]
+    ] (* getSamplingPtsFiboSFCTiles *)
 
 demoFiboSFC[niters_:15] :=
     Module[ {dbg},
@@ -175,7 +185,7 @@ demoFiboSFC[niters_:15] :=
 		Graphics[ getFiboSFCTilesGL[tlst] ]//Print;
 		Do[
 			tlst = subdivFiboSFCTiles @ tlst;
-			tlst = setSamplingPtFiboSFCTiles @ tlst;
+			tlst = setSamplingPtsFiboSFCTiles @ tlst;
 			flags = If[iter < 10, showTileType+showTilefcode+showSFC+showArrows+showFrame+showOrdinalNumber+showSamplingPt, showSFC];
 			Graphics[ getFiboSFCTilesGL[tlst,flags], PlotLabel-> iter ]//Print;
 			If[dbg, tlst//mf//Print];
@@ -184,23 +194,119 @@ demoFiboSFC[niters_:15] :=
 		Graphics[ getFiboSFCTilesGL[tlst,showValue] ]//Print;
 		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
 		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		tlst = setSamplingPtsFiboSFCTiles @ tlst;
 		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
 		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		tlst = setSamplingPtsFiboSFCTiles @ tlst;
 		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
 		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		tlst = setSamplingPtsFiboSFCTiles @ tlst;
 		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
 		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		tlst = setSamplingPtsFiboSFCTiles @ tlst;
 		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
 		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		tlst = setSamplingPtsFiboSFCTiles @ tlst;
 		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
 		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtFiboSFCTiles @ tlst;
+		tlst = setSamplingPtsFiboSFCTiles @ tlst;
 		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
 	] (* demoFiboSFC *)
 
+getDiscrepancy2DFiboSFC[niters_:22] :=
+    Module[ {npts,pts,dND, tlst},
+		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
+        res = Table[
+			tlst = subdivFiboSFCTiles @ tlst;
+			tlst = setSamplingPtsFiboSFCTiles @ tlst;
+            npts = Length[tlst];
+            pts = getSamplingPtsFiboSFCTiles[tlst];
+            dND = getGeneralizedL2discrepancy[pts];
+			{npts,dND}
+		,{iter,niters}];
+        Export["data_discrepancyL2/2D/FiboSFC.dat", res]; 
+        Print[mf @ res]
+    ] (* getDiscrepancy2DFiboSFC *)
 
+showDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC",powfromto_:{2,16},col_:Red] := 
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancyOwen,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors},
+		{powfrom,powto}=powfromto;
+		base=2;
+		fontSz = 20;
+        dirDiscrepancy = "data_discrepancyL2/"<>ToString[nDims]<>"D/";
+        discrepancyWN = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Drop[#,1]& @ Import[dirDiscrepancy<>"WN.dat"])[[;;,1;;2]];
+        discrepancyOwen = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Drop[#,1]& @ Import[dirDiscrepancy<>"OwenPure.dat"])[[;;,1;;2]];
+        discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Drop[#,1]& @ Import[dirDiscrepancy<>"Strat.dat"])[[;;,1;;2]], {discrepancyWN[[1]]} ];
+        plotLabel = "CascadedSeq GeneralizedL2Discrepancy "<>ToString[nDims]<>"D"<>" GF"<>ToString[base];  
+             
+        discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Drop[#,1]& @ Import[dirDiscrepancy<>"Sobol.dat"])[[;;,1;;2]];
+        discrepancy2DFiboSFC = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"FiboSFC.dat"], thisDiscrepancy];
+        alldata = If[Length[discrepancyStrat] == 1,
+        	{discrepancyWN, discrepancySobol, discrepancy2DFiboSFC},
+        	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancy2DFiboSFC}
+        ];
+        legends = If[Length[discrepancyStrat] == 1,
+        	{"WN","Sob", thisDiscrepancyLabel},
+       		{"WN","Sob", "Jit", thisDiscrepancyLabel}
+        ];
+        colors = If[Length[discrepancyStrat] == 1,
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} },
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {Blue,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} }
+        ];
+
+		(*refND = Last /@ getInterpolatedRefsDiscrepancyNDGFN[nDims,base,{powfrom,powto}];*)
+        
+        range = {Min @@ ((Last /@ #) &@discrepancyOwen), Max @@((Last /@ #) &@discrepancyWN) };
+        p = ListLogLogPlot[ alldata
+            ,PlotLegends -> Placed[#,{.4,.1}]& @  {Style[#,fontSz]& /@ legends }
+            ,PlotStyle -> colors
+            ,Joined->True
+            ,FrameTicks->{{Automatic,None},{Table[base^pow,{pow,powfrom,powto,1}],Table[base^pow,{pow,powfrom,powto,1}]}}
+            ,FrameStyle->Directive[Black,20]
+            ,RotateLabel -> True
+            ,PlotMarkers->{{\[FilledCircle],5} }
+            ,Frame->True
+             ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "discrepancy", fontSz] }
+               ,ImageSize -> {1024,1024}
+            (*,PlotRange->{{base^powfrom,base^powto},{.0003,.3}}*)
+            (*,PlotRange->{{base^powfrom,base^powto},{.1,Min[Last /@ thisDiscrepancy]}}*)
+            ,PlotRange->{{base^powfrom,base^powto},range}
+            ,GridLines->{Table[base^pow,{pow,powfrom,powto,1}],None}
+            ,GridLinesStyle->Directive[Darker@Gray, Dashed]
+            ,AspectRatio->1
+            ,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+            ,PlotLabel -> Style[ plotLabel, Bold, 24]
+        ];
+        p//Print;
+        p
+    ] (* showDisrepancyND *)
+
+testDyadicPartitioningNDFull[set_,showErrFlag_:True] := Module[{sz,powers,tests,i,tab,dim},
+	sz=Length[set];
+	dim = Length[First@set];
+	powers = Table[2^i,{i,0,Log[2,sz]}];
+	tests = Select[Tuples[powers, dim], (Times @@ #) == sz^(dim-1) &];
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+	If[showErrFlag, If[And @@ tab == False, Print["testHierarchicalStratified3DStrong: ",Select[{tests,tab}//T,Last[#]==False&]//mf, " -> ", Select[{tests,tab}//T,Last[#]==False&]//Length] ] ];
+	And @@ tab
+] (* testDyadicPartitioningNDFull *)
+
+tstBinary[nlevels_:5] :=
+    Module[ {},
+        dtab = Table[
+			npts = 4^ilevel;
+			codes = Partition[#,ilevel]& /@ (IntegerDigits[#,2,2*ilevel]& /@ Range[0,npts-1]);
+			pts = Table[
+					{codex,codey} = codes[[i]];
+					ix = FromDigits[#,2]& @ codex;
+					iy = FromDigits[#,2]& @ codey;
+					ixfrac = FromDigits[#,2]& @ Reverse[codex];
+					iyfrac = FromDigits[#,2]& @ Reverse[codey];
+					{x,y} = {ix / 2^ilevel + iyfrac / npts, iy / 2^ilevel + ixfrac / npts}//N
+				,{i,npts}];
+			ipts = Round[ npts pts ];
+			Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]];
+			{npts,getGeneralizedL2discrepancy[pts]}
+        ,{ilevel,nlevels}];
+        showDisrepancyND[2,dtab,"tstBinary"];
+    ]
