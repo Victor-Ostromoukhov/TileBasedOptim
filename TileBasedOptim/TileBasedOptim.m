@@ -69,6 +69,19 @@ getGeneralizedL2discrepancy[pts_, dbg_:False] :=
         discrepancy
    ] (* getGeneralizedL2discrepancy *)
 
+getStarDiscrepancy[pts_, dbg_:False] :=
+    Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
+    	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+    	prog = "discrepancy";
+        Export["tmp/tmp"<>pid<>".dat",N[pts]];
+        execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
+        returnCode = Run[execPrefix<>execString];
+        If[dbg, Print[execString -> returnCode ] ];
+        discrepancy = Import["tmp/res"<>pid<>".dat"][[1,1]];
+        Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
+        discrepancy
+   ] (* getStarDiscrepancy *)
+
 
 subdivFiboSFCTiles[tlst_] :=
     Module[ {res={}, tileType,refPt,v1,v2,samplingPt,fcode },
@@ -291,7 +304,7 @@ testDyadicPartitioningNDFull[set_,showErrFlag_:True] := Module[{sz,powers,tests,
 	And @@ tab
 ] (* testDyadicPartitioningNDFull *)
 
-tstBinary[nlevels_:5] :=
+tstStarBinary[nlevels_:7] :=
     Module[ {},
         dtab = Table[
 			npts = 4^ilevel;
@@ -306,7 +319,64 @@ tstBinary[nlevels_:5] :=
 				,{i,npts}];
 			ipts = Round[ npts pts ];
 			Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]];
-			{npts,getGeneralizedL2discrepancy[pts]}
+			{npts,getStarDiscrepancy[pts]}
         ,{ilevel,nlevels}];
         showDisrepancyND[2,dtab,"tstBinary"];
     ]
+
+    
+makeSobolDiscrepancy[nlevels_:18] :=
+    Module[ {},
+        dtab = Table[
+			npts = 2^ilevel;
+        	Print["Processing makeSobolDiscrepancy level ",ilevel, " npts = ",npts];
+			execString = "owen -n "<>ToString[npts]<>" --nd 2 -p 0 -o tmp/pts"<>pid<>".dat > /dev/null";
+        	returnCode = Run[execPrefix<>execString];
+        	pts = Import["tmp/pts"<>pid<>".dat"];
+			ipts = Round[ npts pts ];
+			If[dbg,Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+			{npts,getStarDiscrepancy[pts]}
+        ,{ilevel,nlevels}];
+        Export["data_StarDiscrepancy/2D/Sobol.dat", res]; 
+    ]
+
+makeWNStarDiscrepancy[nlevels_:9, ntrials_:64] :=
+    Module[ {},
+        dtab = Table[
+			npts = 4^ilevel;
+        	Print["Processing makeWNStarDiscrepancy level ",ilevel, " npts = ",npts];
+			trials = Parallelize @ Table[
+				pts = Table[{RandomReal[],RandomReal[]},{i,npts}];
+				{npts,getStarDiscrepancy[pts]}
+			,{itrail,ntrials}];
+			Mean @ trials
+        ,{ilevel,nlevels}];
+        showDisrepancyND[2,dtab,"tstBinary"];
+        Export["data_StarDiscrepancy/2D/WN.dat", res]; 
+        Print[mf @ res]
+    ]
+
+makeStratStarDiscrepancy[nlevels_:9, ntrials_:64] :=
+    Module[ {},
+        dtab = Table[
+			npts = 4^ilevel;
+			nstrats = 2^ilevel;
+        	Print["Processing makeStratStarDiscrepancy level ",ilevel, " npts = ",npts];
+			trials = Parallelize @ Table[
+				pts = N @ Table[{Mod[i,nstrats], Quotient[i,nstrats]}/nstrats + {RandomReal[],RandomReal[]}/nstrats,{i,0,npts-1}];
+				If[dbg,Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+				{npts,getStarDiscrepancy[pts]}
+			,{itrail,ntrials}];
+			Mean @ trials
+        ,{ilevel,nlevels}];
+        showDisrepancyND[2,dtab,"tstBinary"];
+        Export["data_StarDiscrepancy/2D/Strat.dat", res]; 
+        Print[mf @ res]
+    ]
+
+ (*
+ math
+ <<TileBasedOptim/TileBasedOptim.m
+ makeWNStarDiscrepancy[]
+makeStratStarDiscrepancy[]
+ *)
