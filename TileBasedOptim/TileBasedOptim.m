@@ -337,7 +337,7 @@ makeSobolDiscrepancy[nlevels_:18] :=
 			If[dbg,Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
 			{npts,getStarDiscrepancy[pts]}
         ,{ilevel,nlevels}];
-        Export["data_StarDiscrepancy/2D/Sobol.dat", res]; 
+        Export["data_StarDiscrepancy/2D/Sobol.dat", dtab]; 
     ]
 
 makeWNStarDiscrepancy[nlevels_:9, ntrials_:64] :=
@@ -352,7 +352,7 @@ makeWNStarDiscrepancy[nlevels_:9, ntrials_:64] :=
 			Mean @ trials
         ,{ilevel,nlevels}];
         showDisrepancyND[2,dtab,"tstBinary"];
-        Export["data_StarDiscrepancy/2D/WN.dat", res]; 
+        Export["data_StarDiscrepancy/2D/WN.dat", dtab]; 
         Print[mf @ res]
     ]
 
@@ -370,7 +370,7 @@ makeStratStarDiscrepancy[nlevels_:9, ntrials_:64] :=
 			Mean @ trials
         ,{ilevel,nlevels}];
         showDisrepancyND[2,dtab,"tstBinary"];
-        Export["data_StarDiscrepancy/2D/Strat.dat", res]; 
+        Export["data_StarDiscrepancy/2D/Strat.dat", dtab]; 
         Print[mf @ res]
     ]
 
@@ -379,4 +379,5 @@ makeStratStarDiscrepancy[nlevels_:9, ntrials_:64] :=
  <<TileBasedOptim/TileBasedOptim.m
  makeWNStarDiscrepancy[]
 makeStratStarDiscrepancy[]
+makeSobolDiscrepancy[]
  *)
