@@ -370,7 +370,7 @@ makeStratStarDiscrepancy[nlevels_:10, ntrials_:64, nDims_:3] :=
 			trials = (*Parallelize @*) Table[
 				Switch[nDims
 				,2, pts = N @ Table[{Mod[i,nstrats], Quotient[i,nstrats]}/nstrats + {RandomReal[],RandomReal[]}/nstrats,{i,0,npts-1}];
-				,3, pts = Flatten[#,2]& @ Table[{ix+RandomReal[],iy+RandomReal[],iz+RandomReal[]}/nstrats,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}]];
+				,3, pts = Flatten[#,2]& @ Table[{ix+RandomReal[],iy+RandomReal[],iz+RandomReal[]}/nstrats,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
 				];
 				If[dbg,Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
 				{npts,getStarDiscrepancy[pts]}
@@ -384,6 +384,7 @@ makeStratStarDiscrepancy[nlevels_:10, ntrials_:64, nDims_:3] :=
  (*
  gitpull
  math
+ 
  <<TileBasedOptim/TileBasedOptim.m
  makeWNStarDiscrepancy[]
 makeStratStarDiscrepancy[]
