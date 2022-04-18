@@ -225,7 +225,7 @@ testDyadicPartitioningNDFull[set_,showErrFlag_:True] := Module[{sz,powers,tests,
 	And @@ tab
 ] (* testDyadicPartitioningNDFull *)
 
-tstStarBinary[nlevels_:7] :=
+tstStarBinary2D[nlevels_:7] :=
     Module[ {},
         dtab = Table[
 			npts = 4^ilevel;
@@ -234,18 +234,36 @@ tstStarBinary[nlevels_:7] :=
 					{codex,codey} = codes[[i]];
 					ix = FromDigits[#,2]& @ codex;
 					iy = FromDigits[#,2]& @ codey;
-					ixfrac = FromDigits[#,2]& @ Reverse[codex];
-					iyfrac = FromDigits[#,2]& @ Reverse[codey];
-					{x,y} = {ix / 2^ilevel + iyfrac / npts, iy / 2^ilevel + ixfrac / npts}//N
+					ixfrac = FromDigits[#,2]& @ Reverse[codey];
+					iyfrac = FromDigits[#,2]& @ Reverse[codex];
+					{ix / 2^ilevel + ixfrac / npts, iy / 2^ilevel + iyfrac / npts}//N
 				,{i,npts}];
 			ipts = Round[ npts pts ];
 			Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]];
 			{npts,getStarDiscrepancy[pts]}
         ,{ilevel,nlevels}];
         showDisrepancyND[2,dtab,"tstBinary"];
-    ]
+    ] (* tstStarBinary2D *)
 
-(*-------------------------- calculate discrepancy --------------------------*)
+tstStarBinary3D[nlevels_:4] :=
+    Module[ {},
+        dtab = Table[
+			npts = 8^ilevel;
+			nstrats = 2^ilevel;
+			pts = Flatten[#,2]& @ Table[
+					{codex,codey,codez} = {IntegerDigits[ix,2,ilevel],IntegerDigits[iy,2,ilevel],IntegerDigits[iz,2,ilevel]};
+					ixfrac = FromDigits[#,2]& @ Reverse[codex];
+					iyfrac = FromDigits[#,2]& @ Reverse[codey];
+					izfrac = FromDigits[#,2]& @ Reverse[codez];
+					{ix / 2^ilevel + ixfrac / npts, iy / 2^ilevel + iyfrac / npts, iz / 2^ilevel + izfrac / npts}//N
+				,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
+			If[ilevel == 2, Print[mf @ pts]];
+			{npts,getStarDiscrepancy[pts]}
+        ,{ilevel,nlevels}];
+        showDisrepancyND[3,dtab,"tstBinary"];
+    ] (* tstStarBinary2D *)
+
+(*-------------------------- calculate & show discrepancy --------------------------*)
 getGeneralizedL2discrepancy[pts_, dbg_:False] :=
     Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
