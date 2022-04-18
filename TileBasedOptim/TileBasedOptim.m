@@ -56,33 +56,6 @@ FIBOFxy[symbols_] := FIBOF/@symbols
 FIBOphitab = Table[phi^-i, {i, 32}] // N;
 FIBOPhi[s_] := Sum[FIBOphitab[[i]] s[[i]], {i, Length[s]}] 
 
-getGeneralizedL2discrepancy[pts_, dbg_:False] :=
-    Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
-    	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-    	prog = "getGeneralizedL2Discrepancy_from_file";
-        Export["tmp/tmp"<>pid<>".dat",N[pts]];
-        execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
-        returnCode = Run[execPrefix<>execString];
-        If[dbg, Print[execString -> returnCode ] ];
-        discrepancy = Import["tmp/res"<>pid<>".dat"][[1,2]];
-        Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
-        discrepancy
-   ] (* getGeneralizedL2discrepancy *)
-
-getStarDiscrepancy[pts_, dbg_:False] :=
-    Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
-    	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-    	prog = "discrepancy";
-        Export["tmp/tmp"<>pid<>".dat",N[pts]];
-        execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
-        returnCode = Run[execPrefix<>execString];
-        If[dbg, Print[execString -> returnCode ] ];
-        discrepancy = Import["tmp/res"<>pid<>".dat"][[1,1]];
-        Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
-        discrepancy
-   ] (* getStarDiscrepancy *)
-
-
 subdivFiboSFCTiles[tlst_] :=
     Module[ {res={}, tileType,refPt,v1,v2,samplingPt,fcode },
     	Table[
@@ -324,10 +297,40 @@ tstStarBinary[nlevels_:7] :=
         showDisrepancyND[2,dtab,"tstBinary"];
     ]
 
-    
+(*-------------------------- calculate discrepancy --------------------------*)
+getGeneralizedL2discrepancy[pts_, dbg_:False] :=
+    Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
+    	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+    	prog = "getGeneralizedL2Discrepancy_from_file";
+        Export["tmp/tmp"<>pid<>".dat",N[pts]];
+        execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
+        returnCode = Run[execPrefix<>execString];
+        If[dbg, Print[execString -> returnCode ] ];
+        discrepancy = Import["tmp/res"<>pid<>".dat"][[1,2]];
+        Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
+        discrepancy
+   ] (* getGeneralizedL2discrepancy *)
+
+getStarDiscrepancy[pts_, dbg_:False] :=
+    Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
+    	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+    	prog = "discrepancy";
+        Export["tmp/tmp"<>pid<>".dat",N[pts]];
+        execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
+        returnCode = Run[execPrefix<>execString];
+        If[dbg, Print[execString -> returnCode ] ];
+        discrepancy = Import["tmp/res"<>pid<>".dat"][[1,1]];
+        Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
+        discrepancy
+   ] (* getStarDiscrepancy *)
+
+getCloseestN2D[n_] := Round[Sqrt[n]]^2
+getCloseestNND[nDims_:2, n_] := Round[n^(1/nDims)]^nDims
+
 makeSobolDiscrepancy[nlevels_:18] :=
     Module[ {},
-        dtab = Table[
+        dtab = {};
+        Do[
 			npts = 2^ilevel;
         	Print["Processing makeSobolDiscrepancy level ",ilevel, " npts = ",npts];
 			execString = "owen -n "<>ToString[npts]<>" --nd 2 -p 0 -o tmp/pts"<>pid<>".dat > /dev/null";
@@ -335,9 +338,9 @@ makeSobolDiscrepancy[nlevels_:18] :=
         	pts = Import["tmp/pts"<>pid<>".dat"];
 			ipts = Round[ npts pts ];
 			If[dbg,Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-			{npts,getStarDiscrepancy[pts]}
+			ApprendTo[dtab, {{npts,getStarDiscrepancy[pts]}} ];
+	        Export["data_StarDiscrepancy/2D/Sobol.dat", dtab]; 
         ,{ilevel,nlevels}];
-        Export["data_StarDiscrepancy/2D/Sobol.dat", dtab]; 
     ]
 
 makeWNStarDiscrepancy[nlevels_:9, ntrials_:64] :=
@@ -378,7 +381,7 @@ makeStratStarDiscrepancy[nlevels_:9, ntrials_:64] :=
  gitpull
  math
  <<TileBasedOptim/TileBasedOptim.m
- makeWNStarDiscrepancy[]
+ makeWNStarDiscrepancy[8]
 makeStratStarDiscrepancy[]
 makeSobolDiscrepancy[]
  *)
