@@ -242,7 +242,7 @@ tstStarBinary2D[nlevels_:7] :=
 			Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]];
 			{npts,getStarDiscrepancy[pts]}
         ,{ilevel,nlevels}];
-        showDisrepancyND[2,dtab,"tstBinary"];
+        showStarDisrepancyND[2,dtab,"tstStarBinary2D"];
     ] (* tstStarBinary2D *)
 
 tstStarBinary3D[nlevels_:2] :=
@@ -257,12 +257,12 @@ tstStarBinary3D[nlevels_:2] :=
 					ixfrac = FromDigits[#,2]& @ Reverse[ iixcode];
 					iyfrac = 
 					izfrac = 0;
-					If[ilevel == 2, Print[{ix,iy,iz} -> codex -> iix -> iixcode -> ixfrac]];
+					(*If[ilevel == 2, Print[{ix,iy,iz} -> codex -> iix -> iixcode -> ixfrac]];*)
 					{ix / 2^ilevel + ixfrac / npts, iy / 2^ilevel + iyfrac / npts, iz / 2^ilevel + izfrac / npts}//N
 				,{ix,0,0(*nstrats-1*)},{iy,0,nstrats-1},{iz,0,nstrats-1}];
 			{npts,getStarDiscrepancy[pts]}
         ,{ilevel,nlevels}];
-        (*showDisrepancyND[3,dtab,"tstBinary"];*)
+        showStarDisrepancyND[3,dtab,"tstStarBinary3D",{2,12}];
     ] (* tstStarBinary2D *)
 
 (*-------------------------- calculate & show discrepancy --------------------------*)
@@ -357,7 +357,7 @@ makeStratStarDiscrepancy[nlevels_:12, ntrials_:64, nDims_:3] :=
         Print[mf @ dtab]
     ]
 
-showDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC",powfromto_:{2,16},col_:Red] := 
+showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC",powfromto_:{2,16},col_:Red] := 
 	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancy2DFiboSFC},
 		{powfrom,powto}=powfromto;
 		fontSz = 20;
@@ -366,8 +366,7 @@ showDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC",po
         discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Import[dirDiscrepancy<>"Strat.dat"]), {discrepancyWN[[1]]} ];
         discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);
         discrepancy2DFiboSFC = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"FiboSFC.dat"], thisDiscrepancy];
-        plotLabel = "CascadedSeq GeneralizedL2Discrepancy "<>ToString[nDims]<>"D"<>" GF"<>ToString[base];  
-             
+        plotLabel = " StarDisrepancy "<>ToString[nDims]<>"D";               
         alldata = If[Length[discrepancyStrat] == 1,
         	{discrepancyWN, discrepancySobol, discrepancy2DFiboSFC},
         	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancy2DFiboSFC}
@@ -390,10 +389,8 @@ showDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC",po
             ,RotateLabel -> True
             ,PlotMarkers->{{\[FilledCircle],5} }
             ,Frame->True
-             ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "discrepancy", fontSz] }
-               ,ImageSize -> {1024,1024}
-            (*,PlotRange->{{base^powfrom,base^powto},{.0003,.3}}*)
-            (*,PlotRange->{{base^powfrom,base^powto},{.1,Min[Last /@ thisDiscrepancy]}}*)
+            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "StarDisrepancy", fontSz] }
+            ,ImageSize -> {1024,1024}
             ,PlotRange->{{base^powfrom,base^powto},range}
             ,GridLines->{Table[base^pow,{pow,powfrom,powto,1}],None}
             ,GridLinesStyle->Directive[Darker@Gray, Dashed]
@@ -403,4 +400,4 @@ showDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC",po
         ];
         p//Print;
         (*p*)
-    ] (* showDisrepancyND *)
+    ] (* showStarDisrepancyND *)
