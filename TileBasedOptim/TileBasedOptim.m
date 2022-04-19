@@ -259,7 +259,7 @@ tstStarBinary3D[nlevels_:3] :=
 					ixfrac = FromDigits[#,2]& @ codex2;
 					iyfrac = FromDigits[#,2]& @ codey2;
 					izfrac = FromDigits[#,2]& @ codez2;
-					(*If[ilevel == 3, Print[{ix,iy,iz} -> mf[{codex,codey,codez}] -> mf[{T[{codey,codez}],T[{codez,codex}],T[{codex,codey}]}] -> mf[{codex2,codey2,codez2}]]];*)
+					If[ilevel == 3, Print[{ix,iy,iz} -> mf[{codex,codey,codez}] -> mf[{T[{codey,codez}],T[{codez,codex}],T[{codex,codey}]}] -> mf[{codex2,codey2,codez2}]]];
 					{ix / 2^ilevel + ixfrac / npts, iy / 2^ilevel + iyfrac / npts, iz / 2^ilevel + izfrac / npts}//N
 				,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
 			{npts,getStarDiscrepancy[pts]}
@@ -290,7 +290,7 @@ getStarDiscrepancy[pts_, dbg_:False] :=
         returnCode = Run[execPrefix<>execString];
         If[dbg, Print[execString -> returnCode ] ];
         discrepancy = Import["tmp/res"<>pid<>".dat"][[1,1]];
-        (*Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];*)
+        Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
         discrepancy
    ] (* getStarDiscrepancy *)
 
