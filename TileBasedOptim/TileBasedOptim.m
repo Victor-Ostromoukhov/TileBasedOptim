@@ -245,21 +245,23 @@ tstStarBinary2D[nlevels_:7] :=
         showStarDisrepancyND[2,dtab,"tstStarBinary2D"];
     ] (* tstStarBinary2D *)
 
-tstStarBinary3D[nlevels_:2] :=
+tstStarBinary3D[nlevels_:3] :=
     Module[ {},
         dtab = Table[
 			npts = 8^ilevel;
 			nstrats = 2^ilevel;
+			Print["Processing tstStarBinary3D level ",ilevel, " npts = ",npts, " nstrats = ",nstrats];
 			pts = Flatten[#,2]& @ Table[
 					{codex,codey,codez} = {IntegerDigits[ix,2,ilevel],IntegerDigits[iy,2,ilevel],IntegerDigits[iz,2,ilevel]};
-					iix = (iy + iy*iz);
-					iixcode = IntegerDigits[iix,2,2*ilevel]& @ iix;
-					ixfrac = FromDigits[#,2]& @ Reverse[ iixcode];
-					iyfrac = 
-					izfrac = 0;
+					codex2 = Reverse @ Flatten[RandomSample /@ T[{codey,codez}]];
+					codey2 = Reverse @ Flatten[RandomSample /@ T[{codex,codez}]];
+					codez2 = Reverse @ Flatten[RandomSample /@ T[{codex,codey}]];
+					ixfrac = FromDigits[#,2]& @ codex2;
+					iyfrac = FromDigits[#,2]& @ codey2;
+					izfrac = FromDigits[#,2]& @ codez2;
 					(*If[ilevel == 2, Print[{ix,iy,iz} -> codex -> iix -> iixcode -> ixfrac]];*)
 					{ix / 2^ilevel + ixfrac / npts, iy / 2^ilevel + iyfrac / npts, iz / 2^ilevel + izfrac / npts}//N
-				,{ix,0,0(*nstrats-1*)},{iy,0,nstrats-1},{iz,0,nstrats-1}];
+				,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
 			{npts,getStarDiscrepancy[pts]}
         ,{ilevel,nlevels}];
         showStarDisrepancyND[3,dtab,"tstStarBinary3D",{2,12}];
