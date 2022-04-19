@@ -21,6 +21,8 @@ str2n[str_] := FromDigits[#, 2] & @ Table[StringTake[str, {i}] // ToExpression, 
 pid := "_pid"<>ToString[$ProcessID]<>"_kid"<>ToString[$KernelID]
 execPrefix = "~/bin/";
 
+Print["module TileBasedOptim loaded."];
+
 (*------------------------- constants -------------------------*)
 phi = N[GoldenRatio,16];
 oneoverphi = 1/phi;
