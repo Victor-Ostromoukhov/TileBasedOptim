@@ -245,22 +245,24 @@ tstStarBinary2D[nlevels_:7] :=
         showDisrepancyND[2,dtab,"tstBinary"];
     ] (* tstStarBinary2D *)
 
-tstStarBinary3D[nlevels_:4] :=
+tstStarBinary3D[nlevels_:2] :=
     Module[ {},
         dtab = Table[
 			npts = 8^ilevel;
 			nstrats = 2^ilevel;
 			pts = Flatten[#,2]& @ Table[
 					{codex,codey,codez} = {IntegerDigits[ix,2,ilevel],IntegerDigits[iy,2,ilevel],IntegerDigits[iz,2,ilevel]};
-					ixfrac = FromDigits[#,2]& @ Reverse[codex];
-					iyfrac = FromDigits[#,2]& @ Reverse[codey];
-					izfrac = FromDigits[#,2]& @ Reverse[codez];
+					iix = (iy + iy*iz);
+					iixcode = IntegerDigits[iix,2,2*ilevel]& @ iix;
+					ixfrac = FromDigits[#,2]& @ Reverse[ iixcode];
+					iyfrac = 
+					izfrac = 0;
+					If[ilevel == 2, Print[{ix,iy,iz} -> codex -> iix -> iixcode -> ixfrac]];
 					{ix / 2^ilevel + ixfrac / npts, iy / 2^ilevel + iyfrac / npts, iz / 2^ilevel + izfrac / npts}//N
-				,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
-			If[ilevel == 2, Print[mf @ pts]];
+				,{ix,0,0(*nstrats-1*)},{iy,0,nstrats-1},{iz,0,nstrats-1}];
 			{npts,getStarDiscrepancy[pts]}
         ,{ilevel,nlevels}];
-        showDisrepancyND[3,dtab,"tstBinary"];
+        (*showDisrepancyND[3,dtab,"tstBinary"];*)
     ] (* tstStarBinary2D *)
 
 (*-------------------------- calculate & show discrepancy --------------------------*)
@@ -301,7 +303,7 @@ makeWNStarDiscrepancy[]
 makeStratStarDiscrepancy[]
 makeSobolDiscrepancy[]
 *)
-makeSobolDiscrepancy[nlevels_:12, nDims_:3] :=
+makeSobolDiscrepancy[nlevels_:14, nDims_:3] :=
     Module[ {},
         dtab = {};
         Do[
@@ -318,7 +320,7 @@ makeSobolDiscrepancy[nlevels_:12, nDims_:3] :=
         Print[mf @ dtab]
     ]
 
-makeWNStarDiscrepancy[nlevels_:10, ntrials_:64, nDims_:3] :=
+makeWNStarDiscrepancy[nlevels_:12, ntrials_:64, nDims_:3] :=
     Module[ {},
         dtab = {};
         Do[
@@ -334,7 +336,7 @@ makeWNStarDiscrepancy[nlevels_:10, ntrials_:64, nDims_:3] :=
         Print[mf @ dtab]
     ]
 
-makeStratStarDiscrepancy[nlevels_:10, ntrials_:64, nDims_:3] :=
+makeStratStarDiscrepancy[nlevels_:12, ntrials_:64, nDims_:3] :=
     Module[ {},
         dtab = {};
         Do[
