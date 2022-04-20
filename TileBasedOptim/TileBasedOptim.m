@@ -304,6 +304,8 @@ getStarDiscrepancy[pts_, dbg_:False] :=
     Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
     	prog = "getStarDiscrepancy";
+    	prog = "discrepancy";
+    	
         Export["tmp/tmp"<>pid<>".dat",N[pts]];
         execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
         returnCode = Run[execPrefix<>execString];
