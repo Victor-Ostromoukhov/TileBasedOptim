@@ -234,7 +234,7 @@ math
 tstStarBinary2D[]
 *)
 
-tstStarBinary2D[nlevels_:8] :=
+tstStarBinary2D[nlevels_:5, dstarFlag_:True] :=
     Module[ {},
         dtab = Table[
 			npts = 4^ilevel;
@@ -250,10 +250,14 @@ tstStarBinary2D[nlevels_:8] :=
 					{ix / 2^ilevel + ixfrac / npts, iy / 2^ilevel + iyfrac / npts}//N
 				,{i,npts}];
 			ipts = Round[ npts pts ];
-			(*Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]];*)
-			{npts,getStarDiscrepancy[pts]}
+			Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]];
+			{npts,If[dstarFlag,getStarDiscrepancy[pts],getGeneralizedL2discrepancy[pts]]}
         ,{ilevel,nlevels}];
-        showStarDisrepancyND[2,dtab,"tstStarBinary2D"];
+        If[dstarFlag,
+			showStarDisrepancyND[2,dtab,"tstStarBinary2D"];
+        ,(*ELSE*)
+       		showGeneralizedL2discrepancyND[2,dtab,"GeneralizedL2discrepancy2D"];
+        ];
     ] (* tstStarBinary2D *)
 
 tstStarBinary3D[nlevels_:2] :=
@@ -304,7 +308,6 @@ getStarDiscrepancy[pts_, dbg_:False] :=
     Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
     	prog = "getStarDiscrepancy";
-    	prog = "discrepancy";
     	
         Export["tmp/tmp"<>pid<>".dat",N[pts]];
         execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
@@ -326,7 +329,7 @@ makeWNStarDiscrepancy[]
 makeStratStarDiscrepancy[]
 makeSobolDiscrepancy[]
 *)
-makeSobolDiscrepancy[nlevels_:14, nDims_:3] :=
+makeSobolDiscrepancy[nlevels_:14, nDims_:2,dbg_:True] :=
     Module[ {},
         dtab = {};
         Do[
@@ -338,7 +341,7 @@ makeSobolDiscrepancy[nlevels_:14, nDims_:3] :=
 			ipts = Round[ npts pts ];
 			If[dbg,Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
 			AppendTo[dtab, {npts,getStarDiscrepancy[pts]} ];
-	        Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
+	        (*Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; *)
         ,{ilevel,nlevels}];
         Print[mf @ dtab]
     ]
@@ -354,7 +357,7 @@ makeWNStarDiscrepancy[nlevels_:12, ntrials_:64, nDims_:3] :=
 				{npts,getStarDiscrepancy[pts]}
 			,{itrail,ntrials}];
 			AppendTo[dtab, Mean @ trials ];
-	        Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/WN.dat", dtab]; 
+	        (*Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/WN.dat", dtab]; *)
         ,{ilevel,nlevels}];
         Print[mf @ dtab]
     ]
@@ -424,3 +427,60 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC
         p//Print;
         (*p*)
     ] (* showStarDisrepancyND *)
+
+ showGeneralizedL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC",powfromto_:{2,16},col_:Red] := 
+	Module[{(*dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancy2DFiboSFC*)},
+		{powfrom,powto}=powfromto;
+    	fontSz = 20;
+		kPlusMinus = .5;
+		base = 2;
+    	{powfrom,powto,powstep} = {2,10,2};
+    	selPows = 2^Range[powfrom,powto,powstep];
+        dirDiscrepancy = "data_discrepancyL2/"<>ToString[nDims]<>"D/";
+			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"WN.dat"]);
+			discrepancyWN = Select[#,MemberQ[selPows,#[[1]]]&]& @ Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"Sobol.dat"]);
+			discrepancySobol = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];				
+			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"Strat.dat"]);
+			discrepancyStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];				
+
+        (*discrepancyWN = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"WN.dat"]);
+        discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Import[dirDiscrepancy<>"Strat.dat"]), {discrepancyWN[[1]]} ];
+        discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);*)
+        
+        discrepancy2DFiboSFC = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"FiboSFC.dat"], thisDiscrepancy];
+        plotLabel = " GeneralizedL2discrepancyND "<>ToString[nDims]<>"D";               
+        alldata = If[Length[discrepancyStrat] == 1,
+        	{discrepancyWN, discrepancySobol, discrepancy2DFiboSFC},
+        	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancy2DFiboSFC}
+        ];
+        legends = If[Length[discrepancyStrat] == 1,
+        	{"WN","Sobol", thisDiscrepancyLabel},
+       		{"WN","Sobol", "Jitter", thisDiscrepancyLabel}
+        ];
+        colors = If[Length[discrepancyStrat] == 1,
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} },
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {Blue,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} }
+        ];
+        range = {Min @@ ((Last /@ #) &@discrepancySobol), Max @@((Last /@ #) &@discrepancySobol) };
+        p = ListLogLogPlot[ alldata
+            ,PlotLegends -> Placed[#,{.4,.1}]& @  {Style[#,fontSz]& /@ legends }
+            ,PlotStyle -> colors
+            ,Joined->True
+            ,FrameTicks->{{Automatic,None},{Table[base^pow,{pow,powfrom,powto,1}],Table[base^pow,{pow,powfrom,powto,1}]}}
+            ,FrameStyle->Directive[Black,20]
+            ,RotateLabel -> True
+            ,PlotMarkers->{{\[FilledCircle],5} }
+            ,Frame->True
+            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "GeneralizedL2discrepancyND", fontSz] }
+            ,ImageSize -> {1024,1024}
+            ,PlotRange->{{base^powfrom,base^powto},range}
+            ,GridLines->{Table[base^pow,{pow,powfrom,powto,1}],None}
+            ,GridLinesStyle->Directive[Darker@Gray, Dashed]
+            ,AspectRatio->1
+            ,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+            ,PlotLabel -> Style[ plotLabel, Bold, 24]
+        ];
+        p//Print;
+        (*p*)
+    ] (* showGeneralizedL2discrepancyND *)
