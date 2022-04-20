@@ -247,7 +247,7 @@ tstStarBinary2D[nlevels_:7] :=
         showStarDisrepancyND[2,dtab,"tstStarBinary2D"];
     ] (* tstStarBinary2D *)
 
-tstStarBinary3D[nlevels_:3] :=
+tstStarBinary3D[nlevels_:2] :=
     Module[ {},
         dtab = Table[
 			npts = 8^ilevel;
@@ -255,18 +255,26 @@ tstStarBinary3D[nlevels_:3] :=
 			Print["Processing tstStarBinary3D level ",ilevel, " npts = ",npts, " nstrats = ",nstrats];
 			pts = Flatten[#,2]& @ Table[
 					{codex,codey,codez} = {IntegerDigits[ix,2,ilevel],IntegerDigits[iy,2,ilevel],IntegerDigits[iz,2,ilevel]};
-					codex2 = Reverse @ Flatten[  T[{codey,codez}]];
+					(*codex2 = Reverse @ Flatten[  T[{codey,codez}]];
 					codey2 = Reverse @ Flatten[  T[{codez,codex}]];
-					codez2 = Reverse @ Flatten[  T[{codex,codey}]];
+					codez2 = Reverse @ Flatten[  T[{codex,codey}]];*)
+
+					codex2 = Reverse @ Flatten[  T[{BitXor@@{codey,codez},1-BitXor@@{codey,codez} }]];
+					codey2 = Reverse @ Flatten[  T[{BitXor@@{codez,codex},1-BitXor@@{codez,codex} }]];
+					codez2 = Reverse @ Flatten[  T[{BitXor@@{codex,codey},1-BitXor@@{codex,codey} }]];
+
 					ixfrac = FromDigits[#,2]& @ codex2;
 					iyfrac = FromDigits[#,2]& @ codey2;
 					izfrac = FromDigits[#,2]& @ codez2;
-					If[ilevel == 3, Print[{ix,iy,iz} -> mf[{codex,codey,codez}] -> mf[{T[{codey,codez}],T[{codez,codex}],T[{codex,codey}]}] -> mf[{codex2,codey2,codez2}]]];
+					If[ilevel == 2, Print[{ix,iy,iz} -> mf[{codex,codey,codez}] -> mf[{T[{codey,codez}],T[{codez,codex}],T[{codex,codey}]}] -> mf[{codex2,codey2,codez2}]]];
 					{ix / 2^ilevel + ixfrac / npts, iy / 2^ilevel + iyfrac / npts, iz / 2^ilevel + izfrac / npts}//N
 				,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
 			{npts,getStarDiscrepancy[pts]}
         ,{ilevel,nlevels}];
         showStarDisrepancyND[3,dtab,"tstStarBinary3D",{2,12}];
+        
+        Graphics3D[{Point /@ pts}]//Print;
+        Graphics[{AbsolutePointSize[10],Point /@ (Drop[#,-1]& /@ pts)}, Framed->True,ImageSize->{1024,1024}/2]//Print;
     ] (* tstStarBinary2D *)
 
 (*-------------------------- calculate & show discrepancy --------------------------*)
