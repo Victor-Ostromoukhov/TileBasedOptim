@@ -227,10 +227,19 @@ testDyadicPartitioningNDFull[set_,showErrFlag_:True] := Module[{sz,powers,tests,
 	And @@ tab
 ] (* testDyadicPartitioningNDFull *)
 
-tstStarBinary2D[nlevels_:7] :=
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+tstStarBinary2D[]
+*)
+
+tstStarBinary2D[nlevels_:8] :=
     Module[ {},
         dtab = Table[
 			npts = 4^ilevel;
+			nstrats = 2^ilevel;
+			Print["Processing tstStarBinary3D level ",ilevel, " npts = ",npts, " nstrats = ",nstrats];
 			codes = Partition[#,ilevel]& /@ (IntegerDigits[#,2,2*ilevel]& /@ Range[0,npts-1]);
 			pts = Table[
 					{codex,codey} = codes[[i]];
@@ -241,7 +250,7 @@ tstStarBinary2D[nlevels_:7] :=
 					{ix / 2^ilevel + ixfrac / npts, iy / 2^ilevel + iyfrac / npts}//N
 				,{i,npts}];
 			ipts = Round[ npts pts ];
-			Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]];
+			(*Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]];*)
 			{npts,getStarDiscrepancy[pts]}
         ,{ilevel,nlevels}];
         showStarDisrepancyND[2,dtab,"tstStarBinary2D"];
@@ -281,7 +290,7 @@ tstStarBinary3D[nlevels_:2] :=
 getGeneralizedL2discrepancy[pts_, dbg_:False] :=
     Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-    	prog = "getGeneralizedL2Discrepancy_from_file";
+    	prog = "getGeneralizedL2Discrepancy";
         Export["tmp/tmp"<>pid<>".dat",N[pts]];
         execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
         returnCode = Run[execPrefix<>execString];
@@ -294,7 +303,7 @@ getGeneralizedL2discrepancy[pts_, dbg_:False] :=
 getStarDiscrepancy[pts_, dbg_:False] :=
     Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-    	prog = "discrepancy";
+    	prog = "getStarDiscrepancy";
         Export["tmp/tmp"<>pid<>".dat",N[pts]];
         execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
         returnCode = Run[execPrefix<>execString];
@@ -364,7 +373,7 @@ makeStratStarDiscrepancy[nlevels_:12, ntrials_:64, nDims_:3] :=
 				{npts,getStarDiscrepancy[pts]}
 			,{itrail,ntrials}];
 			AppendTo[dtab, Mean @ trials ];
-	        Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Strat.dat", dtab]; 
+	        Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Strat.dat", dtab]; push
         ,{ilevel,nlevels}];
         Print[mf @ dtab]
     ]
