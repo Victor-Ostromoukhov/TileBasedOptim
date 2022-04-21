@@ -613,7 +613,7 @@ getbase3SFCTilesGL[tlst_,params_:showSFC] :=
     		If[BitAnd[params,showGrayValue] > 0, AppendTo[gl,{GrayLevel[FromDigits[Reverse@fcode,3]/3^fcodelen],Polygon@cont}] ];
 			AppendTo[gl,Flatten[#,1]& @ {(*Point@(refPt+(norm1+norm2)/20),*)bortedStyle,Line@cont } ];
 			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{1.9,-1}]} ] ];		
-			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FromDigits[Reverse@fcode,3],Bold,14,Red],refPt+(v1+v2)/2,{-1.9,-1}]} ] ];		
+			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FromDigits[fcode,3],Bold,14,Red],refPt+(v1+v2)/2,{-1.9,-1}]} ] ];		
 			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2)/2,{0,1}]} ] ];
 			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, Point@samplingPt ] ];
     	,{ind,Length[tlst]}];
@@ -622,6 +622,8 @@ getbase3SFCTilesGL[tlst_,params_:showSFC] :=
     		If[BitAnd[params,showArrows] > 0, AppendTo[gl,Flatten[#,1]& @ {sfcStyle,(*Arrowheads[1/3^(3+(Length[fcode]+Mod[Length[fcode],2])/2)],*)Arrow/@(Partition[#,2]&@sfc)}] ] ];    	
     	Return[gl]
     ] (* getbase3SFCTilesGL *)
+
+selectbase3SFCTiles[tlst_,intensity_:.8] := Select[tlst, FromDigits[Reverse@Last[#],3]/3^Length[Last[#]] < intensity & ]
 
 fillSamplingPtsbase3SFCTiles[tlst_] :=
     Module[ {res={}, tileType,refPt,v1,v2,k1,k2,fcode},
@@ -654,9 +656,22 @@ demobase3SFC[niters_:4, dbg_:False] :=
 			Graphics[ getbase3SFCTilesGL[tlst], PlotLabel-> iter ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,niters}];
-		Graphics[ getbase3SFCTilesGL[tlst,showGrayValue], PlotLabel-> iter ]//Print;
+		Graphics[ getbase3SFCTilesGL[tlst,showGrayValue], PlotLabel-> niters ]//Print;
 		tlst = subdivbase3SFCTiles @ tlst;
-		Graphics[ getbase3SFCTilesGL[tlst,showGrayValue], PlotLabel-> iter ]//Print;
+		Graphics[ getbase3SFCTilesGL[tlst,showGrayValue], PlotLabel-> niters+1 ]//Print;
+		
+		seltlst = selectbase3SFCTiles[tlst, .33333333];
+		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .33333333 ]//Print;
+		seltlst = selectbase3SFCTiles[tlst, .38];
+		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .38 ]//Print;
+		seltlst = selectbase3SFCTiles[tlst, .5];
+		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .5 ]//Print;
+		seltlst = selectbase3SFCTiles[tlst, .6];
+		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .6 ]//Print;
+		seltlst = selectbase3SFCTiles[tlst, .7];
+		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .7 ]//Print;
+		seltlst = selectbase3SFCTiles[tlst, .8];
+		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .8 ]//Print;
 	] (* demobase3SFC *)
 
 getDiscrepancy2Dbase3SFC[niters_:22] :=
