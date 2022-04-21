@@ -4,7 +4,7 @@
  
 (****************** globals *******************)
 SetDirectory[ToFileName[$HomeDirectory,"TileBasedOptim/"]];
-SetOptions[Graphics, ImageSize -> {3/2 1024, Automatic}];
+SetOptions[Graphics, ImageSize -> {1024, Automatic}];
 
 mf := MatrixForm
 T :=  Transpose
@@ -33,12 +33,6 @@ mxRot90 =  {{0, -1}, {1, 0}};
 mxRot180 = {{-1,0}, {0,-1}};
 mxRot270 = {{0, 1}, {-1, 0}};
 
-type1 = 1;
-type2 = 2;
-type3 = 3;
-type4 = 4;
-type5 = 5;
-type6 = 6;
 
 (* debugging flags *)
 showTileType = 1;
@@ -51,171 +45,6 @@ showOrdinalNumber = 64;
 showSamplingPt = 128;
 
 (*------------------------- end of constants -------------------------*)
-FIBOF[symbols_] := With[ {s = Reverse[symbols]}, Total@Table[Fibonacci[i+1 ] s[[i]], {i, Length[s]}] ]
-FIBOFinv[symbols_] := Total@Table[Fibonacci[i+1 ] symbols[[i]], {i, Length[symbols]}]
-FIBOFxy[symbols_] := FIBOF/@symbols
-
-FIBOphitab = Table[phi^-i, {i, 32}] // N;
-FIBOPhi[s_] := Sum[FIBOphitab[[i]] s[[i]], {i, Length[s]}] 
-
-subdivFiboSFCTiles[tlst_] :=
-    Module[ {res={}, tileType,refPt,v1,v2,samplingPt,fcode },
-    	Table[
-			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
-            Switch[tileType
-              ,1, If[fcode == {} || Last[fcode] == 0,
-	                  AppendTo[res,{type4,refPt,{oneoverphi v1,v2},samplingPt,Append[fcode,0]}];
-    	              AppendTo[res,{type5,refPt+oneoverphi v1+v2,{ (mxRot270.v1),oneoverphi2 (mxRot270.v2)},samplingPt,Append[fcode,1]}];
-              	  ,(*ELSE: Last[fcode] == 1 *)
-	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
-              	  ];
-              ,2, If[Last[fcode] == 0,
-	                  AppendTo[res,{type3,refPt,{ v1, oneoverphi v2},samplingPt,Append[fcode,0]}];
-    	              AppendTo[res,{type6,refPt+oneoverphi v2+v1,{oneoverphi2 (mxRot90.v1), (mxRot90.v2)},samplingPt,Append[fcode,1]}];
-              	  ,(*ELSE: Last[fcode] == 1 *)
-	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
-              	  ];
-              ,3, If[Last[fcode] == 0,
-	                  AppendTo[res,{type1,refPt,{oneoverphi v1, v2},samplingPt,Append[fcode,0]}];
-    	              AppendTo[res,{type4,refPt+oneoverphi v1,{ (oneoverphi2 v1), (v2)},samplingPt,Append[fcode,1]}];
-              	  ,(*ELSE: Last[fcode] == 1 *)
-	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
-              	  ];
-              ,4, If[Last[fcode] == 0,
-	                  AppendTo[res,{type2,refPt,{v1,oneoverphi v2},samplingPt,Append[fcode,0]}];
-    	              AppendTo[res,{type3,refPt+oneoverphi v2,{ (v1), (oneoverphi2 v2)},samplingPt,Append[fcode,1]}];
-              	  ,(*ELSE: Last[fcode] == 1 *)
-	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
-              	  ];
-              ,5, If[Last[fcode] == 0,
-	                  AppendTo[res,{type3,refPt,{oneoverphi v1, v2},samplingPt,Append[fcode,0]}];
-    	              AppendTo[res,{type2,refPt+oneoverphi v1 + v2,		{ oneoverphi2 (mxRot270.v1),  (mxRot270.v2)},samplingPt,Append[fcode,1]}];
-              	  ,(*ELSE: Last[fcode] == 1 *)
-	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
-              	  ];
-              ,6, If[Last[fcode] == 0,
-	                  AppendTo[res,{type4,refPt,{v1,oneoverphi v2},samplingPt,Append[fcode,0]}];
-    	              AppendTo[res,{type1,refPt+oneoverphi v2 + v1,{ (mxRot90.v1),oneoverphi2 (mxRot90.v2)},samplingPt,Append[fcode,1]}];
-              	  ,(*ELSE: Last[fcode] == 1 *)
-	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
-              	  ];
-            ];
-    	,{ind,Length[tlst]}];
-    	Return[res]
-    ] (* subdivFiboSFCTiles *)
-
-getsfcFiboSFC[tlst_] :=
-    Module[ {sfc={}, tileType,refPt,v1,v2,samplingPt,fcode,delta=7},
-    	Do[
-			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
-   			AppendTo[sfc,refPt + (v1/Norm[v1]+v2/Norm[v2])/1/phi^((Length[fcode]+delta)/2) ];
-            Switch[tileType
-              ,1, 
-  				AppendTo[sfc,refPt + v1 + (v2/Norm[v2]-v1/Norm[v1])/1/phi^((Length[fcode]+delta)/2) ];
-              ,2, 
-  				AppendTo[sfc,refPt + v2 + (v1/Norm[v1]-v2/Norm[v2])/1/phi^((Length[fcode]+delta)/2) ];
-              ,_, 
-  				AppendTo[sfc,refPt + v1 + v2 - (v1/Norm[v1]+v2/Norm[v2])/1/phi^((Length[fcode]+delta)/2) ];
-            ];
-    	,{ind,Length[tlst]}];
-    	Return[sfc]
-    ] (* getsfcFiboSFC *)
-
-
-getFiboSFCTilesGL[tlst_,params_:showSFC] :=
-    Module[ {gl={AbsolutePointSize[5]},tileType,refPt,v1,v2,samplingPt,fcode,cont,sfc,norm1,norm2,k1,k2,
-    		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
-    	Do[
-			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
-			{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/phi^((Length[fcode]+Mod[Length[fcode],2])/2);
-			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
-			samplingPt = refPt + k1 v1 + k2 v2;
-    		If[BitAnd[params,showValue] > 0, AppendTo[gl,{GrayLevel[FIBOPhi[Reverse@fcode]],Polygon@cont}] ];
-			AppendTo[gl,Flatten[#,1]& @ {bortedStyle,Line@cont } ];
-			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{1.9,-1}]} ] ];		
-			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FIBOPhi[Reverse@fcode],Bold,14,Red],refPt+(v1+v2)/2,{-1.9,-1}]} ] ];		
-			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2)/2,{0,1}]} ] ];
-			If[BitAnd[params,showFrame] > 0, AppendTo[gl, {Arrowheads[1/phi^(6+(Length[fcode]+Mod[Length[fcode],2])/2)],Red,Arrow[{refPt+(norm1+norm2)/10,refPt+norm1/2+norm2/10}],Blue,Arrow[{refPt+(norm1+norm2)/10,refPt+norm2/2+norm1/10}]} ] ];
-			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, Point@samplingPt ] ];
-    	,{ind,Length[tlst]}];
-    	If[BitAnd[params,showSFC] > 0, sfc = getsfcFiboSFC[tlst]; 
-    		AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}];
-    		If[BitAnd[params,showArrows] > 0, AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Arrow/@(Partition[#,2]&@sfc)}] ] ];    	
-    	Return[gl]
-    ] (* getFiboSFCTilesGL *)
-
-
-setSamplingPtsFiboSFCTiles[tlst_] :=
-    Module[ {res={}, tileType,refPt,v1,v2,k1,k2,fcode},
-    	Do[
-			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
-			k1 = k2 = FIBOPhi[Reverse@fcode];
-			If[Min[v1] < 0, k1 = 1-k1];
-			If[Min[v2] < 0, k2 = 1-k2];
-   			AppendTo[res,{tileType,refPt,{v1,v2},{k1,k2},fcode}];
-    	,{ind,Length[tlst]}];
-    	Return[res]
-    ] (* setSamplingPtsFiboSFCTiles *)
-
-getSamplingPtsFiboSFCTiles[tlst_] :=
-    Module[ {tileType,refPt,v1,v2,k1,k2,fcode},
-    	Parallelize @ Table[
-			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
-			(*{k1,k2} = {RandomReal[],RandomReal[]};*)
-			refPt + k1 v1 + k2 v2
-    	,{ind,Length[tlst]}]
-    ] (* getSamplingPtsFiboSFCTiles *)
-
-demoFiboSFC[niters_:15] :=
-    Module[ {dbg},
-    	dbg = False;
-		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
-		Graphics[ getFiboSFCTilesGL[tlst] ]//Print;
-		Do[
-			tlst = subdivFiboSFCTiles @ tlst;
-			tlst = setSamplingPtsFiboSFCTiles @ tlst;
-			flags = If[iter < 10, showTileType+showTilefcode+showSFC+showArrows+showFrame+showOrdinalNumber+showSamplingPt, showSFC];
-			Graphics[ getFiboSFCTilesGL[tlst,flags], PlotLabel-> iter ]//Print;
-			If[dbg, tlst//mf//Print];
-		,{iter,niters}];
-
-		Graphics[ getFiboSFCTilesGL[tlst,showValue] ]//Print;
-		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtsFiboSFCTiles @ tlst;
-		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtsFiboSFCTiles @ tlst;
-		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtsFiboSFCTiles @ tlst;
-		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtsFiboSFCTiles @ tlst;
-		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtsFiboSFCTiles @ tlst;
-		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivFiboSFCTiles @ tlst;
-		tlst = setSamplingPtsFiboSFCTiles @ tlst;
-		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
-	] (* demoFiboSFC *)
-
-getDiscrepancy2DFiboSFC[niters_:22] :=
-    Module[ {npts,pts,dND, tlst},
-		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
-        res = Table[
-			tlst = subdivFiboSFCTiles @ tlst;
-			tlst = setSamplingPtsFiboSFCTiles @ tlst;
-            npts = Length[tlst];
-            pts = getSamplingPtsFiboSFCTiles[tlst];
-            dND = getGeneralizedL2discrepancy[pts];
-			{npts,dND}
-		,{iter,niters}];
-        Export["data_discrepancyL2/2D/FiboSFC.dat", res]; 
-        Print[mf @ res]
-    ] (* getDiscrepancy2DFiboSFC *)
-
 
 testDyadicPartitioningNDFull[set_,showErrFlag_:True] := Module[{sz,powers,tests,i,tab,dim},
 	sz=Length[set];
@@ -234,7 +63,7 @@ math
 tstStarBinary2D[]
 *)
 
-tstStarBinary2D[nlevels_:5, dstarFlag_:True] :=
+tstStarBinary2D[nlevels_:10, dstarFlag_:True] :=
     Module[ {},
         dtab = Table[
 			npts = 4^ilevel;
@@ -250,7 +79,7 @@ tstStarBinary2D[nlevels_:5, dstarFlag_:True] :=
 					{ix / 2^ilevel + ixfrac / npts, iy / 2^ilevel + iyfrac / npts}//N
 				,{i,npts}];
 			ipts = Round[ npts pts ];
-			Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]];
+			(*Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]];*)
 			{npts,If[dstarFlag,getStarDiscrepancy[pts],getGeneralizedL2discrepancy[pts]]}
         ,{ilevel,nlevels}];
         If[dstarFlag,
@@ -310,11 +139,15 @@ getStarDiscrepancy[pts_, dbg_:False] :=
     	prog = "getStarDiscrepancy";
     	
         Export["tmp/tmp"<>pid<>".dat",N[pts]];
-        execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
+        execString =  If[nDims == 2,
+        	"StarDiscrepancy_fromfile_2dd -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat  > /dev/null"
+        ,(*ELSE*)
+        	"getStarDiscrepancy -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null"
+        ];
         returnCode = Run[execPrefix<>execString];
         If[dbg, Print[execString -> returnCode ] ];
-        discrepancy = Import["tmp/res"<>pid<>".dat"][[1,1]];
-        Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
+        discrepancy = If[nDims == 2, Import["tmp/res"<>pid<>".dat"][[2,2]], Import["tmp/res"<>pid<>".dat"][[1,1]] ];
+        (*Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];*)
         discrepancy
    ] (* getStarDiscrepancy *)
 
@@ -484,3 +317,347 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC
         p//Print;
         (*p*)
     ] (* showGeneralizedL2discrepancyND *)
+ 
+(*----------------------------- FiboSFC --------------------------------*)
+type1 = 1;
+type2 = 2;
+type3 = 3;
+type4 = 4;
+type5 = 5;
+type6 = 6;
+FIBOF[symbols_] := With[ {s = Reverse[symbols]}, Total@Table[Fibonacci[i+1 ] s[[i]], {i, Length[s]}] ]
+FIBOFinv[symbols_] := Total@Table[Fibonacci[i+1 ] symbols[[i]], {i, Length[symbols]}]
+FIBOFxy[symbols_] := FIBOF/@symbols
+
+FIBOphitab = Table[phi^-i, {i, 32}] // N;
+FIBOPhi[s_] := Sum[FIBOphitab[[i]] s[[i]], {i, Length[s]}] 
+
+subdivFiboSFCTiles[tlst_] :=
+    Module[ {res={}, tileType,refPt,v1,v2,samplingPt,fcode },
+    	Table[
+			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
+            Switch[tileType
+              ,1, If[fcode == {} || Last[fcode] == 0,
+	                  AppendTo[res,{type4,refPt,{oneoverphi v1,v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type5,refPt+oneoverphi v1+v2,{ (mxRot270.v1),oneoverphi2 (mxRot270.v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+              ,2, If[Last[fcode] == 0,
+	                  AppendTo[res,{type3,refPt,{ v1, oneoverphi v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type6,refPt+oneoverphi v2+v1,{oneoverphi2 (mxRot90.v1), (mxRot90.v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+              ,3, If[Last[fcode] == 0,
+	                  AppendTo[res,{type1,refPt,{oneoverphi v1, v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type4,refPt+oneoverphi v1,{ (oneoverphi2 v1), (v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+              ,4, If[Last[fcode] == 0,
+	                  AppendTo[res,{type2,refPt,{v1,oneoverphi v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type3,refPt+oneoverphi v2,{ (v1), (oneoverphi2 v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+              ,5, If[Last[fcode] == 0,
+	                  AppendTo[res,{type3,refPt,{oneoverphi v1, v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type2,refPt+oneoverphi v1 + v2,		{ oneoverphi2 (mxRot270.v1),  (mxRot270.v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+              ,6, If[Last[fcode] == 0,
+	                  AppendTo[res,{type4,refPt,{v1,oneoverphi v2},samplingPt,Append[fcode,0]}];
+    	              AppendTo[res,{type1,refPt+oneoverphi v2 + v1,{ (mxRot90.v1),oneoverphi2 (mxRot90.v2)},samplingPt,Append[fcode,1]}];
+              	  ,(*ELSE: Last[fcode] == 1 *)
+	                  AppendTo[res,{tileType,refPt,{v1,v2},samplingPt,Append[fcode,0]}];
+              	  ];
+            ];
+    	,{ind,Length[tlst]}];
+    	Return[res]
+    ] (* subdivFiboSFCTiles *)
+
+getsfcFiboSFC[tlst_] :=
+    Module[ {sfc={}, tileType,refPt,v1,v2,samplingPt,fcode,delta=7},
+    	Do[
+			{tileType,refPt,{v1,v2},samplingPt,fcode} = tlst[[ind]];
+   			AppendTo[sfc,refPt + (v1/Norm[v1]+v2/Norm[v2])/1/phi^((Length[fcode]+delta)/2) ];
+            Switch[tileType
+              ,1, 
+  				AppendTo[sfc,refPt + v1 + (v2/Norm[v2]-v1/Norm[v1])/1/phi^((Length[fcode]+delta)/2) ];
+              ,2, 
+  				AppendTo[sfc,refPt + v2 + (v1/Norm[v1]-v2/Norm[v2])/1/phi^((Length[fcode]+delta)/2) ];
+              ,_, 
+  				AppendTo[sfc,refPt + v1 + v2 - (v1/Norm[v1]+v2/Norm[v2])/1/phi^((Length[fcode]+delta)/2) ];
+            ];
+    	,{ind,Length[tlst]}];
+    	Return[sfc]
+    ] (* getsfcFiboSFC *)
+
+
+getFiboSFCTilesGL[tlst_,params_:showSFC] :=
+    Module[ {gl={AbsolutePointSize[5]},tileType,refPt,v1,v2,samplingPt,fcode,cont,sfc,norm1,norm2,k1,k2,
+    		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
+    	Do[
+			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
+			{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/phi^((Length[fcode]+Mod[Length[fcode],2])/2);
+			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
+			samplingPt = refPt + k1 v1 + k2 v2;
+    		If[BitAnd[params,showValue] > 0, AppendTo[gl,{GrayLevel[FIBOPhi[Reverse@fcode]],Polygon@cont}] ];
+			AppendTo[gl,Flatten[#,1]& @ {bortedStyle,Line@cont } ];
+			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{1.9,-1}]} ] ];		
+			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FIBOPhi[Reverse@fcode],Bold,14,Red],refPt+(v1+v2)/2,{-1.9,-1}]} ] ];		
+			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2)/2,{0,1}]} ] ];
+			If[BitAnd[params,showFrame] > 0, AppendTo[gl, {Arrowheads[1/phi^(6+(Length[fcode]+Mod[Length[fcode],2])/2)],Red,Arrow[{refPt+(norm1+norm2)/10,refPt+norm1/2+norm2/10}],Blue,Arrow[{refPt+(norm1+norm2)/10,refPt+norm2/2+norm1/10}]} ] ];
+			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, Point@samplingPt ] ];
+    	,{ind,Length[tlst]}];
+    	If[BitAnd[params,showSFC] > 0, sfc = getsfcFiboSFC[tlst]; 
+    		AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}];
+    		If[BitAnd[params,showArrows] > 0, AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Arrow/@(Partition[#,2]&@sfc)}] ] ];    	
+    	Return[gl]
+    ] (* getFiboSFCTilesGL *)
+
+
+fillSamplingPtsFiboSFCTiles[tlst_] :=
+    Module[ {res={}, tileType,refPt,v1,v2,k1,k2,fcode},
+    	Do[
+			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
+			k1 = k2 = FIBOPhi[Reverse@fcode];
+			If[Min[v1] < 0, k1 = 1-k1];
+			If[Min[v2] < 0, k2 = 1-k2];
+   			AppendTo[res,{tileType,refPt,{v1,v2},{k1,k2},fcode}];
+    	,{ind,Length[tlst]}];
+    	Return[res]
+    ] (* fillSamplingPtsFiboSFCTiles *)
+
+getSamplingPtsFiboSFCTiles[tlst_] :=
+    Module[ {tileType,refPt,v1,v2,k1,k2,fcode},
+    	Parallelize @ Table[
+			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
+			(*{k1,k2} = {RandomReal[],RandomReal[]};*)
+			refPt + k1 v1 + k2 v2
+    	,{ind,Length[tlst]}]
+    ] (* getSamplingPtsFiboSFCTiles *)
+
+demoFiboSFC[niters_:15] :=
+    Module[ {dbg},
+    	dbg = False;
+		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
+		Graphics[ getFiboSFCTilesGL[tlst] ]//Print;
+		Do[
+			tlst = subdivFiboSFCTiles @ tlst;
+			tlst = fillSamplingPtsFiboSFCTiles @ tlst;
+			flags = If[iter < 10, showTileType+showTilefcode+showSFC+showArrows+showFrame+showOrdinalNumber+showSamplingPt, showSFC];
+			Graphics[ getFiboSFCTilesGL[tlst,flags], PlotLabel-> iter ]//Print;
+			If[dbg, tlst//mf//Print];
+		,{iter,niters}];
+
+		Graphics[ getFiboSFCTilesGL[tlst,showValue] ]//Print;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = fillSamplingPtsFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = fillSamplingPtsFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = fillSamplingPtsFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = fillSamplingPtsFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = fillSamplingPtsFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivFiboSFCTiles @ tlst;
+		tlst = fillSamplingPtsFiboSFCTiles @ tlst;
+		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
+	] (* demoFiboSFC *)
+
+getDiscrepancy2DFiboSFC[niters_:22] :=
+    Module[ {npts,pts,dND, tlst},
+		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
+        res = Table[
+			tlst = subdivFiboSFCTiles @ tlst;
+			tlst = fillSamplingPtsFiboSFCTiles @ tlst;
+            npts = Length[tlst];
+            pts = getSamplingPtsFiboSFCTiles[tlst];
+            dND = getGeneralizedL2discrepancy[pts];
+			{npts,dND}
+		,{iter,niters}];
+        Export["data_discrepancyL2/2D/FiboSFC.dat", res]; 
+        Print[mf @ res]
+    ] (* getDiscrepancy2DFiboSFC *)
+
+(*----------------------------- end of FiboSFC --------------------------------*)
+
+
+
+
+(*----------------------------- base3SFC --------------------------------*)
+typeSqURdir = 		1;
+typeSqULdir = 		2;
+typeHRectURdir = 	3;
+typeHRectULdir = 	4;
+typeVRectURdir = 	5;
+typeVRectULdir = 	6;
+typeSqURinv = 		11;
+typeSqULinv = 		12;
+typeHRectURinv = 	13;
+typeHRectULinv = 	14;
+typeVRectURinv = 	15;
+typeVRectULinv = 	16;
+
+subdivbase3SFCTiles[tlst_] :=
+    Module[ {res={}, tileType,refPt,v1,v2,samplingPt,xcode,ycode,fcode },
+    	Table[
+			{tileType,refPt,{v1,v2},samplingPt,{xcode,ycode},fcode} = tlst[[ind]];
+            Switch[tileType
+              ,typeSqURdir, 
+	                  AppendTo[res,{typeHRectURdir,refPt,			{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeHRectULdir,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeHRectURdir,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
+              ,typeSqURinv, 
+	                  AppendTo[res,{typeHRectURinv,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeHRectULinv,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeHRectURinv,refPt,			{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
+              ,typeSqULdir, 
+	                  AppendTo[res,{typeVRectULdir,refPt + 2/3 v1,	{1/3 v1, v2},samplingPt, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeVRectURinv,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeVRectULdir,refPt,			{1/3 v1, v2},samplingPt, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
+              ,typeSqULinv, 
+	                  AppendTo[res,{typeHRectULinv,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeHRectURinv,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeHRectULinv,refPt,			{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
+              ,typeHRectURdir, 
+	                  AppendTo[res,{typeSqURdir,refPt,			{1/3 v1, v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeSqULinv,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeSqURdir,refPt + 2/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
+              ,typeHRectULdir, 
+	                  AppendTo[res,{typeSqULdir,refPt + 2/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeSqURinv,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeSqULdir,refPt,			{1/3 v1, v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
+            ];
+    	,{ind,Length[tlst]}];
+    	Return[res]
+    ] (* subdivbase3SFCTiles *)
+
+getsfcbase3SFC[tlst_] :=
+    Module[ {sfc={}, tileType,refPt,v1,v2,samplingPt,xcode,ycode,fcode,norm1,norm2,delta=5},
+    	{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/2);
+    	Do[
+			{tileType,refPt,{v1,v2},samplingPt,{xcode,ycode},fcode} = tlst[[ind]];
+            If[tileType == typeSqURdir || tileType == typeHRectURdir || tileType == typeVRectURdir,
+	   			AppendTo[sfc,refPt + (norm1+norm2)/1/3^((Length[fcode]+delta)/2) ];
+  				AppendTo[sfc,refPt + v1 + v2 + (-norm1-norm2)/3^((Length[fcode]+delta)/2) ] ;
+  			];
+			If[tileType == typeSqULdir || tileType == typeHRectULdir || tileType == typeVRectULdir,
+	   			AppendTo[sfc,refPt + v1 + (-norm1+norm2)/1/3^((Length[fcode]+delta)/2) ];
+  				AppendTo[sfc,refPt + v2 + (norm1-norm2)/3^((Length[fcode]+delta)/2) ];
+            ];
+            If[tileType == typeSqURinv || tileType == typeHRectURinv || tileType == typeVRectURinv,
+  				AppendTo[sfc,refPt + v1 + v2 + (-norm1-norm2)/3^((Length[fcode]+delta)/2) ] ;
+	   			AppendTo[sfc,refPt + (norm1+norm2)/1/3^((Length[fcode]+delta)/2) ];
+  			];
+			If[tileType == typeSqULinv || tileType == typeHRectULinv || tileType == typeVRectULinv,
+  				AppendTo[sfc,refPt + v2 + (norm1-norm2)/3^((Length[fcode]+delta)/2) ];
+	   			AppendTo[sfc,refPt + v1 + (-norm1+norm2)/1/3^((Length[fcode]+delta)/2) ];
+            ];
+    	,{ind,Length[tlst]}];
+    	Return[sfc]
+    ] (* getsfcbase3SFC *)
+
+
+getbase3SFCTilesGL[tlst_,params_:showSFC+showArrows+showTileType] :=
+    Module[ {gl={AbsolutePointSize[5]},tileType,refPt,v1,v2,samplingPt,fcode,cont,sfc,norm1,norm2,k1,k2,
+    		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
+    	Do[
+			{tileType,refPt,{v1,v2},{k1,k2},{xcode,ycode},fcode} = tlst[[ind]];
+			{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/2);
+			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
+			samplingPt = refPt + k1 v1 + k2 v2;
+    		(*If[BitAnd[params,showValue] > 0, AppendTo[gl,{GrayLevel[FIBOPhi[Reverse@fcode]],Polygon@cont}] ];*)
+			AppendTo[gl,Flatten[#,1]& @ {Point@(refPt+(norm1+norm2)/20),bortedStyle,Line@cont } ];
+			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{1.9,-1}]} ] ];		
+			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FromDigits[Reverse@fcode,3],Bold,14,Red],refPt+(v1+v2)/2,{-1.9,-1}]} ] ];		
+			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2)/2,{0,1}]} ] ];
+			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, Point@samplingPt ] ];
+    	,{ind,Length[tlst]}];
+    	If[BitAnd[params,showSFC] > 0, sfc = getsfcbase3SFC[tlst]; 
+    		AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}];
+    		If[BitAnd[params,showArrows] > 0, AppendTo[gl,Flatten[#,1]& @ {sfcStyle,(*Arrowheads[1/3^(3+(Length[fcode]+Mod[Length[fcode],2])/2)],*)Arrow/@(Partition[#,2]&@sfc)}] ] ];    	
+    	Return[gl]
+    ] (* getbase3SFCTilesGL *)
+
+fillSamplingPtsbase3SFCTiles[tlst_] :=
+    Module[ {res={}, tileType,refPt,v1,v2,k1,k2,fcode},
+    	Do[
+			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
+			k1 = k2 = base3Phi[Reverse@fcode];
+			If[Min[v1] < 0, k1 = 1-k1];
+			If[Min[v2] < 0, k2 = 1-k2];
+   			AppendTo[res,{tileType,refPt,{v1,v2},{k1,k2},fcode}];
+    	,{ind,Length[tlst]}];
+    	Return[res]
+    ] (* fillSamplingPtsbase3SFCTiles *)
+
+getSamplingPtsbase3SFCTiles[tlst_] :=
+    Module[ {tileType,refPt,v1,v2,k1,k2,fcode},
+    	Parallelize @ Table[
+			{tileType,refPt,{v1,v2},{k1,k2},fcode} = tlst[[ind]];
+			(*{k1,k2} = {RandomReal[],RandomReal[]};*)
+			refPt + k1 v1 + k2 v2
+    	,{ind,Length[tlst]}]
+    ] (* getSamplingPtsbase3SFCTiles *)
+
+demobase3SFC[niters_:3, dbg_:False] :=
+    Module[ {},
+		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {{},{}} ,{}} };
+		Graphics[ getbase3SFCTilesGL[tlst] ]//Print;
+		
+		Do[
+			tlst = subdivbase3SFCTiles @ tlst;
+			Graphics[ getbase3SFCTilesGL[tlst], PlotLabel-> iter ]//Print;
+			If[dbg, tlst//mf//Print];
+		,{iter,niters}];
+Abort[];
+
+		Graphics[ getbase3SFCTilesGL[tlst,showValue] ]//Print;
+		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivbase3SFCTiles @ tlst;
+		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
+		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivbase3SFCTiles @ tlst;
+		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
+		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivbase3SFCTiles @ tlst;
+		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
+		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivbase3SFCTiles @ tlst;
+		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
+		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivbase3SFCTiles @ tlst;
+		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
+		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
+		tlst = subdivbase3SFCTiles @ tlst;
+		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
+		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
+	] (* demobase3SFC *)
+
+getDiscrepancy2Dbase3SFC[niters_:22] :=
+    Module[ {npts,pts,dND, tlst},
+		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
+        res = Table[
+			tlst = subdivbase3SFCTiles @ tlst;
+			tlst = fillSamplingPtsbase3SFCTiles @ tlst;
+            npts = Length[tlst];
+            pts = getSamplingPtsbase3SFCTiles[tlst];
+            dND = getGeneralizedL2discrepancy[pts];
+			{npts,dND}
+		,{iter,niters}];
+        Export["data_discrepancyL2/2D/base3SFC.dat", res]; 
+        Print[mf @ res]
+    ] (* getDiscrepancy2Dbase3SFC *)
+
+(*----------------------------- end of FiboSFC --------------------------------*)
