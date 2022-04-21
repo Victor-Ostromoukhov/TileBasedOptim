@@ -542,14 +542,30 @@ subdivbase3SFCTiles[tlst_] :=
 	                  AppendTo[res,{typeSqURdir,refPt,			{1/3 v1, v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
 	                  AppendTo[res,{typeSqULinv,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
 	                  AppendTo[res,{typeSqURdir,refPt + 2/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
+              ,typeHRectURinv, 
+	                  AppendTo[res,{typeSqURinv,refPt + 2/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeSqULdir,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeSqURinv,refPt,			{1/3 v1, v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
               ,typeHRectULdir, 
 	                  AppendTo[res,{typeSqULdir,refPt + 2/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
 	                  AppendTo[res,{typeSqURinv,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
 	                  AppendTo[res,{typeSqULdir,refPt,			{1/3 v1, v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
+              ,typeHRectULinv, 
+	                  AppendTo[res,{typeSqULinv,refPt,			{1/3 v1, v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeSqURdir,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeSqULinv,refPt + 2/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
              ,typeVRectURdir, 
 	                  AppendTo[res,{typeSqURdir,refPt,			{v1, 1/3 v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
 	                  AppendTo[res,{typeSqULdir,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
 	                  AppendTo[res,{typeSqURdir,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
+             ,typeVRectURinv, 
+	                  AppendTo[res,{typeSqURinv,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeSqULinv,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeSqURinv,refPt,			{v1, 1/3 v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
+             ,typeVRectULdir, 
+	                  AppendTo[res,{typeSqULdir,refPt,			{v1, 1/3 v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeSqURdir,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeSqULdir,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
              ,typeVRectULinv, 
 	                  AppendTo[res,{typeSqULinv,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
 	                  AppendTo[res,{typeSqURinv,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
@@ -627,7 +643,7 @@ getSamplingPtsbase3SFCTiles[tlst_] :=
     	,{ind,Length[tlst]}]
     ] (* getSamplingPtsbase3SFCTiles *)
 
-demobase3SFC[niters_:3, dbg_:False] :=
+demobase3SFC[niters_:4, dbg_:False] :=
     Module[ {},
 		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {{},{}} ,{}} };
 		Graphics[ getbase3SFCTilesGL[tlst] ]//Print;
