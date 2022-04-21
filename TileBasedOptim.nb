@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     62092,       1256]
-NotebookOptionsPosition[     61041,       1230]
-NotebookOutlinePosition[     61492,       1248]
-CellTagsIndexPosition[     61449,       1245]
+NotebookDataLength[     62469,       1262]
+NotebookOptionsPosition[     61420,       1236]
+NotebookOutlinePosition[     61871,       1254]
+CellTagsIndexPosition[     61828,       1251]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -22,8 +22,9 @@ Notebook[{
 Cell[CellGroupData[{
 Cell[BoxData[
  RowBox[{"demobase3SFC", "[", "]"}]], "Input",
- CellChangeTimes->{{3.859521619413535*^9, 3.859521620792259*^9}},
- CellLabel->"In[37]:=",ExpressionUUID->"2817e2cc-303a-49d2-835c-6e92bbe04e79"],
+ CellChangeTimes->{{3.859521619413535*^9, 3.859521620792259*^9}, 
+   3.859535944723599*^9, 3.85953617848698*^9, 3.859536456091391*^9},
+ CellLabel->"In[26]:=",ExpressionUUID->"2817e2cc-303a-49d2-835c-6e92bbe04e79"],
 
 Cell[CellGroupData[{
 
@@ -73,10 +74,15 @@ Cell[BoxData[
    3.859535007151434*^9, {3.859535132421571*^9, 3.859535142152378*^9}, {
    3.859535202326025*^9, 3.859535275783627*^9}, 3.8595353132549953`*^9, 
    3.859535467095859*^9, 3.8595355237338133`*^9, 3.859535560917549*^9, 
-   3.859535773661104*^9},
+   3.859535773661104*^9, 3.8595359057628317`*^9, 3.8595359465595827`*^9, {
+   3.859536165174469*^9, 3.8595361790950203`*^9}, 3.859536322227173*^9, 
+   3.859536399126935*^9, {3.859536452567378*^9, 3.859536460315777*^9}, 
+   3.859536625059432*^9, 3.8595366687231627`*^9, 3.859536963443411*^9, 
+   3.859537068484902*^9, 3.859537139581604*^9, {3.8595371908574753`*^9, 
+   3.85953720724996*^9}},
  CellLabel->
   "During evaluation of \
-In[37]:=",ExpressionUUID->"d4bb90e1-de5f-4a70-9772-671dc06d07c9"],
+In[26]:=",ExpressionUUID->"7f227106-898e-4d99-bc69-8312d5b473a5"],
 
 Cell[BoxData[
  GraphicsBox[
@@ -175,10 +181,15 @@ Cell[BoxData[
    3.859535007151434*^9, {3.859535132421571*^9, 3.859535142152378*^9}, {
    3.859535202326025*^9, 3.859535275783627*^9}, 3.8595353132549953`*^9, 
    3.859535467095859*^9, 3.8595355237338133`*^9, 3.859535560917549*^9, 
-   3.859535773665044*^9},
+   3.859535773661104*^9, 3.8595359057628317`*^9, 3.8595359465595827`*^9, {
+   3.859536165174469*^9, 3.8595361790950203`*^9}, 3.859536322227173*^9, 
+   3.859536399126935*^9, {3.859536452567378*^9, 3.859536460315777*^9}, 
+   3.859536625059432*^9, 3.8595366687231627`*^9, 3.859536963443411*^9, 
+   3.859537068484902*^9, 3.859537139581604*^9, {3.8595371908574753`*^9, 
+   3.859537207254285*^9}},
  CellLabel->
   "During evaluation of \
-In[37]:=",ExpressionUUID->"d7544e56-b97a-4703-ad5f-336540b755d7"],
+In[26]:=",ExpressionUUID->"b9c1a1f5-6e48-461d-a82a-813851b250de"],
 
 Cell[BoxData[
  GraphicsBox[
@@ -481,10 +492,15 @@ Cell[BoxData[
    3.859535007151434*^9, {3.859535132421571*^9, 3.859535142152378*^9}, {
    3.859535202326025*^9, 3.859535275783627*^9}, 3.8595353132549953`*^9, 
    3.859535467095859*^9, 3.8595355237338133`*^9, 3.859535560917549*^9, 
-   3.859535773697754*^9},
+   3.859535773661104*^9, 3.8595359057628317`*^9, 3.8595359465595827`*^9, {
+   3.859536165174469*^9, 3.8595361790950203`*^9}, 3.859536322227173*^9, 
+   3.859536399126935*^9, {3.859536452567378*^9, 3.859536460315777*^9}, 
+   3.859536625059432*^9, 3.8595366687231627`*^9, 3.859536963443411*^9, 
+   3.859537068484902*^9, 3.859537139581604*^9, {3.8595371908574753`*^9, 
+   3.8595372072894163`*^9}},
  CellLabel->
   "During evaluation of \
-In[37]:=",ExpressionUUID->"8d7492a2-3ecc-4c93-a685-81ddd6163f12"],
+In[26]:=",ExpressionUUID->"ad373d8b-0589-4417-a4ff-6b46c871fb34"],
 
 Cell[BoxData[
  GraphicsBox[
@@ -546,17 +562,16 @@ Cell[BoxData[
      FontColor->RGBColor[0, 0, 1]], 
     NCache[{Rational[1, 6], Rational[5, 18]}, {0.16666666666666666`, 
      0.2777777777777778}], ImageScaled[{1.45, 0}]], {
-    PointBox[NCache[{Rational[61, 180], Rational[41, 180]}, {
-      0.3388888888888889, 0.22777777777777777`}]], 
+    PointBox[NCache[{Rational[61, 180], Rational[1, 180]}, {
+      0.3388888888888889, 0.005555555555555556}]], 
     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-     LineBox[NCache[{{Rational[1, 3], Rational[2, 9]}, {
-        Rational[2, 3], Rational[2, 9]}, {Rational[2, 3], Rational[1, 3]}, {
-        Rational[1, 3], Rational[1, 3]}, {Rational[1, 3], Rational[2, 9]}}, {{
-       0.3333333333333333, 0.2222222222222222}, {0.6666666666666666, 
-       0.2222222222222222}, {0.6666666666666666, 0.3333333333333333}, {
-       0.3333333333333333, 0.3333333333333333}, {0.3333333333333333, 
-       0.2222222222222222}}]]}}, InsetBox[
-    StyleBox["14",
+     LineBox[NCache[{{Rational[1, 3], 0}, {Rational[4, 9], 0}, {
+        Rational[4, 9], Rational[1, 3]}, {Rational[1, 3], Rational[1, 3]}, {
+        Rational[1, 3], 0}}, {{0.3333333333333333, 0}, {
+        0.4444444444444444, 0}, {0.4444444444444444, 0.3333333333333333}, {
+        0.3333333333333333, 0.3333333333333333}, {0.3333333333333333, 0}}]]}},
+    InsetBox[
+    StyleBox["16",
      StripOnInput->False,
      LineColor->RGBColor[0, 0, 1],
      FrontFaceColor->RGBColor[0, 0, 1],
@@ -565,19 +580,18 @@ Cell[BoxData[
      FontSize->14,
      FontWeight->Bold,
      FontColor->RGBColor[0, 0, 1]], 
-    NCache[{Rational[1, 2], Rational[5, 18]}, {0.5, 0.2777777777777778}], 
-    ImageScaled[{1.45, 0}]], {
-    PointBox[NCache[{Rational[61, 180], Rational[7, 60]}, {0.3388888888888889,
-       0.11666666666666667`}]], 
+    NCache[{Rational[7, 18], Rational[1, 6]}, {0.3888888888888889, 
+     0.16666666666666666`}], ImageScaled[{1.45, 0}]], {
+    PointBox[NCache[{Rational[9, 20], Rational[1, 180]}, {0.45, 
+      0.005555555555555556}]], 
     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-     LineBox[NCache[{{Rational[1, 3], Rational[1, 9]}, {
-        Rational[2, 3], Rational[1, 9]}, {Rational[2, 3], Rational[2, 9]}, {
-        Rational[1, 3], Rational[2, 9]}, {Rational[1, 3], Rational[1, 9]}}, {{
-       0.3333333333333333, 0.1111111111111111}, {0.6666666666666666, 
-       0.1111111111111111}, {0.6666666666666666, 0.2222222222222222}, {
-       0.3333333333333333, 0.2222222222222222}, {0.3333333333333333, 
-       0.1111111111111111}}]]}}, InsetBox[
-    StyleBox["13",
+     LineBox[NCache[{{Rational[4, 9], 0}, {Rational[5, 9], 0}, {
+        Rational[5, 9], Rational[1, 3]}, {Rational[4, 9], Rational[1, 3]}, {
+        Rational[4, 9], 0}}, {{0.4444444444444444, 0}, {
+        0.5555555555555556, 0}, {0.5555555555555556, 0.3333333333333333}, {
+        0.4444444444444444, 0.3333333333333333}, {0.4444444444444444, 0}}]]}},
+    InsetBox[
+    StyleBox["5",
      StripOnInput->False,
      LineColor->RGBColor[0, 0, 1],
      FrontFaceColor->RGBColor[0, 0, 1],
@@ -588,16 +602,16 @@ Cell[BoxData[
      FontColor->RGBColor[0, 0, 1]], 
     NCache[{Rational[1, 2], Rational[1, 6]}, {0.5, 0.16666666666666666`}], 
     ImageScaled[{1.45, 0}]], {
-    PointBox[NCache[{Rational[61, 180], Rational[1, 180]}, {
-      0.3388888888888889, 0.005555555555555556}]], 
+    PointBox[NCache[{Rational[101, 180], Rational[1, 180]}, {
+      0.5611111111111111, 0.005555555555555556}]], 
     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-     LineBox[NCache[{{Rational[1, 3], 0}, {Rational[2, 3], 0}, {
-        Rational[2, 3], Rational[1, 9]}, {Rational[1, 3], Rational[1, 9]}, {
-        Rational[1, 3], 0}}, {{0.3333333333333333, 0}, {
-        0.6666666666666666, 0}, {0.6666666666666666, 0.1111111111111111}, {
-        0.3333333333333333, 0.1111111111111111}, {0.3333333333333333, 0}}]]}},
+     LineBox[NCache[{{Rational[5, 9], 0}, {Rational[2, 3], 0}, {
+        Rational[2, 3], Rational[1, 3]}, {Rational[5, 9], Rational[1, 3]}, {
+        Rational[5, 9], 0}}, {{0.5555555555555556, 0}, {
+        0.6666666666666666, 0}, {0.6666666666666666, 0.3333333333333333}, {
+        0.5555555555555556, 0.3333333333333333}, {0.5555555555555556, 0}}]]}},
     InsetBox[
-    StyleBox["14",
+    StyleBox["16",
      StripOnInput->False,
      LineColor->RGBColor[0, 0, 1],
      FrontFaceColor->RGBColor[0, 0, 1],
@@ -606,8 +620,8 @@ Cell[BoxData[
      FontSize->14,
      FontWeight->Bold,
      FontColor->RGBColor[0, 0, 1]], 
-    NCache[{Rational[1, 2], Rational[1, 18]}, {0.5, 0.05555555555555555}], 
-    ImageScaled[{1.45, 0}]], {
+    NCache[{Rational[11, 18], Rational[1, 6]}, {0.6111111111111112, 
+     0.16666666666666666`}], ImageScaled[{1.45, 0}]], {
     PointBox[NCache[{Rational[121, 180], Rational[1, 180]}, {
       0.6722222222222223, 0.005555555555555556}]], 
     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
@@ -909,18 +923,17 @@ Cell[BoxData[
      FontColor->RGBColor[0, 0, 1]], 
     NCache[{Rational[1, 6], Rational[17, 18]}, {0.16666666666666666`, 
      0.9444444444444444}], ImageScaled[{1.45, 0}]], {
-    PointBox[NCache[{Rational[61, 180], Rational[161, 180]}, {
-      0.3388888888888889, 0.8944444444444445}]], 
+    PointBox[NCache[{Rational[61, 180], Rational[121, 180]}, {
+      0.3388888888888889, 0.6722222222222223}]], 
     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-     LineBox[
-      NCache[{{Rational[1, 3], Rational[8, 9]}, {
-        Rational[2, 3], Rational[8, 9]}, {Rational[2, 3], 1}, {
-        Rational[1, 3], 1}, {Rational[1, 3], Rational[8, 9]}}, {{
-        0.3333333333333333, 0.8888888888888888}, {0.6666666666666666, 
-        0.8888888888888888}, {0.6666666666666666, 1}, {
-        0.3333333333333333, 1}, {0.3333333333333333, 0.8888888888888888}}]]}},
+     LineBox[NCache[{{Rational[1, 3], Rational[2, 3]}, {
+        Rational[4, 9], Rational[2, 3]}, {Rational[4, 9], 1}, {
+        Rational[1, 3], 1}, {Rational[1, 3], Rational[2, 3]}}, {{
+        0.3333333333333333, 0.6666666666666666}, {0.4444444444444444, 
+        0.6666666666666666}, {0.4444444444444444, 1}, {
+        0.3333333333333333, 1}, {0.3333333333333333, 0.6666666666666666}}]]}},
     InsetBox[
-    StyleBox["14",
+    StyleBox["16",
      StripOnInput->False,
      LineColor->RGBColor[0, 0, 1],
      FrontFaceColor->RGBColor[0, 0, 1],
@@ -929,19 +942,19 @@ Cell[BoxData[
      FontSize->14,
      FontWeight->Bold,
      FontColor->RGBColor[0, 0, 1]], 
-    NCache[{Rational[1, 2], Rational[17, 18]}, {0.5, 0.9444444444444444}], 
-    ImageScaled[{1.45, 0}]], {
-    PointBox[NCache[{Rational[61, 180], Rational[47, 60]}, {
-      0.3388888888888889, 0.7833333333333333}]], 
+    NCache[{Rational[7, 18], Rational[5, 6]}, {0.3888888888888889, 
+     0.8333333333333334}], ImageScaled[{1.45, 0}]], {
+    PointBox[NCache[{Rational[9, 20], Rational[121, 180]}, {0.45, 
+      0.6722222222222223}]], 
     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-     LineBox[NCache[{{Rational[1, 3], Rational[7, 9]}, {
-        Rational[2, 3], Rational[7, 9]}, {Rational[2, 3], Rational[8, 9]}, {
-        Rational[1, 3], Rational[8, 9]}, {Rational[1, 3], Rational[7, 9]}}, {{
-       0.3333333333333333, 0.7777777777777778}, {0.6666666666666666, 
-       0.7777777777777778}, {0.6666666666666666, 0.8888888888888888}, {
-       0.3333333333333333, 0.8888888888888888}, {0.3333333333333333, 
-       0.7777777777777778}}]]}}, InsetBox[
-    StyleBox["13",
+     LineBox[NCache[{{Rational[4, 9], Rational[2, 3]}, {
+        Rational[5, 9], Rational[2, 3]}, {Rational[5, 9], 1}, {
+        Rational[4, 9], 1}, {Rational[4, 9], Rational[2, 3]}}, {{
+        0.4444444444444444, 0.6666666666666666}, {0.5555555555555556, 
+        0.6666666666666666}, {0.5555555555555556, 1}, {
+        0.4444444444444444, 1}, {0.4444444444444444, 0.6666666666666666}}]]}},
+    InsetBox[
+    StyleBox["5",
      StripOnInput->False,
      LineColor->RGBColor[0, 0, 1],
      FrontFaceColor->RGBColor[0, 0, 1],
@@ -952,17 +965,17 @@ Cell[BoxData[
      FontColor->RGBColor[0, 0, 1]], 
     NCache[{Rational[1, 2], Rational[5, 6]}, {0.5, 0.8333333333333334}], 
     ImageScaled[{1.45, 0}]], {
-    PointBox[NCache[{Rational[61, 180], Rational[121, 180]}, {
-      0.3388888888888889, 0.6722222222222223}]], 
+    PointBox[NCache[{Rational[101, 180], Rational[121, 180]}, {
+      0.5611111111111111, 0.6722222222222223}]], 
     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-     LineBox[NCache[{{Rational[1, 3], Rational[2, 3]}, {
-        Rational[2, 3], Rational[2, 3]}, {Rational[2, 3], Rational[7, 9]}, {
-        Rational[1, 3], Rational[7, 9]}, {Rational[1, 3], Rational[2, 3]}}, {{
-       0.3333333333333333, 0.6666666666666666}, {0.6666666666666666, 
-       0.6666666666666666}, {0.6666666666666666, 0.7777777777777778}, {
-       0.3333333333333333, 0.7777777777777778}, {0.3333333333333333, 
-       0.6666666666666666}}]]}}, InsetBox[
-    StyleBox["14",
+     LineBox[NCache[{{Rational[5, 9], Rational[2, 3]}, {
+        Rational[2, 3], Rational[2, 3]}, {Rational[2, 3], 1}, {
+        Rational[5, 9], 1}, {Rational[5, 9], Rational[2, 3]}}, {{
+        0.5555555555555556, 0.6666666666666666}, {0.6666666666666666, 
+        0.6666666666666666}, {0.6666666666666666, 1}, {
+        0.5555555555555556, 1}, {0.5555555555555556, 0.6666666666666666}}]]}},
+    InsetBox[
+    StyleBox["16",
      StripOnInput->False,
      LineColor->RGBColor[0, 0, 1],
      FrontFaceColor->RGBColor[0, 0, 1],
@@ -971,8 +984,8 @@ Cell[BoxData[
      FontSize->14,
      FontWeight->Bold,
      FontColor->RGBColor[0, 0, 1]], 
-    NCache[{Rational[1, 2], Rational[13, 18]}, {0.5, 0.7222222222222222}], 
-    ImageScaled[{1.45, 0}]], {
+    NCache[{Rational[11, 18], Rational[5, 6]}, {0.6111111111111112, 
+     0.8333333333333334}], ImageScaled[{1.45, 0}]], {
     PointBox[NCache[{Rational[121, 180], Rational[121, 180]}, {
       0.6722222222222223, 0.6722222222222223}]], 
     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
@@ -1040,10 +1053,10 @@ Cell[BoxData[
        Rational[1, 81], Rational[19, 81]}, {
        Rational[26, 81], Rational[26, 81]}, {
        Rational[28, 81], Rational[26, 81]}, {
-       Rational[53, 81], Rational[19, 81]}, {
-       Rational[53, 81], Rational[17, 81]}, {
-       Rational[28, 81], Rational[10, 81]}, {
-       Rational[28, 81], Rational[8, 81]}, {
+       Rational[35, 81], Rational[1, 81]}, {
+       Rational[37, 81], Rational[1, 81]}, {
+       Rational[44, 81], Rational[26, 81]}, {
+       Rational[46, 81], Rational[26, 81]}, {
        Rational[53, 81], Rational[1, 81]}, {
        Rational[55, 81], Rational[1, 81]}, {
        Rational[80, 81], Rational[8, 81]}, {
@@ -1076,10 +1089,10 @@ Cell[BoxData[
        Rational[1, 81], Rational[73, 81]}, {
        Rational[26, 81], Rational[80, 81]}, {
        Rational[28, 81], Rational[80, 81]}, {
-       Rational[53, 81], Rational[73, 81]}, {
-       Rational[53, 81], Rational[71, 81]}, {
-       Rational[28, 81], Rational[64, 81]}, {
-       Rational[28, 81], Rational[62, 81]}, {
+       Rational[35, 81], Rational[55, 81]}, {
+       Rational[37, 81], Rational[55, 81]}, {
+       Rational[44, 81], Rational[80, 81]}, {
+       Rational[46, 81], Rational[80, 81]}, {
        Rational[53, 81], Rational[55, 81]}, {
        Rational[55, 81], Rational[55, 81]}, {
        Rational[80, 81], Rational[62, 81]}, {
@@ -1087,13 +1100,13 @@ Cell[BoxData[
        Rational[55, 81], Rational[71, 81]}, {
        Rational[55, 81], Rational[73, 81]}, {
        Rational[80, 81], Rational[80, 81]}}, CompressedData["
-1:eJxTTMoPSmViYGAwA2IQ/eDltT8bPDrtYTTbvLyz/N1XoPydcH7EEh6bu7P2
-w9XVgQVOwfm7TO11gtjOwdXDaLA2+Wtw/rqfiRONPjyBq4fxYebB1MPsg/Fh
-7oGph9n7d4OHZMWup3A+RN97uHoYH2YeTD3MPhgf5h6YelR/v4e744hSKtDo
-N3B3lGaDTHqD5q6XcPVAwZLsuhdwPsw+mHp0GqYOqAjookdw/qkDl9f+THwI
-V5cN8QCcD3TslMblt+Hq0cMdxscV7jA+rnBH5XfijAeYfTB/o6anl3D1sHCD
-8WHhiivcYXyYvbjiAdWdmPEAUw9zLzoNswemHjU9vYSrg9kH48Pcg5re3tsD
-AG2Qzm0=
+1:eJx1kjFowkAYRkMHJ6FzJ6lzp0KdhKyZnVwjZAq0SwudAo7iJHRycCo4tWS1
+Szt0EtrF4iJCW1owIMRVqNBL4vvgAg7meOHd3fd/5rRz1QqOHMdpmF+2fibz
+v9jruayV0eXbcf9jzxNx+77aXA6f5UX5i6n46cI9a1Xe5bPm22pzsXncdccL
+7QuLg8TTl9nD1v+Sf3Kbnfwtftz6g/PNj/xd7BnlV1zkTJUfJj8++WHy49tz
+p5rjtR6Yo9fKcZMPsC7lSuSbl9dhtBJzH355xWNumF7w6A2mV/xy7zBzso8e
+YHrCp0ebewf/B+5jbvt7SuTTG0yvh3qHmZP76AGmJ3x6hMmNX17xyG9/T4k8
+8sPkt7+31P0HyyHM6g==
       "]]]}, 
    {RGBColor[1, 0.5, 0], AbsoluteThickness[3], 
     ArrowBox[NCache[{{Rational[1, 81], Rational[1, 81]}, {
@@ -1107,14 +1120,15 @@ AG2Qzm0=
        Rational[26, 81], Rational[26, 81]}}, {{0.012345679012345678`, 
       0.2345679012345679}, {0.32098765432098764`, 0.32098765432098764`}}]], 
     ArrowBox[NCache[{{Rational[28, 81], Rational[26, 81]}, {
-       Rational[53, 81], Rational[19, 81]}}, {{0.345679012345679, 
-      0.32098765432098764`}, {0.654320987654321, 0.2345679012345679}}]], 
-    ArrowBox[NCache[{{Rational[53, 81], Rational[17, 81]}, {
-       Rational[28, 81], Rational[10, 81]}}, {{0.654320987654321, 
-      0.20987654320987653`}, {0.345679012345679, 0.12345679012345678`}}]], 
-    ArrowBox[NCache[{{Rational[28, 81], Rational[8, 81]}, {
-       Rational[53, 81], Rational[1, 81]}}, {{0.345679012345679, 
-      0.09876543209876543}, {0.654320987654321, 0.012345679012345678`}}]], 
+       Rational[35, 81], Rational[1, 81]}}, {{0.345679012345679, 
+      0.32098765432098764`}, {0.43209876543209874`, 0.012345679012345678`}}]],
+     ArrowBox[
+     NCache[{{Rational[37, 81], Rational[1, 81]}, {
+       Rational[44, 81], Rational[26, 81]}}, {{0.4567901234567901, 
+      0.012345679012345678`}, {0.5432098765432098, 0.32098765432098764`}}]], 
+    ArrowBox[NCache[{{Rational[46, 81], Rational[26, 81]}, {
+       Rational[53, 81], Rational[1, 81]}}, {{0.5679012345679012, 
+      0.32098765432098764`}, {0.654320987654321, 0.012345679012345678`}}]], 
     ArrowBox[NCache[{{Rational[55, 81], Rational[1, 81]}, {
        Rational[80, 81], Rational[8, 81]}}, {{0.6790123456790124, 
       0.012345679012345678`}, {0.9876543209876543, 0.09876543209876543}}]], 
@@ -1124,8 +1138,7 @@ AG2Qzm0=
     ArrowBox[NCache[{{Rational[55, 81], Rational[19, 81]}, {
        Rational[80, 81], Rational[26, 81]}}, {{0.6790123456790124, 
       0.2345679012345679}, {0.9876543209876543, 0.32098765432098764`}}]], 
-    ArrowBox[
-     NCache[{{Rational[80, 81], Rational[28, 81]}, {
+    ArrowBox[NCache[{{Rational[80, 81], Rational[28, 81]}, {
        Rational[73, 81], Rational[53, 81]}}, {{0.9876543209876543, 
       0.345679012345679}, {0.9012345679012346, 0.654320987654321}}]], 
     ArrowBox[NCache[{{Rational[71, 81], Rational[53, 81]}, {
@@ -1158,18 +1171,19 @@ AG2Qzm0=
     ArrowBox[NCache[{{Rational[26, 81], Rational[64, 81]}, {
        Rational[1, 81], Rational[71, 81]}}, {{0.32098765432098764`, 
       0.7901234567901234}, {0.012345679012345678`, 0.8765432098765432}}]], 
-    ArrowBox[NCache[{{Rational[1, 81], Rational[73, 81]}, {
+    ArrowBox[
+     NCache[{{Rational[1, 81], Rational[73, 81]}, {
        Rational[26, 81], Rational[80, 81]}}, {{0.012345679012345678`, 
       0.9012345679012346}, {0.32098765432098764`, 0.9876543209876543}}]], 
     ArrowBox[NCache[{{Rational[28, 81], Rational[80, 81]}, {
-       Rational[53, 81], Rational[73, 81]}}, {{0.345679012345679, 
-      0.9876543209876543}, {0.654320987654321, 0.9012345679012346}}]], 
-    ArrowBox[NCache[{{Rational[53, 81], Rational[71, 81]}, {
-       Rational[28, 81], Rational[64, 81]}}, {{0.654320987654321, 
-      0.8765432098765432}, {0.345679012345679, 0.7901234567901234}}]], 
-    ArrowBox[NCache[{{Rational[28, 81], Rational[62, 81]}, {
-       Rational[53, 81], Rational[55, 81]}}, {{0.345679012345679, 
-      0.7654320987654321}, {0.654320987654321, 0.6790123456790124}}]], 
+       Rational[35, 81], Rational[55, 81]}}, {{0.345679012345679, 
+      0.9876543209876543}, {0.43209876543209874`, 0.6790123456790124}}]], 
+    ArrowBox[NCache[{{Rational[37, 81], Rational[55, 81]}, {
+       Rational[44, 81], Rational[80, 81]}}, {{0.4567901234567901, 
+      0.6790123456790124}, {0.5432098765432098, 0.9876543209876543}}]], 
+    ArrowBox[NCache[{{Rational[46, 81], Rational[80, 81]}, {
+       Rational[53, 81], Rational[55, 81]}}, {{0.5679012345679012, 
+      0.9876543209876543}, {0.654320987654321, 0.6790123456790124}}]], 
     ArrowBox[NCache[{{Rational[55, 81], Rational[55, 81]}, {
        Rational[80, 81], Rational[62, 81]}}, {{0.6790123456790124, 
       0.6790123456790124}, {0.9876543209876543, 0.7654320987654321}}]], 
@@ -1197,36 +1211,28 @@ AG2Qzm0=
    3.859535007151434*^9, {3.859535132421571*^9, 3.859535142152378*^9}, {
    3.859535202326025*^9, 3.859535275783627*^9}, 3.8595353132549953`*^9, 
    3.859535467095859*^9, 3.8595355237338133`*^9, 3.859535560917549*^9, 
-   3.859535773711145*^9},
+   3.859535773661104*^9, 3.8595359057628317`*^9, 3.8595359465595827`*^9, {
+   3.859536165174469*^9, 3.8595361790950203`*^9}, 3.859536322227173*^9, 
+   3.859536399126935*^9, {3.859536452567378*^9, 3.859536460315777*^9}, 
+   3.859536625059432*^9, 3.8595366687231627`*^9, 3.859536963443411*^9, 
+   3.859537068484902*^9, 3.859537139581604*^9, {3.8595371908574753`*^9, 
+   3.859537207304368*^9}},
  CellLabel->
   "During evaluation of \
-In[37]:=",ExpressionUUID->"7c1ddf42-cdee-4375-a4ff-0c873945a06b"]
+In[26]:=",ExpressionUUID->"b6825299-b664-4dbd-9e00-dee9a79033f7"]
 }, Open  ]],
 
 Cell[BoxData["$Aborted"], "Output",
- CellChangeTimes->{
-  3.8595216229464283`*^9, 3.8595217431175823`*^9, 3.859521785041003*^9, 
-   3.859521888591793*^9, 3.8595219643268747`*^9, {3.859522004927917*^9, 
-   3.8595220656551943`*^9}, 3.859522102747581*^9, 3.859522150952859*^9, 
-   3.859522319572688*^9, 3.859522472688567*^9, 3.8595225274287*^9, 
-   3.859532941878009*^9, {3.859533038406658*^9, 3.8595330921088963`*^9}, 
-   3.859533476290751*^9, 3.8595335194847527`*^9, 3.8595339562723837`*^9, 
-   3.8595339948237257`*^9, 3.8595340635192223`*^9, {3.859534109650605*^9, 
-   3.8595341321316757`*^9}, 3.85953421682652*^9, 3.859534257057358*^9, 
-   3.859534355635666*^9, 3.859534397616508*^9, 3.859534436925824*^9, 
-   3.859534559566813*^9, 3.8595346120971937`*^9, {3.8595346653225822`*^9, 
-   3.859534692991972*^9}, 3.859534745675969*^9, 3.859534821042782*^9, {
-   3.8595348782298117`*^9, 3.8595348948845053`*^9}, 3.859534934687635*^9, 
-   3.859535007215033*^9, {3.859535132485902*^9, 3.859535142217598*^9}, {
-   3.859535202393025*^9, 3.859535275847776*^9}, 3.859535313321802*^9, 
-   3.859535467159111*^9, 3.859535523775155*^9, 3.859535560980421*^9, 
-   3.859535773724453*^9},
- CellLabel->"Out[37]=",ExpressionUUID->"5ad83388-6ed9-4ebd-9317-22fab0fccac0"]
+ CellChangeTimes->{{3.859536459409075*^9, 3.859536460344308*^9}, 
+   3.859536625130818*^9, 3.859536668789054*^9, 3.8595369635079803`*^9, 
+   3.859537068548059*^9, 3.859537139646888*^9, {3.8595371909233227`*^9, 
+   3.859537207318572*^9}},
+ CellLabel->"Out[26]=",ExpressionUUID->"12d3174a-687f-4668-ab40-ab44a7c84a56"]
 }, Open  ]],
 
 Cell[BoxData[" "], "Input",
  CellChangeTimes->{3.85952254607543*^9},
- CellLabel->"In[38]:=",ExpressionUUID->"36a0887b-8628-439d-88f4-9cf3898159a2"]
+ CellLabel->"In[27]:=",ExpressionUUID->"36a0887b-8628-439d-88f4-9cf3898159a2"]
 },
 WindowSize->{2258, 1311},
 WindowMargins->{{Automatic, 56}, {Automatic, 0}},
@@ -1248,16 +1254,16 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 205, 3, 30, "Input",ExpressionUUID->"2817e2cc-303a-49d2-835c-6e92bbe04e79"],
+Cell[580, 22, 274, 4, 30, "Input",ExpressionUUID->"2817e2cc-303a-49d2-835c-6e92bbe04e79"],
 Cell[CellGroupData[{
-Cell[810, 29, 2566, 49, 1030, "Print",ExpressionUUID->"d4bb90e1-de5f-4a70-9772-671dc06d07c9"],
-Cell[3379, 80, 4995, 100, 1044, "Print",ExpressionUUID->"d7544e56-b97a-4703-ad5f-336540b755d7"],
-Cell[8377, 182, 15587, 304, 1044, "Print",ExpressionUUID->"8d7492a2-3ecc-4c93-a685-81ddd6163f12"],
-Cell[23967, 488, 35645, 714, 1044, "Print",ExpressionUUID->"7c1ddf42-cdee-4375-a4ff-0c873945a06b"]
+Cell[879, 30, 2931, 54, 1030, "Print",ExpressionUUID->"7f227106-898e-4d99-bc69-8312d5b473a5"],
+Cell[3813, 86, 5361, 105, 1044, "Print",ExpressionUUID->"b9c1a1f5-6e48-461d-a82a-813851b250de"],
+Cell[9177, 193, 15955, 309, 1044, "Print",ExpressionUUID->"ad373d8b-0589-4417-a4ff-6b46c871fb34"],
+Cell[25135, 504, 35752, 717, 1044, "Print",ExpressionUUID->"b6825299-b664-4dbd-9e00-dee9a79033f7"]
 }, Open  ]],
-Cell[59627, 1205, 1248, 18, 34, "Output",ExpressionUUID->"5ad83388-6ed9-4ebd-9317-22fab0fccac0"]
+Cell[60902, 1224, 352, 5, 34, "Output",ExpressionUUID->"12d3174a-687f-4668-ab40-ab44a7c84a56"]
 }, Open  ]],
-Cell[60890, 1226, 147, 2, 60, "Input",ExpressionUUID->"36a0887b-8628-439d-88f4-9cf3898159a2"]
+Cell[61269, 1232, 147, 2, 60, "Input",ExpressionUUID->"36a0887b-8628-439d-88f4-9cf3898159a2"]
 }
 ]
 *)

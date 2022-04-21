@@ -518,6 +518,10 @@ subdivbase3SFCTiles[tlst_] :=
 	                  AppendTo[res,{typeHRectURdir,refPt,			{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
 	                  AppendTo[res,{typeHRectULdir,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
 	                  AppendTo[res,{typeHRectURdir,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
+              (*,typeSqURdir, 
+	                  AppendTo[res,{typeVRectURdir,refPt,			{1/3 v1, v2},samplingPt, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeVRectULinv,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeVRectURdir,refPt + 2/3 v1,	{1/3 v1, v2},samplingPt, {xcode,Append[ycode,2]}, Append[fcode,2]} ];*)
               ,typeSqURinv, 
 	                  AppendTo[res,{typeHRectURinv,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
 	                  AppendTo[res,{typeHRectULinv,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
@@ -526,10 +530,14 @@ subdivbase3SFCTiles[tlst_] :=
 	                  AppendTo[res,{typeVRectULdir,refPt + 2/3 v1,	{1/3 v1, v2},samplingPt, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
 	                  AppendTo[res,{typeVRectURinv,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
 	                  AppendTo[res,{typeVRectULdir,refPt,			{1/3 v1, v2},samplingPt, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
-              ,typeSqULinv, 
+              (*,typeSqULinv, 
 	                  AppendTo[res,{typeHRectULinv,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
 	                  AppendTo[res,{typeHRectURinv,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeHRectULinv,refPt,			{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
+	                  AppendTo[res,{typeHRectULinv,refPt,			{v1, 1/3 v2},samplingPt, {xcode,Append[ycode,2]}, Append[fcode,2]} ];*)
+              ,typeSqULinv, 
+	                  AppendTo[res,{typeVRectULinv,refPt,	{1/3 v1, v2},samplingPt, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeVRectURdir,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeVRectULinv,refPt + 2/3 v1,			{1/3 v1, v2},samplingPt, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
               ,typeHRectURdir, 
 	                  AppendTo[res,{typeSqURdir,refPt,			{1/3 v1, v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
 	                  AppendTo[res,{typeSqULinv,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
@@ -538,6 +546,14 @@ subdivbase3SFCTiles[tlst_] :=
 	                  AppendTo[res,{typeSqULdir,refPt + 2/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
 	                  AppendTo[res,{typeSqURinv,refPt + 1/3 v1,	{1/3 v1, v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
 	                  AppendTo[res,{typeSqULdir,refPt,			{1/3 v1, v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
+             ,typeVRectURdir, 
+	                  AppendTo[res,{typeSqURdir,refPt,			{v1, 1/3 v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeSqULdir,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeSqURdir,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
+             ,typeVRectULinv, 
+	                  AppendTo[res,{typeSqULinv,refPt + 2/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,0],ycode}, Append[fcode,0]} ];
+	                  AppendTo[res,{typeSqURinv,refPt + 1/3 v2,	{v1, 1/3 v2},samplingPt, {Append[xcode,1],ycode}, Append[fcode,1]} ];
+	                  AppendTo[res,{typeSqULinv,refPt,			{v1, 1/3 v2},samplingPt, {Append[xcode,2],ycode}, Append[fcode,2]} ];
             ];
     	,{ind,Length[tlst]}];
     	Return[res]
