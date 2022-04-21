@@ -38,7 +38,7 @@ mxRot270 = {{0, 1}, {-1, 0}};
 showTileType = 1;
 showTilefcode = 2;
 showSFC = 4;
-showValue = 8;
+showGrayValue = 8;
 showArrows = 16;
 showFrame = 32;
 showOrdinalNumber = 64;
@@ -404,7 +404,7 @@ getFiboSFCTilesGL[tlst_,params_:showSFC] :=
 			{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/phi^((Length[fcode]+Mod[Length[fcode],2])/2);
 			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
 			samplingPt = refPt + k1 v1 + k2 v2;
-    		If[BitAnd[params,showValue] > 0, AppendTo[gl,{GrayLevel[FIBOPhi[Reverse@fcode]],Polygon@cont}] ];
+    		If[BitAnd[params,showGrayValue] > 0, AppendTo[gl,{GrayLevel[FIBOPhi[Reverse@fcode]],Polygon@cont}] ];
 			AppendTo[gl,Flatten[#,1]& @ {bortedStyle,Line@cont } ];
 			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{1.9,-1}]} ] ];		
 			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FIBOPhi[Reverse@fcode],Bold,14,Red],refPt+(v1+v2)/2,{-1.9,-1}]} ] ];		
@@ -453,7 +453,7 @@ demoFiboSFC[niters_:15] :=
 			If[dbg, tlst//mf//Print];
 		,{iter,niters}];
 
-		Graphics[ getFiboSFCTilesGL[tlst,showValue] ]//Print;
+		Graphics[ getFiboSFCTilesGL[tlst,showGrayValue] ]//Print;
 		Graphics[ getFiboSFCTilesGL[tlst,showSamplingPt] ]//Print;
 		tlst = subdivFiboSFCTiles @ tlst;
 		tlst = fillSamplingPtsFiboSFCTiles @ tlst;
@@ -576,7 +576,7 @@ subdivbase3SFCTiles[tlst_] :=
     ] (* subdivbase3SFCTiles *)
 
 getsfcbase3SFC[tlst_] :=
-    Module[ {sfc={}, tileType,refPt,v1,v2,samplingPt,xcode,ycode,fcode,norm1,norm2,delta=5},
+    Module[ {sfc={}, tileType,refPt,v1,v2,samplingPt,xcode,ycode,fcode,norm1,norm2,delta=3},
     	{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/2);
     	Do[
 			{tileType,refPt,{v1,v2},samplingPt,{xcode,ycode},fcode} = tlst[[ind]];
@@ -601,16 +601,17 @@ getsfcbase3SFC[tlst_] :=
     ] (* getsfcbase3SFC *)
 
 
-getbase3SFCTilesGL[tlst_,params_:showSFC+showArrows+showTileType] :=
+getbase3SFCTilesGL[tlst_,params_:showSFC] :=
     Module[ {gl={AbsolutePointSize[5]},tileType,refPt,v1,v2,samplingPt,fcode,cont,sfc,norm1,norm2,k1,k2,
     		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
     	Do[
 			{tileType,refPt,{v1,v2},{k1,k2},{xcode,ycode},fcode} = tlst[[ind]];
+			fcodelen = Length[fcode];
 			{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/2);
 			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
 			samplingPt = refPt + k1 v1 + k2 v2;
-    		(*If[BitAnd[params,showValue] > 0, AppendTo[gl,{GrayLevel[FIBOPhi[Reverse@fcode]],Polygon@cont}] ];*)
-			AppendTo[gl,Flatten[#,1]& @ {Point@(refPt+(norm1+norm2)/20),bortedStyle,Line@cont } ];
+    		If[BitAnd[params,showGrayValue] > 0, AppendTo[gl,{GrayLevel[FromDigits[Reverse@fcode,3]/3^fcodelen],Polygon@cont}] ];
+			AppendTo[gl,Flatten[#,1]& @ {(*Point@(refPt+(norm1+norm2)/20),*)bortedStyle,Line@cont } ];
 			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{1.9,-1}]} ] ];		
 			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FromDigits[Reverse@fcode,3],Bold,14,Red],refPt+(v1+v2)/2,{-1.9,-1}]} ] ];		
 			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2)/2,{0,1}]} ] ];
@@ -653,28 +654,9 @@ demobase3SFC[niters_:4, dbg_:False] :=
 			Graphics[ getbase3SFCTilesGL[tlst], PlotLabel-> iter ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,niters}];
-Abort[];
-
-		Graphics[ getbase3SFCTilesGL[tlst,showValue] ]//Print;
-		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
+		Graphics[ getbase3SFCTilesGL[tlst,showGrayValue], PlotLabel-> iter ]//Print;
 		tlst = subdivbase3SFCTiles @ tlst;
-		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
-		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivbase3SFCTiles @ tlst;
-		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
-		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivbase3SFCTiles @ tlst;
-		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
-		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivbase3SFCTiles @ tlst;
-		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
-		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivbase3SFCTiles @ tlst;
-		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
-		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
-		tlst = subdivbase3SFCTiles @ tlst;
-		tlst = fillSamplingPtsbase3SFCTiles @ tlst;
-		Graphics[ getbase3SFCTilesGL[tlst,showSamplingPt] ]//Print;
+		Graphics[ getbase3SFCTilesGL[tlst,showGrayValue], PlotLabel-> iter ]//Print;
 	] (* demobase3SFC *)
 
 getDiscrepancy2Dbase3SFC[niters_:22] :=
