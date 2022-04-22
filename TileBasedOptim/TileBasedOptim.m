@@ -56,6 +56,77 @@ testDyadicPartitioningNDFull[set_,showErrFlag_:True] := Module[{sz,powers,tests,
 	And @@ tab
 ] (* testDyadicPartitioningNDFull *)
 
+
+
+testStrat2DGF3[set_] := 
+  Module[{sz,tests,i,tab,sz1d},
+	sz=Length[set];
+	If[NumberQ[Sqrt[sz]], sz1d = Sqrt[sz]; tests = {{sz1d,sz1d}}];
+	If[NumberQ[Sqrt[sz/3]], sz1d = Sqrt[sz/3]; tests = {{3 sz1d,sz1d},{sz1d,3 sz1d}}] ;
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+	And @@ tab
+] (* testStrat2DGF3 *)
+
+testStrat3DGF3[set_] := 
+  Module[{sz,tests,i,tab,sz1d},
+	sz=Length[set];
+	If[NumberQ[sz^(1/3)], sz1d = sz^(1/3); tests = {{sz1d,sz1d,sz1d}}];
+	If[NumberQ[(sz/3)^(1/3)], sz1d = (sz/3)^(1/3); tests = {{3 sz1d,sz1d,sz1d},{sz1d,3 sz1d,sz1d},{sz1d,sz1d,3 sz1d}}] ;
+	If[NumberQ[(sz/9)^(1/3)], sz1d = (sz/3)^(1/3); tests = {{3 sz1d,3 sz1d,sz1d},{3 sz1d,sz1d,3 sz1d},{sz1d,3 sz1d,3 sz1d}}] ;
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+	And @@ tab
+] (* testStrat3DGF3 *)
+
+testStrat2DGFN[base_,set_] := 
+  Module[{sz,tests,i,tab,sz1d},
+	sz=Length[set];
+	If[NumberQ[sz^(1/base)], sz1d = sz^(1/base); tests = {{sz1d,sz1d,sz1d}}];
+	If[NumberQ[(sz/base)^(1/base)], sz1d = (sz/base)^(1/base); tests = {{base sz1d,sz1d},{sz1d,base sz1d}}] ;
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+	And @@ tab
+] (* testStrat2DGFN *)
+
+testStrat3DGFN[base_,set_] := 
+  Module[{sz,tests,i,tab,sz1d},
+	sz=Length[set];
+	If[NumberQ[sz^(1/base)], sz1d = sz^(1/base); tests = {{sz1d,sz1d,sz1d}}];
+	If[NumberQ[(sz/base)^(1/base)], sz1d = (sz/base)^(1/base); tests = {{base sz1d,sz1d,sz1d},{sz1d,base sz1d,sz1d},{sz1d,sz1d,base sz1d}}] ;
+	If[NumberQ[(sz/(base^2))^(1/base)], sz1d = (sz/base)^(1/base); tests = {{base sz1d,base sz1d,sz1d},{base sz1d,sz1d,base sz1d},{sz1d,base sz1d,base sz1d}}] ;
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+	And @@ tab
+] (* testStrat3DGFN *)
+
+testDyadicPartitioningNDFullGFN[base_,ipts_,showErrFlag_:False] := Module[{sz,powers,tests,i,tab,dim},
+	sz=Length[ipts];
+	dim = Length[First@ipts];
+	powers = Table[base^i,{i,0,Log[base,sz]}];
+	tests = Select[Tuples[powers, dim], (Times @@ #) == sz^(dim-1) &];
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ ipts]] == sz,{i,Length[tests]}];
+	If[showErrFlag, If[And @@ tab == False, Print["testDyadicPartitioningNDFullGFN: ",Select[{tests,tab}//T,Last[#]==False&]//mf, " -> ", Select[{tests,tab}//T,Last[#]==False&]//Length] ] ];
+	And @@ tab
+] (* testDyadicPartitioningNDFullGFN *)
+
+testDyadicPartitioningNDFullGFNTfactor[base_,ipts_,tfactor_:0, showErrFlag_:False] := Module[{sz,powers,tests,i,tab,dim},
+	sz=Length[ipts];
+	dim = Length[First@ipts];
+	powers = Table[base^i,{i,0,Log[base,sz]}];
+	tests = Select[Tuples[powers, dim], (Times @@ #) == sz^(dim-1) base^(tfactor) &];
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ ipts]] == sz/base^(tfactor),{i,Length[tests]}];
+	If[showErrFlag, If[And @@ tab == False, Print["testDyadicPartitioningNDFullGFN: ",Select[{tests,tab}//T,Last[#]==False&]//mf, " -> ", Select[{tests,tab}//T,Last[#]==False&]//Length] ] ];
+	And @@ tab
+] (* testDyadicPartitioningNDFullGFN *)
+
+getTfactor[base_,ipts_, showErrFlag_:False] :=
+    Module[ {tfactor},
+    	Do[
+    		If[testDyadicPartitioningNDFullGFNTfactor[base,ipts,tf,showErrFlag],
+	    		tfactor = tf;
+	    		Break[]
+    		];
+    	,{tf,0,10}];
+    	Return[tfactor];
+    ] (* testDyadicPartitioningNDFullGFN *)
+
 (*
 gitpull
 math
@@ -689,4 +760,31 @@ getDiscrepancy2Dbase3SFC[niters_:22] :=
         Print[mf @ res]
     ] (* getDiscrepancy2Dbase3SFC *)
 
+makeMatBuilderMatrices0m2net[] :=
+    Module[ {},
+		Do[
+			execString = "testCplex -i NetBuilder_profiles/2D_0m2net.txt -o NetBuilder_matrices/2D_0m2net_"<>i2s[i]<>".txt --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
+        	returnCode = Run[execPrefix<>execString];
+        	Print[execString -> returnCode]
+		,{i,256}];
+    ] (* makeMatBuilderMatrices *)
+
+enumerate0m2netSolutions[] :=
+    Module[ {},
+    	npts = 3^8;
+		tab = Union @ (Union /@ Table[
+			execString = "matrixSampler -d 2 -b 3 -n "<>ToString[npts]<>" -i NetBuilder_matrices/2D_0m2net_"<>i2s[i]<>".txt --size 10 -o tmp/pts_"<>pid<>".dat > /dev/null";
+        	returnCode = Run[execPrefix<>execString];
+        	Print[i -> execString -> returnCode];
+        	prevpts = pts;
+        	pts = Round[npts Import["tmp/pts_"<>pid<>".dat"] ];
+        	pts
+		,{i,2}]);
+		Print[Length[tab] ];
+		
+		Graphics[{Red, Point /@ prevpts, Blue, Point /@ pts}]
+    ] (* makeMatBuilderMatrices *)
+    
+    
+ 
 (*----------------------------- end of FiboSFC --------------------------------*)
