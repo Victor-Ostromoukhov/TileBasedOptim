@@ -732,8 +732,8 @@ demobase3SFC[niters_:4, dbg_:False] :=
 			{x,y} = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;niters,;;niters]].ind, mxTab[[2,;;niters,;;niters]].ind}) ) / 3^niters;
 			{dx,dy} = {x,y} - refPt;
 			Print[i -> {xcode,ycode} -> v -> ind -> N[{x,y}] -> N[{dx,dy}] -> ( dx >= 0 && dx <= 1 &&  dy >= 0 && dy <= 1)];
-			Point @ {x,y}
-		,{i, 10 (*3^niters*)}];
+			{Point @ {x,y}, Text[Style[i,Bold,14],{x,y},{-1.5,-1.5}]}
+		,{i, 3^niters}];
 		Graphics[ {getbase3SFCTilesGL[tlst,showSFC+showArrows],AbsolutePointSize[10],gl}, PlotLabel-> niters ]//Print;
 Abort[];
 		seltlst = selectbase3SFCTiles[tlst, .33333333];
