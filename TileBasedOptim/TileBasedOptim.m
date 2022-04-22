@@ -711,9 +711,9 @@ getSamplingPtsbase3SFCTiles[tlst_] :=
     	,{ind,Length[tlst]}]
     ] (* getSamplingPtsbase3SFCTiles *)
 
-demobase3SFC[niters_:4, dbg_:False] :=
+demobase3SFC[inniters_:4, dbg_:False] :=
     Module[ {},
-    	
+    	niters = inniters;
 		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {{},{}} ,{}} };
 		(*Graphics[ getbase3SFCTilesGL[tlst] ]//Print;*)
 		
@@ -725,16 +725,37 @@ demobase3SFC[niters_:4, dbg_:False] :=
 		(*Graphics[ getbase3SFCTilesGL[tlst,showGrayValue], PlotLabel-> niters ]//Print;*)
 		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_000001.dat"];
 		mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; niters/2, ;; niters]], mxTab[[2, ;; niters/2, ;; niters]]] ;
+		mxInvH = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; niters/2, ;; niters + 1]], mxTab[[2, ;; niters/2 + 1, ;; niters + 1]]] ;
+		mxInvV = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; niters/2 + 1, ;; niters + 1]], mxTab[[2, ;; niters/2, ;; niters + 1]]] ;
 		gl = Table[
 			{tileType,refPt,{v1,v2},{k1,k2},{xcode,ycode},fcode} = tlst[[i]];
 			v = Join[xcode,ycode];
-			ind = mxInv.v;
-			{x,y} = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;niters,;;niters]].ind, mxTab[[2,;;niters,;;niters]].ind}) ) / 3^niters;
+			indVect = Mod[#,3]& /@ (mxInv.v);
+			{x,y} = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;niters,;;niters]].indVect, mxTab[[2,;;niters,;;niters]].indVect}) ) / 3^niters;
 			{dx,dy} = {x,y} - refPt;
-			Print[i -> {xcode,ycode} -> v -> ind -> N[{x,y}] -> N[{dx,dy}] -> ( dx >= 0 && dx <= 1 &&  dy >= 0 && dy <= 1)];
-			{Point @ {x,y}, Text[Style[i,Bold,14],{x,y},{-1.5,-1.5}]}
+			(*Print[i -> {xcode,ycode} -> v -> indVect -> N[{x,y}] -> N[{dx,dy}] -> ( dx >= 0 && dx <= 3^(niters/2) &&  dy >= 0 && dy <= 3^(niters/2))];*)
+			{Point @ {x,y}, Text[Style[i,Bold,14],{x,y},{-1.2,-1.2}],Red,Text[Style[FromDigits[#,3]& @ indVect,Bold,14],{x,y},{1.2,1.2}]}
 		,{i, 3^niters}];
-		Graphics[ {getbase3SFCTilesGL[tlst,showSFC+showArrows],AbsolutePointSize[10],gl}, PlotLabel-> niters ]//Print;
+		Graphics[ {getbase3SFCTilesGL[tlst,showSFC],AbsolutePointSize[10],gl}, PlotLabel-> niters, ImageSize -> {1024,1024}3/2 ]//Print;
+
+
+		niters = niters+1;
+		tlst = subdivbase3SFCTiles @ tlst;
+		(*Graphics[ {getbase3SFCTilesGL[tlst,showSFC],AbsolutePointSize[10],gl}, PlotLabel-> niters, ImageSize -> {1024,1024}3/2 ]//Print;*)
+
+		gl = Table[
+			{tileType,refPt,{v1,v2},{k1,k2},{xcode,ycode},fcode} = tlst[[i]];
+			mx = If[tileType == typeHRectURdir || tileType == typeHRectULdir || tileType == typeHRectURinv || tileType == typeHRectULinv, mxInvH, mxInvV];
+			v = Join[xcode,ycode];
+			indVect = Mod[#,3]& /@ (mx.v);
+			{x,y} = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;niters,;;niters]].indVect, mxTab[[2,;;niters,;;niters]].indVect}) ) / 3^niters;
+			{dx,dy} = {x,y} - refPt;
+			(*Print[i -> {xcode,ycode} -> v -> indVect -> N[{x,y}] -> N[{dx,dy}] -> ( dx >= 0 && dx <= 3^(niters/2) &&  dy >= 0 && dy <= 3^(niters/2))];*)
+			{Point @ {x,y}, Text[Style[i,Bold,14],{x,y},{-1.2,-1.2}],Red,Text[Style[FromDigits[#,3]& @ indVect,Bold,14],{x,y},{1.2,1.2}]}
+		,{i, 3^niters}];
+		Graphics[ {getbase3SFCTilesGL[tlst,showSFC],AbsolutePointSize[10],gl}, PlotLabel-> niters, ImageSize -> {1024,1024}3/2 ]//Print;
+
+
 Abort[];
 		seltlst = selectbase3SFCTiles[tlst, .33333333];
 		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .33333333 ]//Print;
