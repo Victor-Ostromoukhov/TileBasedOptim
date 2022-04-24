@@ -1,0 +1,3931 @@
+(* Project: unity (Unity/LIRIS)
+	VO April 10, 2018 
+
+dbgexpSobolBased[] -> expSobolBasedWithPermuts[]
+buildBNpts4dexpSobolBased[]
+
+dbgPermutTree[]
+makeBNOTneighbors[]
+buildBNpts4d[]
+showSobol4D[]
+
+dbgSolidAngle[]
+exploreSolidAngleBNMask[]
+
+renumbreVoidAndClusterMx[]
+
+on sphere:
+fibiLattice[] 
+
+*************************************************)
+SetDirectory[ToFileName[$HomeDirectory,"unity"]];
+SetOptions[Graphics, ImageSize ->{ 600,Automatic},AspectRatio->Automatic, PlotRange->All ];
+SetOptions[Graphics, ImageSize -> 3/2{1024,1024},AspectRatio->Automatic, PlotRange->All ];
+SetOptions[ListPlot, ImageSize -> { 600,Automatic},AspectRatio->.2, PlotRange->All];
+SetOptions[ListLogLogPlot, ImageSize -> { 600,Automatic},AspectRatio->.61, PlotRange->All];
+SetOptions[ListDensityPlot, ImageSize -> {512,Automatic},AspectRatio->Automatic, PlotRange->All];
+SetOptions[MatrixPlot, Mesh -> True];
+SetOptions[ArrayPlot, Mesh -> True];
+SetOptions[Graphics3D, ImageSize -> {1024,1024},AspectRatio->Automatic, PlotRange->All];
+
+pid := "_pid"<>ToString[$ProcessID]<>"_kid"<>ToString[$KernelID]
+systemID = StringSplit[$System][[1]]; (* "Mac" or "Linux" *)
+execPrefix = "~/bin/";
+
+second[x_]:= If[Length[x] > 1, x[[2]], First[x] ] (* like First *)
+third[x_]:= If[Length[x] > 2, x[[3]], First[x] ] (* like First *)
+fourth[x_]:= If[Length[x] > 3, x[[4]], First[x] ] (* like First *)
+
+epsilon = 10^-10.;
+eps = 10^-6.;
+
+Print["unity loaded."];
+
+mf := MatrixForm
+if := InputForm
+T :=  Transpose
+gr = GoldenRatio // N
+PI = Pi//N;
+known := ValueQ
+
+tau = phi = 1/2 (Sqrt[5]+1);
+
+n2PaddedString[n_,len_:5] := ToString[NumberForm[n, len-1, NumberPadding -> "0"]]
+
+niceRaster[img_,OptionsPattern[]] :=
+	Block[ {sx,sy,z},
+		z = OptionValue[zoom];
+		{sy,sx} = Dimensions[img][[;;2]];
+		Return[Graphics[Raster[img],PlotRange->{{0,sx},{0,sy}},ImageSize->{z sx,z sy}]];
+	];
+Options[niceRaster] = {zoom->1};
+
+reorg2D[lst2D_] :=
+    With[ {sz = Floor[Length[lst2D]/2]},
+        If[ sz == 0, Print["reorg2D: void data"]; Break[] ];
+        (RotateLeft[#,sz]& /@ (RotateLeft[#,sz]& @ lst2D))
+    ] (* reorg2D *)
+Reorg := reorg2D
+
+rotatePI2[pt1_,pt2_]:=Block[{x,y},
+  {x,y} = pt1-pt2;
+  Return[pt2+{-y,x}]
+] (* rotatePI2 *)
+rotatePI2::usage =
+"rotatePI2[pt1, pt2] : Point pt1 rotated around pt2 by angle PI/2 (90 deg)"
+
+rotatedaround[pt1_, pt2_, alpha_]:=
+(* gives a point which is pt1 rotated around pt2 by angle alpha *)
+Block[{a},
+    If [pt1 == pt2, Return[pt1]];
+    a = ArcTan[(pt1-pt2)[[1]],(pt1-pt2)[[2]]];
+    Return[ pt2 + euclidlen[pt1-pt2] {Cos[a+alpha], Sin[a+alpha]} ]
+]; (* rotatedaround *)
+rotatedaround::usage = "rotatedaround[pt1,pt2,alpha] : Point pt1 rotated around pt2 by angle alpha"
+
+getAngle[z0_, z1_, z2_] := Block[{res},
+  If[z0==z1 || z2==z1, res = 0, res = ArcTan@@(z0-z1) - ArcTan@@(z2-z1) ];
+  If[res < 0, res += 2Pi];
+  Return[res]
+] (* getAngle *)
+getAngle::usage =
+  "getAngle[z0, z1, z2] angle z0--z1--z2, in 2D, between 0 and 2 Pi"
+
+
+euclidlen[z_] := Sqrt[Total[z^2]]
+euclidlen2[z_] := Total[z^2]
+euclidlenSq[z_] := Total[z^2]
+euclidlenN[z_] := Sqrt[Total[z^2]]//N
+
+arr3D[{from_,to_},th_:.03] :={Cylinder[{from,.1from + .9 to},th],Cone[{.1from + .9 to,to},2 th]}
+
+getRandomColor[] :=
+    RGBColor[Random[], Random[], Random[]]
+
+
+   
+
+(*------------ quaternions from discrete_rotations_600cell.nb V.O.UdeM december 2005------------*)
+
+(*quaternion2matrixOLD[q_] :=
+    Module[ {
+    xx = q[[2]]^2, yy = q[[3]]^2, zz = q[[4]]^2,
+    xy = q[[2]] q[[3]], xz = q[[2]] q[[4]], yz = q[[3]] q[[4]], 
+    wx = q[[1]] q[[2]], wy = q[[1]] q[[3]], wz = q[[1]] q[[4]]},
+        Return[{
+          {1 - 2*(yy + zz), 2*(xy + wz), 2*(xz - wy)},
+          {2*(xy - wz), 1 - 2*(xx + zz), 2*(yz + wx)},
+          {2*(xz + wy), 2*(yz - wx), 1 - 2*(xx + yy)}}]
+    ] (* quaternion2matrix *)
+*)
+quaternion2matrixOLD[q_] :=
+    Module[ {
+    xx = q[[2]]^2, yy = q[[3]]^2, zz = q[[4]]^2, (* {w,x,y,z} *)
+    xy = q[[2]] q[[3]], xz = q[[2]] q[[4]], yz = q[[3]] q[[4]], 
+    wx = q[[1]] q[[2]], wy = q[[1]] q[[3]], wz = q[[1]] q[[4]]},
+        Return[{
+          {1 - 2 yy - 2 zz, 	2 xy - 2 wz, 		2 xz + 2 wy},
+          {2 xy + 2 wz, 		1 - 2 xx - 2 zz, 	2 yz - 2 wx},
+          {2 xz - 2 wy, 		2 yz + 2 wx, 		1 - 2 xx - 2 yy}}]
+    ] (* quaternion2matrix *)
+
+quaternion2matrix[{w_,x_,y_,z_}] :=
+    Module[ {n,s,xx,yy,zz,wx,wy,wz,xy,xz,yz},
+		n = w * w + x * x + y * y + z * z;
+		s = If[n == 0, 0 ,(*ELSE*) 2 / n ];
+		wx = s * w * x; wy = s * w * y; wz = s * w * z;
+		xx = s * x * x; xy = s * x * y; xz = s * x * z;
+		yy = s * y * y; yz = s * y * z; zz = s * z * z;
+        Return[{
+			{1 - (yy + zz),		xy - wz,		xz + wy},
+			{xy + wz,     		1 - (xx + zz),	yz - wx},
+			{xz - wy ,			yz + wx,		1 - (xx + yy)}
+        }]
+
+    ] (* quaternion2matrix *)
+
+sign[x_] := If[x >= 0, 1, -1]
+
+matrix2quaternion[m_] := (* ref: https://en.wikipedia.org/wiki/Rotation_matrix#Quaternion *)
+    Module[ {t,r, w, x, y, z},
+		t = Tr[m];
+		r = Sqrt[(1+t)];
+		w = r/2;
+		x = sign[m[[3,2]]-m[[2,3]]] Sqrt[(1+m[[1,1]]-m[[2,2]]-m[[3,3]])]/2;
+		y = sign[m[[1,3]]-m[[3,1]]] Sqrt[(1-m[[1,1]]+m[[2,2]]-m[[3,3]])]/2;
+		z = sign[m[[2,1]]-m[[1,2]]] Sqrt[(1-m[[1,1]]-m[[2,2]]+m[[3,3]])]/2;
+		{w,x,y,z}
+    ] (* matrix2quaternion *)
+
+findClosestQuaternion[q_] :=
+    Module[ {dvect, pos},
+        dvect = euclidlen[q - #] & /@ qlst;
+        pos = Position[dvect, Min[dvect]];
+        If[ Length[pos] > 1,
+            Print[Min[dvect] // Chop, " findClosestQuaternion: ", pos]
+        ];
+        Return[ pos[[1, 1]]]
+    ] (* findClosestQuaternion *)
+
+multiplyQuaternions[q0_, q1_] :=
+    Module[ {w0, x0, y0, z0, w1, x1, y1, z1},
+        {w0, x0, y0, z0} = q0;
+        {w1, x1, y1, z1} = q1;
+        Return[Chop[{
+           w0*w1 - x0*x1 - y0*y1 - z0*z1,
+           w0*x1 + x0*w1 + y0*z1 - z0*y1,
+           w0*y1 - x0*z1 + y0*w1 + z0*x1,
+           w0*z1 + x0*y1 - y0*x1 + z0*w1}]]
+    ] (* multiplyQuaternions *)
+
+show120cell[] :=
+    Module[ {},
+        v533 = Get["data/v533.data"]; (* 600 vertices *)
+        e533 = Get["data/e533.data"]; (* 1200 edges *)
+        f533 = Get["data/f533.data"];  (* 720 faces *)
+        c533 = Get["data/c533.data"];  (* 120 cells *)
+        qtab = Table[{}, {120}];
+        (*---vertices---*)
+        Do[
+          v = v533[[i]];
+          AppendTo[qtab[[1]], v/euclidlen[v]]
+         , {i, Length[v533]}];
+        
+        (*---cells---*)
+        Do[
+			v = (Plus @@ c533[[i]])/Length[ c533[[i]]] // Chop;
+				AppendTo[qtab[[2]], v/euclidlen[v]];
+ 		, {i, Length[c533]}];
+
+		(**************
+		(*---faces---*)
+		Do[
+		vcenter=v=(Plus @@ f533[[i]])/Length[f533[[i]]]//Chop;
+		AppendTo[qlst,vcenter/euclidlen[vcenter]];
+		,{i,Length[f533]}]
+		
+		(*---edges---*)
+		Do[
+		v=(Plus @@ e533[[i]])/Length[ e533[[i]]]//Chop
+		AppendTo[qlst,v/euclidlen[v]];
+		,{i,Length[e533]}]
+		*********)
+
+		nsphere = 20;
+        gl = {Opacity[.5],Thickness[.001], Lighter@Cyan, Sphere[{0,0,0},.99],  PointSize[.005],Opacity[1]};
+        fviz = WireFrame;
+        fviz = Identity;
+        z0 = {0, 0, 1};
+        z0 = {1, 0, 0};
+        z0 = {1, 1, 1}/sqrt3;
+        z0 = {Random[], Random[], Random[]};
+        z0 = z0/euclidlen[z0];
+        Do[
+          qlst = qtab[[j]];
+          col = getRandomColor[];
+          Do[
+           z = z0;
+           q = qlst[[i]];
+           m = quaternion2matrix[q];
+           (*z = m.z0;*)
+           z = Total[(m z0)];
+           sz = .02;
+           AppendTo[gl, {col, PointSize[sz ], Point[z]} ];
+           , {i, Length[qlst]}];
+          , {j, 1, 2}];
+        p1 = Graphics3D[{gl}, PlotRange -> All, Boxed -> False, Axes -> False];
+        p1 // Show
+    ]
+    
+ rotMx2AxisAngle[rotMx_] := (* source: https://en.wikipedia.org/wiki/Rotation_matrix *)
+    Module[ {es, ind, u,theta},
+        es = Eigensystem[rotMx];
+        ind = Position[es[[1]], 1][[1, 1]];
+        u = es[[2,ind]] / Norm[ es[[2,ind]] ] ;
+        theta = ArcCos[(Tr[rotMx]-1)/2];
+        {u,theta}
+    ] (* rotMx2AxisAngle *)
+
+
+wxyz2AxisAngle[{w_,x_,y_,z_}]:= {{x,y,z}/Norm[{x,y,z}],2 ArcCos[w]}
+
+basesQuaternions = (* 60 bases (matrix2quaternion /@ bases) // FullSimplify *)
+  	{{1,0,0,0},{1/4 (1+Sqrt[5]),-(1/2),0,1/4 (-1+Sqrt[5])},{1/2,1/2,1/2,1/2},{1/2,1/4 (-1+Sqrt[5]),0,1/4 (1+Sqrt[5])},{1/4 (1+Sqrt[5]),1/2,0,1/4 (-1+Sqrt[5])},
+  	{1/2,-(1/2),-(1/2),-(1/2)},{1/4 (-1+Sqrt[5]),1/4 (-1-Sqrt[5]),0,-(1/2)},{0,1/2,1/4 (-1+Sqrt[5]),1/4 (1+Sqrt[5])},{0,1,0,0},{1/2,1/4 (1+Sqrt[5]),1/4 (-1+Sqrt[5]),0},
+  	{1/4 (-1+Sqrt[5]),1/4 (1+Sqrt[5]),0,-(1/2)},{1/2,-(1/2),1/2,-(1/2)},{0,1/4 (1+Sqrt[5]),1/2,1/4 (-1+Sqrt[5])},{1/2,1/2,1/2,-(1/2)},{0,1/2,1/4 (-1+Sqrt[5]),1/4 (1+Sqrt[5])},
+  	{1/4 (1+Sqrt[5]),0,1/4 (-1+Sqrt[5]),-(1/2)},{0,0,0,1},{1/4 (-1+Sqrt[5]),0,1/2,1/4 (-1-Sqrt[5])},{1/2,1/2,-(1/2),-(1/2)},{1/4 (1+Sqrt[5]),0,1/4 (1-Sqrt[5]),-(1/2)},
+  	{0,1/4 (1+Sqrt[5]),1/2,1/4 (-1+Sqrt[5])},{1/4 (-1+Sqrt[5]),0,-(1/2),1/4 (-1-Sqrt[5])},{1/2,1/2,-(1/2),1/2},{1/4 (1+Sqrt[5]),1/4 (-1+Sqrt[5]),-(1/2),0},{0,0,1,0},
+  	{0,1/4 (-1+Sqrt[5]),1/4 (1+Sqrt[5]),1/2},{1/2,0,1/4 (1+Sqrt[5]),1/4 (-1+Sqrt[5])},{1/2,-(1/2),-(1/2),1/2},{1/4 (-1+Sqrt[5]),-(1/2),1/4 (-1-Sqrt[5]),0},{1/2,-(1/2),1/2,1/2},
+  	{1/4 (1+Sqrt[5]),1/2,0,1/4 (1-Sqrt[5])},{1/4 (1+Sqrt[5]),-(1/2),0,1/4 (1-Sqrt[5])},{1/4 (1+Sqrt[5]),1/4 (1-Sqrt[5]),-(1/2),0},{1/4 (-1+Sqrt[5]),1/2,1/4 (1+Sqrt[5]),0},
+  	{1/4 (1+Sqrt[5]),0,1/4 (-1+Sqrt[5]),1/2},{1/2,0,1/4 (-1-Sqrt[5]),1/4 (1-Sqrt[5])},{0,1/4 (1+Sqrt[5]),1/2,1/4 (-1+Sqrt[5])},{1/2,1/4 (1+Sqrt[5]),1/4 (1-Sqrt[5]),0},
+  	{1/2,1/4 (-1-Sqrt[5]),1/4 (1-Sqrt[5]),0},{1/4 (-1+Sqrt[5]),-(1/2),1/4 (1+Sqrt[5]),0},{1/2,1/4 (1-Sqrt[5]),0,1/4 (-1-Sqrt[5])},{1/2,1/4 (-1-Sqrt[5]),1/4 (-1+Sqrt[5]),0},
+  	{1/4 (1+Sqrt[5]),1/4 (-1+Sqrt[5]),1/2,0},{1/2,0,1/4 (1+Sqrt[5]),1/4 (1-Sqrt[5])},{1/4 (-1+Sqrt[5]),0,1/2,1/4 (1+Sqrt[5])},{1/4 (-1+Sqrt[5]),0,-(1/2),1/4 (1+Sqrt[5])},
+  	{0,1/2,1/4 (-1+Sqrt[5]),1/4 (1+Sqrt[5])},{1/2,1/4 (-1+Sqrt[5]),0,1/4 (-1-Sqrt[5])},{1/2,0,1/4 (-1-Sqrt[5]),1/4 (-1+Sqrt[5])},{1/4 (-1+Sqrt[5]),1/4 (1+Sqrt[5]),0,1/2},
+  	{1/4 (-1+Sqrt[5]),1/2,1/4 (-1-Sqrt[5]),0},{0,1/4 (-1+Sqrt[5]),1/4 (1+Sqrt[5]),1/2},{0,1/4 (-1+Sqrt[5]),1/4 (1+Sqrt[5]),1/2},{0,1/4 (1+Sqrt[5]),1/2,1/4 (-1+Sqrt[5])},
+  	{1/4 (1+Sqrt[5]),0,1/4 (1-Sqrt[5]),1/2},{0,1/4 (-1+Sqrt[5]),1/4 (1+Sqrt[5]),1/2},{0,1/2,1/4 (-1+Sqrt[5]),1/4 (1+Sqrt[5])},{1/4 (1+Sqrt[5]),1/4 (1-Sqrt[5]),1/2,0},
+  	{1/4 (-1+Sqrt[5]),1/4 (-1-Sqrt[5]),0,1/2},{1/2,1/4 (1-Sqrt[5]),0,1/4 (1+Sqrt[5])}};
+  	
+ qtab = {{1/4 (1+Sqrt[5]),-(1/2),0,1/4 (-1+Sqrt[5])},{1/2,1/4 (-1+Sqrt[5]),0,1/4 (1+Sqrt[5])},{1/4 (-1+Sqrt[5]),0,1/2,1/4 (1+Sqrt[5])},{-(1/2),1/4 (1-Sqrt[5]),0,1/4 (1+Sqrt[5])},
+ 	{1/4 (-1-Sqrt[5]),1/4 (-1+Sqrt[5]),-(1/2),0},{1/2,1/2,1/2,-(1/2)},{1/4 (1-Sqrt[5]),0,-(1/2),1/4 (1+Sqrt[5])},{1/2,0,1/4 (-1-Sqrt[5]),1/4 (-1+Sqrt[5])},{1/4 (-1-Sqrt[5]),1/2,0,1/4 (-1+Sqrt[5])},
+ 	{-(1/2),0,1/4 (1+Sqrt[5]),1/4 (-1+Sqrt[5])},{1/4 (-1+Sqrt[5]),-(1/2),1/4 (-1-Sqrt[5]),0},{1/2,1/2,1/2,1/2}};
+(* {q1, q2} = {qtab[[1]], qtab[[2]]};
+Do[
+ Print[i -> Position[qtab, q1] -> Position[qtab, q2]];
+ {q1, q2} = {q2, multiplyQuaternions[q1, q2] // FullSimplify};
+ , {i, 12}]*)
+ 
+(*tuples = Select[
+   Tuples[{0, 1, 1/2, 1/4 (1 + Sqrt[5]), 
+     1/4 (-1 + Sqrt[5]), -1, -1/
+      2, -1/4 (1 + Sqrt[5]), -1/4 (-1 + Sqrt[5])}, 4], 
+   N[Norm[#]] == 1. &];
+Do[
+ tt = Parallelize @ Table[
+    {q1, q2} = {tuples[[j]], tuples[[jj]]};
+    Table[
+     {q1, q2} = {q2, multiplyQuaternions[q1, q2] // FullSimplify};
+     ind = Flatten[{Position[tuples, q1], Position[tuples, q2]}];
+     ind
+     , {i, 1000}]
+    , {j, Length[tuples]}];
+ len1 = Length[Union[Flatten[#]]] & /@ tt;
+ len2 = Length[Union[#]] & /@ tt;
+ Print[jj -> Union[ len1] -> Union[ len2]];
+ , {jj, Length[tuples]}]
+
+1->{3,4,5,12,20,24,30,50}->{3,6,14,16,42,48,50,150}
+2->{3,4,5,12,20,24,30,50}->{3,6,14,16,42,48,50,150}
+3->{3,4,5,12,20,24,30,50}->{3,6,14,16,42,48,50,150}
+4->{3,4,5,12,20,24,30,50}->{3,6,14,16,42,48,50,150}
+5->{3,4,5,12,20,24,30,50}->{3,6,14,16,42,48,50,150}*)
+
+(*------------ end of quaternions from discrete_rotations_600cell.nb V.O.UdeM december 2005------------*)
+
+dbgQuaternions[] :=
+    Module[ {},
+        unitVectorsGL = {Red,Thickness[.01],Arrow[{{0,0,0},{1,0,0}}],Green,Thickness[.01],Arrow[{{0,0,0},{0,1,0}}],Blue,Thickness[.01],Arrow[{{0,0,0},{0,0,1}}]};
+        gl = {Opacity[.5],Thickness[.001], Lighter@Cyan, Sphere[{0,0,0},.99],  PointSize[.005],Opacity[1]};
+        rpts = Table[
+                {w,x,y,z} = {0,	ix/256 2.,1,iz/256 2.};
+                diag = Norm[{w,x,y,z}];
+                rotMx = quaternion2matrix[#/diag]& @ {w,x,y,z};
+                {w,x,y,z} = (diag matrix2quaternion[rotMx])//Chop;
+                (*If[ {w,x,y,z} == {0,0,0,0}, Continue[] ];*)
+                det = Det[rotMx];
+                intMx = diag^2 rotMx;
+                (*If[ Max[Abs[Flatten@intMx]] == 1, Continue[] ];*)
+                tstsetmax = Ceiling[diag^(2/3)];
+                pt = {1,0,0};
+                rpt = Flatten @ (rotMx.T[{pt}]);
+                rpt
+           ,{iz,0,256},{ix,0,256}];
+        Graphics3D[{gl,unitVectorsGL
+            ,Red,Point/@ rpts
+            } ]//Print;
+    ] (* dbgQuaternions *)
+
+tst[] :=
+    Module[ {},
+        v533 = Get["data/v533.data"]; (* 600 vertices *)
+        e533 = Get["data/e533.data"]; (* 1200 edges *)
+        f533 = Get["data/f533.data"];  (* 720 faces *)
+        c533 = Get["data/c533.data"];  (* 120 cells *)
+        qtab = Table[{}, {120}];
+        (*---vertices---*)
+        Do[
+          v = v533[[i]];
+          AppendTo[qtab[[1]], v/euclidlen[v]]
+         , {i, Length[v533]}];
+        
+        (*---cells---*)
+        Do[
+            v = (Plus @@ c533[[i]])/Length[ c533[[i]]] // Chop;
+            AppendTo[qtab[[2]], v/euclidlen[v]];
+         , {i, Length[c533]}];
+        gl = {Opacity[.5],Thickness[.001], Lighter@Cyan, Sphere[{0,0,0},.99],  PointSize[.005],Opacity[1]};
+        fviz = WireFrame;
+        fviz = Identity;
+        z0 = {0, 0, 1};
+        z0 = {1, 0, 0};
+        z0 = {1, 1, 1}/sqrt3;
+        z0 = {Random[], Random[], Random[]};
+        z0 = z0/euclidlen[z0];
+        Do[
+          qlst = qtab[[j]];
+          col = getRandomColor[];
+          Do[
+	           z = z0;
+	           q = qlst[[i]];
+	           m = quaternion2matrix[q];
+	           (*z = m.z0;*)
+	           (*z = Total[(m z0)];*)
+               z = Flatten @ (m.T[{z0}]);
+	           sz = .02;
+	           AppendTo[gl, {col, PointSize[sz ], Point[z]} ];
+           , {i, 1 Length[qlst]}];
+		, {j, 1, 1}];
+        p1 = Graphics3D[{gl}, PlotRange -> All, Boxed -> False, Axes -> False];
+        p1 // Show
+    ]
+
+getCCVTpts[npts_,dbg_:False] :=
+    Module[ {execString},
+        execString = "ccvtTor "<>ToString[npts]<>" 256 1 1 tmp/res"<>pid<>".dat  > /dev/null"; (* "Linux" : OpenMP version *)
+        If[dbg, Print["Executing ", execString] ];
+        Run[execPrefix<>execString];
+        Import["tmp/res"<>pid<>".dat"]
+    ] (* getDiscrepancy2Dexact *)
+
+getBNOTpts[npts_:1024,ordNumber_:0, dbg_:True] :=
+    Module[ {execString,resFileName,rnd},
+    		resFileName = "tmp/res"<>pid<>".dat";
+    		If[FileExistsQ[resFileName], DeleteFile[resFileName]]; (* otherwise pbnot appends to it!!! *)
+    		rnd = If[ordNumber == 0, RandomInteger[2^16], ordNumber];
+    		execString = "pbnot -n "<>ToString[npts]<>" -r "<>ToString[rnd]<>" -o "<>resFileName<>"  > /dev/null"; (* "Linux" : OpenMP version *)
+        If[dbg, Print["Executing ", execString] ];
+        Run[execPrefix<>execString];
+        Import["tmp/res"<>pid<>".dat"]
+    ] (* getDiscrepancy2Dexact *)
+
+getHungarian[{pts1_,pts2_}] :=
+    Module[ {execString},
+        Export["tmp/pts1"<>pid<>".dat",N[pts1]];
+        Export["tmp/pts2"<>pid<>".dat",N[pts2]];
+        execString = "hungarian-algorithm -i tmp/pts1"<>pid<>".dat  tmp/pts2"<>pid<>".dat -o tmp/out"<>pid<>".dat  > /dev/null"; (* "Linux" : OpenMP version *)
+        Print["Executing ", execString];
+        Run[execPrefix<>execString];
+        Flatten @ Import["tmp/out"<>pid<>".dat"]
+    ] (* getDiscrepancy2Dexact *)
+
+prepLloydPointsets[pts_,margin_:.5,dbg_:True] :=
+    Module[ {shiftTab,ptsPlus,innerpts,outerpts},
+        shiftTab = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,0},{0,1},{1,-1},{1,0},{1,1}};
+        ptsPlus = Flatten[#,1]& @ Table[
+            shift = shiftTab[[iShift]];
+            Plus[shift,#]& /@ pts
+        ,{iShift, Length[shiftTab]} ];
+        innerpts  = Select[#, -margin < #[[1]] < (1 + margin) && -margin < #[[2]] < (1 + margin) &]& @  ptsPlus;
+        outerpts = Complement[ptsPlus,innerpts];
+        {Join[#, {1}] & /@ innerpts, Join[#, {-1}] & /@ outerpts}
+    ] (* prepLloydPointsets *)
+
+prepLloydPointsetsWithRef[pts_,refPts_,margin_:.5,dbg_:True] :=
+    Module[ {shiftTab,ptsPlus,innerpts,outerpts,flag,refpt,pt,refptsPlus,tmp},
+        shiftTab = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,0},{0,1},{1,-1},{1,0},{1,1}};
+        ptsPlus = Flatten[#,1]& @ Table[
+            shift = shiftTab[[iShift]];
+            Plus[shift,#]& /@ pts
+        ,{iShift, Length[shiftTab]} ];
+        refptsPlus = Flatten[#,1]& @ Table[
+            shift = shiftTab[[iShift]];
+            Plus[shift,#]& /@ refPts
+        ,{iShift, Length[shiftTab]} ];
+        
+        tmp = Table[pt = ptsPlus[[i]]; refpt = refptsPlus[[i]];
+        		flag = If[Norm[refpt - pt] < eps, {1}, {-1}];
+        		Join[#, flag] & @ pt, {i,Length[ptsPlus]}];
+ 
+        innerpts  = Select[#, -margin < #[[1]] < (1 + margin) && -margin < #[[2]] < (1 + margin) &]& @  tmp;
+        outerpts = Complement[tmp,innerpts];
+        {innerpts,
+        	Join[#, {-1}] & /@ (Drop[#,-1]& /@ outerpts)}
+    ] (* prepLloydPointsets *)
+
+performLloydWithBlockers[{pts_,blockers_},niters_:1,dbg_:False] :=
+    Module[ {inputfname,outputfname,execString,npts=Length[pts]},
+    	inputfname = "tmp/in"<>pid<>".dat";
+    	outputfname = "tmp/out"<>pid<>".dat";
+    	Export[inputfname,Join[pts,blockers]];
+    	execString = "my_lloyd2d "<>inputfname<>" "<>outputfname<>" "<>ToString[niters];
+    	If[dbg, Print["executing ",execString -> {Length[pts],Length[blockers]}]];
+    	Run[execPrefix<>execString];
+    	Drop[#,-1]& /@ Import[outputfname][[;;npts]]
+    ] (* performLloydWithBlockers *)
+
+pairingCCVTSquarePartitions[ordNumber_:0] := (* takes a couple of minutes for 1024 points *)
+    Module[ {pts,nDifferentPts,centers,indTab,pairs,fname},
+        npts = 256;
+        npts = 1024;
+        npts1d = Sqrt[npts];
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+        partitionBorders = {Cyan, Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}] };
+        pts = getCCVTpts[npts];
+        centers = Flatten[#,1]& @ Table[
+                {xCenter,yCenter} = 1./npts1d {(ix-.5),(iy-.5)};
+                {xCenter,yCenter}
+            ,{iy,npts1d},{ix,npts1d}];
+        nDifferentPts = Length@Union[Floor[npts1d pts]];
+        Print[ordNumber -> (npts-nDifferentPts)];
+        indTab = getHungarian[{centers,pts}];
+        pairs = Table[{centers[[i]],pts[[1+indTab[[i]]]]},{i,Length[indTab]}];
+        Graphics[{frame, partitionBorders, Orange, AbsolutePointSize[10], Line/@pairs, Black, Point/@pts, Red, Point/@centers},ImageSize ->3/2{1024,1024}]//Print;
+        fname = "data/CCVTSquarePartitionsPairs_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[ordNumber]<>".dat";
+        Export[fname,Flatten /@ pairs];
+    ] (* pairingCCVTSquarePartitions *)
+
+    
+
+ pairingBNOTquarePartitions[dbg_:True] := (* takes a couple of minutes for 1024 points *)
+    Module[ {(*pts,nDifferentPts,centers,indTab,pairs,fname*)},
+    		pow = 1/2; (* used to bring overpassed pts into strata *)
+        npts = 256;
+        npts = 1024;
+        npts1d = Sqrt[npts];
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+        partitionBorders = {Cyan, Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}] };
+		centers = Flatten[#,1]& @ Table[
+	                {xCenter,yCenter} = 1./npts1d {(ix-.5),(iy-.5)};
+	                {xCenter,yCenter}
+	            ,{iy,npts1d},{ix,npts1d}];
+
+		{nProblematicMaxrPerLine,nProblematicMaxToal} = Switch[npts
+			,256, {3,33}
+			,1024, {5,200}
+		];
+		count = 0;
+		niters = 16;
+		nLloydIterations = 1;
+		Parallelize @ Do[
+			nSolution = iter;
+			found = False;
+			While[!found,
+		        bnotpts = getBNOTpts[npts,nSolution];
+		        nDifferentPts = Length@Union[Floor[npts1d bnotpts]];
+				diff = (npts-nDifferentPts);
+        			Print[{count,iter} -> " before correction ", Length[bnotpts] -> diff];
+
+			    If[Length[bnotpts] != npts, Continue[] ];
+		        indTab = getHungarian[{centers,bnotpts}];
+		        pairs = Table[{centers[[i]],bnotpts[[1+indTab[[i]]]]},{i,Length[indTab]}];	        
+	
+				xBorders = yBorders = Table[0,{npts1d+1}];
+				newPts = Table[
+					{xdiff,ydiff} = (pairs[[iPair,2]] - pairs[[iPair,1]]) npts1d ;
+					{xInd,yInd} = Floor[npts1d #]& /@ pairs[[iPair,1]];
+					{xNew,yNew} = pairs[[iPair,2]];
+					If[xdiff < -1/2, (xBorders[[xInd+1]])++; kx = Sign[xdiff] (1/Abs[xdiff]/2)^(pow); xNew = pairs[[iPair,1,1]] + kx/2/npts1d ];
+					If[xdiff >  1/2, (xBorders[[xInd+2]])++; kx = Sign[xdiff] (1/Abs[xdiff]/2)^(pow); xNew = pairs[[iPair,1,1]] + kx/2/npts1d ];
+					If[ydiff < -1/2, (yBorders[[yInd+1]])++; ky = Sign[ydiff] (1/Abs[ydiff]/2)^(pow); yNew = pairs[[iPair,1,2]] + ky/2/npts1d ];
+					If[ydiff >  1/2, (yBorders[[yInd+2]])++; ky = Sign[ydiff] (1/Abs[ydiff]/2)^(pow); yNew = pairs[[iPair,1,2]] + ky/2/npts1d ];
+					{xNew,yNew}
+				,{iPair,Length[pairs]}];
+				corrections = {newPts,Last/@pairs}//T;
+				Print[mf[{xBorders,yBorders}] -> {Max[xBorders],Max[yBorders]} -> (Total @ {Total[xBorders], Total[yBorders]})]; 
+	        		If[Max[{Max[xBorders], Max[yBorders]}] <= nProblematicMaxrPerLine && (Total @ {Total[xBorders], Total[yBorders]}) <= nProblematicMaxToal, found = True];
+			];
+	        If[dbg,
+       			Graphics[{frame, partitionBorders, AbsolutePointSize[10], 
+       				Green, Table[{Line[{newPts[[i]],pairs[[i,1]]}] },{i,Length[pairs]}],
+       				Red,Line/@corrections,
+       				Red, Point /@ bnotpts, Black, Point/@ newPts},ImageSize ->3/2{1024,1024} ]//Print;
+	        	];
+
+
+
+			prevPts = newPts;
+			{lloydPts,lloydBlockers} = prepLloydPointsetsWithRef[prevPts,Last/@pairs];
+			pts = Select[#, 0 <= #[[1]] < 1 && 0 <= #[[2]] < 1 &]& @  performLloydWithBlockers[{lloydPts,lloydBlockers},nLloydIterations];
+
+			If[Length[pts] != npts, Continue[] ];
+			
+			finalResult = Table[ Flatten@{Floor[npts1d pairs[[iPair,1]]], npts1d ( newPts[[iPair]] - (pairs[[iPair,1]] - {1/npts1d/2., 1/npts1d/2.}) )} ,{iPair,Length[pairs]}];			
+	        fname = "data/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[nSolution]<>"_beforeLloyd.dat";
+	        Export[fname,finalResult];
+
+
+		        indTab = getHungarian[{centers,pts}];
+		        pairs = Table[{centers[[i]],pts[[1+indTab[[i]]]]},{i,Length[indTab]}];	        
+	
+				xBorders = yBorders = Table[0,{npts1d+1}];
+				newPts = Table[
+					{xdiff,ydiff} = (pairs[[iPair,2]] - pairs[[iPair,1]]) npts1d ;
+					{xInd,yInd} = Floor[npts1d #]& /@ pairs[[iPair,1]];
+					{xNew,yNew} = pairs[[iPair,2]];
+					If[xdiff < -1/2, (xBorders[[xInd+1]])++; kx = Sign[xdiff] (1/Abs[xdiff]/2)^(pow); xNew = pairs[[iPair,1,1]] + kx/2/npts1d ];
+					If[xdiff >  1/2, (xBorders[[xInd+2]])++; kx = Sign[xdiff] (1/Abs[xdiff]/2)^(pow); xNew = pairs[[iPair,1,1]] + kx/2/npts1d ];
+					If[ydiff < -1/2, (yBorders[[yInd+1]])++; ky = Sign[ydiff] (1/Abs[ydiff]/2)^(pow); yNew = pairs[[iPair,1,2]] + ky/2/npts1d ];
+					If[ydiff >  1/2, (yBorders[[yInd+2]])++; ky = Sign[ydiff] (1/Abs[ydiff]/2)^(pow); yNew = pairs[[iPair,1,2]] + ky/2/npts1d ];
+					{xNew,yNew}
+				,{iPair,Length[pairs]}];
+				corrections = {newPts,Last/@pairs}//T;
+				Print[mf[{xBorders,yBorders}] -> {Max[xBorders],Max[yBorders]} -> (Total @ {Total[xBorders], Total[yBorders]})]; 
+
+		        If[dbg,
+	       			Graphics[{frame, partitionBorders, AbsolutePointSize[10], 
+	       				Green, Table[{Line[{newPts[[i]],pairs[[i,1]]}] },{i,Length[pairs]}],
+	       				Red,Line/@corrections,
+	       				Red, Point /@ pts, Black, Point/@ newPts},ImageSize ->3/2{1024,1024},PlotLabel->"After Lloyd" ]//Print;
+		        	];
+
+
+			finalResult = Table[ Flatten@{Floor[npts1d pairs[[iPair,1]]], npts1d ( newPts[[iPair]] - (pairs[[iPair,1]] - {1/npts1d/2., 1/npts1d/2.}) )} ,{iPair,Length[pairs]}];			
+	        fname = "data/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[nSolution]<>".dat";
+	        Export[fname,finalResult];
+		,{iter,0,niters-1}];
+		
+		pts = finalResult[[;; , 1 ;; 2]] + finalResult[[;; , 3 ;; 4]] /npts1d;
+		Graphics[Point/@pts]//Print;
+
+    ] (* pairingCCVTSquarePartitions *)
+
+    
+visuPairingBNOTquarePartitions[nSolution_:0,npts_:1024] :=
+    Block[ {},
+        npts1d = Sqrt[npts];
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+        partitionBorders = {Cyan, Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}] };
+        centers = Table[
+                    {xCenter,yCenter} = 1./npts1d {(ix-.5),(iy-.5)};
+                    {xCenter,yCenter}
+                ,{iy,npts1d},{ix,npts1d}];
+        (*fname = "data/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[nSolution]<>".dat";*)
+        fname = "data_best_found/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[nSolution]<>".dat";
+        data = Import[fname];
+        
+        pairs = Table[
+        		{indx,indy} = data[[i,1;;2]];
+        		{x,y} = {indx,indy} / npts1d + data[[i,3;;4]] / npts1d;
+        		{centers[[1+indy,1+indx]], {x,y}}
+        	,{i,Length[data]}];
+        Graphics[{frame, partitionBorders, AbsolutePointSize[10], 
+	       				Green, Table[{Line[ pairs[[i]] ] },{i,Length[pairs]}],
+	       				Black, Point/@ (Last /@ pairs)},ImageSize ->3/2{1024,1024},PlotLabel->"After Lloyd" ]//Print;
+    ]
+    
+(*---------------------- Fibonacci + icosahedral group ----------------------*)
+basesAreAlreadyKnown = True;
+
+If[basesAreAlreadyKnown,
+		basicVectors = Get["data/basicVectors.txt"]//N;
+		allbasicVectors = Get["data/allbasicVectors.txt"]//N;
+		bases = Get["data/bases.txt"]//N;
+		mt = Get["data/multiplicationTable.txt"];
+		{twofoldvectors,threefoldvectors,fivefoldvectors} = basicVectors[[1,{2,3,5}]];
+		{v2fold, v3fold, v5fold} = {alltwofoldvectors,allthreefoldvectors,allfivefoldvectors} = allbasicVectors[[1,{2,3,5}]];
+		{t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15}=twofoldvectors;
+		{h1,h2,h3,h4,h5,h6,h7,h8,h9,h10}=threefoldvectors;
+		{e1,e2,e3,e4,e5,e6}=fivefoldvectors;
+	,(*ELSE*)
+		{e1,e2,e3,e4,e5,e6}=(********in [Duneau94 page 168] Const=1/Sqrt[2(tau+2)]**********)
+		   1/(2tau){{1,tau,0,-1,tau,0},{tau,0,1,tau,0,-1},{0,1,tau,0,-1,tau}}//Transpose//FullSimplify;
+		{t1,t2,t3}={(e5+e2),(e1+e4),(e3+e6)};
+		{t4,t5,t6}={(e5-e4),(e3+e2),(e6-e1)};
+		{t7,t8,t9}={(e5+e1),-(e6+e2),(e3+e4)};
+		{t10,t11,t12}={(e1+e2),(e3-e5),(e6-e4)};
+		{t13,t14,t15}={(e5-e6),(e1+e3),(e2-e4)};
+		h1=e1+e2+e3;
+		h2=e1+e4+e3;
+		h3=e6+e2+e3;
+		h4=e1+e2+e5;
+		h5=e1+e4-e6;
+		h6=-e5+e4+e3;
+		h7=e6-e5+e3;
+		h8=e6-e4+e2;
+		h9=-e4+e2+e5;
+		h10=e1-e6+e5;
+		twofoldvectors={t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15}  / (1/2 Sqrt[1/2 (5+Sqrt[5])]) // Simplify;		
+		threefoldvectors={h1,h2,h3,h4,h5,h6,h7,h8,h9,h10} / phi  / (1/2 Sqrt[1/2 (5+Sqrt[5])])  //Simplify;
+		fivefoldvectors={e1,e2,e3,e4,e5,e6} phi / (1/2 Sqrt[1/2 (5+Sqrt[5])]) //Simplify; 				
+		alltwofoldvectors = Join[twofoldvectors,-twofoldvectors];
+		allthreefoldvectors = Join[threefoldvectors,-threefoldvectors];
+		allfivefoldvectors = Join[fivefoldvectors,-fivefoldvectors];
+		bases = {
+			{t1,t2,t3},
+			{t4,t5,t6},
+			{t7,t8,t9},
+			{t10,t11,t12},
+			{t13,t14,t15}
+		};
+		bases = Join[bases, Map[RotateRight[#,1]&,bases],Map[RotateRight[#,2]&,bases]];
+		bases = Join[bases, Map[Times[{1,-1,-1},#]&,bases],Map[Times[{-1,-1,1},#]&,bases],Map[Times[{-1,1,-1},#]&,bases]];
+		list = {24,60,37,8 ,14,58,20,42, 10,18,32,49, 7,25,12,9,2,43, 31,22,21,33,56,35, 30,47,50,23,40,29, 6,4,11,27,1,15, 54,3,44,52,19,5, 36,55,26,13,46,39, 48,57,38,34,28,45, 41,59,16,53,51,17};
+		orderTab = Union[list[[1 ;; 60 ;; 2]]]~Join~Union[list[[2 ;; 60 ;; 2]]];
+		bases=bases//FullSimplify; 
+		new=Table[bases[[orderTab[[i]]]],{i,60}];
+		bases=new;
+		Put[bases, "data/bases.txt"]//N;
+];
+
+findBase[m_]:=Module[{i,res=0},
+  Do[
+    If[euclidlen[m[[1]]-bases[[i,1]]] < epsilon && euclidlen[m[[2]]-bases[[i,2]]] < epsilon &&
+    	euclidlen[m[[3]]-bases[[i,3]]] < epsilon, res=i ];
+  ,{i,60}];
+  Return[res];
+]
+
+buildMultTable60x60[] :=
+    Module[ {irot,i,j,b},
+        mt = Table[-1,{60},{60}];
+        Do[
+          Do[
+          	b = bases[[j]].bases[[i]];
+            mt[[j,i]] = findBase[b];
+		  ,{i,60}]
+		,{j,60}];
+        Put[mt,"data/multiplicationTable.txt"];
+        allbasicVectors = Table[{},{60},{5}];
+        basicVectors = Table[{},{60},{5}];
+        Do[
+            basicVectors[[irot,2]] = Table[twofoldvectors[[i]].bases[[irot]],{i,15}];
+            basicVectors[[irot,3]] = Table[threefoldvectors[[i]].bases[[irot]],{i,10}];
+            basicVectors[[irot,5]] = Table[fivefoldvectors[[i]].bases[[irot]],{i,6}];
+            allbasicVectors[[irot,2]] = Table[alltwofoldvectors[[i]].bases[[irot]],{i,2 15}];
+            allbasicVectors[[irot,3]] = Table[allthreefoldvectors[[i]].bases[[irot]],{i,2 10}];
+            allbasicVectors[[irot,5]] = Table[allfivefoldvectors[[i]].bases[[irot]],{i,2 6}];
+        ,{irot,60}];
+        Put[basicVectors//Simplify, "data/basicVectors.txt"];
+        Put[allbasicVectors//Simplify, "data/allbasicVectors.txt"];
+        Put[bases, "data/bases.txt"];
+    ]; (* buildMultTable60x60 *)
+
+vdcReal[n_,ndigits_:16]    := N[(FromDigits[#,2]& @ (Reverse @ (IntegerDigits[#,2,ndigits]& @ n)))/2^ndigits]
+vdcInteger[n_,ndigits_:16]    :=   (FromDigits[#,2]& @ (Reverse @ (IntegerDigits[#,2,ndigits]& @ n)))
+
+				 			(*phij =  2  vdcInteger[j] PI/phi;*)
+				 			(*phij =  2 1/(vdcReal[j])^.0001 vdcInteger[j] PI/phi;*)
+				 			(*phij =  vdcInteger[j] PI/phi(base^pow2PhiPow);*)
+				 			(*phij =  2 j PI/phi;*)
+				 			(*PI/phi(base^pow2PhiPow)*)
+	 			  			(*base = Switch[baseCase,1,phi//N, 2,2, 3,3, 4,4, 5,5, 6,PI, 7,PI/2, 8,2 PI, 9, E//N];*)
+						(*npts = Fibonacci[nFiboPts];*)
+
+fibiLattice[] :=
+	Module[{},
+        niters = 10000;
+        dbgGraphics = False;
+		SetOptions[Graphics3D, ImageSize->3/2{1024,1024}, AspectRatio->Automatic, PlotRange->All, Axes->True, AxesLabel->{"X","Y","Z"}];
+        showFiboPts = showSphere = showBaseVectors = True;
+        showUniformSpherePoints = showFiboPtNumbers = False;
+        zero = {0,0,0};
+        eps = 10^-10;
+        rSphere = .05;
+        axesscale = 1.2;
+        {col1,col2} = {Red, Blue};
+        dir = 1;
+        nFiboPts = 10;
+        nInitFiboPts = 12;
+        rPts = 1.0;
+        rTxt = 1.01;
+		Manipulate[
+ 			Graphics3D[{
+  				Opacity[opacity], {If[showSphere,Sphere[zero,.99]]}
+  				
+  			  	, If[showOriginalFiboPts,			  		
+  			  		(*npts = Fibonacci[14];
+ 			  		originaldata1 = Table[ (* original Fibonacci lattice *)
+			 			thetaj = ArcCos[1 - (2 j )/npts/2];
+			 			phij =  2 j PI/phi;
+			 			{thetaj,phij}
+					,{j,0,npts-1}];						
+					pts1 = (rPts {Sin[#[[1]]] Cos[#[[2]]], Sin[#[[1]]] Sin[#[[2]]], Cos[#[[1]]]})& /@ originaldata1;
+  			  		npts = Fibonacci[15];*)
+ 			  		originaldata2 = Table[ (* original Fibonacci lattice *)
+			 			thetaj = ArcCos[1 - (2 j )/npts/2];
+			 			phij =  2 j PI/phi;
+			 			{thetaj,phij}
+					,{j,0,npts-1}];						
+					pts = (rPts {Sin[#[[1]]] Cos[#[[2]]], Sin[#[[1]]] Sin[#[[2]]], Cos[#[[1]]]})& /@ originaldata2;
+			 		{Blue,AbsolutePointSize[10],(*Point /@ pts1, *)Red, Point /@ pts}		
+ 			  	]
+  			  	, If[showFiboPts,
+  			  		ndigits = Floor@Log[2,npts];
+ 			  		data = Table[
+			 			thetaj = ArcCos[1 - vdcReal[j]];
+			 			phij =  vdcInteger[j,ndigits] 2 PI/phi;
+			 			{thetaj,phij}
+					,{j,0,npts-1}];
+					pts = (rPts {Sin[#[[1]]] Cos[#[[2]]], Sin[#[[1]]] Sin[#[[2]]], Cos[#[[1]]]})& /@ data;
+			 		{Black,AbsolutePointSize[10],Point /@ pts}		
+ 			  	]
+  			  	, If[showSobolPts,
+  			  	    sobolIndPair = {sobolInd1,sobolInd2};
+     				buildMSobol[sobolIndPair,False];
+     				sobolpts =  ( Table[ sobol2dOriginal[i] ,{i,0,npts-1}] )//N;
+ 			  		data = Table[
+			 			thetaj = ArcCos[1 - sobolpts[[j,1]] ];
+			 			phij =  sobolpts[[j,2]] 2 PI;
+			 			{thetaj,phij}
+					,{j,npts}];
+					pts = (rPts {Sin[#[[1]]] Cos[#[[2]]], Sin[#[[1]]] Sin[#[[2]]], Cos[#[[1]]]})& /@ data;
+			 		{Black,AbsolutePointSize[3],Point /@ pts}		
+ 			  	]
+  			  	, If[showRegGridPts,
+      				regGridPts =  ( Table[ {vdcReal[i],j/npts} ,{i,0,npts-1}] )//N;
+ 			  		data = Table[
+			 			thetaj = ArcCos[1 - regGridPts[[j,1]] ];
+			 			phij =  regGridPts[[j,2]] 2 PI;
+			 			{thetaj,phij}
+					,{j,npts}];
+					pts = (rPts {Sin[#[[1]]] Cos[#[[2]]], Sin[#[[1]]] Sin[#[[2]]], Cos[#[[1]]]})& /@ data;
+			 		{Black,AbsolutePointSize[10],Point /@ pts}		
+ 			  	]
+  			  	, If[showNumbers,
+			 		{Red,Table[pt=pts[[i]];{Text[Style[#,Bold,48]& @ (i-1), pt ]},{i,Length[pts[[;;16]]]}]}		
+ 			  	]
+ 			  	, If[showUniformSpherePoints,
+						{Blue,AbsolutePointSize[10], Point @ SpherePoints[npts]}
+ 			  	]
+ 			  	
+ 				, If[showBaseVectors,  {Opacity[1], AbsoluteThickness[3], {Text[Style["x",Large,Bold],axesscale #[[1]],{-1,-1}],Text[Style["y",Large,Bold],axesscale #[[2]],{-1,-1}],Text[Style["z",Large,Bold],axesscale #[[3]],{-1,-1}],
+ 					Red,Line[{zero,axesscale #[[1]]}], Green,Line[{zero,axesscale #[[2]]}], Blue,Line[{zero,axesscale #[[3]]}] }& @ bases[[dir]] } ]		
+				},PlotRange->{{-axesscale,axesscale},{-axesscale,axesscale},{-axesscale,axesscale}},PlotLabel->Style[#,24,Bold]& @ ToString[sobolIndPair]]
+			(*, {{k,1},1,4}*)
+			(*, {{pow2PhiPow,0},Range[-10, 10]}*)
+			(*, {{baseCase,1},Range[9]}*)
+			, {{opacity,.7},0,1}
+			, Control[{{npts, 1024},Join[Table[2^i,{i,6,20}], (*Table[RandomInteger[{256,4096}],{5}],*)Table[Fibonacci[i],{i,5,20}] ] }]
+			(*, Control[{{npts, Fibonacci[10]},Table[Fibonacci[i],{i,5,20}] }]*)
+			, Control[{{showOriginalFiboPts,False},{False,True}}]
+			, Control[{{showFiboPts,False},{False,True}}]
+			, Control[{{sobolInd1,8},Range[15] } ]
+			, Control[{{sobolInd2,11},Range[15] } ]
+			, Control[{{showSobolPts,False},{False,True}}]
+			, Control[{{showRegGridPts,False},{False,True}}]
+			, Control[{{showNumbers,False},{False,True}}]
+			(*, Control[{{showUniformSpherePoints,False},{False,True}}]*)
+			, Control[{{showSphere,True},{False,True}}]
+			, Control[{{showBaseVectors,True},{False,True}}]
+		]//Print;
+] (* fibiLattice *)
+
+showSobolSphericalPts[{sobolInd1_,sobolInd2_},npts_:(4 1024)] :=
+	Module[{},
+        niters = 10000;
+        dbgGraphics = False;
+		SetOptions[Graphics3D, ImageSize->2{1024,1024}, AspectRatio->Automatic, PlotRange->All, Axes->True, AxesLabel->{"X","Y","Z"}];
+        showFiboPts = showSphere = showBaseVectors = True;
+        showUniformSpherePoints = showFiboPtNumbers = False;
+        zero = {0,0,0};
+        eps = 10^-10;
+        rSphere = .05;
+        axesscale = 1.2;
+        {col1,col2} = {Red, Blue};
+        dir = 1;
+        nFiboPts = 10;
+        nInitFiboPts = 12;
+        rPts = 1.0;
+        rTxt = 1.01;
+        opacity = .7;
+		sobolIndPair = {sobolInd1,sobolInd2};
+     	buildMSobol[sobolIndPair,False];
+     	sobolpts =  ( Table[ sobol2dOriginal[i] ,{i,0,npts-1}] )//N;
+ 		pts = Parallelize @ Table[
+			 			thetaj = ArcCos[1 - sobolpts[[j,1]] ];
+			 			phij =  sobolpts[[j,2]] 2 PI;
+			 			(rPts {Sin[thetaj] Cos[phij], Sin[thetaj] Sin[phij], Cos[thetaj]})
+		,{j,npts}];
+
+			Graphics3D[{
+  					Opacity[opacity], Sphere[zero,.99],
+			 		{Black,AbsolutePointSize[3],Point /@ pts},
+ 					{Opacity[1], AbsoluteThickness[3], {Text[Style["x",Large,Bold],axesscale #[[1]],{-1,-1}],Text[Style["y",Large,Bold],axesscale #[[2]],{-1,-1}],Text[Style["z",Large,Bold],axesscale #[[3]],{-1,-1}],
+ 					Red,Line[{zero,axesscale #[[1]]}], Green,Line[{zero,axesscale #[[2]]}], Blue,Line[{zero,axesscale #[[3]]}] }& @ bases[[dir]] }
+				},PlotRange->{{-axesscale,axesscale},{-axesscale,axesscale},{-axesscale,axesscale}},PlotLabel->Style[#,24,Bold]& @ ToString[{sobolIndPair,npts}],
+				ViewPoint->{1,-3,5}, SphericalRegion -> True, ViewAngle -> 14 \[Degree] ] //Print;
+				
+] (* showSobolSphericalPts *)2
+
+
+(*------------------------- supprot for Sobol -------------------------*)
+a058947 = Get["data/a058947.dat"];
+sobolDirectionVectors = Get["data/sobol_direction_vectors.dat"];
+
+sobolseqLength = 64;
+sobolseqLength = 48; (* to be compatibe with Keller & Grunschloss http://gruenschloss.org/ *)
+sobolseqLength = 32;
+
+grayCode[i_, n_] := 
+ FromDigits[
+  BitXor @@@ Partition[Prepend[IntegerDigits[i, 2, n], 0], 2, 1], 2]
+fromGrayCode[i_, n_] := FromDigits[BitXor[IntegerDigits[i, 2, n], FoldList[BitXor, 0, Most[IntegerDigits[i, 2, n]]]], 2]
+
+grayCodeList[k_] := Module[{b = IntegerDigits[k, 2], i},
+  Do[
+   If[b[[i - 1]] == 1, b[[i]] = 1 - b[[i]]], {i, Length[b], 2, -1} ];
+	b
+  ]
+
+sobol1dGrayCode[nf_,n_] := (* + Gray Code as described in BratleyFox88 and AntonovSaleev79 *)
+    Module[ {i,seq = grayCodeList[n] //Reverse,seqlen,nn},
+        seqlen = Length[seq];
+        nn = BitXor @@ Table[ seq[[i]] msobol[[nf,i]] 2^(seqlen-i), {i, seqlen}];
+        Return[ FromDigits[IntegerDigits[nn,2,seqlen] ,2] / 2^seqlen ]
+    ]
+
+buildMSobol[indtab_,dbg_:False] :=
+    Module[ {},
+        msobol = getMsobol1d[#,dbg]& /@ indtab;
+        If[ dbg, 
+        	Print["buildMSobol:  msobol=",msobol//mf];
+        	(*Print[ mf[ Table[Join[Table[" ",{sobolseqLength-i}], Take[#,i]& @ (IntegerDigits[msobol[[2,i]],2,i]) ], {i,sobolseqLength}] ], mf[ Table[Join[Take[#,i]& @ (IntegerDigits[msobol[[2,i]],2,i]),  Table[" ",{sobolseqLength-i}] ], {i,sobolseqLength}] ]   ]*);
+         ];
+    ]
+
+getMsobol1d[ind_,dbg_:False] :=
+    Module[ {(*seq,seqlen,i,j,msobol,visumx1,visumx2,sobolM*)},
+        msobol = Table[1,{sobolseqLength}];
+        seq = a058947[[ind]]//IntegerDigits;
+        seqlen = Length[seq];
+        (*Do[
+            msobol[[i]] = ( (2^(i-1)-1)*2 + 1); (* must be even!!! *)
+        ,{i,2,seqlen-1}];*)
+        msobol[[;;(seqlen-1)]] = sobolDirectionVectors[[ind]]; (* initialization of direction vectors as in new-joe-kuo-6.21201.txt http://web.maths.unsw.edu.au/~fkuo/sobol/ *)
+        If[ dbg,
+            Print["getMsobol1d:  ind=",ind," seq=",seq," of len=",seqlen -> msobol[[;;seqlen-1]] ]
+        ];
+        Do[
+            msobol[[i]] = BitXor @@ Join[Table[2^(j) seq[[j+1]] msobol[[i-j]],{j,1,seqlen-1}],{msobol[[i-seqlen+1]]}];
+            If[dbg, 
+	            (*Print[i -> (IntegerDigits[#,2,i]& @ msobol[[i]]) ];*)
+	            Print[i -> (IntegerDigits[#,2,i]& /@ Join[Table[2^(j) seq[[j+1]] msobol[[i-j]],{j,1,seqlen-1}],{msobol[[i-seqlen+1]]}]) -> (IntegerDigits[#,2,i]& @ msobol[[i]]) ];
+	            (*Print[i -> seq ->msobol[[;;i-1]] -> {msobol[[i-seqlen+1]]}
+	                -> Table[2^(j) msobol[[i-j]],{j,1,seqlen-1}]
+	                -> Table[2^(j) seq[[j+1]] msobol[[i-j]],{j,1,seqlen-1}]
+	                   -> Table[ seq[[j+1]] ,{j,1,seqlen-1}]
+	                -> Table[IntegerDigits[2^(j) seq[[j+1]] msobol[[i-j]] ,2,seqlen] ,{j,1,seqlen-1}] 
+	                ->  (IntegerDigits[#,2,i]& @ msobol[[i-seqlen+1]]) 
+	                -> (IntegerDigits[#,2,i]& @ msobol[[i]] ) 
+	                ];*)
+            ];
+        ,{i,seqlen, sobolseqLength }];
+        (*If[dbg,Do[Print[i -> (IntegerDigits[#,2,i]& @ msobol[[i]]) ],{i, sobolseqLength }]];
+        If[dbg,Do[Print[i -> (Join[Table[" ",{sobolseqLength-i}],#]& @ (IntegerDigits[#,2,i]& @ msobol[[i]])) ],{i, sobolseqLength }]];*)
+	    If[dbg,
+		    	visumx1 = Table[ StringJoin[ToString /@ (Join[#,Table[" ",{sobolseqLength-i}]]& @ (IntegerDigits[#,2,i]& @ msobol[[i]]))],{i, sobolseqLength }];
+		    	visumx2 = Table[ StringJoin[ToString /@ (Join[Table[" ",{sobolseqLength-i}],#]& @ (IntegerDigits[#,2,i]& @ msobol[[i]]))],{i, sobolseqLength }];
+		    	sobolM = Table[0,{sobolseqLength},{sobolseqLength}];
+		    	Do[ sobolM[[i,;;i]] = (IntegerDigits[#,2,i]& @ msobol[[i]])  ,{i, sobolseqLength }];
+	        	Print[{Range[sobolseqLength]}//T//mf, visumx2//mf, visumx1//mf];
+	        	Print[mf @ sobolM];
+	        	Print[MatrixPlot @ sobolM];
+        ];
+        Return[msobol]
+    ] (* getMsobol1d *)
+
+
+sobol1d[dim_,n_] := (* original Sobol's construction *)
+    Module[ {i,seq = IntegerDigits[n,2] //Reverse,seqlen,nn},
+        seqlen = Length[seq];
+        nn = BitXor @@ Table[ seq[[i]] msobol[[dim,i]] 2^(seqlen-i), {i, seqlen}];
+        Return[ FromDigits[IntegerDigits[nn,2,seqlen] ,2] / 2^seqlen ]
+    ]
+
+sobol1dInv[dim_,n_] := (* sobol1dInv[sobol1d[n]] == n *)
+    Module[ {i,seq = IntegerDigits[n,2] ,seqlen,nn},
+        seqlen = Length[seq];
+        nn = BitXor @@ Table[ seq[[i]] msobol[[dim,i]] 2^(i-1), {i, seqlen}];
+        Return[ FromDigits[Reverse@IntegerDigits[nn,2,seqlen] ,2] / 2^seqlen ]
+    ]
+
+sobol2d[n_] := fsobol2d[n] (* fsobol2d should be assigned to sobol2dGrayCode or sobol2dOriginal *) 
+
+sobol1DGrayCode[n_] := sobol1dGrayCode[1,n]
+sobol1DOriginal[n_] := sobol1d[1,n]
+
+sobol2dGrayCode[n_] := {sobol1dGrayCode[1,n],sobol1dGrayCode[2,n]}
+sobol2dOriginal[n_] := {sobol1d[1,n],sobol1d[2,n]}
+
+sobol3dGrayCode[n_] := {sobol1dGrayCode[1,n],sobol1dGrayCode[2,n],sobol1dGrayCode[3,n]}
+sobol3dOriginal[n_] := {sobol1d[1,n],sobol1d[2,n],sobol1d[3,n]}
+
+sobol4dGrayCode[n_] := {sobol1dGrayCode[1,n],sobol1dGrayCode[2,n],sobol1dGrayCode[3,n],sobol1dGrayCode[4,n]}
+sobol4dOriginal[n_] := {sobol1d[1,n],sobol1d[2,n],sobol1d[3,n],sobol1d[4,n]}
+
+
+sobol5dGrayCode[n_] := {sobol1dGrayCode[1,n],sobol1dGrayCode[2,n],sobol1dGrayCode[3,n],sobol1dGrayCode[4,n],sobol1dGrayCode[5,n]}
+sobol5dOriginal[n_] := {sobol1d[1,n],sobol1d[2,n],sobol1d[3,n],sobol1d[4,n],sobol1d[5,n]}
+
+
+sobol6dGrayCode[n_] := {sobol1dGrayCode[1,n],sobol1dGrayCode[2,n],sobol1dGrayCode[3,n],sobol1dGrayCode[4,n],sobol1dGrayCode[5,n],sobol1dGrayCode[6,n]}
+sobol6dOriginal[n_] := {sobol1d[1,n],sobol1d[2,n],sobol1d[3,n],sobol1d[4,n],sobol1d[5,n],sobol1d[6,n]}
+
+getSobol1dPt[n_] := (* original Sobol's construction *)
+    Module[ {i,seq = IntegerDigits[n,2] //Reverse,seqlen,nn},
+        seqlen = Length[seq];
+        nn = BitXor @@ Table[ seq[[i]] msobol[[1,i]] 2^(seqlen-i), {i, seqlen}];
+        Return[ FromDigits[IntegerDigits[nn,2,seqlen] ,2] / 2^seqlen ]
+    ]
+    
+sobolScrambledPermuts2pts1D[xpermuts_,sobolInd_:1,dbg_:False] :=
+    Module[ {xresdigits,xdigitsReversed,ind,resBit,newpts,nbits,npts,pts},
+    	buildMSobol[{sobolInd}];
+        If[ !known[msobol], buildMSobol[{sobolInd,sobolInd}] ];
+        nbits = Length[xpermuts];
+        npts = 2^nbits;
+        pts = Round[2^(nbits) ( Table[ getSobol1dPt[i] //N,{i,0,npts-1}] ) ];
+        xresdigits = Table[
+            xdigitsReversed =  IntegerDigits[#,2,nbits]& @ pts[[ii]];
+            Table[
+                ind = 1 + FromDigits[#,2]& @ xdigitsReversed[[;;ilevel-1]];
+                resBit = BitXor @@ {xpermuts[[ilevel,ind]], xdigitsReversed[[ilevel]]};
+                resBit
+            ,{ilevel,Length[xdigitsReversed]}]
+        ,{ii,npts}];
+        newpts = FromDigits[#,2]& /@ xresdigits;
+        If[ dbg,
+            {xpermuts -> newpts}//Print;
+        ];
+        newpts
+    ] (* sobolScrambledPermuts2pts1D *)
+
+sobolScrambledInteger2pts1D[npts_,sobolInd_:1]:= sobolScrambledPermuts2pts1D[getRandomPermutTree[Log[2,npts]],sobolInd] 
+sobolScrambledInteger2pts2D[npts_,{sobolInd1_,sobolInd2_}]:= {sobolScrambledInteger2pts1D[npts,sobolInd1],sobolScrambledInteger2pts1D[npts,sobolInd2]}//T
+
+
+getRandomPermutTree[nlevels_]:=Module[{},
+	Table[
+		Table[RandomChoice[{0,1}],{2^ilevel}]
+	,{ilevel,0,nlevels-1}]
+]
+
+(*------------------------- end of supprot for Sobol -------------------------*)
+
+getBinaryGrid2Dx2WithoutLabels[nlevels_:1] :=
+    Module[ {gl, coltab, delta, cur, n},
+        coltab = {(*Orange*)Yellow, Cyan, Blue,Gray, Darker@Red, Orange,Blue,Red,Yellow};
+        coltab = {Yellow, Red, Cyan, Blue, Magenta, Gray, Black, Red, Cyan, Blue, Magenta, Green, Black};
+        gl = {};
+        Do[
+            gl = Join[gl,{coltab[[ilevel]],Thickness[.2 1/2^(1.3 ilevel+2)]}];
+            cur = 0;
+            n = 2^ilevel;
+            delta = 1/2^( ilevel );
+            Do[
+                AppendTo[gl, {Line[{{0,cur},{1,cur}}], Line[{{0,cur+delta},{1,cur+delta}}]}];
+                AppendTo[gl, {Line[{{cur,0},{cur,1}}], Line[{{cur+delta,0},{cur+delta,1}}]}];
+                cur += delta;
+            ,{i,n}]
+        ,{ilevel,nlevels}];
+        gl
+    ] (* getBinaryGrid2Dx2 *)
+
+
+showSobol6D[dbg_:False] :=
+    Module[ {},
+	SetOptions[Graphics, ImageSize ->{ 800,800},AspectRatio->Automatic, PlotRange->All ];
+    	npts = 1024;  
+     level = Log[4,npts];
+     grid = getBinaryGrid2Dx2WithoutLabels[level];    
+    	{sobolInd1,sobolInd2,sobolInd3,sobolInd4,sobolInd5,sobolInd6} = {1,2,3,4,5,6};
+     buildMSobol[{sobolInd1,sobolInd2,sobolInd3,sobolInd4,sobolInd5,sobolInd6},False];
+     sobolpts =  ( Table[ sobol6dOriginal[i] ,{i,0,npts-1}] );
+     ptsXY = sobolpts[[;; , 1 ;; 2]];
+     ptszw = sobolpts[[;; , 3 ;; 4]];
+     ptsUV = sobolpts[[;; , 5 ;; 6]];
+     
+     Print["================================ 1&2 Grouped ======================================"];
+     selptsXY = Select[ptsXY, #[[1]] < 1/4 && #[[2]] < 1/4 &];
+     poslst = Flatten[Flatten /@ Position[ptsXY, #] & /@ selptsXY];
+     selptszw = ptszw[[poslst]];
+     selptsUV = ptsUV[[poslst]];
+     {
+     	Graphics[{grid, AbsolutePointSize[10], Point/@ptsXY, 
+     		Table[pt = selptsXY[[i]]; {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 1 & 2: Sobol ind="<>ToString[{sobolInd1,sobolInd2}]],
+	     Graphics[{grid, AbsolutePointSize[10], Point/@ptszw, 
+	     	Table[pt = selptszw[[i]]; {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 3 & 4: Sobol ind="<>ToString[{sobolInd3,sobolInd4}]],
+	     Graphics[{grid, AbsolutePointSize[10], Point/@ptsUV, 
+	     	Table[pt = selptsUV[[i]]; {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 5  & 6: Sobol ind="<>ToString[{sobolInd5,sobolInd6}]]
+     }//Print;
+
+ 
+     Print["================================ 3&4 Grouped ======================================"];
+     selptszw = Select[ptszw, #[[1]] < 1/4 && #[[2]] < 1/4 &];
+     poslst = Flatten[Flatten /@ Position[ptszw, #] & /@ selptszw];
+     selptsXY = ptsXY[[poslst]];
+     selptsUV = ptsUV[[poslst]];
+     {
+     	Graphics[{grid, AbsolutePointSize[10], Point/@ptsXY, 
+     		Table[pt = selptsXY[[i]]; {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 1 & 2: Sobol ind="<>ToString[{sobolInd1,sobolInd2}]],
+	     Graphics[{grid, AbsolutePointSize[10], Point/@ptszw, 
+	     	Table[pt = selptszw[[i]]; {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 3 & 4: Sobol ind="<>ToString[{sobolInd3,sobolInd4}]],
+	     Graphics[{grid, AbsolutePointSize[10], Point/@ptsUV, 
+	     	Table[pt = selptsUV[[i]]; {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 5  & 6: Sobol ind="<>ToString[{sobolInd5,sobolInd6}]]
+     }//Print;
+
+     Print["================================ 5&6 Grouped ======================================"];
+     selptsUV = Select[ptsUV, #[[1]] < 1/4 && #[[2]] < 1/4 &];
+     poslst = Flatten[Flatten /@ Position[ptsUV, #] & /@ selptsUV];
+     selptsXY = ptsXY[[poslst]];
+     selptszw = ptszw[[poslst]];
+     {
+     	Graphics[{grid, AbsolutePointSize[10], Point/@ptsXY, 
+     		Table[pt = selptsXY[[i]]; {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 1 & 2: Sobol ind="<>ToString[{sobolInd1,sobolInd2}]],
+	     Graphics[{grid, AbsolutePointSize[10], Point/@ptszw, 
+	     	Table[pt = selptszw[[i]]; {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 3 & 4: Sobol ind="<>ToString[{sobolInd3,sobolInd4}]],
+	     Graphics[{grid, AbsolutePointSize[10], Point/@ptsUV, 
+	     	Table[pt = selptsUV[[i]]; {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 5  & 6: Sobol ind="<>ToString[{sobolInd5,sobolInd6}]]
+     }//Print;
+] (* showSobolAsTree *)
+
+
+visu4D[] :=
+    Module[ {},
+    	
+    		lbl = "ptsSobol4D_GrayCode_4K";
+    		lbl = "ptsSobol4D_4K";
+    		lbl = "4K-4D";
+		SetOptions[Graphics, ImageSize ->{ 1024,1024},AspectRatio->Automatic, PlotRange->All ];
+        data = Import["data/"<>lbl<>".dat"];
+        npts = 4096;
+        level = Log[4,npts];
+        grid = getBinaryGrid2Dx2WithoutLabels[level];
+        ptsXY = data[[;; , 1 ;; 2]];
+        ptsUV = data[[;; , 3 ;; 4]];
+        Print["================================ 1&2 Grouped ======================================"];
+        selptsXY = Select[ptsXY, #[[1]] < 1/8 && #[[2]] < 1/8 &];
+        poslst = Flatten[Flatten /@ Position[ptsXY, #] & /@ selptsXY];
+        selptsUV = ptsUV[[poslst]];
+        {    Graphics[{grid, AbsolutePointSize[10], Point/@ptsXY, Red, Point /@ selptsXY },PlotLabel->"4K pts Dims 1 & 2: Ours"],
+             Graphics[{grid, AbsolutePointSize[10], Point/@ptsUV,  Red, Point /@ selptsUV },PlotLabel->"4K pts Dims 3 & 4: Ours"]
+        }//Print;
+        
+        grid = getBinaryGrid2Dx2WithoutLabels[level];
+        pxy = Graphics[{grid, AbsolutePointSize[4], Point/@ptsXY },PlotLabel->"4K pts Dims 1 & 2: "<>lbl, ImageSize ->3/2{ 1024,1024}];
+        grid = getBinaryGrid2Dx2WithoutLabels[level];
+        puv = Graphics[{grid, AbsolutePointSize[4], Point/@ptsUV },PlotLabel->"4K pts Dims 3 & 4: "<>lbl, ImageSize ->3/2{ 1024,1024}];
+        
+        pxy//Print;
+        puv//Print;
+        Export["ptsXY_"<>lbl<>".pdf",pxy];
+        Export["ptsUV_"<>lbl<>".pdf",puv];
+    ]
+
+compareKellerVsSobol4D[] :=
+    Module[ {},
+    	
+    		lbl = "ptsSobol4D_GrayCode_4K";
+    		lbl = "4K-4D";
+    		lbl = "keller4K-4D";
+    		lbl = "ptsSobol4D_4K";
+		SetOptions[Graphics, ImageSize ->{ 1024,1024},AspectRatio->Automatic, PlotRange->All ];
+        data = Import["data/"<>lbl<>".dat"];
+        npts = 4096;
+        level = Log[4,npts];
+        grid = getBinaryGrid2Dx2WithoutLabels[level];
+        ptsXY = data[[;; , 1 ;; 2]];
+        ptsUV = data[[;; , 3 ;; 4]];
+        Print["================================ 1&2 Grouped ======================================"];
+        selptsXY = Select[ptsXY, #[[1]] < 1/8 && #[[2]] < 1/8 &];
+        poslst = Flatten[Flatten /@ Position[ptsXY, #] & /@ selptsXY];
+        selptsUV = ptsUV[[poslst]];
+        {    Graphics[{grid, AbsolutePointSize[10], Point/@ptsXY, Red, Point /@ selptsXY },PlotLabel->"4K pts Dims 1 & 2: Ours"],
+             Graphics[{grid, AbsolutePointSize[10], Point/@ptsUV,  Red, Point /@ selptsUV },PlotLabel->"4K pts Dims 3 & 4: Ours"]
+        }//Print;
+        
+        grid = getBinaryGrid2Dx2WithoutLabels[level];
+        pxy = Graphics[{grid, AbsolutePointSize[4], Point/@ptsXY },PlotLabel->"4K pts Dims 1 & 2: "<>lbl, ImageSize ->3/2{ 1024,1024}];
+        grid = getBinaryGrid2Dx2WithoutLabels[level];
+        puv = Graphics[{grid, AbsolutePointSize[4], Point/@ptsUV },PlotLabel->"4K pts Dims 3 & 4: "<>lbl, ImageSize ->3/2{ 1024,1024}];
+        
+        pxy//Print;
+        puv//Print;
+        Export["ptsXY_"<>lbl<>".pdf",pxy];
+        Export["ptsUV_"<>lbl<>".pdf",puv];
+    ]
+    
+    
+mkSobol4D[] :=
+    Module[ {},
+         
+        npts = 64;
+        npts = 1024 1024;
+        
+        level = Log[4,npts];
+        grid = getBinaryGrid2Dx2WithoutLabels[level];
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,3,4};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {2,3,4,5};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,3,7};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,4,5};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,6,7};
+        buildMSobol[{sobolInd1,sobolInd2,sobolInd3,sobolInd4},False];
+        pts4d =  (Parallelize @ Table[ sobol4dOriginal[i] ,{i,0,npts-1}] );
+
+		basename = "Sobol4D_"<>ToString[sobolInd1]<>ToString[sobolInd2]<>ToString[sobolInd3]<>ToString[sobolInd4];
+        fname = "data/pts"<>basename<>".dat";
+        Print[" writing ",Length[pts4d]," pts into ",fname];
+        Export[fname,N[pts4d]];
+        Print[fname, " is written."];
+        pngfname = "results/"<>basename<>".png";
+        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+        Print[execstring];
+        Run[execstring];
+     
+        execString = "OwenScrambling_fromfile_2di --random -i data/ptsSobol2Dint_xy_"<>ToString[npts]<>".dat -o data/ptsSobol2Dint_xy_"<>ToString[npts]<>"+Owen.dat" ;
+        Run[execPrefix<>execString];
+        execString = "OwenScrambling_fromfile_2di --random -i data/ptsSobol2Dint_uv_"<>ToString[npts]<>".dat -o data/ptsSobol2Dint_uv_"<>ToString[npts]<>"+Owen.dat" ;
+        Run[execPrefix<>execString];
+
+		ptsXYOwen = Import["data/ptsSobol2Dint_xy_"<>ToString[npts]<>"+Owen.dat"] / npts;
+		ptsUVOwen = Import["data/ptsSobol2Dint_uv_"<>ToString[npts]<>"+Owen.dat"] / npts;
+		pts4dOwen = Flatten /@ ({ptsXYOwen, ptsUVOwen} // T);
+
+		basename = "Sobol4D_"<>ToString[sobolInd1]<>ToString[sobolInd2]<>ToString[sobolInd3]<>ToString[sobolInd4]<>"+Owen";
+        fname = "data/pts"<>basename<>".dat";
+        Print[" writing ",Length[pts4d]," pts into ",fname];
+        Export[fname,N[pts4dOwen]];
+        Print[fname, " is written."];
+        pngfname = "results/"<>basename<>".png";
+        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+        Print[execstring];
+        Run[execstring];
+
+		(*basename = "BNLDSequence";
+        fname = "data/1M-4D.dat";
+        pngfname = "results/"<>basename<>".png";
+        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+        Print[execstring];
+        Run[execstring];*)
+
+
+    ]
+    
+    
+findCorrelation[] :=
+    Module[ {},
+    		lbl = "1M-4D";
+		SetOptions[Graphics, ImageSize ->{ 1024,1024},AspectRatio->Automatic, PlotRange->All ];
+        data = Import["data/"<>lbl<>".dat"];
+        npts = 4096;
+        level = Log[4,npts];
+        grid = getBinaryGrid2Dx2WithoutLabels[level];
+        ptsXY = data[[;; , 1 ;; 2]];
+        ptsUV = data[[;; , 3 ;; 4]];
+
+
+		zone1xy = Select[ptsXY, (178/1024) <= #[[1]] < (182/1024) && (1 - 658/1024) <= #[[2]] < (1 - 654/1024) &];
+		indzone1xy = Flatten @ (Position[ptsXY,#]& /@ zone1xy);
+		zone1uv = ptsUV[[indzone1xy]];
+
+		zone2xy = Select[ptsXY, (178/1024) <= #[[1]] < (182/1024) && (1 - 654/1024) <= #[[2]] < (1 - 650/1024) &];
+		indzone2xy = Flatten @ (Position[ptsXY,#]& /@ zone2xy);
+		zone2uv = ptsUV[[indzone2xy]];
+
+
+		
+		zone3xy = Select[ptsXY, (182/1024) <= #[[1]] < (186/1024) && (1 - 658/1024) <= #[[2]] < (1 - 654/1024) &];
+		indzone3xy = Flatten @ (Position[ptsXY,#]& /@ zone3xy);
+		zone3uv = ptsUV[[indzone3xy]];
+
+		zone4xy = Select[ptsXY, (182/1024) <= #[[1]] < (186/1024) && (1 - 654/1024) <= #[[2]] < (1 - 650/1024) &];
+		indzone4xy = Flatten @ (Position[ptsXY,#]& /@ zone4xy);
+		zone4uv = ptsUV[[indzone4xy]];
+
+
+		{Graphics[{grid, AbsolutePointSize[10], Red, Point/@zone1uv, Blue, Point/@zone2uv},PlotLabel->"zones 1(Red) & 2 (Blue)"],
+		Graphics[{grid, AbsolutePointSize[10], Red, Point/@zone3uv, Blue, Point/@zone4uv},PlotLabel->"zones 3(Red) & 4 (Blue)"]}//Print;
+    ]
+
+getGeneralizedL2Discrepancy4D[pts_] :=
+    Module[ {execString},
+        Export["tmp/tmp"<>pid<>".dat",N[pts]];
+        execString =  "Parallel_GeneralizedL2Discrepancy_fromfile_4dd -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat > /dev/null";
+        Print[execString];
+        Run[execPrefix<>execString];
+        data = Import["tmp/res"<>pid<>".dat"][[2,;;2]]
+    ] (* getGeneralizedL2Discrepancy4D *)
+
+comareDiscrepancy4D[]  :=
+    Module[ {},
+        npts = 1024 1024;
+        fname = "data/ptsSobol4D_"<>ToString[npts]<>".dat";
+        sobolpts = Import[fname];
+        Print[fname -> Length[sobolpts]];
+
+        fname = "data/ptsSobol4D_"<>ToString[npts]<>"+Owen.dat";
+        pts4dOwen = Import[fname];
+        Print[fname -> Length[pts4dOwen]];
+
+        idmax = 14;
+		dtabSobol = Table[
+                n = Ceiling[2^id];
+                discrepancy = getGeneralizedL2Discrepancy4D[Take[#,n]& @ sobolpts];
+                If[dbg,Print[n,"/",2^idmax -> discrepancy]];
+                discrepancy
+		,{id,2,idmax, 1/8}];
+
+		dtabOwen = Table[
+                n = Ceiling[2^id];
+                discrepancy = getGeneralizedL2Discrepancy4D[Take[#,n]& @ pts4dOwen];
+                If[dbg,Print[n,"/",2^idmax -> discrepancy]];
+                discrepancy
+		,{id,2,idmax, 1/8}];
+		
+		ListLogLogPlot[{dtabSobol,dtabOwen},PlotStyle->{Red,Blue}]//Print;
+    ]
+
+    
+    
+    
+(*---------------------------- BNordering ----------------------------*)
+getptsMinDist1[ptsunsorted_,torFlag_:True,dbg_:False] :=
+    Module[ {pts = Sort[ptsunsorted],firstrow,firstcol,lastrow,lastcol,elem,iElem,len = Length[ptsunsorted],lensq,tab},
+        lensq = Ceiling[Sqrt[len]];
+        If[ torFlag,
+            firstrow = (Reverse /@ (Sort[Reverse /@ pts])[[;; lensq]]);
+            firstrow = Join[firstrow, {First[Sort[firstrow]]+{len,0}},{Last[Sort[firstrow]]+{-len,0}} ];
+            lastrow = (Reverse /@ (Sort[Reverse /@ pts])[[len-lensq+1;;len]]);
+            lastrow = Join[lastrow, {First[Sort[lastrow]]+{len,0}},{Last[Sort[lastrow]]+{-len,0}} ];
+            firstcol = pts[[;; lensq]];
+            lastcol = pts[[len-lensq+1;;len]];
+            pts = Join[pts, 
+                Plus[#,{0,len}]& /@ firstrow, 
+                Plus[#,{0,-len}]& /@ lastrow, 
+                Plus[#,{len,0}]& /@ firstcol , 
+                Plus[#,{-len,0}]& /@ lastcol]
+        ];
+        tab = Table[
+            elem = pts[[iElem]];
+            Sort[Norm[elem-#] & /@ pts][[2;;2]]
+        ,{iElem, len}];
+        If[dbg, Graphics[{Red,Point/@pts, Blue,Point/@ptsunsorted}]//Print];
+        tab//Min
+    ] (* getptsMinDist1 *)
+
+(*getExtendedSet01[set01_] :=
+    Module[ {},
+        subset00 = Select[set01, #[[1]] < .5 && #[[2]] < .5 &];
+        subset10 = Select[set01, #[[1]] >= .5 && #[[2]] < .5 &];
+        subset01 = Select[set01, #[[1]] < .5 && #[[2]] >= .5 &];
+        subset11 = Select[set01, #[[1]] >= .5 && #[[2]] >= .5 &];
+        Join[set01, 
+            Plus[#,{1,0}]&/@subset00,Plus[#,{1,0}]&/@subset01,Plus[#,{-1,0}]&/@subset10,Plus[#,{-1,0}]&/@subset11,
+            Plus[#,{0,1}]&/@subset00,Plus[#,{0,1}]&/@subset10,Plus[#,{0,-1}]&/@subset01,Plus[#,{0,-1}]&/@subset11,
+            Plus[#,{1,1}]&/@subset00,Plus[#,{-1,1}]&/@subset10,Plus[#,{1,-1}]&/@subset01,Plus[#,{-1,-1}]&/@subset11
+        ]
+    ]*)
+
+getExtendedSet01[set01_] :=
+    Module[ {},
+        Join[set01, 
+            Plus[#,{1,0}]&/@set01,Plus[#,{-1,0}]&/@set01, Plus[#,{0,1}]&/@set01,Plus[#,{0,-1}]&/@set01,
+            Plus[#,{1,1}]&/@set01,Plus[#,{-1,1}]&/@set01,Plus[#,{1,-1}]&/@set01,Plus[#,{-1,-1}]&/@set01
+        ]
+    ]
+
+
+getAllNeighghbors[set_,ncentral_:1024,dbg_:False] :=
+    Module[ {setfname,nei,execString,selnei},
+        setfname = "tmp/set"<>pid<>".dat";
+        Export[setfname,Table[ Append[set[[i]],i], {i,Length[set]}]];
+        execString = "my_delaunay2d "<>setfname<>" tmp/ds"<>pid<>".dat tmp/vs"<>pid<>".dat tmp/vp"<>pid<>".dat tmp/dt"<>pid<>".dat > /dev/null";
+        If[dbg, Print["Executing ", execString] ];
+        Run[execPrefix<>execString];
+        nei = Import["tmp/dt"<>pid<>".dat"];
+        selnei = Flatten[#,1]& /@ Table[Select[nei,First[#] == i&],{i,ncentral}];
+        Table[ Table[ Mod[selnei[[i,j]], ncentral, 1],{j,Length[selnei[[i]]]}] 	,{i,ncentral}]
+    ] (* getAllNeighghbors *)
+
+getAllNeighghborsRings[set_,ncentral_:1024,radii_:{1.5,2},dbg_:False] :=
+    Module[ {nei,neipts,refpt,r,npts1d=Sqrt[ncentral],selnei},
+    	Table[
+		r = radii[[ir]];
+        neipts = Table[
+        		refpt = set[[i]];
+        		nei = Select[set, getToroidalDist[refpt,#] < r/npts1d  && # != refpt&];
+        		Print[r -> i -> Length[nei] ];
+        		Join[{refpt},nei]
+        	,{i,ncentral}];
+        	selnei = Flatten[(Position[set, #] & /@ #)] & /@ neipts
+        (*Table[ Table[ Mod[selnei[[i,j]], ncentral, 1],{j,Length[selnei[[i]]]}] ,{i,ncentral}]*)
+	,{ir,Length[radii]}]
+] (* getAllNeighghborsRings *)
+
+getToroidalDist[pt1_,pt2_,w_:1]:= Module[{dx,dy},
+	{dx,dy} = Abs[pt2-pt1];
+	If[dx > w/2, dx = w - dx];
+	If[dy > w/2, dy = w - dy];
+    Sqrt[dx*dx + dy*dy]
+]
+getToroidalDistSq[pt1_,pt2_,w_:1]:= Module[{dx,dy},
+	{dx,dy} = Abs[pt2-pt1];
+	If[dx > w/2, dx = w - dx];
+	If[dy > w/2, dy = w - dy];
+    dx*dx + dy*dy
+]
+mkSet00[npts_:1024,dbg_:False] := (* aka centers *)
+    Block[ {}, (* mindist tab: {{0.0213905,0},{0.0191367,1},{0.0212313,2},{0.020184,3},{0.0176387,4},{0.0198319,5},{0.0173547,6},{0.0199789,7},{0.0164477,8},{0.0169664,9},{0.0212522,10},{0.0174904,11},{0.0193656,12},{0.0176682,13},{0.0194653,14},{0.0195344,15},{0.0197688,16}} *)
+        npts1d = Sqrt[npts];
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+        partitionBorders = {Cyan, Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}] };
+        fineGridFacto = 8;
+        
+        set00 = centers = Flatten[#,1]& @ Table[
+                    {xCenter,yCenter} = 1./npts1d {(ix-.5),(iy-.5)};
+                    {xCenter,yCenter}
+                ,{iy,npts1d},{ix,npts1d}];
+        Export["set00.dat",set00];
+        Put[set00,"set00.h"];
+     ] (* bruteForceReordering *)
+
+    
+mkPermutsDotH[npts_:1024] :=Module[{},
+        npts1d = Sqrt[npts];
+        nbits = Log[2,npts1d];
+        allpts = Flatten[#,1]& @ Table[ {ix,iy} ,{iy,npts1d},{ix,npts1d}];
+
+		set00 = Flatten[#,1]& @ Table[ Position[allpts,{ix,iy}][[1,1]] ,{iy,npts1d/2},{ix,npts1d/2}];
+		set10 = Flatten[#,1]& @ Table[ Position[allpts,{ix,iy}][[1,1]] ,{iy,npts1d/2+1,npts1d},{ix,npts1d/2}];
+		set01 = Flatten[#,1]& @ Table[ Position[allpts,{ix,iy}][[1,1]] ,{iy,npts1d/2},{ix,npts1d/2+1,npts1d}];
+		set11 = Flatten[#,1]& @ Table[ Position[allpts,{ix,iy}][[1,1]] ,{iy,npts1d/2+1,npts1d},{ix,npts1d/2+1,npts1d}];
+
+		vdcset = Flatten[#,1]& @ Table[ 
+			src = {ix,iy};
+			dst = {vdcInteger[ix-1,nbits]+1,vdcInteger[iy-1,nbits]+1};
+			Position[allpts,dst][[1,1]] 
+		,{iy,npts1d},{ix,npts1d}];
+        Put[vdcset,"permuts.h"];
+        Put[{set00,set01,set10,set11},"permuts_4bins.h"];
+]
+
+convert[] :=
+    Module[ {},
+        npts = 1024;
+        npts1d = 32;
+        Do[
+                data = Import["data/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[iset]<>".dat"];
+                Print[iset -> Length[data] ];
+	        		pts = Table[
+	        		{indx,indy} = data[[i,1;;2]];
+	        		{x,y} = {indx,indy} / npts1d + data[[i,3;;4]] / npts1d;
+	        		{x,y}
+	        	,{i,Length[data]}];
+	        	Export["data/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[iset]<>".dat",pts];
+        ,{iset,0,16}];
+    ]
+    
+soso[dbg_:False] :=
+    Module[ {},
+		SetOptions[Graphics, ImageSize -> 2{1024,1024},AspectRatio->Automatic, PlotRange->All];
+        npts = 1024;
+        npts1d = 32;
+        iset = 0;
+        nmappings = 32;
+        pattern = Import["data/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[iset]<>".dat"];
+        mappings = Table[
+			fname = "data/mapping_ptset_"<>n2PaddedString[iset]<>"/mapping_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[imapping]<>".dat";
+			Get[fname]
+        	,{imapping,0,nmappings-1}];
+        	mapping = mappings[[2]] - 1;
+
+        	pts4d = Table[-1,{npts*npts}];
+        	
+        mappingIndTab = 	Table[
+	        		{indx,indy} = Floor[pattern[[ipattern]] * npts1d];
+        			(*If[dbg, Print[ipattern -> pattern[[ipattern]] -> {indx,indy}] ];*)
+	        		{indx,indy}
+	    ,{ipattern,Length[pattern]}];
+
+		gl = {};
+        pts = 	Flatten[#,1]& @ Table[
+        		mappingInd = mapping[[imapping]];
+        		{mapdX, mapdY} = mappingIndTab[[mappingInd]];
+        		If[dbg, Print[imapping -> {mapdX, mapdY}] ];
+        		If[dbg, AppendTo[gl,{Point@{mapdX, mapdY}, Text[Style[#,24,Bold]&@imapping,{mapdX, mapdY},{-1,-1}] }] ];
+        		{tileX,tileY} = mappingIndTab[[imapping]];
+	         (Parallelize @ 	Table[
+	        		{patX,patY} = pattern[[ipattern]];
+	       		mappingInd = mapping[[ipattern]];
+	        		(*{patU,patV} = mappingIndTab[[mappingInd]];*)
+	        		{patU,patV} = pattern[[mappingInd]];
+	        		{x,y} = {tileX,tileY} / npts1d + {patX,patY} / npts1d;
+	        		{u,v} = {patU,patV} / npts1d + {tileX,tileY} / npts1d  //N;
+	        		(*Print[{imapping,ipattern} -> {x,y} ];*)
+	        		{x,y,u,v}
+	         ,{ipattern,Length[pattern]}])
+		,{imapping, Length[mapping] }];
+		If[dbg, Graphics[gl]//Print];
+		Export["data/data_new_4D.dat",pts];
+		Run[execPrefix <> "path data/data_new_4D.dat out.png; open out.png"];
+    ] (* soso *)
+
+
+(*        		{mapdX, mapdY} = mappingIndTab[[xytileInd]];
+        		If[dbg, Print[ixytiles -> {mapdX, mapdY}] ];
+        		If[dbg, AppendTo[gl,{Point@{mapdX, mapdY}, Text[Style[#,24,Bold]&@ixytiles,{mapdX, mapdY},{-1,-1}] }] ];
+		If[dbg, Graphics[gl]//Print];*)
+qqq[dbg_:False] :=
+     Module[ {},
+         SetOptions[Graphics, ImageSize -> 2{1024,1024},AspectRatio->Automatic, PlotRange->All];
+         npts = 1024;
+         npts1d = 32;
+         iset = 0;
+         nmappings = 1;
+         pattern = Import["data/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[iset]<>".dat"];
+         mappings = Table[
+             fname = "data/mapping_ptset_"<>n2PaddedString[iset]<>"/mapping_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[imapping]<>".dat";
+             Get[fname]
+         ,{imapping,0,nmappings-1}];
+         mapping = mappings[[1]];
+         pts4d = Table[-1,{npts*npts}];
+         mappingIndTab = Table[
+                     {indx,indy} = Floor[pattern[[ipattern]] * npts1d];
+                     {indx,indy}
+         ,{ipattern,Length[pattern]}];
+         gl = {};
+         pts = Flatten[#,1]& @ Table[
+                 mappingInd = mapping[[imapping]];
+                 {mapdX, mapdY} = mappingIndTab[[mappingInd]];
+                 {tileX,tileY} = mappingIndTab[[imapping]];
+                 Table[
+                        {patX,patY} = pattern[[ipattern]];
+                        mappingInd = mapping[[ipattern]];
+                        {patU,patV} = pattern[[mappingInd]];
+                        {x,y} = {tileX,tileY} / npts1d + {patX,patY} / npts1d;
+                        {u,v} = {patU,patV} / npts1d + {tileX,tileY} / npts1d  //N;
+                        {x,y,u,v}
+                 ,{ipattern,Length[pattern]}]
+         ,{imapping, Length[mapping] }];
+         Export["data/data_new_4D.dat",pts];
+         Run[execPrefix <> "path data/data_new_4D.dat out.png; open out.png"];
+     ] (* qqq *)
+        
+(* zzz[dbg_:False] :=
+    Module[ {},
+		SetOptions[Graphics, ImageSize -> 2{1024,1024},AspectRatio->Automatic, PlotRange->All];
+        npts = 1024;
+        npts1d = 32;
+        iset = 0;
+        nmappings = 1;
+        pattern = Import["data/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[iset]<>".dat"];
+        mappings = Table[fname = "data/mapping_ptset_"<>n2PaddedString[iset]<>"/mapping_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[imapping]<>".dat";
+			Get[fname]
+        	,{imapping,0,nmappings-1}];
+        mapping = mappings[[1]];
+        pts4d = Table[-1,{npts*npts}]; 	
+        mappingIndTab = Table[{indx,indy} = Floor[pattern[[ipattern]] * npts1d]; {indx,indy},{ipattern,Length[pattern]}];
+
+		gl = {};
+        pts = Flatten[#,1]& @ ((*Parallelize @*) Table[
+        		{tileX,tileY} = mappingIndTab[[ixytiles]];
+	        	{patU,patV} = pattern[[ixytiles]];
+	         	Table[
+	        		{patX,patY} = pattern[[ipattern]];
+	        		{x,y} = {tileX,tileY} / npts1d + {patX,patY} / npts1d //N;
+If[ipattern == 1, Print[{ixytiles,ipattern} -> {x,y} -> Floor[npts {x,y}] ] ];
+	         		{tileU,tileV} = mappingIndTab[[ipattern]];
+	        		{u,v} = {tileU,tileV} / npts1d + {patU,patV} / npts1d //N; ;
+	        		{x,y,u,v}
+	         ,{ipattern,npts}]
+		,{ixytiles, npts }]);
+		Export["data/data_new_4D.dat",pts];
+		Run[execPrefix <> "path data/data_new_4D.dat out.png; open out.png"];
+    ] (* zzz *)
+*)
+rot345[{u_,v_}] := Round[{3 u - 4 v, 4 u + 3 v}/5]
+rot435[{u_,v_}] := Round[{4 u - 3 v, 3 u + 4 v}/5]
+rot51213[{u_,v_}] := Round[{5 u - 12 v, 12 u + 5 v}/13]
+rot72425[{u_,v_}] := Round[{7 u - 24 v, 24 u + 7 v}/25]
+rot345WithPivot[{u_,v_},{pivotu_,pivotv_}] := {pivotu,pivotv} + Round[{3 (u-pivotu) - 4 (v-pivotv), 4 (u-pivotu) + 3 (v-pivotv)}/5]
+
+buildVDCpts4d[] :=
+    Module[ {},
+        npts1d = 1024;
+        npts = npts1d^2;
+        nbits = Log[2,npts1d];
+        step = 1./npts1d;
+               
+        npts1d = 1024;
+        npts = npts1d^2;
+        step = 1./npts1d;
+        pts4d = Flatten[#,1]& @ (Parallelize @ Table[
+                x = step ix + step/2;
+                y = step iy + step/2;
+                u = vdcReal[iy] + step/2;
+                v = vdcReal[ix] + step/2;
+                {x,y,u,v}
+        ,{ix,0,npts1d-1},{iy,0,npts1d-1}] );
+        Export["data/pts4d_vdc.dat",pts4d];
+        Run[execPrefix <> "path data/pts4d_vdc.dat out_vdc.png; open out_vdc.png"];
+
+
+        (*pts4d = Flatten[#,1]& @ (Parallelize @ Table[
+                x = step ix + step/2;
+                y = step iy + step/2;
+                {iu,iv} = Mod[#,npts1d]& /@ (rot345 @ {vdcInteger[ix,nbits],vdcInteger[iy,nbits]});
+                {u,v} = step ({iu,iv} + {.5,.5});
+                {x,y,u,v}
+            ,{ix,0,npts1d-1},{iy,0,npts1d-1}] );
+        fname = "data/pts4d_vdc+rot345.dat";
+        Print["Exporting into ",fname];
+        Export[fname,pts4d];
+        Run[execPrefix <> "path "<>fname<>" out_vdc+rot345.png; open out_vdc+rot345.png"];*)
+
+       (*pts4d = Flatten[#,1]& @ (Parallelize @ Table[
+                x = step ix + step/2;
+                y = step iy + step/2;
+                {iu,iv} = Mod[#,npts1d]& /@ (rot435 @ (rot345 @ {vdcInteger[ix,nbits],vdcInteger[iy,nbits]}));
+                {u,v} = step ({iu,iv} + {.5,.5});
+                {x,y,u,v}
+            ,{ix,0,npts1d-1},{iy,0,npts1d-1}] );
+        fname = "data/pts4d_vdc+rot345+rot435.dat";
+        Print["Exporting into ",fname];
+        Export[fname,pts4d];
+        Run[execPrefix <> "path "<>fname<>" out_vdc+rot345+rot435.png; open out_vdc+rot345+rot435.png"];*)
+
+       (*pts4d = Flatten[#,1]& @ (Parallelize @ Table[
+                x = step ix + step/2;
+                y = step iy + step/2;
+                {iu,iv} = Mod[#,npts1d]& /@ (rot345 @ (rot345 @ {vdcInteger[ix,nbits],vdcInteger[iy,nbits]}));
+                {u,v} = step ({iu,iv} + {.5,.5});
+                {x,y,u,v}
+            ,{ix,0,npts1d-1},{iy,0,npts1d-1}] );
+        fname = "data/pts4d_vdc+rot345+rot345.dat";
+        Print["Exporting into ",fname];
+        Export[fname,pts4d];
+        Run[execPrefix <> "path "<>fname<>" out_vdc+rot345+rot345.png; open out_vdc+rot345+rot345.png"];*)
+
+       (*pts4d = Flatten[#,1]& @ (Parallelize @ Table[
+                x = step ix + step/2;
+                y = step iy + step/2;
+                {iu,iv} = Mod[#,npts1d]& /@ (rot51213 @ (rot345 @ {vdcInteger[ix,nbits],vdcInteger[iy,nbits]}));
+                {u,v} = step ({iu,iv} + {.5,.5});
+                {x,y,u,v}
+            ,{ix,0,npts1d-1},{iy,0,npts1d-1}] );
+        fname = "data/pts4d_vdc+rot345+rot51213.dat";
+        Print["Exporting into ",fname];
+        Export[fname,pts4d];
+        Run[execPrefix <> "path "<>fname<>" out_vdc+rot345+rot51213.png; open out_vdc+rot345+rot51213.png"];*)
+
+       (*pts4d = Flatten[#,1]& @ (Parallelize @ Table[
+                x = step ix + step/2;
+                y = step iy + step/2;
+                {iu,iv} = Mod[#,npts1d]& /@ (rot345 @ (rot51213 @ (rot345 @ {vdcInteger[ix,nbits],vdcInteger[iy,nbits]})));
+                {u,v} = step ({iu,iv} + {.5,.5});
+                {x,y,u,v}
+            ,{ix,0,npts1d-1},{iy,0,npts1d-1}] );
+        fname = "data/pts4d_vdc+rot345+rot51213+rot345.dat";
+        Print["Exporting into ",fname];
+        Export[fname,pts4d];
+        Run[execPrefix <> "path "<>fname<>" out_vdc+rot345+rot51213+rot345.png; open out_vdc+rot345+rot51213+rot345.png"];*)
+
+       (*pts4d = Flatten[#,1]& @ (Parallelize @ Table[
+                x = step ix + step/2;
+                y = step iy + step/2;
+                {iu,iv} = Mod[#,npts1d]& /@ (rot345 @ (rot345 @ (rot345 @ {vdcInteger[ix,nbits],vdcInteger[iy,nbits]})));
+                {u,v} = step ({iu,iv} + {.5,.5});
+                {x,y,u,v}
+            ,{ix,0,npts1d-1},{iy,0,npts1d-1}] );
+        fname = "data/pts4d_vdc+rot345+rot51213+rot345.dat";
+        Print["Exporting into ",fname];
+        Export[fname,pts4d];
+        Run[execPrefix <> "path "<>fname<>" out_vdc+rot345+rot345+rot345.png; open out_vdc+rot345+rot345+rot345.png"];*)
+        
+        (*pts4d = Flatten[#,1]& @ (Parallelize @ Table[
+        		{ixr,iyr} = Mod[#,npts1d]& /@ (rot345 @ {ix,iy});
+                {x,y} = step {ixr + 1/2, iyr + 1/2};
+                (*{iu,iv} = Mod[#,npts1d]& /@ (rot345 @ {vdcInteger[ix,nbits],vdcInteger[iy,nbits]});*)
+                {iu,iv} = {vdcInteger[ixr,nbits],vdcInteger[iyr,nbits]};
+                {u,v} = step ({iu,iv} + {.5,.5});
+                {x,y,u,v}
+            ,{ix,0,npts1d-1},{iy,0,npts1d-1}] );
+        fname = "data/pts4d_vdc+rot345.dat";
+        Print["Exporting into ",fname];
+        Export[fname,pts4d];
+        Run[execPrefix <> "path "<>fname<>" out_vdc+rot345.png; open out_vdc+rot345.png"];*)
+        
+        (*pts4d = Flatten[#,1]& @ (Parallelize @ Table[
+                x = step ix + step/2;
+                y = step iy + step/2;
+                {iu,iv} = Mod[#,npts1d]& /@ (rot51213 @ {vdcInteger[ix,nbits],vdcInteger[iy,nbits]});
+                {u,v} = step ({iu,iv} + {.5,.5});
+                {x,y,u,v}
+            ,{ix,0,npts1d-1},{iy,0,npts1d-1}] );
+        fname = "data/pts4d_vdc+rot51213.dat";
+        Print["Exporting into ",fname];
+        Export[fname,pts4d];
+        Run[execPrefix <> "path "<>fname<>" out_vdc+rot51213.png; open out_vdc+rot51213.png"];*)
+
+        (*pts4d = Flatten[#,1]& @ (Parallelize @ Table[
+                x = step ix + step/2;
+                y = step iy + step/2;
+                {iu,iv} = Mod[#,npts1d]& /@ (rot72425 @ {vdcInteger[ix,nbits],vdcInteger[iy,nbits]});
+                {u,v} = step ({iu,iv} + {.5,.5});
+                {x,y,u,v}
+            ,{ix,0,npts1d-1},{iy,0,npts1d-1}] );
+        fname = "data/pts4d_vdc+rot72425.dat";
+        Print["Exporting into ",fname];
+        Export[fname,pts4d];
+        Run[execPrefix <> "path "<>fname<>" out_vdc+rot72425.png; open out_vdc+rot72425.png"];*)
+        
+        pts4d = Table[{0,0,0,0},{ix,0,npts1d-1},{iy,0,npts1d-1}];
+        ( Do[
+        		{ixr,iyr} = (rot345 @ {ix,iy});
+        		If[ 1 < ixr <= npts1d && 1 < iyr <= npts1d ,
+	                {x,y} = step {ixr + 1/2, iyr + 1/2};
+	                (*{iu,iv} = Mod[#,npts1d]& /@ (rot345 @ {vdcInteger[ix,nbits],vdcInteger[iy,nbits]});*)
+	                {iu,iv} = {vdcInteger[ix,nbits],vdcInteger[iy,nbits]};
+	                {u,v} = step ({iu,iv} + {.5,.5});
+	                pts4d[[ixr,iyr]] = {x,y,u,v};
+        		];
+            ,{ix,-npts1d,3/2 npts1d-1},{iy,-npts1d,3/2 npts1d-1}] );
+        fname = "data/pts4d_vdc+rot345before.dat";
+        Print["Exporting into ",fname];
+        Export[fname,Flatten[#,1]& @ pts4d];
+        Run[execPrefix <> "path "<>fname<>" out_vdc+rot345before.png; open out_vdc+rot345before.png"];
+    ] (* buildVDCpts4d*)
+
+     
+ (*buildBNpts4d[dbg_:False] :=
+    Module[ {},
+		SetOptions[Graphics, ImageSize -> 2{1024,1024},AspectRatio->Automatic, PlotRange->All];
+        npts = 1024;
+        npts1d = 32;
+        iset = 0;
+        nmappings = 1;
+        pattern = Import["data/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[iset]<>".dat"];
+        mappings = Table[
+			fname = "data/mapping_ptset_"<>n2PaddedString[iset]<>"/mapping_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[imapping]<>".dat";
+			Get[fname]
+        	,{imapping,0,nmappings-1}];
+        mapping = mappings[[1]];
+
+        pts4d = Table[-1,{npts*npts}];
+        	
+        mappingIndTab = 	Table[
+	        		{indx,indy} = Floor[pattern[[ipattern]] * npts1d];
+        			(*If[dbg, Print[ipattern -> pattern[[ipattern]] -> {indx,indy}] ];*)
+	        		{indx,indy}
+	    ,{ipattern,Length[pattern]}];
+
+		gl = {};
+        pts = Flatten[#,1]& @ ((*Parallelize @*) Table[
+        		(*xytileInd = mapping[[ixytiles]];*)
+        		(*{tileX,tileY} = mappingIndTab[[xytileInd]];*)
+        		{tileX,tileY} = mappingIndTab[[ixytiles]];
+	        	{patU,patV} = pattern[[ixytiles]];
+	         	Table[
+	         		(*uvtileInd = mapping[[ipattern]];*)
+	         		(*{tileU,tileV} = mappingIndTab[[uvtileInd]];*)
+	        		{patX,patY} = pattern[[ipattern]];
+	        		{x,y} = {tileX,tileY} / npts1d + {patX,patY} / npts1d //N;
+If[ipattern == 1, Print[{ixytiles,ipattern} -> {x,y} -> Floor[npts {x,y}] ] ];
+	         		{tileU,tileV} = mappingIndTab[[ipattern]];
+	        		{u,v} = {tileU,tileV} / npts1d + {patU,patV} / npts1d //N; ;
+	        		{x,y,u,v}
+	         ,{ipattern,npts}]
+		,{ixytiles, npts }]);
+		Export["data/data_new_4D.dat",pts];
+		Run[execPrefix <> "path data/data_new_4D.dat out.png; open out.png"];
+    ] (* buildBNpts4d *)
+*)
+
+    
+tstmapping[dbg_:True] :=
+    Module[ {},
+		SetOptions[Graphics, ImageSize -> {1024,1024},AspectRatio->Automatic, PlotRange->All];
+        npts = 1024;
+        npts1d = 32;
+        iset = 0;
+        nmappings = 32;
+        pattern = Import["data/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[iset]<>".dat"];
+			fname = "tmp_data/bestFound_3302_pid6609.dat";
+			mapping = Get[fname];
+ 
+ 		set00 = Import["src/set00.dat"];
+      	bins = Get["permuts_4bins.h"];
+        	
+        mappingIndTab = 	Table[
+	        		{indx,indy} = Floor[pattern[[ipattern]] * npts1d];
+        			(*If[dbg, Print[ipattern -> pattern[[ipattern]] -> {indx,indy}] ];*)
+	        		{indx,indy}
+	    ,{ipattern,Length[pattern]}];
+
+		gl = gl2 = {};
+        pts = 	Flatten[#,1]& @ Table[
+        		mappingInd = mapping[[imapping]];
+        		{mapdX, mapdY} = mappingIndTab[[mappingInd]];
+        		{ix,iy} = Floor[npts1d set00[[imapping]] ];
+        		quadrant = Position[bins, mappingInd][[1, 1]];
+        		(*If[dbg, Print[imapping -> {ix,iy} -> quadrant -> mappingInd -> {mapdX, mapdY}] ];*)
+        		(*If[dbg, AppendTo[gl,{Point@{mapdX, mapdY}, Text[Style[#,18,Bold]&@imapping,{mapdX, mapdY},{-1,-1}] }] ];*)
+        		If[dbg, AppendTo[gl,{Point@{ix,iy}, Text[Style[#,18,Bold]&@quadrant,{ix,iy},{-1,-1}] }] ];
+        		If[dbg, AppendTo[gl2,{Point@{ix,iy}, Text[Style[#,14,Bold]&@mappingInd,{ix,iy},{-1,-1}] }] ];
+			,{imapping, Length[mapping] }];
+		If[dbg, {Graphics[gl],Graphics[gl2]}//Print];
+    ] (* soso *)
+
+renumbreVoidAndClusterMx[] :=
+    Module[ {},
+        sz = 32;
+        mx = Import["data/void_and_cluster_"<>ToString[sz]<>"x"<>ToString[sz]<>"_original.dat"];
+        count = 0;
+        newlst = Flatten[#,1]& @ Table[
+            poslst =  RandomSample @ Position[mx,level];
+             (*Print[level -> poslst];*)
+            Table[{count++,poslst[[j]]},{j,Length[poslst]}]
+        ,{level,Min[mx],Max[mx]}];
+        newmx = Table[0,{Length[mx]},{Length[mx]}];
+        Do[
+            {count,{x,y}} = newlst[[i]];
+            newmx[[x,y]] = count;
+        ,{i,Length[newlst]}];
+        {niceRaster[newmx/Length[newlst]],niceRaster[newmx/Length[newlst],zoom->2],niceRaster[newmx/Length[newlst],zoom->4]}//Print;
+		Export["data/void_and_cluster_"<>ToString[sz]<>"x"<>ToString[sz]<>".dat",newmx];
+
+        sz = 128;
+        mx = Import["data/void_and_cluster_"<>ToString[sz]<>"x"<>ToString[sz]<>"_original.dat"];
+        count = 0;
+        newlst = Flatten[#,1]& @ Table[
+            poslst =  RandomSample @ Position[mx,level];
+             (*Print[level -> poslst];*)
+            Table[{count++,poslst[[j]]},{j,Length[poslst]}]
+        ,{level,Min[mx],Max[mx]}];
+        newmx = Table[0,{Length[mx]},{Length[mx]}];
+        Do[
+            {count,{x,y}} = newlst[[i]];
+            newmx[[x,y]] = count;
+        ,{i,Length[newlst]}];
+        {niceRaster[newmx/Length[newlst]],niceRaster[newmx/Length[newlst],zoom->2],niceRaster[newmx/Length[newlst],zoom->4]}//Print;
+		Export["data/void_and_cluster_"<>ToString[sz]<>"x"<>ToString[sz]<>".dat",newmx];
+		
+		m = RandomSample @ (RandomSample /@ newmx);
+        {niceRaster[m/Length[newlst]],niceRaster[m/Length[newlst],zoom->2],niceRaster[m/Length[newlst],zoom->4]}//Print;
+    ]
+ 
+ 
+(*--------------- Hilbert SFC ---------------*)
+(****************** constants *******************)
+type1 = 1
+type2 = 2
+type3 = 3
+type4 = 4
+type5 = 5
+type6 = 6
+decomposeFig[fig_] :=
+    Block[ {res = {},type,z12,z23,z34,z41,z13,no,i1,i2,i3,i4,orientation,z1,z2,z3,z4},
+        {no,type,{i1,i2,i3,i4},{orientation},{z1,z2,z3,z4}} = fig;
+        z12 = (z1 + z2) / 2;
+        z23 = (z2 + z3) / 2;
+        z34 = (z3 + z4) / 2;
+        z41 = (z4 + z1) / 2;
+        z13 = (z1 + z3) / 2;
+		Switch[ type
+        ,type1,
+                AppendTo[res, getFigure[{z41, z1},  type6, tileno++] ];
+                AppendTo[res, getFigure[{z13, z34}, type5, tileno++] ];
+                AppendTo[res, getFigure[{z13, z23}, type3, tileno++] ];
+                AppendTo[res, getFigure[{z23, z13}, type2, tileno++] ];
+         ,type2,
+                AppendTo[res, getFigure[{z12, z13}, type5, tileno++] ];
+                AppendTo[res, getFigure[{z13, z12}, type6, tileno++] ];
+                AppendTo[res, getFigure[{z13, z23}, type2, tileno++] ];
+                AppendTo[res, getFigure[{z34, z4},  type1, tileno++] ];
+          ,type3,
+                AppendTo[res, getFigure[{z41, z1},  type6, tileno++] ];
+                AppendTo[res, getFigure[{z13, z34}, type5, tileno++] ];
+                AppendTo[res, getFigure[{z13, z23}, type3, tileno++] ];
+                AppendTo[res, getFigure[{z2, z23}, type4, tileno++] ];
+          ,type4,
+                AppendTo[res, getFigure[{z23, z13}, type5, tileno++] ];
+                AppendTo[res, getFigure[{z13, z23}, type6, tileno++] ];
+                AppendTo[res, getFigure[{z13, z34}, type2, tileno++] ];
+                AppendTo[res, getFigure[{z41, z1},  type3, tileno++] ];
+           ,type5,
+                AppendTo[res, getFigure[{z34, z4},  type4, tileno++] ];
+                AppendTo[res, getFigure[{z13, z23}, type5, tileno++] ];
+                AppendTo[res, getFigure[{z13, z12}, type3, tileno++] ];
+                AppendTo[res, getFigure[{z12, z13}, type2, tileno++] ];
+           ,type6,
+                AppendTo[res, getFigure[{z2, z23}, type1, tileno++] ];
+                AppendTo[res, getFigure[{z13, z23}, type6, tileno++] ];
+                AppendTo[res, getFigure[{z13, z34}, type2, tileno++] ];
+                AppendTo[res, getFigure[{z41, z1},  type3, tileno++] ];
+            ];
+        Return[res]
+    ] (* decomposeFigure *)
+
+getFigure[{z1_,z2_},tiletype_, tileno_] :=
+    Block[ {v1,v2,z3,z4,cntr,i1,i2,i3,i4,orientation},
+        v1 = z2-z1;
+        v2 = rotatePI2[v1,{0,0}];
+        z3 = z2 + v2;
+        z4 = z1 + v2;
+        cntr = (z1+z3)/2;
+        orientation = getAngle[z2-z1,{0,0},{1,0}];
+        i1 = appendtovertices[1,z1,tileno,getAngle[{1,1},{0,0},z1-cntr],Pi/2,tiletype];
+        i2 = appendtovertices[2,z2,tileno,getAngle[{1,1},{0,0},z2-cntr],Pi/2,tiletype];
+        i3 = appendtovertices[3,z3,tileno,getAngle[{1,1},{0,0},z3-cntr],Pi/2,tiletype];
+        i4 = appendtovertices[4,z4,tileno,getAngle[{1,1},{0,0},z4-cntr],Pi/2,tiletype];
+        Return[{tileno,tiletype,{i1,i2,i3,i4},{orientation},{z1,z2,z3,z4}}]
+    ] (* getFigure *)
+
+appendtovertices[vertexno_,v_,tileno_,a0_,dalpha_,tiletype_] :=
+    Block[ {i,pos},
+        pos = Position[vertices, v];
+        n = vertexno;
+        If[ pos == {}, (* this vertex does not exist *)
+            AppendTo[vertices,{{v,tileno,n,n,a0,dalpha}}];
+            i = Length[vertices];,(*ELSE*)
+            i = pos[[1,1]];
+            AppendTo[vertices[[i]],{v,tileno,n,n,a0,dalpha}]
+        ];
+        Return[i]
+    ] (* appendtovertices *)
+
+makeHilbertSFC[inniters_:5, dbg_:True] :=
+    Module[ {},
+    		niters = inniters;
+    		tileno = 1;
+        vertices = {};
+        tiles = {};
+        gl0 = {PointSize[ptSize],Thickness[.001]};
+        p = 1.5;
+        z0 = {0,0};
+        z1 = {1,0};
+        dz1 = {1,0};
+        dz2 = {0,1};
+        AppendTo[tiles, getFigure[{z0,z1},type1,1]];
+        Do[
+	        tiles = Flatten[#, 1] & @ (decomposeFig /@ tiles);
+        	,{iter,niters}];
+        	hilbertSFCmx = Table[0,{2^niters},{2^niters}];
+        	hilbertSFC = Table[
+        		{tileno,tiletype,{i1,i2,i3,i4},{orientation},{z1,z2,z3,z4}} = tiles[[i]];
+        		center = Mean@{z1,z2,z3,z4};
+        		{iy,ix} = Ceiling[2^niters center ];
+        		hilbertSFCmx[[iy,ix]] = i-1;
+        		If[dbg, Print[i -> {ix,iy}] ];
+        		{ix,iy}
+        	,{i,Length[tiles]}];
+        	vacMx = Import["data/void_and_cluster_32x32.dat"];
+        	{niceRaster[hilbertSFCmx/1024,zoom->8],niceRaster[vacMx/1024,zoom->8]}//Print;
+        	
+        	mxsz = 2^niters;
+        	mapping = Table[
+        		{x,y} = {Quotient[i-1,mxsz]+1,Mod[i,mxsz,1]};
+        		hilbertValue = hilbertSFCmx[[y,x]];
+        		pos = {u,v} = Position[vacMx,hilbertValue][[1]];
+        		ind = ((v-1) * mxsz + (u-1));
+        		Print[(i-1) -> {x,y} -> hilbertValue -> pos -> ind];
+        		ind
+        	,{i,Length[tiles]}];
+        	Export["mappings/mapping_Hilbert+VAC.dat",mapping];
+        	Put[mapping,"mappings/mapping_Hilbert+VAC.h"];
+        	
+        	If[dbg,
+	        	gl = {};
+	        	prevCenter = Mean @ tiles[[1,-1]];
+	        	Do[
+	        		{tileno,tiletype,{i1,i2,i3,i4},{orientation},{z1,z2,z3,z4}} = tiles[[i]];
+	        		center = Mean@{z1,z2,z3,z4};
+	        		AppendTo[gl, {Cyan,Line[{z1,z2,z3,z4,z1}],Black,Text[Style[#,14,Bold]& @ (i-1),center], Red,Line[{prevCenter,center}] }];
+	        		prevCenter = center;
+	        	,{i,Length[tiles]}];
+	        	Graphics[gl, Frame->True, FrameTicks->{{(Range[mxsz]-.5)/mxsz,Range[mxsz]}//T,{(Range[mxsz]-.5)/mxsz,Range[mxsz]}//T}, ImageSize ->3/2{1024,1024}]//Print;
+	       	gl = {};
+	        	Do[
+				{z1,z2,z3,z4} = {{ix,iy},{ix,iy+1},{ix+1,iy+1},{ix+1,iy}};
+	        		center = Mean@{z1,z2,z3,z4};
+	        		val = vacMx[[ix,iy]];
+	        		AppendTo[gl, {Cyan,Line[{z1,z2,z3,z4,z1}],Black,Text[Style[#,14,Bold]& @ (val),center]  }];
+	         	,{ix,Length[vacMx]},{iy,Length[vacMx]}];
+	        	Graphics[gl, PlotLabel->"V&C", Frame->True, FrameTicks->{{Range[mxsz]+.5,Range[mxsz]}//T,{Range[mxsz]+.5,Range[mxsz]}//T}, ImageSize ->3/2{1024,1024}]//Print;
+		];
+    ]
+    
+    
+testDyadicPartitioning2DSquare[set_] := Module[{sz,tests,i,tab,szsq},
+	sz=Length[set];
+	szsq = Sqrt[sz];
+	tests = {{szsq,szsq}};
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+	And @@ tab
+] (* testDyadicPartitioning2DPartial *)
+
+testDyadicPartitioning2DFull[set_] := Module[{sz,powers,tests,i,tab},
+	sz=Length[set];
+	powers = Table[2^i,{i,0,Log[2,sz]}];
+	tests = Select[Tuples[powers, 2], (Times @@ #) == sz &];
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+	And @@ tab
+] (* testDyadicPartitioning2DFull *)
+
+testDyadicPartitioning2DPartial[set_] := Module[{sz,tests,i,tab,szsq},
+	sz=Length[set];
+	szsq = Sqrt[sz];
+	tests = {{1,sz},{sz,1},{szsq,szsq}};
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+	And @@ tab
+] (* testDyadicPartitioning2DPartial *)
+
+(*---------------------------------------- pairing ----------------------------------------*)
+(*pairing[]:=
+    Module[ {},
+     ptsBNOT = Import["data/BNptset_Stratified_npts"<>n2PaddedString[1024]<>"_"<>n2PaddedString[0]<>".dat"];
+     (*res = ParallelMap[getHungarian,{{ptsUV,ptsBNOT},{ptsBNOT,ptsUV}}]; Put[res,"mappings/mappingUV2BNOT+mappingBNOT2UV.dat"];
+     	mappingUV2BNOT = res[[1]];
+     	mappingBNOT2UV = res[[2]];
+     	*)
+	iptsXY = Floor[npts1d ptsXY] ;
+	iptsUV = Floor[npts1d ptsUV] ;
+	iptsBNOT = Floor[npts1d ptsBNOT] ;
+	
+	mapping = Table[-1,{npts}];
+     Do[
+      	ptBNOT = ptsBNOT[[i]];
+      	iptBNOT = iptsBNOT[[i]];
+      	{u,v} = iptuv = iptsUV[[mappingBNOT2UV[[i]] ]];
+      	{x,y} = iptxy = iptsXY[[mappingBNOT2UV[[i]] ]];
+      	from = y * npts1d + x;
+     	to = i - 1;
+      	Print[i -> (mappingBNOT2UV[[i]]-1)  -> ptBNOT -> iptBNOT -> iptuv -> iptxy," mapping: ", from -> to];
+      	mapping[[from+1]] = to; (* convention C++*)
+     ,{i,npts}];
+     Print[mapping];
+    	Export["mappings/mapping_Sobol12to34.dat",mapping];
+    	Put[mapping,"mappings/mapping_Sobol12to34.h"];	
+     Graphics[{grid, AbsolutePointSize[10], Point/@ptsUV, Red, Point/@ptsBNOT	
+     		,Green,Table[Line[{ptsUV[[i]],ptsBNOT[[mappingUV2BNOT[[i]]]]}],{i,Length[ptsUV]}] 
+     		,Black,Table[ind = mappingUV2BNOT[[i]] - 1 ;
+     			Text[Style[#,Bold,24]& @ ind,ptsBNOT[[mappingUV2BNOT[[i]]]],{-1,-1} ],{i,Length[ptsUV]}] 
+     	},PlotLabel->"Dims 1 & 2: Sobol ind="<>ToString[{sobolInd1,sobolInd2}], Frame->True, FrameTicks->{{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T,{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T}, ImageSize ->{1740,1740}]//Print;
+] (* pairing *)
+*)
+
+(*---------------------------------------- exploreSobolCouples ----------------------------------------*)
+exploreSobolCouples[] :=
+    Module[ {},
+        tabsz = 32;
+        
+        npts = 1024;
+        npts1d = Sqrt[npts];
+        mx1 = Table[0,{tabsz},{tabsz}];
+        Do[
+            Do[
+                 buildMSobol[{i1,i2},False];
+                 sobolpts =  ( npts Table[ sobol2dOriginal[i] ,{i,0,npts-1}] );
+                 If[ testDyadicPartitioning2DSquare[sobolpts],
+                     mx1[[i1,i2]] = 1;
+                 ]
+            ,{i2,i1,tabsz}]
+        ,{i1,1,tabsz}];
+        p = MatrixPlot[mx1,Frame -> True, FrameTicks -> {Range[tabsz],Range[tabsz],Range[tabsz],Range[tabsz]}
+        		,PlotLabel->{npts1d,npts1d}, ImageSize -> {1024,1024}];
+        p//Print;
+        Export["results/Sobol_DyadicPartitioningPairs_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".png",p];
+        Export["results/Sobol_DyadicPartitioningPairs_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".pdf",p];
+        
+
+        npts = 4096;
+        npts1d = Sqrt[npts];
+        mx2 = Table[0,{tabsz},{tabsz}];
+        Do[
+            Do[
+                 buildMSobol[{i1,i2},False];
+                 sobolpts =  ( npts Table[ sobol2dOriginal[i] ,{i,0,npts-1}] );
+                 If[ testDyadicPartitioning2DSquare[sobolpts],
+                     mx2[[i1,i2]] = 1;
+                 ]
+            ,{i2,i1,tabsz}]
+        ,{i1,1,tabsz}];
+        p = MatrixPlot[mx2,Frame -> True, FrameTicks -> {Range[tabsz],Range[tabsz],Range[tabsz],Range[tabsz]}
+        		,PlotLabel->{npts1d,npts1d}, ImageSize -> {1024,1024}];
+        p//Print;
+        Export["results/Sobol_DyadicPartitioningPairs_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".png",p];
+        Export["results/Sobol_DyadicPartitioningPairs_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".pdf",p];
+
+        npts = 4 4096;
+        npts1d = Sqrt[npts];
+        mx3 = Table[0,{tabsz},{tabsz}];
+        Do[
+            Do[
+                 buildMSobol[{i1,i2},False];
+                 sobolpts =  ( npts Table[ sobol2dOriginal[i] ,{i,0,npts-1}] );
+                 If[ testDyadicPartitioning2DSquare[sobolpts],
+                     mx3[[i1,i2]] = 1;
+                 ]
+            ,{i2,i1,tabsz}]
+        ,{i1,1,tabsz}];
+        p = MatrixPlot[mx3,Frame -> True, FrameTicks -> {Range[tabsz],Range[tabsz],Range[tabsz],Range[tabsz]}
+        		,PlotLabel->{npts1d,npts1d}, ImageSize -> {1024,1024}];
+        p//Print;
+        Export["results/Sobol_DyadicPartitioningPairs_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".png",p];
+        Export["results/Sobol_DyadicPartitioningPairs_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".pdf",p];
+
+        npts = 16 4096;
+        npts1d = Sqrt[npts];
+        mx4 = Table[0,{tabsz},{tabsz}];
+        Do[
+            Do[
+                 buildMSobol[{i1,i2},False];
+                 sobolpts =  ( npts Table[ sobol2dOriginal[i] ,{i,0,npts-1}] );
+                 If[ testDyadicPartitioning2DSquare[sobolpts],
+                     mx4[[i1,i2]] = 1;
+                 ]
+            ,{i2,i1,tabsz}]
+        ,{i1,1,tabsz}];
+        p = MatrixPlot[mx4,Frame -> True, FrameTicks -> {Range[tabsz],Range[tabsz],Range[tabsz],Range[tabsz]}
+        		,PlotLabel->{npts1d,npts1d}, ImageSize -> {1024,1024}];
+        p//Print;
+        Export["results/Sobol_DyadicPartitioningPairs_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".png",p];
+        Export["results/Sobol_DyadicPartitioningPairs_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".pdf",p];
+
+        p = MatrixPlot[(mx1+mx2+mx3+mx4),Frame -> True, FrameTicks -> {Range[tabsz],Range[tabsz],Range[tabsz],Range[tabsz]}
+        		,PlotLabel->{npts1d,npts1d}, ImageSize -> {1024,1024}];
+        p//Print;
+        Export["results/Sobol_DyadicPartitioningPairs_4sizes.png",p];
+        Export["results/Sobol_DyadicPartitioningPairs_4sizes.pdf",p];
+    ]
+
+(*---------------------------------------- old bruteForceReordering ----------------------------------------*)
+bruteForceReordering[nSolution_:0,npts_:1024,dbg_:False] := 
+    Block[ {}, (* mindist tab: {{0.0213905,0},{0.0191367,1},{0.0212313,2},{0.020184,3},{0.0176387,4},{0.0198319,5},{0.0173547,6},{0.0199789,7},{0.0164477,8},{0.0169664,9},{0.0212522,10},{0.0174904,11},{0.0193656,12},{0.0176682,13},{0.0194653,14},{0.0195344,15},{0.0197688,16}} *)
+        nPartitions1D = Sqrt[npts];
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+        partitionBorders = {Cyan, Table[{Line[{{0,i/nPartitions1D},{1,i/nPartitions1D}}], Line[{{i/nPartitions1D,0},{i/nPartitions1D,1}}] }, {i,nPartitions1D-1}] };
+        fineGridFacto = 8;
+        
+        centers = Table[
+                    {xCenter,yCenter} = 1./nPartitions1D {(ix-.5),(iy-.5)};
+                    {xCenter,yCenter}
+                ,{iy,nPartitions1D},{ix,nPartitions1D}];
+        data = Import["data_best_found/BNptset_Stratified_npts"<>n2PaddedString[npts]<>"_"<>n2PaddedString[nSolution]<>".dat"];
+        
+        pairs = Table[
+        		{indx,indy} = data[[i,1;;2]];
+        		{x,y} = {indx,indy} / nPartitions1D + data[[i,3;;4]] / nPartitions1D;
+        		{centers[[1+indy,1+indx]], {x,y}}
+        	,{i,Length[data]}];
+        	set01 = Last /@ pairs;
+        	set = getExtendedSet01[set01];
+        	neighbors = getAllNeighghbors[set,npts];
+        	
+	     permuttab = RandomSample @ Range[npts];
+	     newneighbors = Table[ permuttab[[neighbors[[i]]]] ,{i,Length[neighbors]}];
+	     totalDist = Total @ Table[
+	     		newnei = newneighbors[[i]];
+	     		Total @ (getToroidalDist[set01[[newnei[[1]]]], set01[[#]]]& /@ Drop[newnei,1])
+	     	,{i,Length[newneighbors]}];
+
+		iter = 0;
+		While[True,
+			iter++;
+			newpermuttab = permuttab;
+			{ind1,ind2} = {RandomInteger[{1, npts}],RandomInteger[{1, npts}]};
+			newpermuttab[[{ind1,ind2}]] = newpermuttab[[{ind2,ind1}]];
+			
+			newneighbors = Table[ newpermuttab[[neighbors[[i]]]] ,{i,Length[neighbors]}];
+		    newTotalDist = Total @ Table[
+		     		newnei = newneighbors[[i]];
+		     		Total @ (getToroidalDist[set01[[newnei[[1]]]], set01[[#]]]& /@ Drop[newnei,1])
+		     	,{i,Length[newneighbors]}];
+		     If[newTotalDist > totalDist,
+		     	If[newTotalDist > 2800,
+		     		fname = "tmp_data/permuttab_"<>n2PaddedString[nSolution]<>pid<>"totalDist_"<>ToString[Round@totalDist]<>".dat";
+		     		DeleteFile[fname];
+		     		fname = "tmp_data/permuttab_"<>n2PaddedString[nSolution]<>pid<>"totalDist_"<>ToString[Round@newTotalDist]<>".dat";
+		     		Put[newpermuttab,fname];
+		     	];
+		     	permuttab = newpermuttab;
+		     	totalDist = newTotalDist;
+		     	Print[iter, " better total dist:" -> totalDist];
+		     ];
+		];
+     ] (* bruteForceReordering *)
+
+(*---------------------------------------- getTotalContrast  ----------------------------------------*)
+get1ptContrastGaussin[iPattern_:1,fgkernel_,sigmaSelect_,dbg_:True] :=
+    Module[ {(*x0,y0,xpixelref, ypixelref,xyimage,uvimage,filteredImage,minval, maxval,contrast*)},
+        {x0,y0} = iptsXY[[iPattern]];
+        {xpixelref, ypixelref} =  {x0,y0};
+        (*{xpixelref, ypixelref} =  ({x0,y0} + {RandomReal[]-.5,RandomReal[]-.5});*)
+        xyimage = Table[0,{imagesz},{imagesz}];
+        uvimage = Table[0,{imagesz},{imagesz}];
+        Do[
+               {ix,iy} = iptsXY[[i]];
+               w = Floor[nLevelsGKernel * (E^(-getToroidalDistSq[{ix,iy},{xpixelref,ypixelref} ,imagesz]/(2 (magFacdtor sigmaSelect)^2)) )] / (nLevelsGKernel-1);
+               If[(nLevelsGKernel == 2) && (w > 0), w = 1];
+               xyimage[[iy+1,ix+1]] = w;
+               {iu,iv} = iptsUV[[ 1+mappingXY2UV[[i]] ]];
+               uvimage[[iv+1,iu+1]] = w;
+              (* If[ dbg && w > 0, Print[ i -> {ix,iy} -> (mappingXY2UV[[i]]) ->{iu,iv}  -> w//N ]  ];*)
+        ,{i,npts}];
+        filteredImage = InverseFourier[fgkernel * Fourier[uvimage]]//Chop//reorg2D;
+        {minval, maxval} = {Min[filteredImage],Max[filteredImage]};
+        contrast = maxval-minval;
+        If[ dbg,
+            Print["get1ptContrastGaussin: ",iPattern -> mf[{sigmaSelect,sigmagkernelSEL}] -> mf[{minval, maxval}] -> contrast];
+            {niceRaster[xyimage,zoom->8], niceRaster[uvimage,zoom->8],niceRaster[(filteredImage-minval)/contrast,zoom->8]}//Print;
+        ];
+        contrast
+    ] (* get1ptContrastGaussin *)
+
+get1ptContrastVoronoiNei[iPattern_:1,fgkernel_,dbg_:True] :=
+    Module[ {x0,y0,xpixelref, ypixelref,xyimage,uvimage,filteredImage,minval, maxval,contrast,neilstLINEAR,neilstXY,neilstUV,neiptsXY,neiptsUV},
+        {x0,y0} = iptsXY[[iPattern]];
+        {xpixelref, ypixelref} =  {x0,y0};
+        {xpixelref, ypixelref} =  ({x0,y0} + {RandomReal[]-.5,RandomReal[]-.5});
+        xyimage = Table[0,{imagesz},{imagesz}];
+        uvimage = Table[0,{imagesz},{imagesz}];
+        
+        neilstLINEAR = nei[[iPattern]];
+        neilstXY = mappingLINEAR2XY[[1+neilstLINEAR]];
+        neilstUV = mappingXY2UV[[1+neilstXY]];
+        neiptsXY = iptsXY[[1+neilstXY]];
+        neiptsUV = iptsUV[[1+neilstUV]];
+        (xyimage[[1+#[[2]],1+#[[1]]]] = 1)& /@ neiptsXY;
+        (uvimage[[1+#[[2]],1+#[[1]]]] = 1)& /@ neiptsUV;
+        filteredImage = InverseFourier[fgkernel * Fourier[uvimage]]//Chop//reorg2D;
+        {minval, maxval} = {Min[filteredImage],Max[filteredImage]};
+        contrast = maxval-minval;
+        If[ dbg,
+            Print["get1ptContrastVoronoiNei: ",iPattern -> mf[{sigmaSelectNEI,sigmagkernelNEI}] -> mf[{minval, maxval}] -> contrast];
+            {niceRaster[xyimage,zoom->8], niceRaster[uvimage,zoom->8],niceRaster[(filteredImage-minval)/contrast,zoom->8]}//Print;
+        ];
+        contrast
+    ] (* get1ptContrastVoronoiNei *)
+
+
+getTotalContrast[] :=
+    Module[ {},
+        SIGMAKERNELlNEISCALINGFACTOR = 3;
+        {xgkernelCenter,ygkernelCenter} = {1,1}imagesz/2 - .5;
+
+        sigmagkernelNEI = npts1d / sigmaSelectNEI / SIGMAKERNELlNEISCALINGFACTOR  //N;
+        gkernelNEI = Table[E^(-euclidlenSq[{x,y}-{xgkernelCenter,ygkernelCenter}]/(2 (magFacdtor sigmagkernelNEI)^2)),{x,0,imagesz-1},{y,0,imagesz-1}];
+        fgkernelNEI = Fourier @ gkernelNEI;
+
+        sigmagkernelSEL = npts1d / sigmaSEL / SIGMAKERNELlNEISCALINGFACTOR  //N;
+        gkernelSEL = Table[E^(-euclidlenSq[{x,y}-{xgkernelCenter,ygkernelCenter}]/(2 (magFacdtor sigmagkernelSEL)^2)),{x,0,imagesz-1},{y,0,imagesz-1}];
+        fgkernelSEL = Fourier @ gkernelSEL;
+        contrastTab = ((*Parallelize @*) Table[       	
+            contrast = (*get1ptContrastVoronoiNei[iPattern,fgkernelNEI] +*) get1ptContrastGaussin[iPattern,fgkernelSEL,sigmaSEL];
+            Print[iPattern -> contrast];
+            contrast
+        ,{iPattern,345,348}]);
+        Print["thisSigmatotalContrast=",thisSigmatotalContrast];
+        {Total @ contrastTab, Max @ contrastTab}
+    ] (* getTotalContrast *)
+    
+    
+
+(*---------------------------------------- buildBNpts4d ----------------------------------------*)
+showImageMapping[iptsXY_,iptsUV_,basename_:"image"] :=
+    Module[ {len,sz, x,y,u,v,image,image4x4,image16x16,zoom4,p1,p2,p3,uimage,vimage,fuimage,pfu,fvimage,pfv,pu1,pu2,pu3,pv1,pv2,pv3},
+    	zoom4 = 4;
+    	len = Length[iptsXY];
+        sz = Sqrt[len];
+        image = Table[{0,0,0},{sz},{sz}];
+        image4x4 = Table[{0,0,0},{4 sz},{4 sz}];
+        image16x16 = Table[{0,0,0},{16 sz},{16 sz}];
+        Do[
+        	{x,y} = iptsXY[[ixy]];
+        	{u,v} = iptsUV[[ixy]];
+        	image[[y+1,x+1]] = {u,v,0}/sz
+        ,{ixy,Length[iptsXY]}];
+        Do[
+        	{x,y} = iptsXY[[ixy]];
+        	{u,v} = iptsUV[[ixy]];
+        	Do[
+        		image4x4[[(jj-1)*sz + y+1,(ii-1)*sz + x+1]] = {u,v,0}/sz
+        	,{ii,4},{jj,4}];
+         ,{ixy,Length[iptsXY]}];
+         Do[
+        	{x,y} = iptsXY[[ixy]];
+        	{u,v} = iptsUV[[ixy]];
+        	Do[
+        		image16x16[[(jj-1)*sz + y+1,(ii-1)*sz + x+1]] = {u,v,0}/sz
+        	,{ii,16},{jj,16}];
+         ,{ixy,Length[iptsXY]}];
+         uimage = image[[;;,;;,1]]//N;
+         vimage = image[[;;,;;,2]]//N;
+         fuimage = Fourier[uimage]//Abs//Reorg;
+         pfu = Graphics[Raster[fuimage], ImageSize->{16 sz,16 sz},PlotLabel->"Fourier u"];
+         fvimage = Fourier[vimage]//Abs//Reorg;
+         pfv = Graphics[Raster[fvimage], ImageSize->{16 sz,16 sz},PlotLabel->"Fourier v"];
+         GraphicsGrid[{{pfu,pfv}}]//Print;
+         
+         {pu1,pu2,pu3} = {niceRaster[uimage,zoom->zoom4],niceRaster[image4x4[[;;,;;,1]],zoom->zoom4],niceRaster[image16x16[[;;,;;,1]]]};
+         {pv1,pv2,pv3} = {niceRaster[vimage,zoom->zoom4],niceRaster[image4x4[[;;,;;,2]],zoom->zoom4],niceRaster[image16x16[[;;,;;,2]]]};
+         {"u(x,u)" -> pu1,pu2,pu3}//Print;
+         {"v(x,u)" -> pv1,pv2,pv3}//Print;
+         (*p1 = Graphics[Raster[image],PlotRange->{{0,sz},{0,sz}},ImageSize->{zoom4 sz,zoom4 sz}];
+         p2 = Graphics[Raster[image4x4],PlotRange->{{0,4 sz},{0,4 sz}},ImageSize->{4 zoom4 sz,4 zoom4 sz}];
+         p3 = Graphics[Raster[image16x16],PlotRange->{{0,16 sz},{0,16 sz}},ImageSize->{16 sz,16 sz}];*)
+         (*{p1,p2,p3}//Print;*)
+         
+         (*Export["images/"<>basename<>"_Fourier_uv.png",GraphicsGrid[{{pfu,pfv}}]];
+         Export["images/"<>basename<>"_u.png",pu3];
+         Export["images/"<>basename<>"_u_zoom4.png",pu2];
+         Export["images/"<>basename<>"_v.png",pv3];
+         Export["images/"<>basename<>"_v_zoom4.png",pv2];
+         Export["images/"<>basename<>"_uv.png",p3];
+         Export["images/"<>basename<>"_uv_zoom4.png",p2];*)
+    ]
+
+
+(*---------------------------------------- showSobol4D ----------------------------------------*)
+showSobol4D[dbg_:False] :=
+    Module[ {},
+        (*{sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,3,7};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,3,8};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,4,5};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,4,7};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,3,5};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,3,4};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {3,7,1,4};
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {3,4,1,4};
+        SetOptions[Graphics, ImageSize ->{ 1024,1024},AspectRatio->Automatic, PlotRange->All ];
+        npts = 1024;
+        npts1d = Sqrt[npts];
+        level = Log[4,npts];
+        grid = getBinaryGrid2Dx2WithoutLabels[level];
+        buildMSobol[{sobolInd1,sobolInd2,sobolInd3,sobolInd4},False];
+        sobolpts =  (Parallelize @ Table[ sobol4dOriginal[i] ,{i,0,npts-1}] );
+        ptsXY = sobolpts[[;; , 1 ;; 2]]//N;
+        ptsUV = sobolpts[[;; , 3 ;; 4]]//N;
+        iptsXY = Floor[npts1d ptsXY];*)
+
+(*        Print["================================ 1&2 Grouped ======================================"];
+        selptsXY = Select[ptsXY, 0/16 <=  #[[1]] < 2/16 && 0/16 <= #[[2]] < 2/16 &];
+        poslst = Flatten[Flatten /@ Position[ptsXY, #] & /@ selptsXY];
+        selptsUV = ptsUV[[poslst]];
+        {    Graphics[{grid, AbsolutePointSize[10], Point/@ptsXY, 
+                Table[pt = selptsXY[[i]];
+                      {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 1 & 2: Sobol ind="<>ToString[{sobolInd1,sobolInd2}]],
+            Graphics[{grid, AbsolutePointSize[10], Point/@ptsUV, 
+                Table[pt = selptsUV[[i]];
+                      {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 3 & 4: Sobol ind="<>ToString[{sobolInd3,sobolInd4}]]
+        }//Print;
+        Print["================================ 3&4 Grouped ======================================"];
+        selptsUV = Select[ptsUV, 0/16 <=  #[[1]] < 2/16 && 0/16 <= #[[2]] < 2/16 &];
+        poslst = Flatten[Flatten /@ Position[ptsUV, #] & /@ selptsUV];
+        selptsXY = ptsXY[[poslst]];
+        level = Log[4,npts];
+        {    Graphics[{grid, AbsolutePointSize[10], Point/@ptsXY, 
+                Table[pt = selptsXY[[i]];
+                      {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 1 & 2: Sobol ind="<>ToString[{sobolInd1,sobolInd2}]],
+            Graphics[{grid, AbsolutePointSize[10], Point/@ptsUV, 
+                Table[pt = selptsUV[[i]];
+                      {Red, Point[pt], Black, Text[Style[#,Bold,24]& @ (i-1), pt,{-1,-1}]},{i,Length[poslst]}] },PlotLabel->"Dims 3 & 4: Sobol ind="<>ToString[{sobolInd3,sobolInd4}]]
+        }//Print;
+        {mappingUV2BNOT,mappingBNOT2UV} = 1 + Get["mappings/mappingUV2BNOT+mappingBNOT2UV.dat"];
+        Graphics[{grid, AbsolutePointSize[10], Red,Point/@ptsXY
+                ,Black,Table[ind = i - 1;
+                             Text[Style[#,Bold,14]& @ ind,ptsXY[[i]],{-1,-1} ],{i,Length[ptsUV]}] 
+            },PlotLabel->"xy", Frame->True, FrameTicks->{{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T,{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T}, ImageSize ->{1740,1740}]//Print;
+        Graphics[{grid, AbsolutePointSize[10], Red,Point/@ptsUV
+                ,Black,Table[ind = i - 1;
+                             Text[Style[#,Bold,14]& @ ind,ptsUV[[i]],{-1,-1} ],{i,Length[ptsUV]}] 
+            },PlotLabel->"uv", Frame->True, FrameTicks->{{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T,{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T}, ImageSize ->{1740,1740}]//Print;
+        Put[ptsXY,"data/pts_Sobol"<>ToString[sobolInd1]<>ToString[sobolInd2]<>"_"<>ToString[npts]<>".dat"];
+        Put[ptsUV,"data/pts_Sobol"<>ToString[sobolInd3]<>ToString[sobolInd4]<>"_"<>ToString[npts]<>".dat"];
+        Put[Range[0,npts-1],"mappings/mapping_Sobol"<>ToString[sobolInd1]<>ToString[sobolInd2]<>"to"<>ToString[sobolInd3]<>ToString[sobolInd4]<>"_"<>ToString[npts]<>".dat"];
+*)        
+
+	        npts = 16 1024;
+	        npts1d = Sqrt[npts];
+        	{sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,3,4};
+ 	      	{sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {3,4,1,2};
+        	{sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {3,8,1,2};
+        	{sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,3,4,2};
+	        buildMSobol[{sobolInd1,sobolInd2,sobolInd3,sobolInd4},False];
+	        Print["==================",{sobolInd1,sobolInd2,sobolInd3,sobolInd4}];
+	        sobolpts =  (Parallelize @ Table[ sobol4dOriginal[i] ,{i,0,npts-1}] );
+	        ptsXY = sobolpts[[;; , 1 ;; 2]]//N;
+	        ptsUV = sobolpts[[;; , 3 ;; 4]]//N;
+	        iptsXY = Floor[npts1d ptsXY];
+	        If[(iptsXY // Union//Length) != npts, Abort[] ];
+	        uimage = vimage = uvimage = Table[0,{npts1d},{npts1d}];
+	        Do[
+	            {x,y} = iptsXY[[i]];
+	            uimage[[1+x,1+y]] = ptsUV[[i,1]];
+	            vimage[[1+x,1+y]] = ptsUV[[i,2]];
+	            uvimage[[1+x,1+y]] = {ptsUV[[i,1]],ptsUV[[i,2]],0};
+	        ,{i,npts}];
+	        {niceRaster[uimage],niceRaster[vimage],niceRaster[uvimage]}//Print;
+	        {niceRaster[uimage,zoom->4],niceRaster[vimage,zoom->4],niceRaster[uvimage,zoom->4]}//Print;
+
+		fuimage = Fourier[uimage]//Abs;
+	        fuimage[[1,1]] = 0;
+	        {niceRaster[uimage],niceRaster[uimage,zoom->2],niceRaster[uimage,zoom->4],niceRaster[(fuimage//reorg2D)/Max[fuimage],zoom->4]}//Print;
+	        Print[msobol[[3, ;;14]] ];
+
+Print["msobol[[3 ]] =  Table[RandomInteger[{0, 2^(i) - 1}], {i, sobolseqLength}];"];
+	   	npts = 16 1024;
+		npts1d = Sqrt[npts];
+		Do[
+			msobol[[3 ]] =  Table[RandomInteger[{0, 2^(i) - 1}], {i, sobolseqLength}];
+	        sobolpts =  (Parallelize @ Table[ sobol4dOriginal[i] ,{i,0,npts-1}] );
+	        ptsXY = sobolpts[[;; , 1 ;; 2]]//N;
+	        ptsUV = sobolpts[[;; , 3 ;; 4]]//N;
+	        iptsXY = Floor[npts1d ptsXY];
+	        fuimage = uimage = Table[0,{npts1d},{npts1d}];
+	        Do[
+	            {x,y} = iptsXY[[i]];
+	            uimage[[1+x,1+y]] = ptsUV[[i,1]];
+	        ,{i,npts}];
+	        fuimage = Fourier[uimage]//Abs;
+	        fuimage[[1,1]] = 0;
+	        {niceRaster[uimage],niceRaster[uimage,zoom->2],niceRaster[uimage,zoom->4],niceRaster[(fuimage//reorg2D)/Max[fuimage],zoom->4]}//Print;
+	        Print[msobol[[3, ;;14]] ];
+		,{ntrial,10}];
+
+Print["msobol[[3, 2;; ]] =  Table[1 + 2 RandomInteger[{0, 2^(i - 1) - 1}], {i, 2, sobolseqLength}];"];
+		npts = 16 1024;
+		npts1d = Sqrt[npts];
+		Do[
+			msobol[[3, 2;; ]] =  Table[1 + 2 RandomInteger[{0, 2^(i - 1) - 1}], {i, 2, sobolseqLength}];
+	        sobolpts =  (Parallelize @ Table[ sobol4dOriginal[i] ,{i,0,npts-1}] );
+	        ptsXY = sobolpts[[;; , 1 ;; 2]]//N;
+	        ptsUV = sobolpts[[;; , 3 ;; 4]]//N;
+	        iptsXY = Floor[npts1d ptsXY];
+	        fuimage = uimage = Table[0,{npts1d},{npts1d}];
+	        Do[
+	            {x,y} = iptsXY[[i]];
+	            uimage[[1+x,1+y]] = ptsUV[[i,1]];
+	        ,{i,npts}];
+	        fuimage = Fourier[uimage]//Abs;
+	        fuimage[[1,1]] = 0;
+	        {niceRaster[uimage],niceRaster[uimage,zoom->2],niceRaster[uimage,zoom->4],niceRaster[(fuimage//reorg2D)/Max[fuimage],zoom->4]}//Print;
+	        Print[msobol[[3, ;;14]] ];
+		,{ntrial,10}];
+		
+
+		msobol[[3]] = (BitXor @@ #) & /@ T[{msobol[[1]], msobol[[2]]}];
+		sobolpts = (Parallelize@Table[sobol4dOriginal[i], {i, 0, npts - 1}]);
+		ptsXY = sobolpts[[;; , 1 ;; 2]] // N;
+		ptsUV = sobolpts[[;; , 3 ;; 4]] // N;
+		iptsXY = Floor[npts1d ptsXY];
+		uimage = Table[0, {npts1d}, {npts1d}];
+		Do[{x, y} = iptsXY[[i]];
+		  uimage[[1 + x, 1 + y]] = ptsUV[[i, 1]];, {i, npts}];
+		{niceRaster[uimage], niceRaster[uimage, zoom -> 2], 
+		   niceRaster[uimage, zoom -> 4]} // Print;
+		Print[msobol[[3, ;; 14]]];
+
+		msobol[[3]] = (BitOr @@ #) & /@ T[{msobol[[1]], msobol[[2]]}];
+		sobolpts = (Parallelize@Table[sobol4dOriginal[i], {i, 0, npts - 1}]);
+		ptsXY = sobolpts[[;; , 1 ;; 2]] // N;
+		ptsUV = sobolpts[[;; , 3 ;; 4]] // N;
+		iptsXY = Floor[npts1d ptsXY];
+		uimage = Table[0, {npts1d}, {npts1d}];
+		Do[{x, y} = iptsXY[[i]];
+		  uimage[[1 + x, 1 + y]] = ptsUV[[i, 1]];, {i, npts}];
+		{niceRaster[uimage], niceRaster[uimage, zoom -> 2], 
+		   niceRaster[uimage, zoom -> 4]} // Print;
+		Print[msobol[[3, ;; 14]]];
+
+		msobol[[3]] = (BitAnd @@ #) & /@ T[{msobol[[1]], msobol[[2]]}];
+		sobolpts = (Parallelize@Table[sobol4dOriginal[i], {i, 0, npts - 1}]);
+		ptsXY = sobolpts[[;; , 1 ;; 2]] // N;
+		ptsUV = sobolpts[[;; , 3 ;; 4]] // N;
+		iptsXY = Floor[npts1d ptsXY];
+		uimage = Table[0, {npts1d}, {npts1d}];
+		Do[{x, y} = iptsXY[[i]];
+		  uimage[[1 + x, 1 + y]] = ptsUV[[i, 1]];, {i, npts}];
+		{niceRaster[uimage], niceRaster[uimage, zoom -> 2], 
+		   niceRaster[uimage, zoom -> 4]} // Print;
+		Print[msobol[[3, ;; 14]]];
+
+        (*npts = 2^20;
+        pts4d = Parallelize @ Table[N @ sobol4dOriginal[i] ,{i,0,npts-1}];
+        fname = "data/pts4d_Sobol"<>ToString[sobolInd1]<>ToString[sobolInd2]<>"+"<>ToString[sobolInd3]<>ToString[sobolInd4]<>"_"<>ToString[npts]<>".dat";
+        Print[" writing ",Length[pts4d]," Sobol pts into ",fname];
+        Export[fname,pts4d];
+        pngfname = "results/out_Sobol"<>ToString[sobolInd1]<>ToString[sobolInd2]<>"+"<>ToString[sobolInd3]<>ToString[sobolInd4]<>".png";
+        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+        Print[" executing ",execstring];
+        Run[execstring];*)
+    ] (* showSobol4D *)
+
+
+(*---------------------------------------- dbgPermutTreeFullDyadic -- does not work, ala !----------------------------------------*)
+dbgPermutTreeFullDyadic[] :=
+    Module[ {},
+		SetOptions[Graphics, ImageSize -> {1024,1024},AspectRatio->Automatic, PlotRange->All];
+        npts = 1024;
+        npts1d = Sqrt[npts];
+        partitionBorders = {Cyan, AbsoluteThickness[1], Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}], AbsoluteThickness[3], Line[{{0,.5},{1,.5}}], Line[{{.5,0},{.5,1}}] };
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+
+        ptsXY = Import["data/pts_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+        ptsUV = Import["data/pts_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+        iptsXY = Floor[npts1d ptsXY];
+        iptsUV = Floor[npts1d ptsUV];
+        	neighbors = 1 + Import["data/neighbors_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"]; (* Export: in C++ convention *)
+
+
+		elementaryPermutations = Permutations[{0,1,2,3}] /. {0:>{0,0},1:>{1,1},2:>{0,1},3:>{1,0}};
+		elementaryPermutations = (* 384 entries, obtained with Select[T /@ Tuples[Tuples[{0,1,2,3},4],2],testDyadicPartitioning2DFull[#] &];*)
+			{{{0,0},{1,2},{2,1},{3,3}},{{0,0},{1,2},{2,3},{3,1}},{{0,0},{1,3},{2,1},{3,2}},{{0,0},{1,3},{2,2},{3,1}},{{0,1},{1,2},
+			{2,0},{3,3}},{{0,1},{1,2},{2,3},{3,0}},{{0,1},{1,3},{2,0},{3,2}},{{0,1},{1,3},{2,2},{3,0}},{{0,2},{1,0},{2,1},{3,3}},
+			{{0,2},{1,0},{2,3},{3,1}},{{0,2},{1,1},{2,0},{3,3}},{{0,2},{1,1},{2,3},{3,0}},{{0,3},{1,0},{2,1},{3,2}},{{0,3},{1,0},
+			{2,2},{3,1}},{{0,3},{1,1},{2,0},{3,2}},{{0,3},{1,1},{2,2},{3,0}},{{0,0},{1,2},{3,1},{2,3}},{{0,0},{1,2},{3,3},{2,1}},
+			{{0,0},{1,3},{3,1},{2,2}},{{0,0},{1,3},{3,2},{2,1}},{{0,1},{1,2},{3,0},{2,3}},{{0,1},{1,2},{3,3},{2,0}},{{0,1},{1,3},
+			{3,0},{2,2}},{{0,1},{1,3},{3,2},{2,0}},{{0,2},{1,0},{3,1},{2,3}},{{0,2},{1,0},{3,3},{2,1}},{{0,2},{1,1},{3,0},{2,3}},
+			{{0,2},{1,1},{3,3},{2,0}},{{0,3},{1,0},{3,1},{2,2}},{{0,3},{1,0},{3,2},{2,1}},{{0,3},{1,1},{3,0},{2,2}},{{0,3},{1,1},
+			{3,2},{2,0}},{{0,0},{2,1},{1,2},{3,3}},{{0,0},{2,1},{1,3},{3,2}},{{0,0},{2,2},{1,3},{3,1}},{{0,0},{2,3},{1,2},{3,1}},
+			{{0,1},{2,0},{1,2},{3,3}},{{0,1},{2,0},{1,3},{3,2}},{{0,1},{2,2},{1,3},{3,0}},{{0,1},{2,3},{1,2},{3,0}},{{0,2},{2,0},
+			{1,1},{3,3}},{{0,2},{2,1},{1,0},{3,3}},{{0,2},{2,3},{1,0},{3,1}},{{0,2},{2,3},{1,1},{3,0}},{{0,3},{2,0},{1,1},{3,2}},
+			{{0,3},{2,1},{1,0},{3,2}},{{0,3},{2,2},{1,0},{3,1}},{{0,3},{2,2},{1,1},{3,0}},{{0,0},{2,1},{3,2},{1,3}},{{0,0},{2,1},
+			{3,3},{1,2}},{{0,0},{2,2},{3,1},{1,3}},{{0,0},{2,3},{3,1},{1,2}},{{0,1},{2,0},{3,2},{1,3}},{{0,1},{2,0},{3,3},{1,2}},
+			{{0,1},{2,2},{3,0},{1,3}},{{0,1},{2,3},{3,0},{1,2}},{{0,2},{2,0},{3,3},{1,1}},{{0,2},{2,1},{3,3},{1,0}},{{0,2},{2,3},
+			{3,0},{1,1}},{{0,2},{2,3},{3,1},{1,0}},{{0,3},{2,0},{3,2},{1,1}},{{0,3},{2,1},{3,2},{1,0}},{{0,3},{2,2},{3,0},{1,1}},
+			{{0,3},{2,2},{3,1},{1,0}},{{0,0},{3,1},{1,2},{2,3}},{{0,0},{3,1},{1,3},{2,2}},{{0,0},{3,2},{1,3},{2,1}},{{0,0},{3,3},
+			{1,2},{2,1}},{{0,1},{3,0},{1,2},{2,3}},{{0,1},{3,0},{1,3},{2,2}},{{0,1},{3,2},{1,3},{2,0}},{{0,1},{3,3},{1,2},{2,0}},
+			{{0,2},{3,0},{1,1},{2,3}},{{0,2},{3,1},{1,0},{2,3}},{{0,2},{3,3},{1,0},{2,1}},{{0,2},{3,3},{1,1},{2,0}},{{0,3},{3,0},
+			{1,1},{2,2}},{{0,3},{3,1},{1,0},{2,2}},{{0,3},{3,2},{1,0},{2,1}},{{0,3},{3,2},{1,1},{2,0}},{{0,0},{3,1},{2,2},{1,3}},
+			{{0,0},{3,1},{2,3},{1,2}},{{0,0},{3,2},{2,1},{1,3}},{{0,0},{3,3},{2,1},{1,2}},{{0,1},{3,0},{2,2},{1,3}},{{0,1},{3,0},
+			{2,3},{1,2}},{{0,1},{3,2},{2,0},{1,3}},{{0,1},{3,3},{2,0},{1,2}},{{0,2},{3,0},{2,3},{1,1}},{{0,2},{3,1},{2,3},{1,0}},
+			{{0,2},{3,3},{2,0},{1,1}},{{0,2},{3,3},{2,1},{1,0}},{{0,3},{3,0},{2,2},{1,1}},{{0,3},{3,1},{2,2},{1,0}},{{0,3},{3,2},
+			{2,0},{1,1}},{{0,3},{3,2},{2,1},{1,0}},{{1,0},{0,2},{2,1},{3,3}},{{1,0},{0,2},{2,3},{3,1}},{{1,0},{0,3},{2,1},{3,2}},
+			{{1,0},{0,3},{2,2},{3,1}},{{1,1},{0,2},{2,0},{3,3}},{{1,1},{0,2},{2,3},{3,0}},{{1,1},{0,3},{2,0},{3,2}},{{1,1},{0,3},
+			{2,2},{3,0}},{{1,2},{0,0},{2,1},{3,3}},{{1,2},{0,0},{2,3},{3,1}},{{1,2},{0,1},{2,0},{3,3}},{{1,2},{0,1},{2,3},{3,0}},
+			{{1,3},{0,0},{2,1},{3,2}},{{1,3},{0,0},{2,2},{3,1}},{{1,3},{0,1},{2,0},{3,2}},{{1,3},{0,1},{2,2},{3,0}},{{1,0},{0,2},
+			{3,1},{2,3}},{{1,0},{0,2},{3,3},{2,1}},{{1,0},{0,3},{3,1},{2,2}},{{1,0},{0,3},{3,2},{2,1}},{{1,1},{0,2},{3,0},{2,3}},
+			{{1,1},{0,2},{3,3},{2,0}},{{1,1},{0,3},{3,0},{2,2}},{{1,1},{0,3},{3,2},{2,0}},{{1,2},{0,0},{3,1},{2,3}},{{1,2},{0,0},
+			{3,3},{2,1}},{{1,2},{0,1},{3,0},{2,3}},{{1,2},{0,1},{3,3},{2,0}},{{1,3},{0,0},{3,1},{2,2}},{{1,3},{0,0},{3,2},{2,1}},
+			{{1,3},{0,1},{3,0},{2,2}},{{1,3},{0,1},{3,2},{2,0}},{{1,0},{2,1},{0,2},{3,3}},{{1,0},{2,1},{0,3},{3,2}},{{1,0},{2,2},
+			{0,3},{3,1}},{{1,0},{2,3},{0,2},{3,1}},{{1,1},{2,0},{0,2},{3,3}},{{1,1},{2,0},{0,3},{3,2}},{{1,1},{2,2},{0,3},{3,0}},
+			{{1,1},{2,3},{0,2},{3,0}},{{1,2},{2,0},{0,1},{3,3}},{{1,2},{2,1},{0,0},{3,3}},{{1,2},{2,3},{0,0},{3,1}},{{1,2},{2,3},
+			{0,1},{3,0}},{{1,3},{2,0},{0,1},{3,2}},{{1,3},{2,1},{0,0},{3,2}},{{1,3},{2,2},{0,0},{3,1}},{{1,3},{2,2},{0,1},{3,0}},
+			{{1,0},{2,1},{3,2},{0,3}},{{1,0},{2,1},{3,3},{0,2}},{{1,0},{2,2},{3,1},{0,3}},{{1,0},{2,3},{3,1},{0,2}},{{1,1},{2,0},
+			{3,2},{0,3}},{{1,1},{2,0},{3,3},{0,2}},{{1,1},{2,2},{3,0},{0,3}},{{1,1},{2,3},{3,0},{0,2}},{{1,2},{2,0},{3,3},{0,1}},
+			{{1,2},{2,1},{3,3},{0,0}},{{1,2},{2,3},{3,0},{0,1}},{{1,2},{2,3},{3,1},{0,0}},{{1,3},{2,0},{3,2},{0,1}},{{1,3},{2,1},
+			{3,2},{0,0}},{{1,3},{2,2},{3,0},{0,1}},{{1,3},{2,2},{3,1},{0,0}},{{1,0},{3,1},{0,2},{2,3}},{{1,0},{3,1},{0,3},{2,2}},
+			{{1,0},{3,2},{0,3},{2,1}},{{1,0},{3,3},{0,2},{2,1}},{{1,1},{3,0},{0,2},{2,3}},{{1,1},{3,0},{0,3},{2,2}},{{1,1},{3,2},
+			{0,3},{2,0}},{{1,1},{3,3},{0,2},{2,0}},{{1,2},{3,0},{0,1},{2,3}},{{1,2},{3,1},{0,0},{2,3}},{{1,2},{3,3},{0,0},{2,1}},
+			{{1,2},{3,3},{0,1},{2,0}},{{1,3},{3,0},{0,1},{2,2}},{{1,3},{3,1},{0,0},{2,2}},{{1,3},{3,2},{0,0},{2,1}},{{1,3},{3,2},
+			{0,1},{2,0}},{{1,0},{3,1},{2,2},{0,3}},{{1,0},{3,1},{2,3},{0,2}},{{1,0},{3,2},{2,1},{0,3}},{{1,0},{3,3},{2,1},{0,2}},
+			{{1,1},{3,0},{2,2},{0,3}},{{1,1},{3,0},{2,3},{0,2}},{{1,1},{3,2},{2,0},{0,3}},{{1,1},{3,3},{2,0},{0,2}},{{1,2},{3,0},
+			{2,3},{0,1}},{{1,2},{3,1},{2,3},{0,0}},{{1,2},{3,3},{2,0},{0,1}},{{1,2},{3,3},{2,1},{0,0}},{{1,3},{3,0},{2,2},{0,1}},
+			{{1,3},{3,1},{2,2},{0,0}},{{1,3},{3,2},{2,0},{0,1}},{{1,3},{3,2},{2,1},{0,0}},{{2,0},{0,1},{1,2},{3,3}},{{2,0},{0,1},
+			{1,3},{3,2}},{{2,0},{0,2},{1,1},{3,3}},{{2,0},{0,3},{1,1},{3,2}},{{2,1},{0,0},{1,2},{3,3}},{{2,1},{0,0},{1,3},{3,2}},
+			{{2,1},{0,2},{1,0},{3,3}},{{2,1},{0,3},{1,0},{3,2}},{{2,2},{0,0},{1,3},{3,1}},{{2,2},{0,1},{1,3},{3,0}},{{2,2},{0,3},
+			{1,0},{3,1}},{{2,2},{0,3},{1,1},{3,0}},{{2,3},{0,0},{1,2},{3,1}},{{2,3},{0,1},{1,2},{3,0}},{{2,3},{0,2},{1,0},{3,1}},
+			{{2,3},{0,2},{1,1},{3,0}},{{2,0},{0,1},{3,2},{1,3}},{{2,0},{0,1},{3,3},{1,2}},{{2,0},{0,2},{3,3},{1,1}},{{2,0},{0,3},
+			{3,2},{1,1}},{{2,1},{0,0},{3,2},{1,3}},{{2,1},{0,0},{3,3},{1,2}},{{2,1},{0,2},{3,3},{1,0}},{{2,1},{0,3},{3,2},{1,0}},
+			{{2,2},{0,0},{3,1},{1,3}},{{2,2},{0,1},{3,0},{1,3}},{{2,2},{0,3},{3,0},{1,1}},{{2,2},{0,3},{3,1},{1,0}},{{2,3},{0,0},
+			{3,1},{1,2}},{{2,3},{0,1},{3,0},{1,2}},{{2,3},{0,2},{3,0},{1,1}},{{2,3},{0,2},{3,1},{1,0}},{{2,0},{1,1},{0,2},{3,3}},
+			{{2,0},{1,1},{0,3},{3,2}},{{2,0},{1,2},{0,1},{3,3}},{{2,0},{1,3},{0,1},{3,2}},{{2,1},{1,0},{0,2},{3,3}},{{2,1},{1,0},
+			{0,3},{3,2}},{{2,1},{1,2},{0,0},{3,3}},{{2,1},{1,3},{0,0},{3,2}},{{2,2},{1,0},{0,3},{3,1}},{{2,2},{1,1},{0,3},{3,0}},
+			{{2,2},{1,3},{0,0},{3,1}},{{2,2},{1,3},{0,1},{3,0}},{{2,3},{1,0},{0,2},{3,1}},{{2,3},{1,1},{0,2},{3,0}},{{2,3},{1,2},
+			{0,0},{3,1}},{{2,3},{1,2},{0,1},{3,0}},{{2,0},{1,1},{3,2},{0,3}},{{2,0},{1,1},{3,3},{0,2}},{{2,0},{1,2},{3,3},{0,1}},
+			{{2,0},{1,3},{3,2},{0,1}},{{2,1},{1,0},{3,2},{0,3}},{{2,1},{1,0},{3,3},{0,2}},{{2,1},{1,2},{3,3},{0,0}},{{2,1},{1,3},
+			{3,2},{0,0}},{{2,2},{1,0},{3,1},{0,3}},{{2,2},{1,1},{3,0},{0,3}},{{2,2},{1,3},{3,0},{0,1}},{{2,2},{1,3},{3,1},{0,0}},
+			{{2,3},{1,0},{3,1},{0,2}},{{2,3},{1,1},{3,0},{0,2}},{{2,3},{1,2},{3,0},{0,1}},{{2,3},{1,2},{3,1},{0,0}},{{2,0},{3,2},
+			{0,1},{1,3}},{{2,0},{3,2},{0,3},{1,1}},{{2,0},{3,3},{0,1},{1,2}},{{2,0},{3,3},{0,2},{1,1}},{{2,1},{3,2},{0,0},{1,3}},
+			{{2,1},{3,2},{0,3},{1,0}},{{2,1},{3,3},{0,0},{1,2}},{{2,1},{3,3},{0,2},{1,0}},{{2,2},{3,0},{0,1},{1,3}},{{2,2},{3,0},
+			{0,3},{1,1}},{{2,2},{3,1},{0,0},{1,3}},{{2,2},{3,1},{0,3},{1,0}},{{2,3},{3,0},{0,1},{1,2}},{{2,3},{3,0},{0,2},{1,1}},
+			{{2,3},{3,1},{0,0},{1,2}},{{2,3},{3,1},{0,2},{1,0}},{{2,0},{3,2},{1,1},{0,3}},{{2,0},{3,2},{1,3},{0,1}},{{2,0},{3,3},
+			{1,1},{0,2}},{{2,0},{3,3},{1,2},{0,1}},{{2,1},{3,2},{1,0},{0,3}},{{2,1},{3,2},{1,3},{0,0}},{{2,1},{3,3},{1,0},{0,2}},
+			{{2,1},{3,3},{1,2},{0,0}},{{2,2},{3,0},{1,1},{0,3}},{{2,2},{3,0},{1,3},{0,1}},{{2,2},{3,1},{1,0},{0,3}},{{2,2},{3,1},
+			{1,3},{0,0}},{{2,3},{3,0},{1,1},{0,2}},{{2,3},{3,0},{1,2},{0,1}},{{2,3},{3,1},{1,0},{0,2}},{{2,3},{3,1},{1,2},{0,0}},
+			{{3,0},{0,1},{1,2},{2,3}},{{3,0},{0,1},{1,3},{2,2}},{{3,0},{0,2},{1,1},{2,3}},{{3,0},{0,3},{1,1},{2,2}},{{3,1},{0,0},
+			{1,2},{2,3}},{{3,1},{0,0},{1,3},{2,2}},{{3,1},{0,2},{1,0},{2,3}},{{3,1},{0,3},{1,0},{2,2}},{{3,2},{0,0},{1,3},{2,1}},
+			{{3,2},{0,1},{1,3},{2,0}},{{3,2},{0,3},{1,0},{2,1}},{{3,2},{0,3},{1,1},{2,0}},{{3,3},{0,0},{1,2},{2,1}},{{3,3},{0,1},
+			{1,2},{2,0}},{{3,3},{0,2},{1,0},{2,1}},{{3,3},{0,2},{1,1},{2,0}},{{3,0},{0,1},{2,2},{1,3}},{{3,0},{0,1},{2,3},{1,2}},
+			{{3,0},{0,2},{2,3},{1,1}},{{3,0},{0,3},{2,2},{1,1}},{{3,1},{0,0},{2,2},{1,3}},{{3,1},{0,0},{2,3},{1,2}},{{3,1},{0,2},
+			{2,3},{1,0}},{{3,1},{0,3},{2,2},{1,0}},{{3,2},{0,0},{2,1},{1,3}},{{3,2},{0,1},{2,0},{1,3}},{{3,2},{0,3},{2,0},{1,1}},
+			{{3,2},{0,3},{2,1},{1,0}},{{3,3},{0,0},{2,1},{1,2}},{{3,3},{0,1},{2,0},{1,2}},{{3,3},{0,2},{2,0},{1,1}},{{3,3},{0,2},
+			{2,1},{1,0}},{{3,0},{1,1},{0,2},{2,3}},{{3,0},{1,1},{0,3},{2,2}},{{3,0},{1,2},{0,1},{2,3}},{{3,0},{1,3},{0,1},{2,2}},
+			{{3,1},{1,0},{0,2},{2,3}},{{3,1},{1,0},{0,3},{2,2}},{{3,1},{1,2},{0,0},{2,3}},{{3,1},{1,3},{0,0},{2,2}},{{3,2},{1,0},
+			{0,3},{2,1}},{{3,2},{1,1},{0,3},{2,0}},{{3,2},{1,3},{0,0},{2,1}},{{3,2},{1,3},{0,1},{2,0}},{{3,3},{1,0},{0,2},{2,1}},
+			{{3,3},{1,1},{0,2},{2,0}},{{3,3},{1,2},{0,0},{2,1}},{{3,3},{1,2},{0,1},{2,0}},{{3,0},{1,1},{2,2},{0,3}},{{3,0},{1,1},
+			{2,3},{0,2}},{{3,0},{1,2},{2,3},{0,1}},{{3,0},{1,3},{2,2},{0,1}},{{3,1},{1,0},{2,2},{0,3}},{{3,1},{1,0},{2,3},{0,2}},
+			{{3,1},{1,2},{2,3},{0,0}},{{3,1},{1,3},{2,2},{0,0}},{{3,2},{1,0},{2,1},{0,3}},{{3,2},{1,1},{2,0},{0,3}},{{3,2},{1,3},
+			{2,0},{0,1}},{{3,2},{1,3},{2,1},{0,0}},{{3,3},{1,0},{2,1},{0,2}},{{3,3},{1,1},{2,0},{0,2}},{{3,3},{1,2},{2,0},{0,1}},
+			{{3,3},{1,2},{2,1},{0,0}},{{3,0},{2,2},{0,1},{1,3}},{{3,0},{2,2},{0,3},{1,1}},{{3,0},{2,3},{0,1},{1,2}},{{3,0},{2,3},
+			{0,2},{1,1}},{{3,1},{2,2},{0,0},{1,3}},{{3,1},{2,2},{0,3},{1,0}},{{3,1},{2,3},{0,0},{1,2}},{{3,1},{2,3},{0,2},{1,0}},
+			{{3,2},{2,0},{0,1},{1,3}},{{3,2},{2,0},{0,3},{1,1}},{{3,2},{2,1},{0,0},{1,3}},{{3,2},{2,1},{0,3},{1,0}},{{3,3},{2,0},
+			{0,1},{1,2}},{{3,3},{2,0},{0,2},{1,1}},{{3,3},{2,1},{0,0},{1,2}},{{3,3},{2,1},{0,2},{1,0}},{{3,0},{2,2},{1,1},{0,3}},
+			{{3,0},{2,2},{1,3},{0,1}},{{3,0},{2,3},{1,1},{0,2}},{{3,0},{2,3},{1,2},{0,1}},{{3,1},{2,2},{1,0},{0,3}},{{3,1},{2,2},
+			{1,3},{0,0}},{{3,1},{2,3},{1,0},{0,2}},{{3,1},{2,3},{1,2},{0,0}},{{3,2},{2,0},{1,1},{0,3}},{{3,2},{2,0},{1,3},{0,1}},
+			{{3,2},{2,1},{1,0},{0,3}},{{3,2},{2,1},{1,3},{0,0}},{{3,3},{2,0},{1,1},{0,2}},{{3,3},{2,0},{1,2},{0,1}},{{3,3},{2,1},
+			{1,0},{0,2}},{{3,3},{2,1},{1,2},{0,0}}}; (* elementaryPermutations *)
+
+		
+		Table[set=elementaryPermutations[[i]]/4;Graphics[{getBinaryGrid2Dx2WithoutLabels[2],AbsolutePointSize[10],
+			Table[{Point@set[[j]],Text[Style[#,Bold,20]& @(j-1), set[[j]],{-1,-1}]},{j,Length[set]}]},ImageSize->{100,100},PlotLabel->i],{i, Length[elementaryPermutations]}]//Print;
+
+Abort[];
+		(* first, a simple Bayer-like regular structure *)
+		mappingXY2UV = Table[-1,{npts}];
+		permutTreeDepth = Log[4,npts];
+		glxy = gluv = {};
+		Do[
+			orderNumberDigits03 = IntegerDigits[i,4,permutTreeDepth];
+			orderNumberDigits03RadixInverted = Reverse @ orderNumberDigits03;
+			xydigits = T @ Table[
+				(*SeedRandom[10+orderNumberDigits03[[idigit]]];*)
+				alldigits = elementaryPermutations[[244]];
+				digits = alldigits[[1+orderNumberDigits03[[idigit]]]];
+				(*Print[idigit -> alldigits -> digits];*)
+				digits
+			,{idigit,Length[orderNumberDigits03]}];
+			uvdigits = T @ Table[
+				(*SeedRandom[20+orderNumberDigits03RadixInverted[[idigit]]];*)
+				alldigits = elementaryPermutations[[244]];
+				digits = alldigits[[1+orderNumberDigits03RadixInverted[[idigit]]]];
+				(*Print[idigit -> alldigits -> digits];*)
+				digits
+			,{idigit,Length[orderNumberDigits03]}];
+			{x,y} = (FromDigits[#,4]& /@ xydigits);
+			{u,v} = (FromDigits[#,4]& /@ uvdigits);
+			Print[i->orderNumberDigits03->mf[xydigits]->mf[uvdigits]->mf[{{x,y},{u,v}}] ];
+			(*mappingXY2UV[[1 + y*npts1d+x]] = v*npts1d+u;*)
+			AppendTo[glxy,{Black,Point[{x,y}/npts], Blue, Text[i,{x,y}/npts,{-1,-1}] } ];
+			AppendTo[gluv,{Black,Point[{u,v}/npts], Blue, Text[i,{u,v}/npts,{-1,-1}] } ];
+		,{i,0,15}];
+ 		Graphics[{Blue,frame,partitionBorders, glxy},PlotLabel->"simple Bayer-like regular structure xy space"]//Print;
+ 		Graphics[{Blue,frame,partitionBorders, gluv},PlotLabel->"simple Bayer-like regular structure uv space"]//Print;
+        (*Export["tmp/mappingXY2UV_permutTree_regular_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat",mappingXY2UV];  (* mappingXY2UVXY2UV: C++ convention *)*)
+	    ] (* dbgPermutTreeFullDyadic *)
+
+(*----------------------------------------  ----------------------------------------*)
+tstrot345[] :=
+    Module[ {},
+        sz = 80;
+        sz = 32;
+        center = sz/2;
+        squares = Flatten[#,1]& @ Table[
+            Line[{{ix,iy},{ix,iy+1},{ix+1,iy+1},{ix+1,iy},{ix,iy}}]
+        ,{ix,0,sz-1},{iy,0,sz-1}];
+        
+        gl = {};
+        Do[
+            {x,y} = {ix,iy};
+            {u,v} = rot345WithPivot[{x,y},{center,center}];
+            AppendTo[gl,Point@{u,v} ];
+            (*AppendTo[gl,Text[{ix,iy},{u,v},{-1,-1}] ];*)
+        ,{ix,0,sz-1},{iy,0,sz-1}];
+        Graphics[{Cyan,squares,Black,gl}]//Print
+        
+    ]
+
+
+(*----------------------------------------  ----------------------------------------*)
+tryVAC[] :=
+    Module[ {},
+    		basename = "void_and_cluster_32x32";
+        fname = "data/"<>basename<>".dat";
+        mx = Import[fname];
+        {ydim,xdim} = Dimensions[mx];
+        npts = ydim xdim;
+        npts1d = Sqrt[npts];
+
+        nbits = Log[2,npts];
+        Print["Reading ",fname," of dimss ", {ydim,xdim}];
+        mxRot = Table[-1,{iy,ydim},{ix,xdim}];
+        center = {xdim,ydim}/2 + {1,1}/2;
+        Do[
+        	{iu,iv} = rotatePI2[{ix,iy},center];
+        	mxRot[[iu,iv]] = mx[[ix,iy]];
+        ,{iy,ydim},{ix,xdim}];
+        {niceRaster[mx/npts,zoom->4],niceRaster[mxRot/npts,zoom->4]}//Print;
+
+		m = Table[{},{iy,ydim},{ix,xdim}];
+		Do[
+       		m[[ix,iy]] = {mx[[ix,iy]],mxRot[[ix,iy]],0};
+        ,{iy,ydim},{ix,xdim}];
+        Graphics[Raster[m/npts], ImageSize->{4 xdim,4 ydim} ]//Print;
+        
+		m1 = Table[
+       		{iy,ix} - {1,1}
+        ,{iy,ydim},{ix,xdim}];
+       
+		m2 = Table[{},{iy,ydim},{ix,xdim}];
+		Do[
+       		m2[[ix,iy]] = Floor[#/xdim]& /@ {mx[[ix,iy]],mxRot[[ix,iy]]} - {1,1}
+        ,{iy,ydim},{ix,xdim}];
+
+        (*nbits = Log[2,xdim];
+		m1 = Table[
+       		{iu,iv} = m2[[ix,iy]];
+       		{x,y} = {vdcInteger[iu,nbits],vdcInteger[iv,nbits]};
+       		{x,y}
+        ,{iy,ydim},{ix,xdim}];*)
+
+        iptsXY = (Flatten[#,1]& @ m1);
+        iptsUV = Flatten[#,1]& @ m2;
+        mappingXY2UV = Range[npts];
+
+        showImageMapping[iptsXY, iptsUV, basename];
+        pts4d = Table[-1,{npts*npts}];
+        pts4d = Flatten[#,1]& @ ((*Parallelize @*) Table[
+                {tileX,tileY} = iptsXY[[ixytiles]];
+                (*{patU,patV} = iptsUV[[mappingXY2UV[[ixytiles]] ]];*)
+                {patU,patV} = {0,0};
+                If[Mod[ixytiles,100] == 0, Print[ixytiles -> {patU,patV}] ];
+                Table[
+                   {patX,patY} = iptsXY[[ipattern]];
+                   {x,y} = {tileX,tileY} / npts1d + {patX,patY} / npts //N;
+                   {tileU,tileV} = iptsUV[[mappingXY2UV[[ipattern]]]];
+                   {u,v} = {tileU,tileV} / npts1d + {patU,patV} / npts //N; 
+                    (*If[ipattern == 1, Print[{ixytiles,ipattern} -> {x,y} -> Floor[npts {x,y}]  -> {u,v} -> Floor[npts {u,v}] ] ];*)
+                   {x,y,u,v}
+                ,{ipattern,npts}]
+        ,{ixytiles, npts }]);
+        (*fname = "data/pts4d_Sobol"<>ToString[sobolInd1]<>ToString[sobolInd2]<>"+"<>ToString[sobolInd3]<>ToString[sobolInd4]<>".dat";*)
+        fname = "data/data_"<>basename<>pid<>".dat";
+        Print[" writing ",Length[pts4d]," Sobol pts into ",fname];
+        Export[fname,pts4d];
+        pngfname = "results/"<>basename<>".png";
+        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+        Print[" executing ",execstring];
+        Run[execstring];
+        
+    ] (* tryVAC *)
+
+(*----------------------------------------  ----------------------------------------*)
+testDyadicPartitioning2DFullButFirst32[set_] := Module[{sz,tests,i,tab},
+	sz=Length[set];
+	tests = { {2, 16}, {4, 8}, {8, 4}, {16, 2} }; (*{{1, 32}, {2, 16}, {4, 8}, {8, 4}, {16, 2}, {32, 1}};*)
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+	And @@ tab
+] (* testDyadicPartitioning2DFullButFirst32 *)
+
+testDyadicPartitioning2DFullButFirst64[set_] := Module[{sz,tests,i,tab},
+	sz=Length[set];
+	tests = {{2, 32}, {4, 16}, {8, 8}, {16, 4}, {32, 2}} ; (*{{1, 64}, {2, 32}, {4, 16}, {8, 8}, {16, 4}, {32, 2}, {64, 1}};*)
+	tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+	And @@ tab
+] (* testDyadicPartitioning2DFullButFirst64 *)
+
+getLevelDyadsAndFlags[ptsXSorted_,level_] :=
+    Module[ {},
+    		npts = Length[ptsXSorted];
+        npartitions = 2^level;
+        partitions = Partition[ptsXSorted,npts/npartitions];
+        tab = Table[
+        		partition = partitions[[ipartition]];
+            tmp = (Sort @Table[{partition[[i, 2]], Position[ptsXSorted,partition[[i, 2]] ][[1,1]]}, {i, Length[partition]}]);
+            tmp
+        	,{ipartition, npartitions}];
+        	tab//mf//Print;
+    ]
+
+lookForDyadic32[dbg_:True] :=
+    Module[ {set},
+        npts = 32;
+    		If[dbg,grid = getBinaryGrid2Dx2WithoutLabels[Log[2,npts]]];
+            bnotpts = Sort @ getBNOTpts[npts,0,False];
+            tmp = (Sort @Table[{bnotpts[[i, 2]], i - 1}, {i, Length[bnotpts]}]);
+            set = Table[{tmp[[i, 2]], i - 1}, {i, Length[tmp]}];
+            If[set == {{0,0}}, Continue[] ]; (* crush of BNOT *)
+            If[dbg,
+				Graphics[{grid,AbsolutePointSize[30],Point/@(set/npts), Lighter@Orange, Point/@ bnotpts,Black,Table[Text[Style[#,Bold,24]& @ (i),bnotpts[[i]]],{i,Length[bnotpts]}]}
+					,PlotLabel->testDyadicPartitioning2DFull[set]]//Print;
+            ];
+			getLevelDyadsAndFlags[bnotpts,1]
+
+    ]
+    
+    (*set = {{10, 0}, {26, 1}, {0, 2}, {16, 3}, {6, 4}, {22, 5}, {12, 6}, {28, 7},
+    {19, 8}, {3, 9}, {9, 10}, {25, 11}, {31, 12}, {15, 13}, {20, 14},
+    {5, 15}, {27, 16}, {11, 17}, {1, 18}, {17, 19}, {23, 20}, {7, 21},
+    {29, 22}, {13, 23}, {2, 24}, {18, 25}, {24, 26}, {8, 27}, {30, 28},
+    {14, 29}, {4, 30}, {21, 31}};*)
+
+
+lookForDyadic64[dbg_:False] :=
+    Module[ {},
+        npts = 64;
+    		If[dbg,grid = getBinaryGrid2Dx2WithoutLabels[Log[2,npts]]];
+    		ntrials = 10^9;
+        (*Parallelize @*) Do[
+        		If[Mod[itrial,1000] == 0, Print[itrial] ];
+            bnotpts = Sort @ getBNOTpts[npts,0,False];
+            tmp = (Sort @Table[{bnotpts[[i, 2]], i - 1}, {i, Length[bnotpts]}]);
+            set = Table[{tmp[[i, 2]], i - 1}, {i, Length[tmp]}];
+            If[set == {{0,0}}, Continue[] ]; (* crush of BNOT *)
+            If[dbg,
+				Graphics[{grid,AbsolutePointSize[10],Point/@(set/npts)},PlotLabel->testDyadicPartitioning2DFull[set]]//Print;
+            ];
+            If[ testDyadicPartitioning2DFullButFirst64[set],
+                Print["Found:", bnotpts];
+                Print["Found:", set];
+            ];
+        ,{itrial,ntrials}];
+	
+		{sobolInd1,sobolInd2} = {1,2};
+		sobolIndPair = {sobolInd1,sobolInd2};
+		buildMSobol[sobolIndPair,False];
+		sobolpts =  ( Table[ sobol2dOriginal[i] ,{i,0,npts-1}] )//N;
+		Graphics[{grid,AbsolutePointSize[10],Point/@(sobolpts)
+			,Table[Text[Style[#,Bold,24]& @ (i-1),sobolpts[[i]],{-1,-1}],{i,npts}]
+			},PlotLabel->"Sobol "<>ToString[{sobolInd1,sobolInd2}]]//Print;
+    ]
+
+(*----------------------------------------  ----------------------------------------*)
+tryBNLDSequence[] :=
+    Module[ {},
+        SetOptions[Graphics, ImageSize -> 2{1024,1024},AspectRatio->Automatic, PlotRange->All];
+        {sobolInd1,sobolInd2,sobolInd3,sobolInd4} = {1,2,3,6};
+        
+        npts = 4096;
+        npts1d = Sqrt[npts];
+        
+        ptsBNLDSequence = Import["data/4K-4D.dat"];
+
+        buildMSobol[{sobolInd1,sobolInd2,sobolInd3,sobolInd4},False];
+        sobolpts =  ( Table[ sobol4dOriginal[i] ,{i,0,npts-1}] );
+        ptsXY = sobolpts[[;; , 3 ;; 4]]//N;
+        ptsUV = #[[1;;2]]& /@ ptsBNLDSequence;
+        
+        ptsXY = #[[1;;2]]& /@ ptsBNLDSequence;
+        ptsUV = #[[3;;4]]& /@ ptsBNLDSequence;
+        
+        iptsXY = Floor[npts1d ptsXY];
+        iptsUV = Floor[npts1d ptsUV];
+        mappingXY2UV = Range[npts];
+		basename = "tile_BNLDSequence"<>pid;
+        showImageMapping[iptsXY, iptsUV, basename];
+
+     	npts4d = 2^20;
+     	ntiles = npts4d/npts;
+        
+        
+        pts4d = Flatten[#,1]& @ ((*Parallelize @*) Table[
+                {tileX,tileY} = iptsXY[[ixytiles]];
+                                   (*Print[{ixytiles} -> {tileX,tileY} -> N[{tileX,tileY} / npts1d]];*)
+                (*{patU,patV} = iptsUV[[mappingXY2UV[[ixytiles]] ]];*)
+                {patU,patV} = {0,0};
+                If[Mod[ixytiles,100] == 0, Print[ixytiles -> {patU,patV}] ];
+                Table[
+                   {patX,patY} = iptsXY[[ipattern]];
+                   {x,y} = {tileX,tileY} / npts1d + {patX,patY} / npts //N;
+                   			(* 0..1 *)                 (* 0..1/npts1d *)
+                   Print[{ixytiles,ipattern} -> {x,y} -> Floor[1024 {x,y} ]];
+                   {tileU,tileV} = iptsUV[[mappingXY2UV[[ipattern]]]];
+                   {u,v} = {tileU,tileV} / npts1d + {patU,patV} / npts //N; 
+                    (*If[ipattern == 1, Print[{ixytiles,ipattern} -> {x,y} -> Floor[npts {x,y}]  -> {u,v} -> Floor[npts {u,v}] ] ];*)
+                   {x,y,u,v}
+                ,{ipattern, Length[iptsUV]}]
+        ,{ixytiles, Length[iptsXY] }]);
+        (*fname = "data/pts4d_Sobol"<>ToString[sobolInd1]<>ToString[sobolInd2]<>"+"<>ToString[sobolInd3]<>ToString[sobolInd4]<>".dat";*)
+        fname = "data/data_new_4D"<>pid<>".dat";
+        Print[" writing ",Length[pts4d]," Sobol pts into ",fname];
+        Export[fname,pts4d];
+        pngfname = "out_BNLDSequence"<>pid<>".png";
+        (*pngfname = "out.png";*)
+        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+        Print[" executing ",execstring];
+        Run[execstring];
+      
+    ]
+(*----------------------------------------  ----------------------------------------*)
+mkBnot64x64[] :=
+    Module[ {},
+        npts1d = 64;
+        npts = npts1d*npts1d;
+
+		centers = Flatten[#,1]& @ Table[
+	                {xCenter,yCenter} = 1./npts1d {(ix-.5),(iy-.5)};
+	                {xCenter,yCenter}
+	            ,{iy,npts1d},{ix,npts1d}];
+		fname = "src/pts_uniformgrid01_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".h";
+		Put[centers,fname];
+
+		Put[RandomSample@Range[0,npts-1],"src/random_mapping_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".h"];
+                
+        Parallelize @Do[
+	        bnotpts = Sort @ getBNOTpts[npts,0,True];
+	        fname = "data/pts_bnot_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_"<>n2PaddedString[iset]<>".dat";
+	        Export[fname,bnotpts];
+	    ,{iset,0,15}];
+
+        (*npartitions = npts1d;
+        partitions = Partition[bnotpts,npts/npartitions];
+        tab = Table[
+        		partition = partitions[[ipartition]];
+            (*tmp = (Sort @Table[{partition[[i, 2]], Position[ptsXSorted,partition[[i, 2]] ][[1,1]]}, {i, Length[partition]}]);*)
+            tmp = (Sort @Table[{partition[[i, 2]], i - 1}, {i, Length[partition]}]);
+            set = Table[{tmp[[i, 2]], i - 1}, {i, Length[tmp]}];
+            set 
+        	,{ipartition, npartitions}];
+        	tab//mf//Print;*)
+
+		(*centers = Flatten[#,1]& @ Table[
+	                {xCenter,yCenter} = 1./npts1d {(ix-.5),(iy-.5)};
+	                {xCenter,yCenter}
+	            ,{iy,npts1d},{ix,npts1d}];
+	    If[Length[bnotpts] != npts, Print["something is going wrong"] ];
+        indTab = getHungarian[{centers,bnotpts}];
+        pairs = Table[{centers[[i]],bnotpts[[1+indTab[[i]]]]},{i,Length[indTab]}];	        
+
+		xBorders = yBorders = Table[0,{npts1d+1}];
+		newPts = Table[
+			{xdiff,ydiff} = (pairs[[iPair,2]] - pairs[[iPair,1]]) npts1d ;
+			{xInd,yInd} = Floor[npts1d #]& /@ pairs[[iPair,1]];
+			{xNew,yNew} = pairs[[iPair,2]];
+			{xNew,yNew}
+		,{iPair,Length[pairs]}];*)
+
+]
+(*---------------------------------------- dbgSolidAngle ----------------------------------------*)
+dbgSolidAngle[] :=
+    Module[ {},
+        SetOptions[Graphics, ImageSize -> {1024,1024},AspectRatio->Automatic, PlotRange->All];
+        npts1d = 64;
+        npts = npts1d*npts1d;
+
+		SIGMAISQ = 4.41;
+		
+        (*ptsUV = Import["data/pts_bnot_32x32_00000.dat"];*)
+
+        ptsXY = Flatten[#,1]& @ Table[ 1./npts1d {(ix-.5),(iy-.5)} ,{iy,npts1d},{ix,npts1d}];
+        ptsUV = Flatten[#,1]& @ Table[ 1./npts1d {(ix-.5),(iy-.5)} ,{iy,npts1d},{ix,npts1d}];
+        iptsXY = Floor[npts1d ptsXY];
+        iptsUV = Floor[npts1d ptsUV];
+        		
+		basename = "SolidAngleBNMask_64x64";		
+		fname = "data/mappingXY2UV_"<>basename<>".dat";
+		Print["reading ",fname];
+        mappingXY2UV = 1 +  Flatten @ Import[fname];  (* mappingXY2UVXY2UV: C++ convention *)
+		showMappingFourier[mappingXY2UV];
+		
+		frame = {Cyan,Line[{{0,0},{0,npts1d},{npts1d,npts1d},{npts1d,0},{0,0}}]};
+		frameuv = {Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
+		
+		testpt = 2080;
+ 		refptxy = iptsXY[[testpt]];
+ 		refptuv = ptsUV[[mappingXY2UV[[testpt]]]];
+		gl = {Red, AbsolutePointSize[32],Point[refptxy]};
+		gluv = {Red, AbsolutePointSize[32],Point[refptuv]};
+		total = 0;
+ 		Do[
+ 			If[i == testpt, Continue[] ];
+ 			ptxy = iptsXY[[i]];
+ 			energy = E^(-getToroidalDistSq[refptxy,ptxy,npts1d]/SIGMAISQ);
+			ptuv = ptsUV[[mappingXY2UV[[i]]]];
+			d = getToroidalDist[refptuv,ptuv,1];
+			w = E^(-d);
+			total += energy w;
+			If[energy > .01,
+				AppendTo[gl, {Black,AbsolutePointSize[16 energy], Point[ptxy]} ];
+				Print[i -> mappingXY2UV[[i]] -> mf[{refptxy,ptxy}] -> mf[{refptuv,ptuv}] -> {energy,w}];
+				AppendTo[gluv, {Black,AbsolutePointSize[32 energy w], Point[ptuv]} ];
+			];
+ 		,{i,npts}];
+ 		Graphics[{frame,gl}]//Print;
+ 		Graphics[{frameuv,gluv}]//Print;
+ 		
+ 		Plot[E^(-d^2/SIGMAISQ),{d,0,10}]//Print;
+
+		Plot[{-(E-1)/E d + 1, E^(-d^.2),E^(-d^.3),E^(-d^.5),E^(-d),E^(-d^1.2),E^(-d^1.5),E^(-d^2)},{d,0,1},PlotRange->All, 
+			ImageSize -> {1024,1024},AspectRatio->Automatic,
+			PlotStyle->{{Dashed,Black,AbsoluteThickness[2]},Red,Blue,Green,Cyan,Magenta,Gray,Orange,Red,Blue,Green,Cyan,Magenta,Gray,Orange},
+			PlotLegends -> {"linear", "pow=.2", "pow=.3", "pow=.5", "pow=1", "pow=1.2", "pow=1.5", "pow=2"}]//Print;
+ 		
+ 		Print[total];
+   ] (* dbgSolidAngle *)
+
+(*---------------------------------------- makeBNOTneighbors ----------------------------------------*)
+makeBNOTneighbors[] := 
+    Block[ {},
+        npts = 1024;
+        npts1d = Sqrt[npts];
+
+        partitionBorders = {Cyan, Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}] };
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+        
+        
+        pixelCenters = Table[
+                    {xCenter,yCenter} = 1./npts1d {(ix-.5),(iy-.5)};
+                    {xCenter,yCenter}
+                ,{iy,npts1d},{ix,npts1d}];
+        bnotpts = Import["data/pts_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+        	weightsxy = Table[E^(-getToroidalDistSq[bnotpts[[j]],bnotpts[[i]] ]npts/4.41),{j,npts},{i,npts}];
+        	weightsuv = Table[E^(-getToroidalDist[bnotpts[[j]],bnotpts[[i]] ]),{j,npts},{i,npts}];
+        	weightsuvSq = Table[E^(-getToroidalDistSq[bnotpts[[j]],bnotpts[[i]] ]),{j,npts},{i,npts}];
+        	
+        	radii = {2,3,4,5};
+       	{neiring1,neiring2,neiring3,neiring4} = getAllNeighghborsRings[bnotpts,npts,radii];
+        	nei = neiring1[[528]];
+        	center = bnotpts[[ nei[[1]] ]]; 
+        	neipts = bnotpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders, AbsolutePointSize[3],Point/@bnotpts, AbsolutePointSize[10], Point/@ neipts, Magenta,  Line[{center,#}]& /@ neipts,
+ 			{Red,Circle[center,radii[[1]]/npts1d]},
+ 			Table[{ix,iy}=Floor[npts1d bnotpts[[i]]]; n=iy*npts1d+ix; If[n != (i-1), Print["something goes wrong..."] ];
+ 				{Black, Text[n,bnotpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+ 				
+        	nei = neiring2[[528]];
+        	center = bnotpts[[ nei[[1]] ]]; 
+        	neipts = bnotpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders, AbsolutePointSize[3],Point/@bnotpts, AbsolutePointSize[10], Point/@ neipts, Magenta,  Line[{center,#}]& /@ neipts,
+ 			{Red,Circle[center,radii[[2]]/npts1d]},
+ 			Table[{ix,iy}=Floor[npts1d bnotpts[[i]]]; n=iy*npts1d+ix; If[n != (i-1), Print["something goes wrong..."] ];
+ 				{Black, Text[n,bnotpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+
+        	nei = neiring3[[528]];
+        	center = bnotpts[[ nei[[1]] ]]; 
+        	neipts = bnotpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders,  Magenta,  Line[{center,#}]& /@ neipts,
+ 			Red,Circle[center,radii[[3]]/npts1d],
+ 		    Table[w = weightsxy[[ nei[[1]], nei[[i]] ]]; {AbsolutePointSize[32 w], Point[bnotpts[[nei[[i]]]]]} ,{i,Length[nei]}],
+ 			Table[{ix,iy}=Floor[npts1d bnotpts[[i]]]; n=iy*npts1d+ix; {Black, Text[n,bnotpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+
+        	nei = neiring4[[528]];
+        	center = bnotpts[[ nei[[1]] ]]; 
+        	neipts = bnotpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders,  Magenta,  Line[{center,#}]& /@ neipts,
+ 			Red,Circle[center,radii[[4]]/npts1d],
+ 		    Table[w = weightsxy[[ nei[[1]], nei[[i]] ]]; {AbsolutePointSize[32 w], Point[bnotpts[[nei[[i]]]]]} ,{i,Length[nei]}],
+ 			Table[{ix,iy}=Floor[npts1d bnotpts[[i]]]; n=iy*npts1d+ix; {Black, Text[n,bnotpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+
+        	Export["data/neighbors_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_r"<>ToString[radii[[1]]]<>".dat", neiring1-1]; (* Export: in C++ convention *)
+        	Export["data/neighbors_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_r"<>ToString[radii[[2]]]<>".dat", neiring2-1]; (* Export: in C++ convention *)
+        	Export["data/neighbors_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_r"<>ToString[radii[[3]]]<>".dat", neiring3-1]; (* Export: in C++ convention *)
+        	Export["data/neighbors_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_r"<>ToString[radii[[4]]]<>".dat", neiring4-1]; (* Export: in C++ convention *)
+
+        	Export["data/weightsxy_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat", weightsxy]; 
+        	Export["data/weightsuv_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat", weightsuv]; 
+        	Export["data/weightsuvSq_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat", weightsuvSq]; 
+
+     ] (* makeBNOTneighbors *)
+
+makeRegGridneighbors[] := 
+    Block[ {},
+        npts = 1024;
+        npts = 4096;
+        npts1d = Sqrt[npts];
+
+        partitionBorders = {Cyan, Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}] };
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+        
+        
+        RegGridpts = Flatten[#,1]& @ Table[
+                    {xCenter,yCenter} = 1./npts1d {(ix-.5),(iy-.5)};
+                    {xCenter,yCenter}
+                ,{iy,npts1d},{ix,npts1d}];
+        	weightsxy = Parallelize @ Table[E^(-getToroidalDistSq[RegGridpts[[j]],RegGridpts[[i]] ]npts/4.41),{j,npts},{i,npts}];
+        	weightsuv = Parallelize @ Table[E^(-getToroidalDist[RegGridpts[[j]],RegGridpts[[i]] ]),{j,npts},{i,npts}];
+        	weightsuvSq = Parallelize @ Table[E^(-getToroidalDistSq[RegGridpts[[j]],RegGridpts[[i]] ]),{j,npts},{i,npts}];
+        	
+        	radii = {14,15,16,17};
+       	{neiring1,neiring2,neiring3,neiring4} = getAllNeighghborsRings[RegGridpts,npts,radii];
+        	nei = neiring1[[528]];
+        	center = RegGridpts[[ nei[[1]] ]]; 
+        	neipts = RegGridpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders, AbsolutePointSize[3],Point/@RegGridpts, AbsolutePointSize[10], Point/@ neipts, Magenta,  Line[{center,#}]& /@ neipts,
+ 			{Red,Circle[center,radii[[1]]/npts1d]},
+ 			Table[{ix,iy}=Floor[npts1d RegGridpts[[i]]]; n=iy*npts1d+ix; If[n != (i-1), Print["something goes wrong..."] ];
+ 				{Black, Text[n,RegGridpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+ 				
+        	nei = neiring2[[528]];
+        	center = RegGridpts[[ nei[[1]] ]]; 
+        	neipts = RegGridpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders, AbsolutePointSize[3],Point/@RegGridpts, AbsolutePointSize[10], Point/@ neipts, Magenta,  Line[{center,#}]& /@ neipts,
+ 			{Red,Circle[center,radii[[2]]/npts1d]},
+ 			Table[{ix,iy}=Floor[npts1d RegGridpts[[i]]]; n=iy*npts1d+ix; If[n != (i-1), Print["something goes wrong..."] ];
+ 				{Black, Text[n,RegGridpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+
+        	nei = neiring3[[528]];
+        	center = RegGridpts[[ nei[[1]] ]]; 
+        	neipts = RegGridpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders,  Magenta,  Line[{center,#}]& /@ neipts,
+ 			Red,Circle[center,radii[[3]]/npts1d],
+ 		    Table[w = weightsxy[[ nei[[1]], nei[[i]] ]]; {AbsolutePointSize[32 w], Point[RegGridpts[[nei[[i]]]]]} ,{i,Length[nei]}],
+ 			Table[{ix,iy}=Floor[npts1d RegGridpts[[i]]]; n=iy*npts1d+ix; {Black, Text[n,RegGridpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+
+        	nei = neiring4[[528]];
+        	center = RegGridpts[[ nei[[1]] ]]; 
+        	neipts = RegGridpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders,  Magenta,  Line[{center,#}]& /@ neipts,
+ 			Red,Circle[center,radii[[4]]/npts1d],
+ 		    Table[w = weightsxy[[ nei[[1]], nei[[i]] ]]; {AbsolutePointSize[32 w], Point[RegGridpts[[nei[[i]]]]]} ,{i,Length[nei]}],
+ 			Table[{ix,iy}=Floor[npts1d RegGridpts[[i]]]; n=iy*npts1d+ix; {Black, Text[n,RegGridpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+
+        	Export["data/neighbors_RegGrid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_r"<>ToString[radii[[1]]]<>".dat", neiring1-1]; (* Export: in C++ convention *)
+        	Export["data/neighbors_RegGrid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_r"<>ToString[radii[[2]]]<>".dat", neiring2-1]; (* Export: in C++ convention *)
+        	Export["data/neighbors_RegGrid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_r"<>ToString[radii[[3]]]<>".dat", neiring3-1]; (* Export: in C++ convention *)
+        	Export["data/neighbors_RegGrid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_r"<>ToString[radii[[4]]]<>".dat", neiring4-1]; (* Export: in C++ convention *)
+
+        	Export["data/weightsxy_RegGrid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat", weightsxy]; 
+        	Export["data/weightsuv_RegGrid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat", weightsuv]; 
+        	Export["data/weightsuvSq_RegGrid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat", weightsuvSq]; 
+
+        Export["data/pts_RegGrid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat",RegGridpts];
+         	
+         	
+     ] (* makeRegGridneighbors *)
+
+makeBNOTneighborsRings[] := 
+    Block[ {}, (* mindist tab: {{0.0213905,0},{0.0191367,1},{0.0212313,2},{0.020184,3},{0.0176387,4},{0.0198319,5},{0.0173547,6},{0.0199789,7},{0.0164477,8},{0.0169664,9},{0.0212522,10},{0.0174904,11},{0.0193656,12},{0.0176682,13},{0.0194653,14},{0.0195344,15},{0.0197688,16}} *)
+        npts = 1024;
+        npts1d = Sqrt[npts];
+
+        partitionBorders = {Cyan, Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}] };
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+        
+        
+        pixelCenters = Table[
+                    {xCenter,yCenter} = 1./npts1d {(ix-.5),(iy-.5)};
+                    {xCenter,yCenter}
+                ,{iy,npts1d},{ix,npts1d}];
+        bnotpts = Import["data/pts_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+        	set = getExtendedSet01[bnotpts];
+        	{neiring1,neiring2,neiring3,neiring4} = getAllNeighghbors4rings[set,npts];
+        	nei = neiring1[[528]];
+        	center = bnotpts[[ nei[[1]] ]]; 
+        	neipts = bnotpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders, AbsolutePointSize[10],Point/@bnotpts, Magenta,  Line[{center,#}]& /@ neipts,
+ 			Table[{ix,iy}=Floor[npts1d bnotpts[[i]]]; n=iy*npts1d+ix; If[n != (i-1), Print["something goes wrong..."] ];
+ 				{Black, Text[n,bnotpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+        	nei = neiring2[[528]];
+        	center = bnotpts[[ nei[[1]] ]]; 
+        	neipts = bnotpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders, AbsolutePointSize[10],Point/@bnotpts, Magenta,  Line[{center,#}]& /@ neipts,
+ 			Table[{ix,iy}=Floor[npts1d bnotpts[[i]]]; n=iy*npts1d+ix; If[n != (i-1), Print["something goes wrong..."] ];
+ 				{Black, Text[n,bnotpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+        	nei = neiring3[[528]];
+        	center = bnotpts[[ nei[[1]] ]]; 
+        	neipts = bnotpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders, AbsolutePointSize[10],Point/@bnotpts, Magenta,  Line[{center,#}]& /@ neipts,
+ 			Table[{ix,iy}=Floor[npts1d bnotpts[[i]]]; n=iy*npts1d+ix; If[n != (i-1), Print["something goes wrong..."] ];
+ 				{Black, Text[n,bnotpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;
+        	nei = neiring4[[528]];
+        	center = bnotpts[[ nei[[1]] ]]; 
+        	neipts = bnotpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders, AbsolutePointSize[10],Point/@bnotpts, Magenta,  Line[{center,#}]& /@ neipts,
+ 			Table[{ix,iy}=Floor[npts1d bnotpts[[i]]]; n=iy*npts1d+ix; If[n != (i-1), Print["something goes wrong..."] ];
+ 				{Black, Text[n,bnotpts[[i]],{-1,-1}]},{i,npts}]  } ]//Print;		
+        	Export["data/neighbors_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat", neighbors-1]; (* Export: in C++ convention *)
+     ] (* makeBNOTneighbors *)
+
+(*---------------------------------------- mkUniformMapping ----------------------------------------*)
+dbgPermutTree[] :=
+    Module[ {},
+		SetOptions[Graphics, ImageSize -> {1024,1024},AspectRatio->Automatic, PlotRange->All];
+        npts = 1024;
+        npts1d = Sqrt[npts];
+        partitionBorders = {Cyan, AbsoluteThickness[1], Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}], AbsoluteThickness[3], Line[{{0,.5},{1,.5}}], Line[{{.5,0},{.5,1}}] };
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+
+        ptsXY = Import["data/pts_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+        ptsUV = Import["data/pts_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+        iptsXY = Floor[npts1d ptsXY];
+        iptsUV = Floor[npts1d ptsUV];
+        	neighbors = 1 + Import["data/neighbors_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"]; (* Export: in C++ convention *)
+
+
+		elementaryPermutations = Permutations[{0,1,2,3}] /. {0:>{0,0},1:>{1,1},2:>{0,1},3:>{1,0}};
+ 
+ 		Table[set=elementaryPermutations[[i]]/2;Graphics[{getBinaryGrid2Dx2WithoutLabels[1],AbsolutePointSize[10],
+			Table[{Point@set[[j]],Text[Style[#,Bold,20]& @(j-1), set[[j]],{-1,-1}]},{j,Length[set]}]},ImageSize->{100,100},PlotLabel->i],{i, Length[elementaryPermutations]}]//Print;
+	
+	    pixelCenters = Table[
+	            {xCenter,yCenter} = 1./npts1d {(ix-.5),(iy-.5)};
+	            {xCenter,yCenter}
+	        ,{iy,npts1d},{ix,npts1d}];
+
+
+		(* first, a simple Bayer-like regular structure *)
+		mappingXY2UV = Table[-1,{npts}];
+		permutTreeDepth = Log[4,npts];
+		glxy = gluv = {};
+		Do[
+			orderNumberDigits03 = IntegerDigits[i,4,permutTreeDepth];
+			orderNumberDigits03RadixInverted = Reverse @ orderNumberDigits03;
+			xydigits = Transpose @ (orderNumberDigits03 /. {0:>{0,0},1:>{1,1},2:>{0,1},3:>{1,0}});
+			uvdigits = Transpose @ (orderNumberDigits03RadixInverted /. {0:>{0,0},1:>{1,1},2:>{0,1},3:>{1,0}});
+			(*Print[i -> orderNumberDigits03 -> mf[xydigits] -> orderNumberDigits03RadixInverted -> mf[uvdigits]];*)
+			{x,y} = (FromDigits[#,2]& /@ xydigits);
+			{u,v} = (FromDigits[#,2]& /@ uvdigits);
+			(*Print[i,{x,y},{u,v} -> mf[{y*npts1d+x,v*npts1d+u }]];*)
+			mappingXY2UV[[1 + y*npts1d+x]] = v*npts1d+u;
+			AppendTo[glxy,{Black,Point[{x,y}/npts1d], Blue, Text[i,{x,y}/npts1d,{-1,-1}] } ];
+			AppendTo[gluv,{Black,Point[{u,v}/npts1d], Blue, Text[i,{u,v}/npts1d,{-1,-1}] } ];
+		,{i,0,npts-1}];
+ 		Graphics[{Blue,frame,partitionBorders, glxy},PlotLabel->"simple Bayer-like regular structure xy space"]//Print;
+ 		Graphics[{Blue,frame,partitionBorders, gluv},PlotLabel->"simple Bayer-like regular structure uv space"]//Print;
+        (*Export["tmp/mappingXY2UV_permutTree_regular_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat",mappingXY2UV];*)  (* mappingXY2UVXY2UV: C++ convention *)
+		ipts4d = Join[iptsXY//T,iptsUV//T]//T;
+
+Abort[];
+		
+		(* second, applying random permutation tree *)
+		mappingXY2UV = Table[-1,{npts}];
+		permutTreeDepth = Log[4,npts];
+		glxy = gluv = {};
+		(*permutTreeXY = Table[ Table[RandomInteger[{0, 23}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		permutTreeUV = Table[ Table[RandomInteger[{0, 23}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		Export["data/permutTreeXY_random_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat",permutTreeXY];
+		Export["data/permutTreeUV_random_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat",permutTreeUV];*)
+		permutTreeXY = Import["data/permutTreeXY_random_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+		permutTreeUV = Import["data/permutTreeUV_random_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+		
+		permutTreeXY = Table[ Table[RandomInteger[{0, 0}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		permutTreeUV = Table[ Table[RandomInteger[{0, 0}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		Do[
+			orderNumberDigits03 = IntegerDigits[i,4,permutTreeDepth];
+			orderNumberDigits03RadixInverted = Reverse @ orderNumberDigits03;
+			xydigits = Transpose @ Table[
+					xypermut = If[ilevel == 1,
+						ind = 0;
+						permutTreeXY[[ilevel,1]]
+					,(*ELSE *)
+						digits = orderNumberDigits03[[;;ilevel-1]];
+						ind = FromDigits[digits,4];
+						permutTreeXY[[ilevel,ind+1]]
+					];
+				elementaryPermutations[[1+xypermut, 1+orderNumberDigits03[[ilevel]] ]]
+			,{ilevel,permutTreeDepth}];
+			uvdigits = Transpose @ Table[
+					uvpermut = If[ilevel == 1,
+						ind = 0;
+						permutTreeUV[[ilevel,1]]
+					,(*ELSE *)
+						digits = orderNumberDigits03RadixInverted[[;;ilevel-1]];
+						ind = FromDigits[digits,4];
+						permutTreeUV[[ilevel,ind+1]]
+					];
+				elementaryPermutations[[1+uvpermut, 1+orderNumberDigits03RadixInverted[[ilevel]] ]]
+			,{ilevel,permutTreeDepth}];
+			{x,y} = (FromDigits[#,2]& /@ xydigits);
+			{u,v} = (FromDigits[#,2]& /@ uvdigits);
+			(*Print[i,{x,y},{u,v} -> mf[{y*npts1d+x,v*npts1d+u }]];*)
+			Print[i -> {x,y} -> {u,v}];
+			mappingXY2UV[[1 + y*npts1d+x]] = v*npts1d+u;
+			AppendTo[glxy,{Black,Point[{x,y}/npts1d], Blue, Text[i,{x,y}/npts1d,{-1,-1}] } ];
+			AppendTo[gluv,{Black,Point[{u,v}/npts1d], Blue, Text[i,{u,v}/npts1d,{-1,-1}] } ];
+		,{i,0, npts-1}];
+ 		Graphics[{Blue,frame,partitionBorders, glxy},PlotLabel->"random permutation tree xy space", Frame->True, FrameTicks->{{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T,{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T}]//Print;
+ 		Graphics[{Blue,frame,partitionBorders, gluv},PlotLabel->"random permutation tree uv space", Frame->True, FrameTicks->{{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T,{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T}]//Print;
+		showMappingFourier[1+mappingXY2UV];
+Abort[];
+        Export["tmp/mappingXY2UV_permutTree_random_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat",mappingXY2UV];  (* mappingXY2UVXY2UV: C++ convention *)
+
+        bnotpts = Import["data/pts_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+        	neighbors = 	1 + Import["data/neighbors_bnot_grid"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+        	idbg = 528;
+        	nei = neighbors[[idbg]];
+        	(*--- xy ---*)
+        	xycenter = bnotpts[[ nei[[1]] ]]; 
+        	xyneipts = bnotpts[[#]]& /@ Drop[nei,1];
+ 		Graphics[{Blue,frame,partitionBorders, Point/@bnotpts, Magenta,  Line[{xycenter,#}]& /@ xyneipts,
+ 			Table[{ix,iy}=Floor[npts1d bnotpts[[i]]]; n=iy*npts1d+ix; If[n != (i-1), Print["something goes wrong..."] ];
+ 				{Black, Text[n,bnotpts[[i]],{-1,-1}] },{i,npts}]  },
+ 				PlotLabel->"random permutation tree xy space", Frame->True, FrameTicks->{{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T,{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T}]//Print;
+
+        	(*--- uv ---*)
+        	uvcenter = bnotpts[[ 1+mappingXY2UV[[nei[[1]]]] ]]; 
+        	uvneipts = bnotpts[[ 1+mappingXY2UV[[#]]]]& /@ Drop[nei,1];
+        totalNeiDist = Total[getToroidalDist[uvcenter, #] & /@ uvneipts];
+ 		Graphics[{Blue,frame,partitionBorders, Point/@bnotpts, AbsolutePointSize[20], Red,  Point[uvcenter] , Blue, Point /@ uvneipts,
+ 			Table[{ix,iy}=Floor[npts1d bnotpts[[i]]]; n=iy*npts1d+ix; If[n != (i-1), Print["something goes wrong..."] ];
+ 				{Black, Text[n,bnotpts[[i]],{-1,-1}] },{i,npts}]  },
+ 				PlotLabel->"random permutation tree uv space; totalNeiDist="<>ToString[totalNeiDist], Frame->True, FrameTicks->{{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T,{(Range[0,npts1d-1]+.5)/npts1d,Range[0,npts1d-1]}//T}]//Print;
+
+		Print[idbg,nei];
+		Print[xycenter,xyneipts];
+		Print[uvcenter,uvneipts];
+		Print[totalNeiDist]
+    ] (* dbgPermutTree *)
+
+
+(*---------------------------------------- buildBNpts4d ----------------------------------------*)
+showMappingFourier[mappingXY2UV_,iptsXY_,ptsUV_] :=
+    Module[ {npts,npts1d,uimage,vimage,uvimage,fuimage,fvimage,powuimage,powvimage,histoSz,udata,vdata,umax,vmax,uval,vval,r,x,y,u,v},
+        npts = Length[mappingXY2UV];
+        npts1d = Sqrt[npts];
+
+        uimage = vimage = uvimage = Table[0,{npts1d},{npts1d}];
+        Do[
+                {x,y} = iptsXY[[i+1]];
+                {u,v} = ptsUV[[mappingXY2UV[[i+1]]]];
+                uimage[[1+y,1+x]] = u;
+                vimage[[1+y,1+x]] = v;
+                uvimage[[1+y,1+x]] = {u,v,0};
+        ,{i,0,npts-1}];
+         {niceRaster[uimage],niceRaster[vimage],niceRaster[uvimage],	niceRaster[uimage,zoom->2],niceRaster[vimage,zoom->2],niceRaster[uvimage,zoom->2]}//Print;
+        fuimage = (Fourier[uimage]//Abs);
+        fvimage = (Fourier[vimage]//Abs);
+        powuimage = (Fourier[uimage]//Abs)^2;
+        powvimage = (Fourier[vimage]//Abs)^2;
+        fuimage[[1,1]] = fvimage[[1,1]] = powuimage[[1,1]] = powvimage[[1,1]] = 0;
+        {niceRaster[(fuimage//reorg2D)/Max[fuimage],zoom->2],niceRaster[(fvimage//reorg2D)/Max[fvimage],zoom->2],
+        		niceRaster[(2 powuimage//reorg2D)/Max[powuimage],zoom->2],niceRaster[(2 powvimage//reorg2D)/Max[powvimage],zoom->2]}//Print;
+
+		(*Graphics[Point /@ iptsXY, ImageSize -> 1/2{1024,1024}]//Print;*)
+
+        histoSz = npts1d/2;
+        udata = vdata = Table[{0,0},{histoSz}];
+        umax = vmax = Table[0,{histoSz}];
+        Do[
+	    		uval = powuimage[[iy,ix]];
+	    		vval = powvimage[[iy,ix]];
+	    		r = Floor @ getToroidalDist[{1,1}, {ix,iy}, npts1d];
+	    		If[r >= histoSz, Continue[] ];
+	    		udata[[1+r]] = {udata[[1+r,1]]+uval,udata[[1+r,2]]+1};
+	    		vdata[[1+r]] = {vdata[[1+r,1]]+vval,vdata[[1+r,2]]+1};
+	    		umax[[1+r]] = Max[umax[[1+r]],uval];
+	    		vmax[[1+r]] = Max[vmax[[1+r]],vval];
+	    	,{iy,npts1d},{ix,npts1d}];
+	    	uhistogram = T[udata][[1]]/T[udata][[2]];
+	    	vhistogram = T[vdata][[1]]/T[vdata][[2]];
+	    	ListPlot[{uhistogram,vhistogram},Joined->True, PlotLabel->"radial power  spectra", PlotRange->{All,{0,.2}}, AspectRatio->.2, PlotLegends -> {"umean", "vmean"},ImageSize -> {1024,Automatic}]//Print;
+    ]
+	
+buildBNpts4dSolidAngle[] :=
+    Module[ {},
+        SetOptions[Graphics, ImageSize -> 2{1024,1024},AspectRatio->Automatic, PlotRange->All];
+        npts1d = 64;
+        npts = npts1d*npts1d;
+
+		base = "RegGrid";
+        ptsXY = ptsUV = Import["data/pts_"<>base<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat"];
+        iptsXY = Floor[npts1d ptsXY];
+
+		Plot[{-(E-1)/E d + 1, E^(-d^.2),E^(-d^.3),E^(-d^.5),E^(-d),E^(-d^1.2),E^(-d^1.5),E^(-d^2)},{d,0,1},PlotRange->All, 
+			ImageSize -> {1024,1024},AspectRatio->Automatic,
+			PlotStyle->{{Dashed,Black,AbsoluteThickness[2]},Red,Blue,Green,Cyan,Magenta,Gray,Orange,Red,Blue,Green,Cyan,Magenta,Gray,Orange},
+			PlotLegends -> {"linear", "pow=.2", "pow=.3", "pow=.5", "pow=1", "pow=1.2", "pow=1.5", "pow=2"}]//Print;
+
+		dir="results/mapping_best_found/solidangle/";
+		files = FileNames["*.dat", dir];
+		Do[
+			fname = files[[ifile]];
+			basename = FileNameTake[fname];
+			Print["Processing ",fname];
+	        mappingXY2UV = 1 +  Flatten @ Import[fname];  (* mappingXY2UVXY2UV: C++ convention *)
+			showMappingFourier[mappingXY2UV,iptsXY,ptsUV];
+			If[StringContainsQ[basename, "10000000"],
+		        npts4d = 1024*1024;
+		        npts4dSqrt = Sqrt[npts4d];
+		        ntiles = Sqrt[npts4d] / npts1d;
+		        tileSize = npts1d;
+		        pts4d = Table[-1,{npts4d}];
+		        pts4d = Flatten[#,2]& @ ((*Parallelize @*) Table[
+		                (*If[Mod[ixtile,100] == 0, Print[iytile,"/",ntiles] ];*)
+		                Table[
+		                   {patX,patY} = iptsXY[[ipattern]];
+		                    {x,y} = ({ixtile,iytile} tileSize + {patX, patY}) / npts4dSqrt //N;
+		                    {u,v} = ptsUV[[mappingXY2UV[[ipattern]]]];
+		                   {x,y,u,v}
+		                ,{ipattern,npts}]
+		        ,{iytile, 0,ntiles-1 },{ixtile, 0,ntiles-1}]);
+		        (*fname = "data/pts4d_Sobol"<>ToString[sobolInd1]<>ToString[sobolInd2]<>"+"<>ToString[sobolInd3]<>ToString[sobolInd4]<>".dat";*)
+		        fname = fname = StringJoin["tmp/",basename];
+		        Print[" writing ",Length[pts4d]," Sobol pts into ",fname];
+		        Export[fname,pts4d];
+		        pngfname = "results_tmp/"<>basename<>".png";
+		        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+		        Print[execstring];
+		        Run[execstring];
+			];
+		,{ifile,Length[files]}];		
+   ] (* buildBNpts4dSolidAngle *)
+
+buildBNpts4dexpSobolBased[initer_:0] :=
+    Module[ {},
+        SetOptions[Graphics, ImageSize -> 2{1024,1024},AspectRatio->Automatic, PlotRange->All];
+        npts1d = 64;
+        npts = npts1d*npts1d;
+        
+        runNo = 0;
+        iter = initer;
+
+		fname = "tmp_data/mappingXY2UV_expSobolBased_runNo"<>ToString[runNo]<>"_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_iter"<>n2PaddedString[iter,9]<>".dat";
+		basename = FileNameTake[fname];
+		Print["Processing ",fname];
+        mappingXY2UV = 1 +  Flatten @ Import[fname];  (* mappingXY2UVXY2UV: C++ convention *)
+
+		fname = "tmp_data/ptsXY_expSobolBased_runNo"<>ToString[runNo]<>"_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_iter"<>n2PaddedString[iter,9]<>".dat";
+		Print["reading ",fname]; ptsXY = Import[fname];
+		fname = "tmp_data/ptsUV_expSobolBased_runNo"<>ToString[runNo]<>"_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>"_iter"<>n2PaddedString[iter,9]<>".dat";
+		Print["reading ",fname]; ptsUV = Import[fname];
+        iptsXY = Floor[npts1d ptsXY];
+        iptsUV = Floor[npts1d ptsUV];
+        
+        showMappingFourier[mappingXY2UV,iptsXY,ptsUV];
+        
+			(*If[StringContainsQ[basename, "10000000"],*)
+		        npts4d = 1024*1024;
+		        npts4dSqrt = Sqrt[npts4d];
+		        ntiles = Sqrt[npts4d] / npts1d;
+		        tileSize = npts1d;
+		        pts4d = Table[-1,{npts4d}];
+		        pts4d = Flatten[#,2]& @ ((*Parallelize @*) Table[
+		                (*If[Mod[ixtile,100] == 0, Print[iytile,"/",ntiles] ];*)
+		                Table[
+		                   {patX,patY} = iptsXY[[ipattern]];
+		                    {x,y} = ({ixtile,iytile} tileSize + {patX, patY}) / npts4dSqrt //N;
+		                    {u,v} = ptsUV[[mappingXY2UV[[ipattern]]]];
+		                   {x,y,u,v}
+		                ,{ipattern,npts}]
+		        ,{iytile, 0,ntiles-1 },{ixtile, 0,ntiles-1}]);
+		        (*fname = "data/pts4d_Sobol"<>ToString[sobolInd1]<>ToString[sobolInd2]<>"+"<>ToString[sobolInd3]<>ToString[sobolInd4]<>".dat";*)
+		        fname = fname = StringJoin["tmp/",basename];
+		        Print[" writing ",Length[pts4d]," Sobol pts into ",fname];
+		        Export[fname,pts4d];
+		        pngfname = "results_tmp/"<>basename<>".png";
+		        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+		        Print[execstring];
+		        Run[execstring];
+			(*];*)
+   ] (* buildBNpts4dexpSobolBased *)
+
+(*---------------------------------------- checkUniformity ----------------------------------------*)
+testUniform4DSquare[set_] := Module[{sz,tests,i,tab,powers},
+       	sz=Length[set];
+		powers = Table[2^i,{i,1,Log[4,sz]-1}];
+		tests = Select[Tuples[powers, 4], (Times @@ #) == sz && (#[[1]] == #[[2]] ) && (#[[3]] == #[[4]])&];
+		tab = Table[Length[Union[Quotient[#, tests[[i]]] & /@ set]] == sz,{i,Length[tests]}];
+		And @@ tab
+] (* testDyadicPartitioning2DPartial *)
+
+
+checkUniformity[] :=
+    Module[ {},
+        SetOptions[Graphics, ImageSize -> {1024,1024},AspectRatio->Automatic, PlotRange->All];
+        npts1d = 64;
+        npts = npts1d*npts1d;
+
+        (*basename = "bestFound_ours_3009_var1_1024";  (* mappingXY2UVXY2UV: C++ convention *)
+         basename = "init_mappingXY2UV";
+        mappingXY2UV = 1 +  Flatten @ Import["tmp/"<>basename<>".dat"];  (* mappingXY2UVXY2UV: C++ convention *)*)
+        basename = "bestFound_ours_5_var1_1024";  (* mappingXY2UVXY2UV: C++ convention *)
+        basename = "init_ours_mappingXY2UV_64x64";
+        mappingXY2UV = 1 +  Flatten @ Import["tmp_data/"<>basename<>".dat"];  (* mappingXY2UVXY2UV: C++ convention *)
+		glxy = gluv = {};
+        pts4d = Table[
+                {x,y} = {Quotient[i,npts1d],Mod[i,npts1d]};
+                {u,v} = {Quotient[mappingXY2UV[[i+1]]-1,npts1d],Mod[mappingXY2UV[[i+1]]-1,npts1d]};
+				AppendTo[glxy,{Black,Point[{x,y}/npts1d], Blue, Text[i,{x,y}/npts1d,{-1,-1}] } ];
+				AppendTo[gluv,{Black,Point[{u,v}/npts1d], Blue, Text[i,{u,v}/npts1d,{-1,-1}] } ];
+                {x,y,u,v}
+         ,{i, 0, npts-1}];
+        Print[basename -> testUniform4DSquare[pts4d] ];
+ 		Graphics[{Blue,frame,partitionBorders, glxy},PlotLabel->"simple Bayer-like regular structure xy space"]//Print;
+ 		Graphics[{Blue,frame,partitionBorders, gluv},PlotLabel->"simple Bayer-like regular structure uv space"]//Print;
+        
+        
+Abort[];
+        uimage = vimage = uvimage = Table[0,{npts1d},{npts1d}];
+        Do[
+                {x,y} = {Quotient[i,npts1d],Mod[i,npts1d]};
+                {u,v} = {Quotient[mappingXY2UV[[i+1]]-1,npts1d],Mod[mappingXY2UV[[i+1]]-1,npts1d]};
+                uimage[[1+x,1+y]] = u/npts1d;
+                vimage[[1+x,1+y]] = v/npts1d;
+                uvimage[[1+x,1+y]] = {u,v,0}/npts1d;
+        ,{i,0,npts-1}];
+         {niceRaster[uimage],niceRaster[vimage],niceRaster[uvimage]}//Print;
+        {niceRaster[uimage,zoom->4],niceRaster[vimage,zoom->4],niceRaster[uvimage,zoom->4]}//Print;
+        fuimage = (Fourier[uimage]//Abs)^2;
+        fvimage = (Fourier[vimage]//Abs)^2;
+        fuimage[[1,1]] = fvimage[[1,1]] = 0;
+        {niceRaster[uimage],niceRaster[uimage,zoom->2],niceRaster[uimage,zoom->4],niceRaster[(fuimage//reorg2D)/Max[fuimage],zoom->4],niceRaster[(fvimage//reorg2D)/Max[fvimage],zoom->4]}//Print;
+        
+        udata = vdata = Table[{0,0},{1+Ceiling[npts1d/Sqrt[2]]}];
+        umax = vmax = Table[0,{1+Ceiling[npts1d/Sqrt[2]]}];
+        Do[
+        		uval = fuimage[[iy,ix]];
+        		vval = fvimage[[iy,ix]];
+        		r = Round @ getToroidalDist[{1,1}, {ix,iy}, npts1d];
+        		udata[[1+r]] = {udata[[1+r,1]]+uval,udata[[1+r,2]]+1};
+        		vdata[[1+r]] = {vdata[[1+r,1]]+vval,vdata[[1+r,2]]+1};
+        		umax[[1+r]] = Max[umax[[1+r]],uval];
+        		vmax[[1+r]] = Max[vmax[[1+r]],vval];
+        	,{iy,npts1d},{ix,npts1d}];
+        	uhistogram = T[udata][[1]]/T[udata][[2]];
+        	vhistogram = T[vdata][[1]]/T[vdata][[2]];
+        	ListPlot[{uhistogram,vhistogram,umax,vmax},Joined->True, PlotLabel->"radial power  spectra", PlotRange->{All,{0,1}}, AspectRatio->1, PlotLegends -> {"umean", "vmean","umax", "vmax"}]//Print;
+    ]
+
+(*---------------------------------------- expSobolBased ----------------------------------------*)
+
+(*expSobolBasedWithPermuts[npts_:64,permutTreeXY_:{{0},{0,0,0,0},{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}},permutTreeUV_:{{0},{0,0,0,0},{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}},zeroStarageFalg_:False,dbg_:False] :=
+    Module[ {},
+        {sobolInd1,sobolInd2} = {2,3};
+        sobolIndPair = {sobolInd1,sobolInd2};
+        buildMSobol[sobolIndPair,False];
+        iSobolPts =  (npts Table[ sobol2dOriginal[i] ,{i,0,npts-1}] )//T;
+        If[dbg, Print[iSobolPts//T//mf] ];
+        ndigits = Log[4,npts];
+        set1 = IntegerDigits[#,4,ndigits]& /@ (First @ iSobolPts);
+        If[dbg, Print["set1:",set1] ];
+        tab1 = (*Parallelize @*) Table[
+	        digits1 = set1[[ipt]];
+            Table[
+	            	indPermut = FromDigits[#,4]& @ digits1[[;;idigit-1]];
+	            	If[zeroStarageFalg,
+		            	SeedRandom[indPermut];
+		            	thisDigitPermut = RandomInteger[{0,23}];
+	            	,(*ELSE*)
+		            	thisDigitPermut = permutTreeXY[[idigit, 1+indPermut]];
+	            	];
+	            	thisDigitPattern = elementaryPermutations[[1+thisDigitPermut]];
+	            thisDigitPattern[[1+digits1[[idigit]]]]
+			,{idigit,ndigits}]//T
+        ,{ipt,npts}];
+        set2 = IntegerDigits[#,4,ndigits]& /@ (second @ iSobolPts);
+        If[dbg, Print["set2:",set2] ];
+        tab2 = (*Parallelize @*) Table[
+		        digits2 = set2[[ipt]];
+	            t = Table[
+	            	indPermut = FromDigits[#,4]& @ digits2[[;;idigit-1]];
+	            	If[zeroStarageFalg,
+		            	SeedRandom[indPermut];
+		            	thisDigitPermut = RandomInteger[{0,23}];
+	            	,(*ELSE*)
+		            	thisDigitPermut = permutTreeUV[[idigit, 1+indPermut]];
+	            	];
+	            	thisDigitPattern = elementaryPermutations[[1+thisDigitPermut]];
+				If[dbg, Print["     ",{ipt-1,idigit-1} -> indPermut -> thisDigitPermut -> thisDigitPattern[[1+digits2[[idigit]]]]] ];
+	            thisDigitPattern[[1+digits2[[idigit]]]]
+			,{idigit,ndigits}]//T;
+	        If[dbg, Print[ipt -> (FromDigits[#,2]& /@ (t))] ];
+	        t
+        ,{ipt,npts}];
+        xset = First /@ tab1;
+        yset = second /@ tab1;
+        uset = First /@ tab2;
+        vset = second /@ tab2;
+		If[dbg,  ({FromDigits[#,2]& /@ xset, FromDigits[#,2]& /@ yset, FromDigits[#,2]& /@ uset, FromDigits[#,2]& /@ vset} )//T//Print];
+       ({FromDigits[#,2]& /@ xset, FromDigits[#,2]& /@ yset, FromDigits[#,2]& /@ uset, FromDigits[#,2]& /@ vset})//T
+    ] (* expSobolBased*)
+*)
+expSobolBasedWithPermuts[npts_:64,xypermutTree_:{{0},{0,0,0,0},{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}},uvpermutTree_:{{0},{0,0,0,0},{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}},zeroStarageFalg_:False] :=
+    Module[ {},
+        {sobolInd1,sobolInd2} = {2,3};
+        sobolIndPair = {sobolInd1,sobolInd2};
+        buildMSobol[sobolIndPair,False];
+        data =  (npts Table[ sobol2dOriginal[i] ,{i,0,npts-1}] )//T;
+        ndigits = Log[4,npts];
+        set1 = IntegerDigits[#,4,ndigits]& /@ (First @ data);
+        tab1 = Parallelize @ Table[
+	        digits1 = set1[[ipt]];
+            Table[
+            	indPermut = FromDigits[#,4]& @ digits1[[;;idigit-1]];
+            	If[zeroStarageFalg,
+	            	SeedRandom[indPermut];
+	            	thisDigitPermut = RandomInteger[{0,23}];
+            	,(*ELSE*)
+	            	thisDigitPermut = xypermutTree[[idigit, 1+indPermut]];(**)
+            	];
+            	thisDigitPattern = elementaryPermutations[[1+thisDigitPermut]];
+	            thisDigitPattern[[1+digits1[[idigit]]]]
+			,{idigit,ndigits}]//T
+        ,{ipt,npts}];
+        set2 = IntegerDigits[#,4,ndigits]& /@ (second @ data);
+        tab2 = Parallelize @ Table[
+	        digits2 = set2[[ipt]];
+            Table[
+            	indPermut = FromDigits[#,4]& @ digits2[[;;idigit-1]];
+            	If[zeroStarageFalg,
+	            	SeedRandom[indPermut];
+	            	thisDigitPermut = RandomInteger[{0,23}];
+            	,(*ELSE*)
+	            	thisDigitPermut = uvpermutTree[[idigit, 1+indPermut]];(**)
+            	];
+            	thisDigitPattern = elementaryPermutations[[1+thisDigitPermut]];
+	            thisDigitPattern[[1+digits2[[idigit]]]]
+			,{idigit,ndigits}]//T
+        ,{ipt,npts}];
+        xset = First /@ tab1;
+        yset = second /@ tab1;
+        uset = First /@ tab2;
+        vset = second /@ tab2;
+        ({FromDigits[#,2]& /@ xset, FromDigits[#,2]& /@ yset, FromDigits[#,2]& /@ uset, FromDigits[#,2]& /@ vset}/2^ndigits)//T
+    ] (* expSobolBased*)
+
+dbgexpSobolBased[innpts_:4096, showSpectra_:True,dbg_:False] :=
+    Module[ {},
+		SetOptions[Graphics, ImageSize -> {1024,1024}/2,AspectRatio->Automatic, PlotRange->All];
+		elementaryPermutations =  {{{0,0},{1,1},{0,1},{1,0}},{{0,0},{1,1},{1,0},{0,1}},{{0,0},{0,1},{1,1},{1,0}},{{0,0},{0,1},{1,0},{1,1}},{{0,0},{1,0},{1,1},{0,1}},{{0,0},{1,0},{0,1},{1,1}},{{1,1},{0,0},{0,1},{1,0}},{{1,1},{0,0},{1,0},{0,1}},{{1,1},{0,1},{0,0},{1,0}},{{1,1},{0,1},{1,0},{0,0}},{{1,1},{1,0},{0,0},{0,1}},{{1,1},{1,0},{0,1},{0,0}},{{0,1},{0,0},{1,1},{1,0}},{{0,1},{0,0},{1,0},{1,1}},{{0,1},{1,1},{0,0},{1,0}},{{0,1},{1,1},{1,0},{0,0}},{{0,1},{1,0},{0,0},{1,1}},{{0,1},{1,0},{1,1},{0,0}},{{1,0},{0,0},{1,1},{0,1}},{{1,0},{0,0},{0,1},{1,1}},{{1,0},{1,1},{0,0},{0,1}},{{1,0},{1,1},{0,1},{0,0}},{{1,0},{0,1},{0,0},{1,1}},{{1,0},{0,1},{1,1},{0,0}}};
+			(*Permutations[{0, 1, 2, 3}] /. {0 :> {0, 0}, 1 :> {1, 1}, 2 :> {0, 1}, 3 :> {1, 0}};*) (* 4! == 24 permutations *)
+		npts = innpts;
+        npts1d = Sqrt[npts];
+        partitionBorders = {Cyan, AbsoluteThickness[1], Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}], AbsoluteThickness[3], Line[{{0,.5},{1,.5}}], Line[{{.5,0},{.5,1}}] };
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+
+		mappingXY2UV = Table[-1,{npts}];
+		permutTreeDepth = Log[4,npts];
+		glxy = gluv = {};
+		permutTreeXY = Table[ Table[RandomInteger[{0, 23}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		permutTreeUV = Table[ Table[RandomInteger[{0, 23}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		pts4d = expSobolBasedWithPermuts[npts,permutTreeXY,permutTreeXY];
+		
+        iptsXY = pts4d[[;;, 1;;2]];
+        ptsUV = pts4d[[;;, 3;;4]];
+        iptsXY = Floor[npts1d iptsXY];
+        iptsUV = Floor[npts1d ptsUV];
+
+        (*iptsXY = ipts4d[[;;, 1;;2]];
+        iptsUV = ipts4d[[;;, 3;;4]];
+        ptsXY = iptsXY / npts1d;
+        ptsUV = iptsUV / npts1d;*)
+        
+        (*Print[ipts4d//mf];*)
+		glxy = gluv = {};
+		mappingXY2UV = Table[-1,{npts}];
+		Do[
+			{x,y} = iptsXY[[i]];
+			{u,v} = iptsUV[[i]];
+			If[dbg,
+				AppendTo[glxy,{Black,Point[{x,y}/npts1d], Blue, Text[i,{x,y}/npts1d,{-1,-1}] } ];
+				AppendTo[gluv,{Black,Point[{u,v}/npts1d], Blue, Text[i,{u,v}/npts1d,{-1,-1}] } ];
+			];
+			mappingXY2UV[[1 + y*npts1d+x]] = v*npts1d+u; 
+		,{i,npts}];
+		If[dbg,
+	 		Graphics[{Blue,frame,partitionBorders, glxy},PlotLabel->"simple xy"]//Print;
+	 		Graphics[{Blue,frame,partitionBorders, gluv},PlotLabel->"simple uv"]//Print;
+		];
+		If[showSpectra,  
+			showMappingFourier[1+mappingXY2UV,iptsXY,ptsUV]; (* mappingXY2UV is in C++ indexind! *)
+			fname = "tmp_data/mappingXY2UV_expSobolBased_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat";
+			Print["writing into ",fname];
+			Export[fname,mappingXY2UV];
+		];
+		If[npts == 1024 1024,
+			basename = "expSobolBased";
+	        fname = "data/data_new_4D"<>pid<>".dat";
+	        Print[" writing ",Length[pts4d]," Sobol pts into ",fname];
+	        Export[fname,N@pts4d];
+	        pngfname = "results_tmp/"<>basename<>".png";
+	        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+	        Print[execstring];
+	        Run[execstring];
+		];
+    ] (* dbgexpSobolBased *)
+
+(*------------------------------------ testBNMask[] *)
+testBNMask[] :=
+    Module[ {},
+    	npts = 128*128;
+    	npts1d = Sqrt[npts];
+    	fname = "data/void_and_cluster_128x128.dat";
+        udata = Import[fname];
+        {ydim,xdim} = Dimensions[udata];
+        Print["Reading ",fname," of dimss ", {ydim,xdim}];
+
+        vdata = Table[-1,{npts1d},{npts1d}];
+        uvdata = Table[-1,{npts1d},{npts1d}];
+        Do[
+        	{x,y} = {ix-1,iy-1};
+        	{u,v} = rotatePI2[{x,y},{(npts1d-1)/2,(npts1d-1)/2}];
+        	vdata[[v+1,u+1]] = udata[[y+1,x+1]];
+        ,{iy,npts1d},{ix,npts1d}];
+        
+        Do[
+        	{x,y} = {ix-1,iy-1};
+        	uvdata[[y+1,x+1]] = {udata[[y+1,x+1]],vdata[[y+1,x+1]],0};
+        ,{iy,npts1d},{ix,npts1d}];
+        {niceRaster[udata/npts,zoom->4],niceRaster[vdata/npts,zoom->4],niceRaster[uvdata/npts,zoom->4]}//Print;
+
+		iptsUV = {Floor[Flatten@udata/npts1d], Floor[Flatten@vdata/npts1d]}//T;
+		iptsXY = Flatten[#,1]& @ Table[{(ix-1),(iy-1)},{iy,npts1d},{ix,npts1d}];
+
+		mappingXY2UV = Table[-1,{npts}];
+		Do[
+			{x,y} = iptsXY[[i]];
+			{u,v} = iptsUV[[i]];
+			mappingXY2UV[[1 + y*npts1d+x]] = v*npts1d+u;
+		,{i,npts}];
+		showMappingFourier[1+mappingXY2UV]; 
+		fname = "tmp_data/BNMask_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat";
+        Print[" writing into ",fname];
+		Export[fname,mappingXY2UV];
+		
+    	    base = "RegGrid";
+        RegGridpts = Flatten[#,1]& @ Table[1./npts1d {(ix-.5),(iy-.5)},{iy,npts1d},{ix,npts1d}];
+		Export["data/pts_"<>base<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat",RegGridpts];
+
+(*        tab = Table[
+        		sel = Table[If[data[[ix,iy]]<=i,1,0],{ix,xdim},{iy,ydim}];
+        		poslst = Position[data,i];
+        		Print[i -> Length[poslst] -> niceRaster[sel] -> Total[Total/@sel]];
+        		{i,Length[poslst]}
+        	,{i,0,255}];
+*)
+    ]
+
+testBNMask256x256[] :=
+    Module[ {},
+        sz = 128;
+        mx = Import["data/void_and_cluster_"<>ToString[sz]<>"x"<>ToString[sz]<>"_original.dat"];
+        count = 0;
+        newlst = Flatten[#,1]& @ Table[
+            poslst =  RandomSample @ Position[mx,level];
+             (*Print[level -> poslst];*)
+            Table[{count++,poslst[[j]]},{j,Length[poslst]}]
+        ,{level,Min[mx],Max[mx]}];
+        npts = Length[newlst];
+        newmx = Table[0,{Length[mx]},{Length[mx]}];
+        Do[
+            {count,{x,y}} = newlst[[i]];
+            newmx[[x,y]] = count;
+        ,{i,npts}];
+        m1 = newmx;
+        count = 0;
+        newlst = Flatten[#,1]& @ Table[
+            poslst =  RandomSample @ Position[mx,level];
+             (*Print[level -> poslst];*)
+            Table[{count++,poslst[[j]]},{j,Length[poslst]}]
+        ,{level,Min[mx],Max[mx]}];
+        newmx = Table[0,{Length[mx]},{Length[mx]}];
+        Do[
+            {count,{x,y}} = newlst[[i]];
+            newmx[[x,y]] = count;
+        ,{i,npts}];
+        m2 = newmx;
+        count = 0;
+        newlst = Flatten[#,1]& @ Table[
+            poslst =  RandomSample @ Position[mx,level];
+             (*Print[level -> poslst];*)
+            Table[{count++,poslst[[j]]},{j,Length[poslst]}]
+        ,{level,Min[mx],Max[mx]}];
+        newmx = Table[0,{Length[mx]},{Length[mx]}];
+        Do[
+            {count,{x,y}} = newlst[[i]];
+            newmx[[x,y]] = count;
+        ,{i,npts}];
+        m3 = newmx;
+        count = 0;
+        newlst = Flatten[#,1]& @ Table[
+            poslst =  RandomSample @ Position[mx,level];
+             (*Print[level -> poslst];*)
+            Table[{count++,poslst[[j]]},{j,Length[poslst]}]
+        ,{level,Min[mx],Max[mx]}];
+        newmx = Table[0,{Length[mx]},{Length[mx]}];
+        Do[
+            {count,{x,y}} = newlst[[i]];
+            newmx[[x,y]] = count;
+        ,{i,npts}];
+        m4 = newmx;
+        mx256x256 = Table[0,{256},{256}];
+        mx256x256[[;;128,;;128]] = 4 m1;
+        mx256x256[[129;;,;;128]] = 4 m2;
+       	mx256x256[[129;;,129;;]] = 4 m3;
+       	mx256x256[[;;128,129;;]] = 4 m4;
+       	
+       	npts = 4 npts;
+       	npts1d = Sqrt[npts];
+        {niceRaster[mx256x256/npts],niceRaster[mx256x256/npts,zoom->2]}//Print;
+        Do[
+        		partition = mx256x256[[(iy-1)*16+1;;(iy)*16, (ix-1)*16+1;;(ix)*16 ]];
+        		sorted = Sort @ (Flatten[#,1]& @ Table[{partition[[iy, ix]], {iy, ix}}, {iy, 16}, {ix, 16}] );
+        		Do[partition[[sorted[[i,2,1]],sorted[[i,2,2]]]] = i-1,{i,Length[sorted]}];
+        		Do[
+        			mx256x256[[(iy-1)*16 + iiy, (ix-1)*16 + iix ]] = partition[[iiy,iix]];
+        		,{iiy,16},{iix,16}];
+        	,{iy,16},{ix,16}];
+        {niceRaster[mx256x256/npts1d],niceRaster[mx256x256/npts1d,zoom->2]}//Print;
+
+		udata = mx256x256;
+        {ydim,xdim} = Dimensions[udata];
+        Print["udata : ", {ydim,xdim}];
+
+        vdata = Table[-1,{npts1d},{npts1d}];
+        uvdata = Table[-1,{npts1d},{npts1d}];
+        Do[
+        	{x,y} = {ix-1,iy-1};
+        	{u,v} = rotatePI2[{x,y},{(npts1d-1)/2,(npts1d-1)/2}];
+        	vdata[[v+1,u+1]] = udata[[y+1,x+1]];
+        ,{iy,npts1d},{ix,npts1d}];
+        
+        Do[
+        	{x,y} = {ix-1,iy-1};
+        	uvdata[[y+1,x+1]] = {udata[[y+1,x+1]],vdata[[y+1,x+1]],0};
+        ,{iy,npts1d},{ix,npts1d}];
+		iptsUV = { Flatten@udata, Flatten@vdata}//T;
+		iptsXY = Flatten[#,1]& @ Table[{(ix-1),(iy-1)},{iy,npts1d},{ix,npts1d}];
+
+		mappingXY2UV = Table[-1,{npts}];
+		Do[
+			{x,y} = iptsXY[[i]];
+			{u,v} = iptsUV[[i]];
+			mappingXY2UV[[1 + y*npts1d+x]] = v*npts1d+u;
+		,{i,npts}];
+		showMappingFourier[1+mappingXY2UV]; 
+		fname = "tmp_data/BNMask_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat";
+        Print[" writing into ",fname];
+		Export[fname,mappingXY2UV];
+
+    	    base = "RegGrid";
+        RegGridpts = Flatten[#,1]& @ Table[1./npts1d {(ix-.5),(iy-.5)},{iy,npts1d},{ix,npts1d}];
+        fname = "data/pts_" <> base <> ToString[npts1d] <> "x" <> ToString[npts1d] <> ".dat";
+        Print["Writing into ",fname];
+		Export[fname,RegGridpts];
+    ] (* testBNMask256x256 [] *)
+
+(*Abort[];
+ (*
+		(* first, a simple Bayer-like regular structure *)
+		permutTreeXY = Table[ Table[RandomInteger[{0, 0}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		permutTreeUV = Table[ Table[RandomInteger[{0, 0}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		pts4d = expSobolBasedWithPermuts[npts,permutTreeXY,permutTreeUV];
+        ptsXY = pts4d[[;;, 1;;2]];
+        ptsUV = pts4d[[;;, 3;;4]];
+        iptsXY = Floor[npts1d ptsXY];
+        iptsUV = Floor[npts1d ptsUV];
+		glxy = gluv = {};
+		Do[
+			{x,y} = iptsXY[[i]];
+			{u,v} = iptsUV[[i]];
+			If[dbg,
+				AppendTo[glxy,{Black,Point[{x,y}/npts1d], Blue, Text[i,{x,y}/npts1d,{-1,-1}] } ];
+				AppendTo[gluv,{Black,Point[{u,v}/npts1d], Blue, Text[i,{u,v}/npts1d,{-1,-1}] } ];
+			];
+		,{i,npts}];
+		If[dbg,
+	 		Graphics[{Blue,frame,partitionBorders, glxy},PlotLabel->"simple xy"]//Print;
+	 		Graphics[{Blue,frame,partitionBorders, gluv},PlotLabel->"simple uv"]//Print;
+		];
+		If[npts == 1024 1024,
+			basename = "expSobolBased";
+	        fname = "data/data_new_4D"<>pid<>".dat";
+	        Print[" writing ",Length[pts4d]," Sobol pts into ",fname];
+	        Export[fname,N@pts4d];
+	        pngfname = "results_tmp/"<>basename<>".png";
+	        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+	        Print[execstring];
+	        Run[execstring];
+		];
+		Print["dbgexpSobolBased" -> npts -> testUniform4DSquare[pts4d] ];
+
+*)
+		(* second, applying random permutation tree *)
+       uimage = vimage = uvimage = fuimage = fvimage = Table[0,{npts1d},{npts1d}];
+        ntrials = 100;
+		Do[
+			Print[itrial];
+			permutTreeXY = Table[ Table[RandomInteger[{0, 23}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+			(*permutTreeUV = Table[ Table[RandomInteger[{0, 23}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];*)
+			pts4d = expSobolBasedWithPermuts[npts,permutTreeXY,permutTreeXY];
+        		ptsXY = pts4d[[;;, 1;;2]];
+        		ptsUV = pts4d[[;;, 3;;4]];
+			iptsXY = Floor[npts1d ptsXY];
+			iptsUV = Floor[npts1d ptsUV];
+			Do[
+				{x,y} = iptsXY[[i]];
+				{u,v} = iptsUV[[i]];
+                	uimage[[1+y,1+x]] = u/npts1d;
+                	vimage[[1+y,1+x]] = v/npts1d;
+			,{i,npts}];
+        		fuimage += (Fourier[uimage]//Abs);
+        		fvimage += (Fourier[vimage]//Abs);
+        		powuimage += (Fourier[uimage]//Abs)^2;
+        		powvimage += (Fourier[vimage]//Abs)^2;
+		,{itrial,ntrials}];
+		fuimage[[1,1]] = fvimage[[1,1]] = powuimage[[1,1]] = powvimage[[1,1]] = 0;
+        {niceRaster[(fuimage//reorg2D)/Max[fuimage],zoom->2],niceRaster[(fvimage//reorg2D)/Max[fvimage],zoom->2],
+        		niceRaster[(powuimage//reorg2D)/Max[powuimage],zoom->2],niceRaster[(powvimage//reorg2D)/Max[powvimage],zoom->2]}//Print;
+
+        histoSz = npts1d/2;
+        udata = vdata = Table[{0,0},{histoSz}];
+        umax = vmax = Table[0,{histoSz}];
+        Do[
+	    		uval = powuimage[[iy,ix]];
+	    		vval = powvimage[[iy,ix]];
+	    		r = Floor @ getToroidalDist[{1,1}, {ix,iy}, npts1d];
+	    		If[r >= histoSz, Continue[] ];
+	    		udata[[1+r]] = {udata[[1+r,1]]+uval,udata[[1+r,2]]+1};
+	    		vdata[[1+r]] = {vdata[[1+r,1]]+vval,vdata[[1+r,2]]+1};
+	    		umax[[1+r]] = Max[umax[[1+r]],uval];
+	    		vmax[[1+r]] = Max[vmax[[1+r]],vval];
+	    	,{iy,npts1d},{ix,npts1d}];
+	    	powuhistogram = T[udata][[1]]/T[udata][[2]];
+	    	powvhistogram = T[vdata][[1]]/T[vdata][[2]];
+	    	ListPlot[{powuhistogram/Max[powuhistogram],powvhistogram/Max[powvhistogram]}
+	    		,Joined->True, PlotLabel->"radial power  spectra", PlotRange->{All,Automatic}, 
+	    		Ticks->{Automatic,None},AspectRatio->.2, PlotLegends -> {"powumean", "powvmean"},ImageSize -> {1024,Automatic}]//Print;
+
+        (*histoSz = npts1d/2;
+        udata = vdata = Table[{0,0},{histoSz}];
+        umax = vmax = Table[0,{histoSz}];
+        Do[
+	    		uval = fuimage[[iy,ix]];
+	    		vval = fvimage[[iy,ix]];
+	    		r = Floor @ getToroidalDist[{1,1}, {ix,iy}, npts1d];
+	    		If[r >= histoSz, Continue[] ];
+	    		udata[[1+r]] = {udata[[1+r,1]]+uval,udata[[1+r,2]]+1};
+	    		vdata[[1+r]] = {vdata[[1+r,1]]+vval,vdata[[1+r,2]]+1};
+	    		umax[[1+r]] = Max[umax[[1+r]],uval];
+	    		vmax[[1+r]] = Max[vmax[[1+r]],vval];
+	    	,{iy,npts1d},{ix,npts1d}];
+	    	uhistogram = T[udata][[1]]/T[udata][[2]];
+	    	vhistogram = T[vdata][[1]]/T[vdata][[2]];
+
+	    	ListPlot[{uhistogram/Max[uhistogram],vhistogram/Max[vhistogram],powuhistogram/Max[powuhistogram],powvhistogram/Max[powvhistogram]}
+	    		,Joined->True, PlotLabel->"radial power  spectra", PlotRange->{All,Automatic}, 
+	    		Ticks->{Automatic,None},AspectRatio->.2, PlotLegends -> {"umean", "vmean","powumean", "powvmean"},ImageSize -> {1024,Automatic}]//Print;
+*)
+*)
+
+mkexpSobolBased[npts_:1024*1024, showSpectra_:False,dbg_:False] :=
+    Module[ {},
+		SetOptions[Graphics, ImageSize -> {1024,1024}/2,AspectRatio->Automatic, PlotRange->All];
+		elementaryPermutations =  Permutations[{0, 1, 2, 3}] /. {0 :> {0, 0}, 1 :> {1, 1}, 2 :> {0, 1}, 3 :> {1, 0}}; (* 4! == 24 permutations *)
+        npts1d = Sqrt[npts];
+
+		mappingXY2UV = Table[-1,{npts}];
+		permutTreeDepth = Log[4,npts];
+		glxy = gluv = {};
+		permutTreeXY = Table[ Table[RandomInteger[{0, 23}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		(*permutTreeUV = Table[ Table[RandomInteger[{0, 23}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];*)
+		pts4d = expSobolBasedWithPermuts[npts,permutTreeXY,permutTreeXY];
+
+
+		basename = "expSobolBased";
+        fname = "data/pts"<>basename<>".dat";
+        Print[" writing ",Length[pts4d]," pts into ",fname];
+        Export[fname,N[pts4d]];
+        Print[fname, " is written."];
+        pngfname = "results/"<>basename<>".png";
+        execstring = execPrefix <> "path "<>fname<>" "<>pngfname<>"; open "<>pngfname;
+        Print[execstring];
+        Run[execstring];   
+   ] (* mkexpSobolBased *)
+
+(*----------------------------------------  ----------------------------------------*)
+findGoodPermuts16[] :=
+    Module[ {},
+		SetOptions[Graphics, ImageSize -> {1024,1024}/2,AspectRatio->Automatic, PlotRange->All];
+		elementaryPermutations =  Permutations[{0, 1, 2, 3}] /. {0 :> {0, 0}, 1 :> {1, 1}, 2 :> {0, 1}, 3 :> {1, 0}}; (* 4! == 24 permutations *)
+		npts = 16;
+        npts1d = Sqrt[npts];
+        partitionBorders = {Cyan, AbsoluteThickness[1], Table[{Line[{{0,i/npts1d},{1,i/npts1d}}], Line[{{i/npts1d,0},{i/npts1d,1}}] }, {i,npts1d-1}], AbsoluteThickness[3], Line[{{0,.5},{1,.5}}], Line[{{.5,0},{.5,1}}] };
+        frame = Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}];
+
+		mappingXY2UV = Table[-1,{npts}];
+		permutTreeDepth = Log[4,npts];
+		glxy = gluv = {};
+		permutTreeXY = Table[ Table[RandomInteger[{0, 23}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		permutTreeUV = Table[ Table[RandomInteger[{0, 0}],{4^(ilevel-1)}] ,{ilevel,permutTreeDepth}];
+		pts4d = expSobolBasedWithPermuts[npts,permutTreeXY,permutTreeUV];
+        ptsXY = pts4d[[;;, 1;;2]];
+        ptsUV = pts4d[[;;, 3;;4]];
+        iptsXY = Floor[npts1d ptsXY];
+        iptsUV = Floor[npts1d ptsUV];
+    ]
+(*----------------------------------------  ----------------------------------------*)
+
+exploreSolidAngleBNMask[] :=
+    Module[ {},
+        npts1d = 64;
+        npts = npts1d*npts1d;
+        SetOptions[Graphics, ImageSize -> {1024,1024}/2,AspectRatio->Automatic, PlotRange->All];
+        fname = "data/solidangle_u_64x64.png";
+        udata = Floor[Import[fname,"Data"] / 4.];
+        fname = "data/solidangle_v_64x64.png";
+        vdata = Floor[Import[fname,"Data"] / 4.];
+
+        {niceRaster[udata/npts1d,zoom->4],niceRaster[vdata/npts1d,zoom->4] }//Print;
+        
+        iptsUV = {Floor[Flatten@udata], Floor[Flatten@vdata]}//T;
+        iptsXY = Flatten[#,1]& @ Table[{(ix-1),(iy-1)},{iy,npts1d},{ix,npts1d}];
+        mappingXY2UV = Table[-1,{npts}];
+        Do[
+            {x,y} = iptsXY[[i]];
+            {u,v} = iptsUV[[i]];
+            mappingXY2UV[[1 + y*npts1d+x]] = v*npts1d+u;
+        ,{i,npts}];
+        showMappingFourier[1+mappingXY2UV];
+        fname = "data/mappingXY2UV_SolidAngleBNMask_"<>ToString[npts1d]<>"x"<>ToString[npts1d]<>".dat";
+        Print[" writing into ",fname];
+        Export[fname,mappingXY2UV];
+        (*base = "RegGrid";
+        RegGridpts = Flatten[#,1]& @ Table[1./npts1d {(ix-.5),(iy-.5)},{iy,npts1d},{ix,npts1d}];*)
+    ]
+
+(*----------------------------------------  ----------------------------------------*)
+(*----------------------------------------  ----------------------------------------*)
+(*----------------------------------------  ----------------------------------------*)
+(*----------------------------------------  ----------------------------------------*)
+(*----------------------------------------  ----------------------------------------*)

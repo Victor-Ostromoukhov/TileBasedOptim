@@ -1,0 +1,877 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     31551,        869]
+NotebookOptionsPosition[     29623,        833]
+NotebookOutlinePosition[     30161,        852]
+CellTagsIndexPosition[     30118,        849]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+(* fibo-hilbert.m
+   V.O. version 2002/12/14
+*)
+ 
+(****************** params *******************)
+SetOptions[Graphics, ImageSize -> {650, Automatic}];
+
+dbgInflation = False;
+dbgInflation = True;
+
+If[dbgInflation,
+  niter:= 5;
+  labelTileTypes = False;
+  labelTileTypes = True;
+  labelOrdinalNumber = True;
+  labelOrdinalNumber = False;
+,(*ELSE*)
+  niter:= 10;
+  labelTileTypes = False;
+  labelTileTypes = True;
+  labelOrdinalNumber = False;
+  labelOrdinalNumber = True;
+]
+
+showGraphics = False;
+showGraphics = True;
+
+showTileShape = False;
+showTileShape = True;
+tileShapeCol = Red;
+tileShapeTh = .001;
+
+showRefPt = True;
+showRefPt = False;
+refPtCol = Yellow;
+
+showSamplingPt = True;
+showSamplingPt = False;
+samplingPtCol = Yellow;
+
+showThVal = True;
+showThVal = False;
+showThValTxt = True;
+showThValTxt = False;
+
+showdir = False;
+showdir = True;
+
+lbl = \"fibo-hilbert\";
+
+dbg = True;
+dbg = False;
+
+symbolicForm  = False;
+  cutOutOfRangeFlag = False;
+
+font = \"Courier-Bold\"; textsz = 12;
+{{xmin, xmax},{ymin, ymax}} = {{0,1},{0,1}};
+rng = {{xmin, xmax},{ymin, ymax}};
+epsilon = 10.^(-25);
+(****************** end of params *******************)
+
+(****************** constants *******************)
+If[symbolicForm, tau = (1+Sqrt[5])/2, tau = 1.618033988749895];
+stau:=Sqrt[tau];
+tau1:=1/tau;
+tau2:=tau^2;
+zero = {0,0};
+
+If[symbolicForm,
+  hvect = Table[rotatedaround[{1,0},zero, (i) Pi/2], {i,4}]//Simplify;
+  vvect = Table[rotatedaround[{0,1},zero, (i) Pi/2], {i,4}]//Simplify;
+,(*ESLE*)
+  hvect = Table[rotatedaround[{1,0},zero, (i) Pi/2], {i,4}]//N;
+  vvect = Table[rotatedaround[{0,1},zero, (i) Pi/2], {i,4}]//N;
+];
+  
+(*--------- tile data -----------*)
+
+basicInflationSchemes = {
+  {{0, zero}},\t\t\t\t\t\t(*1*)
+  {{0, zero},{3,{1/tau,1}}},\t\t\t\t(*2*)
+  {{0, zero}},\t\t\t\t\t\t(*3*)
+  {{0, zero},{1,{1,1/tau}}},\t\t\t\t(*4*)
+  {{0, zero}},\t\t\t\t\t\t(*5*)
+  {{0, zero},{0,{stau 1/tau,0}}},\t\t\t(*6*)
+  {{0, zero}},\t\t\t\t\t\t(*7*)
+  {{0, zero},{0,{0,stau 1/tau}}},\t\t\t(*8*)
+  {{0, zero}},\t\t\t\t\t\t(*9*)
+  {{0, zero},{3,{1,1/tau}}},\t\t\t\t(*10*)
+  {{0, zero}},\t\t\t\t\t\t(*11*)
+  {{0, zero},{1,{1/tau,1}}} \t\t\t\t(*12*)
+}; (* basicInflationSchemes *)
+
+(* inflationRules, tileShapes, tileSamplingPts are approximant-dependent *)
+
+inflationRules = {
+  {1,{2}},\t\t(*1*)
+  {2,{8,9}},\t\t(*2*)
+  {3,{4}},\t\t(*3*)
+  {4,{6,11}},\t\t(*4*)
+  {5,{6}},\t\t(*5*)
+  {6,{2,7}},\t\t(*6*)
+  {7,{8}},\t\t(*7*)
+  {8,{4,5}},\t\t(*8*)
+  {9,{10}},\t\t(*9*)
+  {10,{6,3}},\t\t(*10*)
+  {11,{12}},\t\t(*11*)
+  {12,{8,1}}\t\t(*12*)
+}; (* inflationRules *)
+tileShapes = {
+  1/stau{{0,0},{1,0},{1,1},{0,1}},\t\t(* 1 sq*)
+  {{0,0},{1,0},{1,1},{0,1}},\t\t\t(* 2 sq*)
+  1/stau{{0,0},{1,0},{1,1},{0,1}},\t\t(* 3 sq*)
+  {{0,0},{1,0},{1,1},{0,1}},\t\t\t(* 4 sq*)
+  {{0,0},{1,0},{1,1/tau},{0,1/tau}},\t\t(* 5 1/tau*)
+  stau{{0,0},{1,0},{1,1/tau},{0,1/tau}},\t(* 6 1/tau*)
+  {{0,0},{1/tau,0},{1/tau,1},{0,1}},\t\t(* 7 1/tau*)
+  stau{{0,0},{1/tau,0},{1/tau,1},{0,1}},\t(* 8 1/tau*)
+  stau{{0,0},{1,0},{1,1/tau2},{0,1/tau2}},\t(* 9 1/tau2*)
+  tau{{0,0},{1,0},{1,1/tau2},{0,1/tau2}},\t(* 10 1/tau2*)
+  stau{{0,0},{1/tau2,0},{1/tau2,1},{0,1}},\t(* 11 1/tau2*)
+  tau{{0,0},{1/tau2,0},{1/tau2,1},{0,1}} \t(* 12 1/tau2*)
+}; (* tileShapes *)
+
+tileSamplingPts = {
+  {0,0}, {0,0}, {0,0}, {0,0},
+  {0,0}, {0,0}, {0,0}, {0,0}
+};
+
+tileAreaCoefs = {
+  {0},\t\t(*1*)
+  {0,1/tau},\t(*2*)
+  {0},\t\t(*3*)
+  {0,1/tau},\t(*4*)
+  {0},\t\t(*5*)
+  {0,1/tau},\t(*6*)
+  {0},\t\t(*7*)
+  {0,1/tau},\t(*8*)
+  {0},\t\t(*9*)
+  {0,1/tau},\t(*10*)
+  {0},\t\t(*11*)
+  {0,1/tau}\t(*12*)
+};
+
+(*--------- end of tile data -----------*)
+
+(****************** end of constants *******************)
+
+(**************** System-dependent setup ******************)
+If[$System == \"Microsoft Windows\",
+  SetDirectory[\"c:\\\\3d\"];
+  epsOut:=Export[#1,#2,\"EPS\"]&; (* epsOut[fname,graph] *)
+  (*epsOut:=Identity[#1]&;*)
+,(*ELSE: Linux, Unix *)
+  AppendTo[$Path,$HomeDirectory<>\"/math\"];
+  epsOut:=Display[\"!psfix -width 5 -lmarg 0 > \"<> #1,#2] &; (* \
+epsOut[fname,graph] *)
+  epsOut:=Display[\"!psfix -width 9 -lmarg 0 > \"<> #1,#2] &; (* \
+epsOut[fname,graph] *)
+];
+pdfOut:=Export[#1,#2,\"PDF\"]&; (* pdfOut[fname,graph] *)
+pictOut:=Export[#1,#2,\"PICT\"]&; (* pictOut[fname,graph] *)
+tiffOut:=Export[#1,#2,\"TIFF\",ImageSize->{512,512}]&; (* \
+tiffOut[fname,graph] *)
+date:= ToString[Date[][[1]]]<>\"/\"<>ToString[Date[][[2]]]<>\"/\"<>
+        ToString[Date[][[3]]]<>\"_\"<>ToString[Date[][[4]]]<>\":\"<>
+        ToString[Date[][[5]]];
+Off[Solve::\"ifun\"]; Off[InverseFunction::\"ifun\"];
+SetOptions[\"stdout\", PageWidth -> 100];
+pid=ToString[$ProcessID];
+(**************** end of System-dependent setup ******************)
+
+
+(****************** procedure *******************)
+dbgPrint[x__]:=If[dbg,Print[x]]
+
+mod4[x_]:=Mod[x-1,4]+1
+
+euclidlen[z_]:= Sqrt[ Plus@@(z^2) ]
+euclidlen::usage =
+  \"euclidlen[z_]\\nEuclidian length of vector z\\n in n-dim space\";
+
+rotatedaround[pt1_, pt2_, alpha_]:=Block[{a},
+(* gives a point which is pt1 rotated around pt2 by angle alpha *)
+    If [pt1 == pt2, Return[pt1]];
+    a = ArcTan[(pt1-pt2)[[1]],(pt1-pt2)[[2]]];
+    Return[ pt2 + euclidlen[pt1-pt2] {Cos[a+alpha], Sin[a+alpha]} ]
+]; (* rotatedaround *)
+rotatedaround::usage =
+\"rotatedaround[pt1,pt2,alpha] : Point pt1 rotated around pt2 by angle alpha\";
+
+rotatedaroundandscaled[pt1_, pt2_, alpha_, k_]:=
+Block[{res, a},
+    If [pt1 == pt2, Return[pt1]];
+    a = ArcTan[(pt1-pt2)[[1]],(pt1-pt2)[[2]]];
+    Return[ pt2 + k euclidlen[pt1-pt2] {Cos[a+alpha], Sin[a+alpha]} ]
+]; (* rotatedaroundandscaled *)
+
+arr[{from_,to_}]:= (*** arrow, compatible with Line[{pt1,pt2}] ***)
+Block[{v1,v2,len,ka1=.07,ka2=.025,ka3=.06,ka},
+    len = euclidlen[to - from]//N;
+    v1 = (to - from) / len; v2 = {-v1[[2]], v1[[1]]};
+    ka = 3 / tau^(iter/2.);
+    {Line[{to-.05*ka*v1,from}],Polygon[{to,to-ka1 ka v1 - ka2 ka v2,to-ka3 ka \
+v1,
+\t    to -ka1 ka v1 + ka2 ka v2}]}
+]; (* arr *)
+
+
+getFigure[tileType_,refPt_,dir_,scale_,params_]:=
+  {tileType,refPt,mod4[dir],scale,params}
+
+(*getGLst[flst_]:=Map[getGFigure, flst, {1}]*)
+getGLst[flst_]:=Block[{res={},i},
+  Do[
+    AppendTo[res,getGFigure[flst[[i]],i] ]
+  ,{i,Length[flst]}];
+  Return[res]
+]
+
+getGFigure[fig_,n_]:=Block[{gl={},tileType,refPt,dir,scale,params,cont,
+bis(*basicInflationScheme*),z0,z1,z2,z3,t1,t3,col,scalefactor=3},
+  If[dbgLst, Print[\"getGFigure \",++count,\"/\",lstlen,\" iter=\",iter]];
+  {tileType,refPt,dir,scale,{thval}} = fig;
+  cont = {z0,z1,z2,z3} = getTileShape[fig];
+  If[showdir,
+    col = Magenta;
+    Switch[tileType
+      ,1, {t1,t3}={z1,z3}; du=(t1-z0)/tau^(scalefactor+1); \
+dv=(t3-z0)/tau^(scalefactor+1); end=z1;
+      ,2, {t1,t3}={z1,z3}; du=(t1-z0)/tau^(scalefactor+1); \
+dv=(t3-z0)/tau^(scalefactor+1); end=z1;
+      ,3, {t1,t3}={z3,z1}; du=(t1-z0)/tau^(scalefactor+1); \
+dv=(t3-z0)/tau^(scalefactor+1); end=z3;
+      ,4, {t1,t3}={z3,z1}; du=(t1-z0)/tau^(scalefactor+1); \
+dv=(t3-z0)/tau^(scalefactor+1); end=z3;
+      ,5, {t1,t3}={z1,z3}; du=(t1-z0)/tau^(scalefactor+1); \
+dv=(t3-z0)/tau^(scalefactor); end=z2;
+      ,6, {t1,t3}={z1,z3}; du=(t1-z0)/tau^(scalefactor+2); \
+dv=(t3-z0)/tau^(scalefactor+1); end=z2;
+      ,7, {t1,t3}={z3,z1}; du=(t1-z0)/tau^(scalefactor+1); \
+dv=(t3-z0)/tau^(scalefactor); end=z2;
+      ,8, {t1,t3}={z3,z1}; du=(t1-z0)/tau^(scalefactor+2); \
+dv=(t3-z0)/tau^(scalefactor+1); end=z2;
+      ,9, {t1,t3}={z1,z3}; du=(t1-z0)/tau^(scalefactor+2); \
+dv=(t3-z0)/tau^(scalefactor); end=z2;
+      ,10,{t1,t3}={z1,z3}; du=(t1-z0)/tau^(scalefactor+2); \
+dv=(t3-z0)/tau^(scalefactor); end=z2;
+      ,11,{t1,t3}={z3,z1}; du=(t1-z0)/tau^(scalefactor+2); \
+dv=(t3-z0)/tau^(scalefactor); end=z2;
+      ,12,{t1,t3}={z3,z1}; du=(t1-z0)/tau^(scalefactor+2); \
+dv=(t3-z0)/tau^(scalefactor); end=z2;
+    ];
+    If[1 <= tileType <= 4,
+      AppendTo[gl,{{col,arr[{z0+du+dv,end-du+dv}]},Point[z0+du+dv],Point[end-\
+du+dv]}];
+    ,(*ELSE*)
+      AppendTo[gl,{{col,arr[{z0+du+dv,end-du-dv}]},Point[z0+du+dv],Point[end-\
+du-dv]}];
+    ];
+  ]; (* If[showdir, *)
+  If[showRefPt,
+    AppendTo[gl,{refPtCol,Point[refPt]}];
+  ];
+  If[showSamplingPt,
+    AppendTo[gl,{samplingPtCol,Point[getSamplingPt[fig]]}];
+  ];
+  If[showTileShape,
+    AppendTo[gl,{tileShapeCol,Thickness[tileShapeTh],Line@@{Append[cont,First[\
+cont]]}}];
+    AppendTo[border,{tileShapeCol,Thickness[tileShapeTh],Line@@{Append[cont,\
+First[cont]]}}];
+  ];
+  If[showThVal,
+    AppendTo[gl,{GrayLevel[thval],Polygon@@{Append[cont,First[cont]]}}];
+  ];
+  If[showThValTxt,
+    AppendTo[gl,Text[ToString[thval],refPt,{-1,-1}] ]
+  ];
+  If[labelOrdinalNumber, AppendTo[gl,Text[ToString[i],(z0+z2)/2,{-1,-1}] ] ];
+  If[labelTileTypes, 
+    AppendTo[gl,{Red,Text[ToString[inflationRules[[tileType,1]]],(z0+z2)/2,{1,\
+1}]} ] ];
+  Return[gl]
+] (* getGFigure *)
+
+ptinrangePlusMargin[{x_,y_}]:=(xmin-margin < x < xmax+margin && ymin-margin < \
+y < ymax+margin)
+ptinrange[{x_,y_}]:= (xmin < x < xmax && ymin < y < ymax)
+
+decomposeFLst[flst_]:=Block[{res={},i,j,len=Length[flst],newlst},
+  Do[
+    If[!cutOutOfRangeFlag,
+      res = Join[res, decomposeFig[flst[[i]] ] ];
+    ,(*ELSE*)
+      newlst = decomposeFig[flst[[i]] ];
+      Do[
+        newfig = newlst[[j]];
+        If[ptinrangePlusMargin[newfig[[2]]], (*refPt*)
+        AppendTo[res,newfig];
+        ]
+      ,{j,Length[newlst]}];
+    ];
+  ,{i,len}];
+  If[dbg,Print[\"decomposeFLst: done. \",len,\"->\",Length[res]]];
+  Return[res];
+] (* decomposeFLst *)
+
+decomposeFig[fig_]:=Block[{res={},tileType,refPt,dir,scale,params,
+thval,newthval,bis,scheme,ddir,ku,kv,u,v,i},
+  {tileType,refPt,dir,scale,params} = fig;
+  {thval} = params;
+  {scheme,bislst} = inflationRules[[tileType]];
+  Do[
+    bis = bislst[[i]];
+    {ddir,{ku, kv}} = basicInflationSchemes[[scheme,i]];
+    u = scale hvect[[mod4[dir] ]];
+    v = scale vvect[[mod4[dir] ]];
+    newthval = thval/tau + tileAreaCoefs[[tileType,i]];
+    AppendTo[res,getFigure[bis,refPt + ku u + kv \
+v,dir+ddir,scale/stau,{newthval}] ]
+  ,{i,Length[bislst]}];
+  Return[res]
+] (* decomposeFigure *)
+
+getSamplingPt[fig_]:=Block[{centers,ku,kv,u,v,tileType,refPt,dir,scale,params},
+  {tileType,refPt,dir,scale,params} = fig;
+  {ku,kv} = tileSamplingPts[[tileType]];
+  u = scale hvect[[mod4[dir] ]];
+  v = scale vvect[[mod4[dir] ]];
+  Return[refPt + ku u + kv v]
+] (* getSamplingPt *)
+
+getFigVoronoiArea[fig_]:=convexPolygonArea[getVoronoi[fig]] 
+
+convexPolygonArea[v_]:=
+  Plus @@ Table[triArea[v[[1]],v[[i-1]],v[[i]]],{i,3,Length[v]}];
+
+getFigBaryCentre[fig_]:= getBaryCentreFromShape[getVoronoi[fig]]
+
+getBaryCentreFromShape[v_]:=Block[{triAreas,triCenters,center},
+  triAreas=Table[triArea[v[[1]],v[[i-1]],v[[i]]],{i,3,Length[v]}];
+  triCenters=Table[(v[[1]]+v[[i-1]]+v[[i]])/3,{i,3,Length[v]}];
+  center = (Plus@@(triAreas triCenters))/(Plus@@triAreas);
+  If[symbolicForm, center = center//Simplify, center = center//Chop];
+  Return[center]
+] (* getBaryCentreFromShape *)
+
+
+triArea[z1_,z2_,z3_]:=Abs[Det[{z3-z1,z2-z1}]]/2;
+triPositiveArea[z1_,z2_,z3_]:=Det[{z3-z1,z2-z1}]/2;
+findequidistantPt[{x1_,y1_},{x2_,y2_},{x3_,y3_}]:=Block[{xsol,ysol,sol},
+    sol=Solve[{L2[{x1,y1}-{xsol,ysol}]==L2[{x2,y2}-{xsol,ysol}]==L2[{x3,y3}-{\
+xsol,ysol}]},{xsol,ysol}];
+    Return[{Replace[xsol,sol[[1]]],Replace[ysol,sol[[1]]]}//Chop]
+]
+
+getTileShape:=getVoronoi;
+getVoronoi[fig_]:=Block[{res={},tileType,refPt,dir,scale,params,u,v,coefs,\
+vvertices},
+  {tileType,refPt,dir,scale,params} = fig;
+  u = scale hvect[[mod4[dir]]];
+  v = scale vvect[[mod4[dir]]];
+  coefs = tileShapes[[tileType]];
+  vvertices = Plus@@Transpose[Map[Times[{u,v},#]&, coefs]];
+  res = Plus[refPt,#]& /@ vvertices;
+  Return[res]
+];
+
+grada[flst_,{xMin_,xMax_},{yMin_,yMax_}]:=
+Block[{res={},i,len=Length[flst],x,y,inputVal,fig},
+  Do[
+    fig=flst[[i]];
+    {{pType,sType,dir},refPt,mag,{thval}} = fig;
+    {x,y} = getCenter[fig];
+    If[xMin < x < xMax && yMin < y < yMax,
+      inputVal = (x - xMin)/(xMax-xMin);
+      If[inputVal > thval, AppendTo[res,Point[{x,y}] ] ];
+    ];
+  ,{i,len}];
+  Return[res]
+] (*grada*)
+
+constLevel[thval_,flst_,{xMin_,xMax_},{yMin_,yMax_}]:=
+Block[{res={},i,len=Length[flst],x,y,inputVal,fig},
+  Do[
+    fig=flst[[i]];
+    {{pType,sType,dir},refPt,mag,{thval}} = fig;
+    {x,y} = getCenter[fig];
+    If[xMin < x < xMax && yMin < y < yMax,
+      If[inputVal > thval-epsilon, AppendTo[res,Point[{x,y}] ] ];
+    ];
+  ,{i,len}];
+  Return[res]
+] (*constLevel*)
+
+showThValues[flst_]:=Block[{res={},i,len=Length[flst],x,y,fig},
+  Do[
+    fig=flst[[i]];
+    {{pType,sType,dir},refPt,mag,extra} = fig;
+    {thval} = extra;
+    {x,y} = getCenter[fig];
+    AppendTo[res,{{Yellow,Point[{x,y}]},Text[ToString[thval],{x,y}] }];
+  ,{i,len}];
+  Return[res]
+] (*showThValues*)
+
+getThValues[flst_]:=Block[{res={},i,len=Length[flst],x,y,fig},
+  Do[
+    fig=flst[[i]];
+    {{pType,sType,dir},refPt,mag,extra} = fig;
+    {thval} = extra;
+    {x,y} = getCenter[fig];
+    AppendTo[res,thval];
+  ,{i,len}];
+  Return[res]
+] (*showThValues*)
+
+dumpSamplingPts[flst_,fname_]:=
+Block[{i,x,y,res={},len=Length[flst],out,count=0,countmarg=0},
+  out = OpenWrite[fname];
+  Do[
+    {x,y} = getSamplingPt[flst[[i]]]//Chop;
+    dbgPrint[i,\"/\",len,\" -> \",{x,y}];
+    If[ptinrange[{x,y}],
+      count++;
+      WriteString[out,ToString[CForm[x]]<>\" \"<>ToString[CForm[y]]<>\" \
+0\\n\"];
+      AppendTo[res,Point[{x,y}]];
+      (*AppendTo[res,{Text[ToString[countmarg+count],{x,y},{-1,-1}]}];*)
+    ,(*ELSE *)
+      countmarg++;
+      WriteString[out,ToString[CForm[x]]<>\" \"<>ToString[CForm[y]]<>\" -1\\n\
+\"];
+      AppendTo[res,{Red,Point[{x,y}]} ];
+      (*AppendTo[res,{Text[ToString[countmarg+count],{x,y},{-1,-1}]}];*)
+    ]
+  ,{i,len}];
+  Close[out];
+  dbgPrint[\"Written: \",count,\"+\",countmarg,\"=\",countmarg+count];
+  Return[res]
+] (* dumpSamplingPts *)
+
+(*-----------------------------------------------------*)
+
+(****************** end of procedures *******************)
+
+(************* prog starts here *************)
+iter = 0; dir = 0; flst = {}; margin=1;
+border = {};
+
+If[dbgInflation,
+  rng = All;
+  {px,py} = {2,-2}; n = 4;
+  n = Ceiling[Sqrt[Length[inflationRules]]];
+  Do[
+    type = i;
+    {x,y} = {px,py} {(i-1) - n Floor[(i-1)/n], Floor[(i-1)/n]};
+    AppendTo[flst,getFigure[type,{x,y},dir,1,{0}]];
+  ,{i,Length[inflationRules]}];
+  gl = {getGLst[flst]};
+  p = Show[Graphics[{gl}],AspectRatio->Automatic,
+       DefaultFont->{font,textsz}];
+  tileShapeCol = Blue;
+  Do[
+    iter = i;
+    flst = decomposeFLst[flst];
+    gl = getGLst[flst];
+    p = Graphics[{border,gl}], DefaultFont->{font,textsz}, \
+AspectRatio->Automatic,PlotRange->rng,PlotLabel->i];
+    p//Print;
+  ,{i,niter}]
+,(*ELSE*)
+  If[showGraphics,
+    AppendTo[flst,getFigure[2,{0,0},dir,1,{0}]];
+    gl = {getGLst[flst]};
+    p = Show[Graphics[{gl}],AspectRatio->Automatic,
+\t DefaultFont->{font,textsz}];
+  ];
+  tileShapeCol = RGBColor[0,1,1];
+  Do[
+    iter = i;
+    plbl = ToString[lbl]<>\" iter=\"<>ToString[iter]<>\" \"<>date;
+    flst = decomposeFLst[flst];
+    If[showGraphics,
+      gl = getGLst[flst];
+      p0 = Graphics[{gl}], DefaultFont->{font,textsz}, \
+AspectRatio->Automatic,PlotRange->rng,PlotLabel->plbl ];
+      Print[p0];
+  ,{i,niter}];
+]\
+\>", "Input",
+ PageWidth->Infinity,
+ InitializationCell->True,
+ CellChangeTimes->{
+  3.858765787148548*^9, {3.858765853947796*^9, 3.8587658837255363`*^9}, {
+   3.8587659302829123`*^9, 3.858765944714837*^9}, {3.858765975577972*^9, 
+   3.858766068240206*^9}},
+ ShowSpecialCharacters->
+  False,ExpressionUUID->"36176ae7-a412-44c3-b04e-48638644ab74"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "Do", "nliter", 
+   "\"Non-list iterator \\!\\(\\*RowBox[{\\\"DefaultFont\\\", \
+\\\"\[Rule]\\\", RowBox[{\\\"{\\\", RowBox[{\\\"font\\\", \\\",\\\", \
+\\\"textsz\\\"}], \\\"}\\\"}]}]\\) at position \
+\\!\\(\\*RowBox[{\\\"2\\\"}]\\) does not evaluate to a real numeric value.\"",
+    2, 772, 1, 17762869539470133554, "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{3.858766022621896*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"9d408ece-9ef9-4cb3-a18e-b79083f95138"],
+
+Cell[BoxData[
+ GraphicsBox[{{{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{0.5214534375125137, 0.11469794024490954`}, {
+       0.11469794024490954`, 0.11469794024490954`}}], 
+      PolygonBox[{{0.6714534375125137, 0.11469794024490954`}, {
+       0.4614534375125137, 0.039697940244909524`}, {0.49145343751251375`, 
+       0.11469794024490954`}, {0.4614534375125137, 0.18969794024490955`}}]}, 
+     PointBox[{0.11469794024490954`, 0.11469794024490954`}], 
+     PointBox[{0.6714534375125137, 0.11469794024490954`}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{0., 0.}, {0.7861513777574233, 0.}, {0.7861513777574233, 
+      0.7861513777574233}, {0., 0.7861513777574233}, {0., 0.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"1\"\>", {0.39307568887871164, 0.39307568887871164}, 
+      ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{2.704101966249685, 0.14589803375031546`}, {
+       2.1458980337503153`, 0.14589803375031546`}}], 
+      PolygonBox[{{2.8541019662496847`, 0.14589803375031546`}, {
+       2.6441019662496847`, 0.07089803375031545}, {2.6741019662496845`, 
+       0.14589803375031546`}, {2.6441019662496847`, 0.22089803375031547`}}]}, 
+     PointBox[{2.1458980337503153`, 0.14589803375031546`}], 
+     PointBox[{2.8541019662496847`, 0.14589803375031546`}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{2., 0.}, {3., 0.}, {3., 1.}, {2., 1.}, {2., 0.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"2\"\>", {2.5, 0.5}, ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{4.114697940244909, 0.5214534375125137}, {4.114697940244909, 
+       0.11469794024490954`}}], 
+      PolygonBox[{{4.114697940244909, 0.6714534375125137}, {4.189697940244909,
+        0.4614534375125137}, {4.114697940244909, 0.49145343751251375`}, {
+       4.039697940244909, 0.4614534375125137}}]}, 
+     PointBox[{4.114697940244909, 0.11469794024490954`}], 
+     PointBox[{4.114697940244909, 0.6714534375125137}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{4., 0.}, {4.786151377757423, 0.}, {4.786151377757423, 
+      0.7861513777574233}, {4., 0.7861513777574233}, {4., 0.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"3\"\>", {4.393075688878712, 0.39307568887871164}, 
+      ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{6.145898033750315, 0.7041019662496845}, {6.145898033750315, 
+       0.14589803375031546`}}], 
+      PolygonBox[{{6.145898033750315, 0.8541019662496845}, {
+       6.2208980337503155`, 0.6441019662496845}, {6.145898033750315, 
+       0.6741019662496845}, {6.070898033750315, 0.6441019662496845}}]}, 
+     PointBox[{6.145898033750315, 0.14589803375031546`}], 
+     PointBox[{6.145898033750315, 0.8541019662496845}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{6., 0.}, {7., 0.}, {7., 1.}, {6., 1.}, {6., 0.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"4\"\>", {6.5, 0.5}, ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{0.7178623157065278, -1.5906235671454987`}, {
+       0.14589803375031546`, -1.8541019662496845`}}], 
+      PolygonBox[{{0.8541019662496845, -1.5278640450004206`}, {
+       0.6947462165618041, -1.6838472012751082`}, {
+       0.6906143855978966, -1.6031754715745143`}, {
+       0.6319866944167261, -1.5476075507319518`}}]}, 
+     PointBox[{0.14589803375031546`, -1.8541019662496845`}], 
+     PointBox[{0.8541019662496845, -1.5278640450004206`}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{0., -2.}, {1., -2.}, {1., -1.381966011250105}, {
+      0., -1.381966011250105}, {0., -2.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"5\"\>", {0.5, -1.6909830056250525}, 
+      ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{3.025005118205135, -1.3992029120195402`}, {
+       2.1146979402449095`, -1.8853020597550905`}}], 
+      PolygonBox[{{3.1573217092691594`, -1.3285465624874861`}, {
+       3.0074066565455526`, -1.493623747364374}, {
+       2.9985417999923305`, -1.413334181925951}, {
+       2.936750307013498, -1.3613071563003498`}}]}, 
+     PointBox[{2.1146979402449095`, -1.8853020597550905`}], 
+     PointBox[{3.1573217092691594`, -1.3285465624874861`}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{2., -2.}, {3.272019649514069, -2.}, {
+      3.272019649514069, -1.2138486222425766`}, {2., -1.2138486222425766`}, {
+      2., -2.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"6\"\>", {2.6360098247570347, -1.6069243111212883}, 
+      ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{4.4093764328545015`, -1.2821376842934722`}, {
+       4.145898033750315, -1.8541019662496845`}}], 
+      PolygonBox[{{4.47213595499958, -1.1458980337503155`}, {
+       4.452392449268048, -1.3680133055832737`}, {
+       4.396824528425486, -1.3093856144021034`}, {
+       4.316152798724891, -1.3052537834381956`}}]}, 
+     PointBox[{4.145898033750315, -1.8541019662496845`}], 
+     PointBox[{4.47213595499958, -1.1458980337503155`}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{4., -2.}, {4.618033988749895, -2.}, {4.618033988749895, -1.}, {
+      4., -1.}, {4., -2.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"7\"\>", {4.3090169943749475, -1.5}, 
+      ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{6.600797087980459, -0.9749948817948647}, {
+       6.114697940244909, -1.8853020597550905`}}], 
+      PolygonBox[{{6.671453437512514, -0.8426782907308406}, {
+       6.63869284369965, -1.0632496929865014`}, {
+       6.5866658180740485`, -1.0014582000076695`}, {
+       6.506376252635627, -0.9925933434544473}}]}, 
+     PointBox[{6.114697940244909, -1.8853020597550905`}], 
+     PointBox[{6.671453437512514, -0.8426782907308406}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{6., -2.}, {6.786151377757423, -2.}, {
+      6.786151377757423, -0.727980350485931}, {6., -0.727980350485931}, {
+      6., -2.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"8\"\>", {6.393075688878712, -1.3639901752429655}, 
+      ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{1.0116638549926833`, -3.6646596766877164`}, {
+       0.11469794024490954`, -3.8853020597550905`}}], 
+      PolygonBox[{{1.1573217092691594`, -3.628829668488264}, {
+       0.971315717381819, -3.7518206071057354`}, {
+       0.982532284137388, -3.6718256783276066`}, {
+       0.9354857091823665, -3.6061627528292592`}}]}, 
+     PointBox[{0.11469794024490954`, -3.8853020597550905`}], 
+     PointBox[{1.1573217092691594`, -3.628829668488264}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{0., -4.}, {1.272019649514069, -4.}, {
+      1.272019649514069, -3.5141317282433544`}, {0., -3.5141317282433544`}, {
+      0., -4.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"9\"\>", {0.6360098247570345, -3.757065864121677}, 
+      ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{3.3264781007231035`, -3.563694053199873}, {
+       2.1458980337503153`, -3.8541019662496847`}}], 
+      PolygonBox[{{3.4721359549995796`, -3.5278640450004204`}, {
+       3.286129963112239, -3.650854983617892}, {
+       3.2973465298678084`, -3.570860054839763}, {
+       3.2502999549127867`, -3.5051971293414157`}}]}, 
+     PointBox[{2.1458980337503153`, -3.8541019662496847`}], 
+     PointBox[{3.4721359549995796`, -3.5278640450004204`}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{2., -4.}, {3.618033988749895, -4.}, {
+      3.618033988749895, -3.381966011250105}, {2., -3.381966011250105}, {
+      2., -4.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"10\"\>", {2.8090169943749475, -3.6909830056250525}, 
+      ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{4.335340323312284, -2.9883361450073167`}, {
+       4.114697940244909, -3.8853020597550905`}}], 
+      PolygonBox[{{4.3711703315117365`, -2.8426782907308406`}, {
+       4.393837247170741, -3.0645142908176335`}, {
+       4.328174321672393, -3.0174677158626118`}, {
+       4.248179392894264, -3.028684282618181}}]}, 
+     PointBox[{4.114697940244909, -3.8853020597550905`}], 
+     PointBox[{4.3711703315117365`, -2.8426782907308406`}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{4., -4.}, {4.485868271756646, -4.}, {
+      4.485868271756646, -2.727980350485931}, {4., -2.727980350485931}, {
+      4., -4.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"11\"\>", {4.242934135878323, -3.3639901752429653}, 
+      ImageScaled[{1, 1}]]}}, {{
+     {RGBColor[1, 0, 1], 
+      LineBox[{{6.436305946800127, -2.6735218992768965`}, {
+       6.145898033750315, -3.8541019662496847`}}], 
+      PolygonBox[{{6.47213595499958, -2.5278640450004204`}, {
+       6.494802870658585, -2.7497000450872133`}, {
+       6.4291399451602365`, -2.7026534701321916`}, {
+       6.349145016382108, -2.713870036887761}}]}, 
+     PointBox[{6.145898033750315, -3.8541019662496847`}], 
+     PointBox[{6.47213595499958, -2.5278640450004204`}]}, 
+    {RGBColor[1, 0, 0], Thickness[0.001], 
+     LineBox[{{6., -4.}, {6.618033988749895, -4.}, {
+      6.618033988749895, -2.381966011250105}, {6., -2.381966011250105}, {
+      6., -4.}}]}, 
+    {RGBColor[1, 0, 0], 
+     InsetBox["\<\"12\"\>", {6.3090169943749475, -3.1909830056250525}, 
+      ImageScaled[{1, 1}]]}}},
+  DefaultFont -> {"Courier-Bold", 12},
+  AspectRatio->Automatic,
+  ImageSize->{650, Automatic}]], "Print",
+ CellChangeTimes->{3.85876602263958*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"d2f1601b-a0b3-40af-89dc-6d95e5023314"],
+
+Cell["Syntax::sntxf: \"\" cannot be followed by \"(* fibo-hilbert.m\".", \
+"Message", "MSG",
+ CellChangeTimes->{3.858766022670624*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"68e3df1c-8d3f-4407-ad64-8b13a57d68e4"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "If", "argb", 
+   "\"\\!\\(\\*RowBox[{\\\"If\\\"}]\\) called with \
+\\!\\(\\*RowBox[{\\\"6\\\"}]\\) arguments; between \
+\\!\\(\\*RowBox[{\\\"2\\\"}]\\) and \\!\\(\\*RowBox[{\\\"4\\\"}]\\) arguments \
+are expected.\"", 2, 777, 2, 17762869539470133554, "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{3.858766022702038*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"4fcb2569-6bee-47af-be2c-fb6450ed9dee"],
+
+Cell[BoxData["p0"], "Print",
+ CellChangeTimes->{3.85876602270984*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"43361c91-e856-453d-ab42-5a112062540e"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "If", "argb", 
+   "\"\\!\\(\\*RowBox[{\\\"If\\\"}]\\) called with \
+\\!\\(\\*RowBox[{\\\"6\\\"}]\\) arguments; between \
+\\!\\(\\*RowBox[{\\\"2\\\"}]\\) and \\!\\(\\*RowBox[{\\\"4\\\"}]\\) arguments \
+are expected.\"", 2, 777, 3, 17762869539470133554, "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{3.858766022711101*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"a16faee5-963e-44f3-849c-b9c19d525e91"],
+
+Cell[BoxData["p0"], "Print",
+ CellChangeTimes->{3.8587660227205772`*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"cbabb6aa-7ef9-492c-8c3d-7fe2802f8fd8"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "If", "argb", 
+   "\"\\!\\(\\*RowBox[{\\\"If\\\"}]\\) called with \
+\\!\\(\\*RowBox[{\\\"6\\\"}]\\) arguments; between \
+\\!\\(\\*RowBox[{\\\"2\\\"}]\\) and \\!\\(\\*RowBox[{\\\"4\\\"}]\\) arguments \
+are expected.\"", 2, 777, 4, 17762869539470133554, "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{3.85876602272176*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"5be0e9d8-8f7a-4917-bb49-0efb1c9d1465"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "General", "stop", 
+   "\"Further output of \\!\\(\\*StyleBox[RowBox[{\\\"If\\\", \\\"::\\\", \
+\\\"argb\\\"}], \\\"MessageName\\\"]\\) will be suppressed during this \
+calculation.\"", 2, 777, 5, 17762869539470133554, "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{3.858766022728898*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"3c5dba28-dd1b-4060-8d2b-3a7a9182e333"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["p0"], "Print",
+ CellChangeTimes->{3.858766022737934*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"88b5b0de-7b97-4f5d-b47e-5fb664f1163f"],
+
+Cell[BoxData["p0"], "Print",
+ CellChangeTimes->{3.858766022739018*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"8609facc-cb75-43df-ac04-e5380c92be78"],
+
+Cell[BoxData["p0"], "Print",
+ CellChangeTimes->{3.858766022740781*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"eda78605-edc8-4a90-b42a-90a0ae7dd10c"]
+}, Open  ]],
+
+Cell["Syntax::sntxf: \"\" cannot be followed by \"(* fibo-hilbert.m\".", \
+"Message", "MSG",
+ CellChangeTimes->{3.85876602274174*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"f8842a5f-bc8d-4acc-bff8-855b9e8cdc81"],
+
+Cell["Syntax::sntxf: \"\" cannot be followed by \"(* fibo-hilbert.m\".", \
+"Message", "MSG",
+ CellChangeTimes->{3.858766022743495*^9},
+ CellLabel->
+  "During evaluation of \
+In[620]:=",ExpressionUUID->"5126212d-8bc5-4505-84c2-b2ff5443294d"]
+}, Open  ]]
+},
+WindowSize->{1541, 1387},
+WindowMargins->{{288, Automatic}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingPageRange->{Automatic, Automatic},
+PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
+FrontEndVersion->"13.0 for Mac OS X x86 (64-bit) (February 4, 2022)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"e795f5c7-9b9e-45b9-abb3-0fc49cb06003"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 15443, 501, 8362, "Input",ExpressionUUID->"36176ae7-a412-44c3-b04e-48638644ab74",
+ InitializationCell->True],
+Cell[16026, 525, 546, 12, 28, "Message",ExpressionUUID->"9d408ece-9ef9-4cb3-a18e-b79083f95138"],
+Cell[16575, 539, 9472, 186, 479, "Print",ExpressionUUID->"d2f1601b-a0b3-40af-89dc-6d95e5023314"],
+Cell[26050, 727, 240, 5, 22, "Message",ExpressionUUID->"68e3df1c-8d3f-4407-ad64-8b13a57d68e4"],
+Cell[26293, 734, 481, 11, 28, "Message",ExpressionUUID->"4fcb2569-6bee-47af-be2c-fb6450ed9dee"],
+Cell[26777, 747, 175, 4, 24, "Print",ExpressionUUID->"43361c91-e856-453d-ab42-5a112062540e"],
+Cell[26955, 753, 481, 11, 28, "Message",ExpressionUUID->"a16faee5-963e-44f3-849c-b9c19d525e91"],
+Cell[27439, 766, 178, 4, 24, "Print",ExpressionUUID->"cbabb6aa-7ef9-492c-8c3d-7fe2802f8fd8"],
+Cell[27620, 772, 480, 11, 28, "Message",ExpressionUUID->"5be0e9d8-8f7a-4917-bb49-0efb1c9d1465"],
+Cell[28103, 785, 448, 10, 28, "Message",ExpressionUUID->"3c5dba28-dd1b-4060-8d2b-3a7a9182e333"],
+Cell[CellGroupData[{
+Cell[28576, 799, 176, 4, 24, "Print",ExpressionUUID->"88b5b0de-7b97-4f5d-b47e-5fb664f1163f"],
+Cell[28755, 805, 176, 4, 24, "Print",ExpressionUUID->"8609facc-cb75-43df-ac04-e5380c92be78"],
+Cell[28934, 811, 176, 4, 24, "Print",ExpressionUUID->"eda78605-edc8-4a90-b42a-90a0ae7dd10c"]
+}, Open  ]],
+Cell[29125, 818, 239, 5, 22, "Message",ExpressionUUID->"f8842a5f-bc8d-4acc-bff8-855b9e8cdc81"],
+Cell[29367, 825, 240, 5, 22, "Message",ExpressionUUID->"5126212d-8bc5-4505-84c2-b2ff5443294d"]
+}, Open  ]]
+}
+]
+*)
+
