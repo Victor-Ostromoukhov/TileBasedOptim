@@ -786,14 +786,22 @@ getDiscrepancy2Dbase3SFC[niters_:4] :=
         Print[mf @ res]
     ] (* getDiscrepancy2Dbase3SFC *)
 
-makeMatBuilderMatrices0m2net[] :=
+makeMatBuilderMatrices0m2net2D[] :=
     Module[ {},
+    	If[ !FileExistsQ["MatBuilder_matrices/"], CreateDirectory["MatBuilder_matrices/"] ];
 		Do[
 			execString = "testCplex -i MatBuilder_profiles/2D_0m2net.txt -o MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
         	returnCode = Run[execPrefix<>execString];
-        	Print[execString -> returnCode]
-		,{i,256}];
-    ] (* makeMatBuilderMatrices *)
+        	Print[execString -> returnCode];
+			mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>".dat"];
+        	(*Do[
+				mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; niters/2, ;; niters]], mxTab[[2, ;; niters/2, ;; niters]]] ;
+				mxInvH = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; niters/2, ;; niters + 1]], mxTab[[2, ;; niters/2 + 1, ;; niters + 1]]] ;
+				mxInvV = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; niters/2 + 1, ;; niters + 1]], mxTab[[2, ;; niters/2, ;; niters + 1]]] ;
+        	,{ilevel,15}];*)
+
+		,{i,16}];
+    ] (* makeMatBuilderMatrices0m2net2D *)
 
 enumerate0m2netSolutions[] :=
     Module[ {},
