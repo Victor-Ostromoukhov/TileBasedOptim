@@ -542,7 +542,7 @@ getSamplingPtsbase3SFCTiles[tlst_] :=
     	,{ind,Length[tlst]}]
     ] (* getSamplingPtsbase3SFCTiles *)
 
-demobase3SFC[innsubdivs_:4, dbg_:False] :=
+demobase3SFC[innsubdivs_:6, dbg_:False] :=
     Module[ {},
     	nsubdivs = innsubdivs;
 		tlst = {{typeSqURdir,0,{0,0},{0,0}, {{1,0},{0,1}}, {{},{}} ,{}} };
@@ -550,24 +550,16 @@ demobase3SFC[innsubdivs_:4, dbg_:False] :=
 		
 		Do[
 			tlst = subdivbase3SFCTiles @ tlst;
-			Graphics[ getbase3SFCTilesGL[tlst,showSFC+showArrows+showTilexycodes+showTileType], PlotLabel-> iter ]//Print;
+			flags = If[iter <= 4, showSFC+showArrows+showTilexycodes+showTileType, showSFC];
+			Graphics[ getbase3SFCTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024} ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,nsubdivs}];
-		(*Graphics[ getbase3SFCTilesGL[tlst,showGrayValue], PlotLabel-> nsubdivs ]//Print;*)
 		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_000001.dat"];
 		mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; nsubdivs/2, ;; nsubdivs]], mxTab[[2, ;; nsubdivs/2, ;; nsubdivs]]] ;
 		mxInvH = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; nsubdivs/2, ;; nsubdivs + 1]], mxTab[[2, ;; nsubdivs/2 + 1, ;; nsubdivs + 1]]] ;
 		mxInvV = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; nsubdivs/2 + 1, ;; nsubdivs + 1]], mxTab[[2, ;; nsubdivs/2, ;; nsubdivs + 1]]] ;
 		tlst = fillSamplingPtsbase3SFCTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
 		Graphics[ {getbase3SFCTilesGL[tlst,showSFC+showSamplingPt]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024}3/2 ]//Print;
-
-
-		nsubdivs = nsubdivs+1;
-		tlst = subdivbase3SFCTiles @ tlst;
-		tlst = fillSamplingPtsbase3SFCTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
-		Graphics[ {getbase3SFCTilesGL[tlst,showSFC+showSamplingPt]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024}3/2 ]//Print;
-
-Abort[];
 
 		seltlst = selectbase3SFCTiles[tlst, .33333333];
 		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .33333333 ]//Print;
