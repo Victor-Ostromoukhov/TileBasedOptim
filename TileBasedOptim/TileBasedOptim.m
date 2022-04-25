@@ -561,18 +561,19 @@ demobase3SFC[innsubdivs_:6, dbg_:False] :=
 		tlst = fillSamplingPtsbase3SFCTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
 		Graphics[ {getbase3SFCTilesGL[tlst,showSFC+showSamplingPt]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024}3/2 ]//Print;
 
+		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
 		seltlst = selectbase3SFCTiles[tlst, .33333333];
-		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .33333333 ]//Print;
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .33333333 ]//Print;
 		seltlst = selectbase3SFCTiles[tlst, .38];
-		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .38 ]//Print;
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .38 ]//Print;
 		seltlst = selectbase3SFCTiles[tlst, .5];
-		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .5 ]//Print;
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .5 ]//Print;
 		seltlst = selectbase3SFCTiles[tlst, .6];
-		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .6 ]//Print;
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .6 ]//Print;
 		seltlst = selectbase3SFCTiles[tlst, .7];
-		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .7 ]//Print;
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .7 ]//Print;
 		seltlst = selectbase3SFCTiles[tlst, .8];
-		Graphics[ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .8 ]//Print;
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .8 ]//Print;
 	] (* demobase3SFC *)
 
 getDiscrepancy2Dbase3SFC[niters_:4] :=
