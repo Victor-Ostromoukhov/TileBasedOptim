@@ -390,7 +390,23 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC
         (*p*)
     ] (* showGeneralizedL2discrepancyND *)
  
-
+enumerate0m2netSolutions[] :=
+    Module[ {},
+    	npts = 3^6;
+		tab = Union @ (Union /@ Table[
+			execString = "matrixSampler -d 2 -b 3 -n "<>ToString[npts]<>" -i MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>".dat --size 10 -o tmp/pts_"<>pid<>".dat > /dev/null";
+        	returnCode = Run[execPrefix<>execString];
+        	Print[i -> execString -> returnCode];
+        	prevpts = pts;
+        	pts = Round[npts Import["tmp/pts_"<>pid<>".dat"] ];
+        	testStrat2DGF3[pts]//Print;
+        	pts
+		,{i,256}]);
+		Print[Length[tab] ];
+		
+		Graphics[{Red, Point /@ prevpts, Blue, Point /@ pts}]
+    ] (* makeMatBuilderMatrices *)
+    
 (*----------------------------- base3SFC --------------------------------*)
 typeSqURdir = 		1;
 typeSqULdir = 		2;
@@ -538,11 +554,11 @@ getSamplingPtsbase3SFCTiles[tlst_] :=
     	Parallelize @ Table[
 			{tileType,sind,samplingPt,refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
 			(*{k1,k2} = {RandomReal[],RandomReal[]};*)
-			refPt + k1 v1 + k2 v2
+			samplingPt
     	,{ind,Length[tlst]}]
     ] (* getSamplingPtsbase3SFCTiles *)
 
-demobase3SFC[innsubdivs_:6, dbg_:False] :=
+demoBase3SFC[innsubdivs_:6, dbg_:False] :=
     Module[ {},
     	nsubdivs = innsubdivs;
 		tlst = {{typeSqURdir,0,{0,0},{0,0}, {{1,0},{0,1}}, {{},{}} ,{}} };
@@ -574,7 +590,7 @@ demobase3SFC[innsubdivs_:6, dbg_:False] :=
 		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .7 ]//Print;
 		seltlst = selectbase3SFCTiles[tlst, .8];
 		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .8 ]//Print;
-	] (* demobase3SFC *)
+	] (* demoBase3SFC *)
 
 getDiscrepancy2Dbase3SFC[niters_:4] :=
     Module[ {npts,pts,dND, tlst},
@@ -594,37 +610,33 @@ getDiscrepancy2Dbase3SFC[niters_:4] :=
 makeMatBuilderMatrices0m2net2D[] :=
     Module[ {},
     	If[ !FileExistsQ["MatBuilder_matrices/"], CreateDirectory["MatBuilder_matrices/"] ];
+    	nlevels = 16;
 		Do[
 			execString = "testCplex -i MatBuilder_profiles/2D_0m2net.txt -o MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
         	returnCode = Run[execPrefix<>execString];
         	Print[execString -> returnCode];
 			mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>".dat"];
-        	(*Do[
-				mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; niters/2, ;; niters]], mxTab[[2, ;; niters/2, ;; niters]]] ;
-				mxInvH = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; niters/2, ;; niters + 1]], mxTab[[2, ;; niters/2 + 1, ;; niters + 1]]] ;
-				mxInvV = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; niters/2 + 1, ;; niters + 1]], mxTab[[2, ;; niters/2, ;; niters + 1]]] ;
-        	,{ilevel,15}];*)
-
+			Print[mf /@ mxTab];
+			mxInvTab = {};
+        	Do[
+				If[ilevel != 0,
+					mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2, ;; ilevel]], mxTab[[2, ;; ilevel/2, ;; ilevel]]];
+					Print[ilevel -> mf[mxInv] ];
+					AppendTo[mxInvTab,mxInv];
+        		];
+				If[ilevel != nlevels, 
+					mxInvH = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2, ;; ilevel + 1]], mxTab[[2, ;; ilevel/2 + 1, ;; ilevel + 1]]] ;
+					mxInvV = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2 + 1, ;; ilevel + 1]], mxTab[[2, ;; ilevel/2, ;; ilevel + 1]]] ;
+					Print[ilevel+1 -> mf[mxInvH] -> mf[mxInvV] ] ;
+					AppendTo[mxInvTab,mxInvH];
+					AppendTo[mxInvTab,mxInvV];
+				];
+        	,{ilevel,0,nlevels,2}];
+			Export["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];
 		,{i,16}];
     ] (* makeMatBuilderMatrices0m2net2D *)
 
-enumerate0m2netSolutions[] :=
-    Module[ {},
-    	npts = 3^6;
-		tab = Union @ (Union /@ Table[
-			execString = "matrixSampler -d 2 -b 3 -n "<>ToString[npts]<>" -i MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>".dat --size 10 -o tmp/pts_"<>pid<>".dat > /dev/null";
-        	returnCode = Run[execPrefix<>execString];
-        	Print[i -> execString -> returnCode];
-        	prevpts = pts;
-        	pts = Round[npts Import["tmp/pts_"<>pid<>".dat"] ];
-        	testStrat2DGF3[pts]//Print;
-        	pts
-		,{i,256}]);
-		Print[Length[tab] ];
-		
-		Graphics[{Red, Point /@ prevpts, Blue, Point /@ pts}]
-    ] (* makeMatBuilderMatrices *)
-    
+
 readMatBuilderMatrix[fname_,nDims_:2] :=
     Module[ {data,mxsz},
     	data = Import[fname];
@@ -633,5 +645,58 @@ readMatBuilderMatrix[fname_,nDims_:2] :=
     			Table[data[[isz+(idim-1)*(mxsz+1)]],{isz,mxsz}]
     		,{idim,nDims}]
     ]
+
+readMatBuilderInvMatrices[fname_,nDims_:2,nlevels_:16] :=
+    Module[ {data,mxsz,res,curIndex},
+    	data = Import[fname];
+    	curIndex = 1;
+    	res = Table[{},{nlevels}];
+    	Table[
+     		mxsz = ilevel;
+    		If[OddQ[ilevel],
+    			AppendTo[res[[ilevel]], data[[curIndex;;curIndex+mxsz-1]] ];
+    			curIndex += mxsz;
+    			AppendTo[res[[ilevel]], data[[curIndex;;curIndex+mxsz-1]] ];
+    			curIndex += mxsz;
+    		,(*ELSE*)
+    			AppendTo[res[[ilevel]], data[[curIndex;;curIndex+mxsz-1]] ];
+    			curIndex += mxsz;
+    		];
+    		If[dbg,Print[ilevel -> (mf /@ res[[ilevel]]) ] ];
+    	,{ilevel,nlevels}];
+    	Return[res]
+    ] (* readMatBuilderInvMatrices *)
  
+ 
+demoStructureBase3SFC[innlevels_:7, dbg_:False] :=
+    Module[ {},
+    	nlevels = innlevels;
+		tlst = {{typeSqURdir,0,{0,0},{0,0}, {{1,0},{0,1}}, {{},{}} ,{}} };
+		Do[
+			tlst = subdivbase3SFCTiles @ tlst;
+			flags = If[iter <= 4, showSFC+showArrows+showTilexycodes+showTileType, showSFC];
+			If[dbg, tlst//mf//Print];
+		,{iter,nlevels}];
+		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_000001.dat"];
+		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_000001_inv.dat"];
+		If[EvenQ[nlevels], mxInv = mxInvTab[[nlevels,1]] ];
+		If[OddQ[nlevels],{mxInvH, mxInvV} = mxInvTab[[nlevels]] ];
+		tlst = fillSamplingPtsbase3SFCTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
+		Graphics[ {getbase3SFCTilesGL[tlst,showSFC+showSamplingPt]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;
+Abort[];
+		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
+		seltlst = selectbase3SFCTiles[tlst, .33333333];
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .33333333 ]//Print;
+		seltlst = selectbase3SFCTiles[tlst, .38];
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .38 ]//Print;
+		seltlst = selectbase3SFCTiles[tlst, .5];
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .5 ]//Print;
+		seltlst = selectbase3SFCTiles[tlst, .6];
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .6 ]//Print;
+		seltlst = selectbase3SFCTiles[tlst, .7];
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .7 ]//Print;
+		seltlst = selectbase3SFCTiles[tlst, .8];
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .8 ]//Print;
+	] (* demoStructureBase3SFC *)
+
 (*----------------------------- end of base3SFC --------------------------------*)
