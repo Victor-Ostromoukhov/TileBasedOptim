@@ -408,18 +408,10 @@ enumerate0m2netSolutions[] :=
     ] (* makeMatBuilderMatrices *)
     
 (*----------------------------- base3SFC --------------------------------*)
-typeSqURdir = 		1;
-typeSqULdir = 		2;
-typeHRectURdir = 	3;
-typeHRectULdir = 	4;
-typeVRectURdir = 	5;
-typeVRectULdir = 	6;
-typeSqURinv = 		11;
-typeSqULinv = 		12;
-typeHRectURinv = 	13;
-typeHRectULinv = 	14;
-typeVRectURinv = 	15;
-typeVRectULinv = 	16;
+
+typeSq = 	1;
+typeHRec = 	2;
+typeVRec = 	3;
 
 subdivbase3SFCTiles[tlst_] :=
     Module[ {res={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode },
@@ -427,80 +419,60 @@ subdivbase3SFCTiles[tlst_] :=
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
 			prevrefPt = refPt; {prevv1,prevv2} = {v1,v2};
             Switch[tileType
-              ,typeSqURdir, 
-	                  AppendTo[res,{typeHRectURdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{v1, 1/3 v2}, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeHRectULdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeHRectURdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
-              ,typeSqURinv, 
-	                  AppendTo[res,{typeHRectURinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,2]}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeHRectULinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeHRectURinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{v1, 1/3 v2}, {xcode,Append[ycode,0]}, Append[fcode,2]} ];
-              ,typeSqULdir, 
-	                  AppendTo[res,{typeVRectULdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,	{1/3 v1, v2}, {Append[xcode,2],ycode}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeVRectURinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,	{1/3 v1, v2}, {Append[xcode,1],ycode}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeVRectULdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{1/3 v1, v2}, {Append[xcode,0],ycode}, Append[fcode,2]} ];
-              ,typeSqULinv, 
-	                  AppendTo[res,{typeVRectULinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{1/3 v1, v2}, {Append[xcode,0],ycode}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeVRectURdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,	{1/3 v1, v2}, {Append[xcode,1],ycode}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeVRectULinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,	{1/3 v1, v2}, {Append[xcode,2],ycode}, Append[fcode,2]} ];
-              ,typeHRectURdir, 
-	                  AppendTo[res,{typeSqURdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{1/3 v1, v2}, {Append[xcode,0],ycode}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeSqULinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,	{1/3 v1, v2}, {Append[xcode,1],ycode}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeSqURdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,	{1/3 v1, v2}, {Append[xcode,2],ycode}, Append[fcode,2]} ];
-              ,typeHRectURinv, 
-	                  AppendTo[res,{typeSqURinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,	{1/3 v1, v2}, {Append[xcode,2],ycode}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeSqULdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,	{1/3 v1, v2}, {Append[xcode,1],ycode}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeSqURinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{1/3 v1, v2}, {Append[xcode,0],ycode}, Append[fcode,2]} ];
-              ,typeHRectULdir, 
-	                  AppendTo[res,{typeSqULdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,	{1/3 v1, v2}, {Append[xcode,2],ycode}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeSqURinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,	{1/3 v1, v2}, {Append[xcode,1],ycode}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeSqULdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{1/3 v1, v2}, {Append[xcode,0],ycode}, Append[fcode,2]} ];
-              ,typeHRectULinv, 
-	                  AppendTo[res,{typeSqULinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{1/3 v1, v2}, {Append[xcode,0],ycode}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeSqURdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,	{1/3 v1, v2}, {Append[xcode,1],ycode}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeSqULinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,	{1/3 v1, v2}, {Append[xcode,2],ycode}, Append[fcode,2]} ];
-             ,typeVRectURdir, 
-	                  AppendTo[res,{typeSqURdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{v1, 1/3 v2}, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeSqULdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeSqURdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
-             ,typeVRectURinv, 
-	                  AppendTo[res,{typeSqURinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,2]}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeSqULinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeSqURinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{v1, 1/3 v2}, {xcode,Append[ycode,0]}, Append[fcode,2]} ];
-             ,typeVRectULdir, 
-	                  AppendTo[res,{typeSqULdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{v1, 1/3 v2}, {xcode,Append[ycode,0]}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeSqURdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeSqULdir,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,2]}, Append[fcode,2]} ];
-             ,typeVRectULinv, 
-	                  AppendTo[res,{typeSqULinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,2]}, Append[fcode,0]} ];
-	                  AppendTo[res,{typeSqURinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,	{v1, 1/3 v2}, {xcode,Append[ycode,1]}, Append[fcode,1]} ];
-	                  AppendTo[res,{typeSqULinv,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{v1, 1/3 v2}, {xcode,Append[ycode,0]}, Append[fcode,2]} ];
+              ,typeSq, 
+              		dxy = Which[
+              			v1[[1]] > 0 && v2[[2]] > 0, {{{},{0}}, {{},{1}}, {{},{2}} },
+              			v1[[1]] < 0 && v2[[2]] < 0, {{{},{2}}, {{},{1}}, {{},{0}} },
+              			v1[[2]] > 0 && v2[[1]] < 0, {{{2},{}}, {{1},{}}, {{0},{}} },
+              			v1[[2]] < 0 && v2[[1]] > 0, {{{0},{}}, {{1},{}}, {{2},{}} }
+              		];
+					AppendTo[res,{typeHRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,					{v1, 1/3 v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeVRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + v1 + 1/3 v2,	{mxRot90.v1/3, mxRot90.v2},		{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeHRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,		{v1, 1/3 v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
+              ,typeHRec, 
+              		dxy = Which[
+              			v1[[1]] > 0 && v2[[2]] > 0, {{{0},{}}, {{1},{}}, {{2},{}} },
+              			v1[[1]] < 0 && v2[[2]] < 0, {{{2},{}}, {{1},{}}, {{0},{}} },
+              			v1[[2]] > 0 && v2[[1]] < 0, {{{},{0}}, {{},{1}}, {{},{2}} },
+              			v1[[2]] < 0 && v2[[1]] > 0, {{{},{2}}, {{},{1}}, {{},{0}} }
+              		];
+					AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{1/3 v1, v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1 + v2,	{mxRot270.v1/3, mxRot270.v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,		{1/3 v1, v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
+              ,typeVRec, 
+              		dxy = Which[
+              			v1[[1]] > 0 && v2[[2]] > 0, {{{},{0}}, {{},{1}}, {{},{2}} },
+              			v1[[1]] < 0 && v2[[2]] < 0, {{{},{2}}, {{},{1}}, {{},{0}} },
+              			v1[[2]] > 0 && v2[[1]] < 0, {{{2},{}}, {{1},{}}, {{0},{}} },
+              			v1[[2]] < 0 && v2[[1]] > 0, {{{0},{}}, {{1},{}}, {{2},{}} }
+              		];
+					AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{v1, 1/3 v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2 + v1,	{mxRot90.v1, mxRot90.v2/3},		{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,		{v1, 1/3 v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
             ];
     	,{ind,Length[tlst]}];
     	Return[res]
     ] (* subdivbase3SFCTiles *)
+
+demoBase3SFC[innsubdivs_:6, dbg_:False] :=
+    Module[ {},
+    	nsubdivs = innsubdivs;
+		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
+		Do[
+			tlst = subdivbase3SFCTiles @ tlst;
+			flags = If[iter <= 6, showSFC+showTilexycodes+showTileType, showSFC];
+			Graphics[ getbase3SFCTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024}3/2 ]//Print;
+			If[dbg, tlst//mf//Print];
+		,{iter,nsubdivs}];
+	] (* demoBase3SFC *)
 
 getsfcbase3SFC[tlst_] :=
     Module[ {sfc={}, tileType,sind,refPt,v1,v2,samplingPt,prevrefPt,prevv1,prevv2,xcode,ycode,fcode,norm1,norm2,delta=3},
     	{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/2);
     	Do[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
-            If[tileType == typeSqURdir || tileType == typeHRectURdir || tileType == typeVRectURdir,
-	   			AppendTo[sfc,refPt + (norm1+norm2)/1/3^((Length[fcode]+delta)/2) ];
-  				AppendTo[sfc,refPt + v1 + v2 + (-norm1-norm2)/3^((Length[fcode]+delta)/2) ] ;
-  			];
-			If[tileType == typeSqULdir || tileType == typeHRectULdir || tileType == typeVRectULdir,
-	   			AppendTo[sfc,refPt + v1 + (-norm1+norm2)/1/3^((Length[fcode]+delta)/2) ];
-  				AppendTo[sfc,refPt + v2 + (norm1-norm2)/3^((Length[fcode]+delta)/2) ];
-            ];
-            If[tileType == typeSqURinv || tileType == typeHRectURinv || tileType == typeVRectURinv,
-  				AppendTo[sfc,refPt + v1 + v2 + (-norm1-norm2)/3^((Length[fcode]+delta)/2) ] ;
-	   			AppendTo[sfc,refPt + (norm1+norm2)/1/3^((Length[fcode]+delta)/2) ];
-  			];
-			If[tileType == typeSqULinv || tileType == typeHRectULinv || tileType == typeVRectULinv,
-  				AppendTo[sfc,refPt + v2 + (norm1-norm2)/3^((Length[fcode]+delta)/2) ];
-	   			AppendTo[sfc,refPt + v1 + (-norm1+norm2)/1/3^((Length[fcode]+delta)/2) ];
-            ];
+	   		AppendTo[sfc,refPt + (norm1+norm2)/1/3^((Length[fcode]+delta)/2) ];
+  			AppendTo[sfc,refPt + v1 + v2 + (-norm1-norm2)/3^((Length[fcode]+delta)/2) ] ;
     	,{ind,Length[tlst]}];
     	Return[sfc]
     ] (* getsfcbase3SFC *)
@@ -517,7 +489,6 @@ getbase3SFCTilesGL[tlst_,params_:showSFC] :=
 			fcodelen = Length[fcode];
 			{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/2);
 			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
-			(*samplingPt = refPt + k1 v1 + k2 v2;*)
     		If[BitAnd[params,showGrayValue] > 0, AppendTo[gl,{GrayLevel[FromDigits[Reverse@fcode,3]/3^fcodelen],Polygon@cont}] ];
 			AppendTo[gl,Flatten[#,1]& @ {(*Point@(refPt+(norm1+norm2)/20),*)bortedStyle,Line@cont } ];
 			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{1.9,-1}]} ] ];		
@@ -540,7 +511,7 @@ fillSamplingPtsbase3SFCTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
 			m = If[Length[xcode] == Length[ycode],
 				mxInv
 			,(*ELSE*)
-				If[tileType == typeHRectURdir || tileType == typeHRectULdir || tileType == typeHRectURinv || tileType == typeHRectULinv, mxInvH, mxInvV]
+				If[Max@(Abs@(First /@ {v1, v2})) > Max@(Abs@(Last /@ {v1, v2})), mxInvH, mxInvV]
 			];
 			indVect = Mod[#,3]& /@ (m.v);
 			samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) / 3^nsubdivs;
@@ -559,39 +530,6 @@ getSamplingPtsbase3SFCTiles[tlst_] :=
     	,{ind,Length[tlst]}]
     ] (* getSamplingPtsbase3SFCTiles *)
 
-demoBase3SFC[innsubdivs_:6, dbg_:False] :=
-    Module[ {},
-    	nsubdivs = innsubdivs;
-		tlst = {{typeSqURdir,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
-		(*Graphics[ getbase3SFCTilesGL[tlst] ]//Print;*)
-		
-		Do[
-			tlst = subdivbase3SFCTiles @ tlst;
-			flags = If[iter <= 4, showSFC+showArrows+showTilexycodes+showTileType, showSFC];
-			Graphics[ getbase3SFCTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024} ]//Print;
-			If[dbg, tlst//mf//Print];
-		,{iter,nsubdivs}];
-		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_000001.dat"];
-		mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; nsubdivs/2, ;; nsubdivs]], mxTab[[2, ;; nsubdivs/2, ;; nsubdivs]]] ;
-		mxInvH = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; nsubdivs/2, ;; nsubdivs + 1]], mxTab[[2, ;; nsubdivs/2 + 1, ;; nsubdivs + 1]]] ;
-		mxInvV = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; nsubdivs/2 + 1, ;; nsubdivs + 1]], mxTab[[2, ;; nsubdivs/2, ;; nsubdivs + 1]]] ;
-		tlst = fillSamplingPtsbase3SFCTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
-		Graphics[ {getbase3SFCTilesGL[tlst,showSFC+showSamplingPt]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024}3/2 ]//Print;
-
-		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
-		seltlst = selectbase3SFCTiles[tlst, .33333333];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .33333333 ]//Print;
-		seltlst = selectbase3SFCTiles[tlst, .38];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .38 ]//Print;
-		seltlst = selectbase3SFCTiles[tlst, .5];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .5 ]//Print;
-		seltlst = selectbase3SFCTiles[tlst, .6];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .6 ]//Print;
-		seltlst = selectbase3SFCTiles[tlst, .7];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .7 ]//Print;
-		seltlst = selectbase3SFCTiles[tlst, .8];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .8 ]//Print;
-	] (* demoBase3SFC *)
 
 getDiscrepancy2Dbase3SFC[niters_:4] :=
     Module[ {npts,pts,dND, tlst},
@@ -669,13 +607,14 @@ readMatBuilderInvMatrices[fname_,nDims_:2,nlevels_:16] :=
     ] (* readMatBuilderInvMatrices *)
  
  
-demoStructureBase3SFC[innlevels_:7, dbg_:False] :=
+demoStructureBase3SFC[innlevels_:4, dbg_:False] :=
     Module[ {},
     	nlevels = innlevels;
-		tlst = {{typeSqURdir,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
+		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
 		Do[
 			tlst = subdivbase3SFCTiles @ tlst;
-			flags = If[iter <= 4, showSFC+showArrows+showTilexycodes+showTileType, showSFC];
+			flags = If[iter <= 6, showSFC+showTilexycodes+showTileType, showSFC];
+			Graphics[ getbase3SFCTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024} ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,nlevels}];
 		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_000001.dat"];
@@ -684,7 +623,9 @@ demoStructureBase3SFC[innlevels_:7, dbg_:False] :=
 		If[OddQ[nlevels],{mxInvH, mxInvV} = mxInvTab[[nlevels]] ];
 		tlst = fillSamplingPtsbase3SFCTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
 		Graphics[ {getbase3SFCTilesGL[tlst,showSFC+showSamplingPt]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;
-Abort[];
+	] (* demoStructureBase3SFC *)
+
+(*Abort[];
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
 		seltlst = selectbase3SFCTiles[tlst, .33333333];
 		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .33333333 ]//Print;
@@ -697,7 +638,6 @@ Abort[];
 		seltlst = selectbase3SFCTiles[tlst, .7];
 		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .7 ]//Print;
 		seltlst = selectbase3SFCTiles[tlst, .8];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .8 ]//Print;
-	] (* demoStructureBase3SFC *)
+		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .8 ]//Print;*)
 
 (*----------------------------- end of base3SFC --------------------------------*)

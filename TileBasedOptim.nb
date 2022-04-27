@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    106282,       2137]
-NotebookOptionsPosition[    105650,       2117]
-NotebookOutlinePosition[    106103,       2135]
-CellTagsIndexPosition[    106060,       2132]
+NotebookDataLength[     10917,        318]
+NotebookOptionsPosition[      8626,        267]
+NotebookOutlinePosition[      9079,        285]
+CellTagsIndexPosition[      9036,        282]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -21,2102 +21,252 @@ Notebook[{
 
 Cell[CellGroupData[{
 Cell[BoxData[
- RowBox[{"demoStructureBase3SFC", "[", "4", "]"}]], "Input",
+ RowBox[{"demoBase3SFC", "[", "1", "]"}]], "Input",
  CellChangeTimes->{{3.859957874410015*^9, 3.8599578751918*^9}, 
-   3.859968809149794*^9},
- CellLabel->"In[13]:=",ExpressionUUID->"a4c6923e-13c6-4c8e-acc3-ecd1b38744f2"],
-
-Cell[BoxData[
- GraphicsBox[
-  {AbsolutePointSize[5], 
-   {RGBColor[1, 0.5, 0], AbsoluteThickness[3], 
-    LineBox[NCache[{{
-       Rational[1, 27] 3^Rational[-1, 2], Rational[1, 27] 
-        3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 27] 
-        3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 27] 
-        3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 27] 
-        3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 27] 
-        3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 27] 
-        3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 27] 
-        3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 27] 
-        3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 27] 
-        3^Rational[-1, 2]}, {
-       1 + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       1 + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       1 + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       1 + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       1 + Rational[-1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       1 + Rational[-1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[1, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 27] 3^Rational[-1, 2], Rational[4, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[5, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[-1, 27] 3^Rational[-1, 2], 1 + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 9] + Rational[1, 27] 3^Rational[-1, 2], 1 + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[-1, 27] 3^Rational[-1, 2], 1 + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[1, 27] 3^Rational[-1, 2], 1 + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[1, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[4, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[-1, 27] 3^Rational[-1, 2], 1 + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[1, 27] 3^Rational[-1, 2], 1 + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[5, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[2, 3] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       1 + Rational[-1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       1 + Rational[-1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[7, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[2, 3] + Rational[1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[-1, 27] 3^Rational[-1, 2], 1 + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[7, 9] + Rational[1, 27] 3^Rational[-1, 2], 1 + 
-        Rational[-1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[-1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       Rational[8, 9] + Rational[1, 27] 3^Rational[-1, 2], Rational[8, 9] + 
-        Rational[1, 27] 3^Rational[-1, 2]}, {
-       1 + Rational[-1, 27] 3^Rational[-1, 2], 1 + 
-        Rational[-1, 27] 3^Rational[-1, 2]}}, CompressedData["
-1:eJx11D1I1mEUhvGXchKaglQCS3BpaRIJgmozIiocDKQhhBQidLB0aQmHxqQP
-CKdoEBGdooamCgqEIEFwkURFy4goiEIC+xp+ZzhwhpfDBdf/nJvneZ/TMTDS
-e2VPo9F4/O/3v574OLs2sfXgpHp2X0/n4M6zqGOnzjXf//EiuOvqpUcHni6E
-39R5++H40XfB69NnWnZ/LoWP9eHrkysvz8XmVDmqudh3/Fx56sLey/fmnywH
-z7QOrQ7vXwkf68s3F8vFl3vyxs3+Q4vvg4+9ftn7rWU9fKwf3zwsD1/eudG3
-k6fHNoIP/j7ffWR6M3ysH988LA9f3jtz/ddvNX0I/tO92jbQtR3+6Nb2xed3
-PwVvjFzbnXr1Ofy+9vHj3w9/CX4z82tt6cLX8LE8fHn1w+bx5cHy8rHz4Dsv
-/bB5fHmwvHzsf8D3P8Duke8esXvguwd5sLx8rB/fPCwPX17ngZ0XH+vHNw/L
-w5c3V56qDzaHLweWk4/14euTKy/PxeZUOaq52Hf8XHl57+C8d7C+/GoPVO8e
-53eP9ct7B8tT7T3snVd7MO89LA+/2kP8/O5x9e6x86r2AD/vHWxe3ntY3moP
-VnsPm5f3Dq72Ds57B8vDr/ZA9e5xfvdYv7x3sDzV3sPuvdqDee9hefjy5spT
-9cHm8OXAcvKxPnx9cuXludicKkc1F/uOnytP/Qv7wDCz
-      "]]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{0, 0}, {Rational[1, 9], 0}, {
-       Rational[1, 9], Rational[1, 9]}, {0, Rational[1, 9]}, {0, 0}}, {{0, 
-       0}, {0.1111111111111111, 0}, {0.1111111111111111, 
-       0.1111111111111111}, {0, 0.1111111111111111}, {0, 0}}]]}, {
-    PointBox[{0, 0}], InsetBox[
-     StyleBox["1",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], {0, 0}, 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 9], 0}, {Rational[2, 9], 0}, {
-       Rational[2, 9], Rational[1, 9]}, {Rational[1, 9], Rational[1, 9]}, {
-       Rational[1, 9], 0}}, {{0.1111111111111111, 0}, {
-       0.2222222222222222, 0}, {0.2222222222222222, 0.1111111111111111}, {
-       0.1111111111111111, 0.1111111111111111}, {0.1111111111111111, 0}}]]}, {
-    PointBox[NCache[{Rational[14, 81], Rational[8, 81]}, {0.1728395061728395, 
-      0.09876543209876543}]], InsetBox[
-     StyleBox["2",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[14, 81], Rational[8, 81]}, {0.1728395061728395, 
-      0.09876543209876543}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 9], 0}, {Rational[1, 3], 0}, {
-       Rational[1, 3], Rational[1, 9]}, {Rational[2, 9], Rational[1, 9]}, {
-       Rational[2, 9], 0}}, {{0.2222222222222222, 0}, {
-       0.3333333333333333, 0}, {0.3333333333333333, 0.1111111111111111}, {
-       0.2222222222222222, 0.1111111111111111}, {0.2222222222222222, 0}}]]}, {
-    PointBox[NCache[{Rational[25, 81], Rational[4, 81]}, {
-      0.30864197530864196`, 0.04938271604938271}]], InsetBox[
-     StyleBox["3",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[25, 81], Rational[4, 81]}, {0.30864197530864196`, 
-      0.04938271604938271}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 9], Rational[1, 9]}, {
-       Rational[1, 3], Rational[1, 9]}, {Rational[1, 3], Rational[2, 9]}, {
-       Rational[2, 9], Rational[2, 9]}, {Rational[2, 9], Rational[1, 9]}}, {{
-      0.2222222222222222, 0.1111111111111111}, {0.3333333333333333, 
-      0.1111111111111111}, {0.3333333333333333, 0.2222222222222222}, {
-      0.2222222222222222, 0.2222222222222222}, {0.2222222222222222, 
-      0.1111111111111111}}]]}, {
-    PointBox[NCache[{Rational[7, 27], Rational[5, 27]}, {0.25925925925925924`,
-       0.18518518518518517`}]], InsetBox[
-     StyleBox["4",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[7, 27], Rational[5, 27]}, {0.25925925925925924`, 
-      0.18518518518518517`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 9], Rational[1, 9]}, {
-       Rational[2, 9], Rational[1, 9]}, {Rational[2, 9], Rational[2, 9]}, {
-       Rational[1, 9], Rational[2, 9]}, {Rational[1, 9], Rational[1, 9]}}, {{
-      0.1111111111111111, 0.1111111111111111}, {0.2222222222222222, 
-      0.1111111111111111}, {0.2222222222222222, 0.2222222222222222}, {
-      0.1111111111111111, 0.2222222222222222}, {0.1111111111111111, 
-      0.1111111111111111}}]]}, {
-    PointBox[NCache[{Rational[10, 81], Rational[10, 81]}, {
-      0.12345679012345678`, 0.12345679012345678`}]], InsetBox[
-     StyleBox["5",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[10, 81], Rational[10, 81]}, {0.12345679012345678`, 
-      0.12345679012345678`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{0, Rational[1, 9]}, {Rational[1, 9], Rational[1, 9]}, {
-       Rational[1, 9], Rational[2, 9]}, {0, Rational[2, 9]}, {
-       0, Rational[1, 9]}}, {{0, 0.1111111111111111}, {0.1111111111111111, 
-       0.1111111111111111}, {0.1111111111111111, 0.2222222222222222}, {
-       0, 0.2222222222222222}, {0, 0.1111111111111111}}]]}, {
-    PointBox[NCache[{Rational[8, 81], Rational[14, 81]}, {0.09876543209876543,
-       0.1728395061728395}]], InsetBox[
-     StyleBox["6",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[8, 81], Rational[14, 81]}, {0.09876543209876543, 
-      0.1728395061728395}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{0, Rational[2, 9]}, {Rational[1, 9], Rational[2, 9]}, {
-       Rational[1, 9], Rational[1, 3]}, {0, Rational[1, 3]}, {
-       0, Rational[2, 9]}}, {{0, 0.2222222222222222}, {0.1111111111111111, 
-       0.2222222222222222}, {0.1111111111111111, 0.3333333333333333}, {
-       0, 0.3333333333333333}, {0, 0.2222222222222222}}]]}, {
-    PointBox[NCache[{Rational[4, 81], Rational[25, 81]}, {0.04938271604938271,
-       0.30864197530864196`}]], InsetBox[
-     StyleBox["7",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[4, 81], Rational[25, 81]}, {0.04938271604938271, 
-      0.30864197530864196`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 9], Rational[2, 9]}, {
-       Rational[2, 9], Rational[2, 9]}, {Rational[2, 9], Rational[1, 3]}, {
-       Rational[1, 9], Rational[1, 3]}, {Rational[1, 9], Rational[2, 9]}}, {{
-      0.1111111111111111, 0.2222222222222222}, {0.2222222222222222, 
-      0.2222222222222222}, {0.2222222222222222, 0.3333333333333333}, {
-      0.1111111111111111, 0.3333333333333333}, {0.1111111111111111, 
-      0.2222222222222222}}]]}, {
-    PointBox[NCache[{Rational[5, 27], Rational[7, 27]}, {0.18518518518518517`,
-       0.25925925925925924`}]], InsetBox[
-     StyleBox["8",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[5, 27], Rational[7, 27]}, {0.18518518518518517`, 
-      0.25925925925925924`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 9], Rational[2, 9]}, {
-       Rational[1, 3], Rational[2, 9]}, {Rational[1, 3], Rational[1, 3]}, {
-       Rational[2, 9], Rational[1, 3]}, {Rational[2, 9], Rational[2, 9]}}, {{
-      0.2222222222222222, 0.2222222222222222}, {0.3333333333333333, 
-      0.2222222222222222}, {0.3333333333333333, 0.3333333333333333}, {
-      0.2222222222222222, 0.3333333333333333}, {0.2222222222222222, 
-      0.2222222222222222}}]]}, {
-    PointBox[NCache[{Rational[20, 81], Rational[20, 81]}, {
-      0.24691358024691357`, 0.24691358024691357`}]], InsetBox[
-     StyleBox["9",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[20, 81], Rational[20, 81]}, {0.24691358024691357`, 
-      0.24691358024691357`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 3], Rational[2, 9]}, {
-       Rational[4, 9], Rational[2, 9]}, {Rational[4, 9], Rational[1, 3]}, {
-       Rational[1, 3], Rational[1, 3]}, {Rational[1, 3], Rational[2, 9]}}, {{
-      0.3333333333333333, 0.2222222222222222}, {0.4444444444444444, 
-      0.2222222222222222}, {0.4444444444444444, 0.3333333333333333}, {
-      0.3333333333333333, 0.3333333333333333}, {0.3333333333333333, 
-      0.2222222222222222}}]]}, {
-    PointBox[NCache[{Rational[34, 81], Rational[22, 81]}, {
-      0.41975308641975306`, 0.2716049382716049}]], InsetBox[
-     StyleBox["10",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[34, 81], Rational[22, 81]}, {0.41975308641975306`, 
-      0.2716049382716049}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 3], Rational[1, 9]}, {
-       Rational[4, 9], Rational[1, 9]}, {Rational[4, 9], Rational[2, 9]}, {
-       Rational[1, 3], Rational[2, 9]}, {Rational[1, 3], Rational[1, 9]}}, {{
-      0.3333333333333333, 0.1111111111111111}, {0.4444444444444444, 
-      0.1111111111111111}, {0.4444444444444444, 0.2222222222222222}, {
-      0.3333333333333333, 0.2222222222222222}, {0.3333333333333333, 
-      0.1111111111111111}}]]}, {
-    PointBox[NCache[{Rational[29, 81], Rational[11, 81]}, {
-      0.35802469135802467`, 0.13580246913580246`}]], InsetBox[
-     StyleBox["11",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[29, 81], Rational[11, 81]}, {0.35802469135802467`, 
-      0.13580246913580246`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 3], 0}, {Rational[4, 9], 0}, {
-       Rational[4, 9], Rational[1, 9]}, {Rational[1, 3], Rational[1, 9]}, {
-       Rational[1, 3], 0}}, {{0.3333333333333333, 0}, {
-       0.4444444444444444, 0}, {0.4444444444444444, 0.1111111111111111}, {
-       0.3333333333333333, 0.1111111111111111}, {0.3333333333333333, 0}}]]}, {
-    PointBox[NCache[{Rational[10, 27], Rational[2, 27]}, {
-      0.37037037037037035`, 0.07407407407407407}]], InsetBox[
-     StyleBox["12",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[10, 27], Rational[2, 27]}, {0.37037037037037035`, 
-      0.07407407407407407}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[4, 9], 0}, {Rational[5, 9], 0}, {
-       Rational[5, 9], Rational[1, 9]}, {Rational[4, 9], Rational[1, 9]}, {
-       Rational[4, 9], 0}}, {{0.4444444444444444, 0}, {
-       0.5555555555555556, 0}, {0.5555555555555556, 0.1111111111111111}, {
-       0.4444444444444444, 0.1111111111111111}, {0.4444444444444444, 0}}]]}, {
-    PointBox[NCache[{Rational[44, 81], Rational[5, 81]}, {0.5432098765432098, 
-      0.06172839506172839}]], InsetBox[
-     StyleBox["13",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[44, 81], Rational[5, 81]}, {0.5432098765432098, 
-      0.06172839506172839}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[4, 9], Rational[1, 9]}, {
-       Rational[5, 9], Rational[1, 9]}, {Rational[5, 9], Rational[2, 9]}, {
-       Rational[4, 9], Rational[2, 9]}, {Rational[4, 9], Rational[1, 9]}}, {{
-      0.4444444444444444, 0.1111111111111111}, {0.5555555555555556, 
-      0.1111111111111111}, {0.5555555555555556, 0.2222222222222222}, {
-      0.4444444444444444, 0.2222222222222222}, {0.4444444444444444, 
-      0.1111111111111111}}]]}, {
-    PointBox[NCache[{Rational[40, 81], Rational[16, 81]}, {
-      0.49382716049382713`, 0.19753086419753085`}]], InsetBox[
-     StyleBox["14",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[40, 81], Rational[16, 81]}, {0.49382716049382713`, 
-      0.19753086419753085`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[4, 9], Rational[2, 9]}, {
-       Rational[5, 9], Rational[2, 9]}, {Rational[5, 9], Rational[1, 3]}, {
-       Rational[4, 9], Rational[1, 3]}, {Rational[4, 9], Rational[2, 9]}}, {{
-      0.4444444444444444, 0.2222222222222222}, {0.5555555555555556, 
-      0.2222222222222222}, {0.5555555555555556, 0.3333333333333333}, {
-      0.4444444444444444, 0.3333333333333333}, {0.4444444444444444, 
-      0.2222222222222222}}]]}, {
-    PointBox[NCache[{Rational[4, 9], Rational[2, 9]}, {0.4444444444444444, 
-      0.2222222222222222}]], InsetBox[
-     StyleBox["15",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[4, 9], Rational[2, 9]}, {0.4444444444444444, 
-      0.2222222222222222}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[5, 9], Rational[2, 9]}, {
-       Rational[2, 3], Rational[2, 9]}, {Rational[2, 3], Rational[1, 3]}, {
-       Rational[5, 9], Rational[1, 3]}, {Rational[5, 9], Rational[2, 9]}}, {{
-      0.5555555555555556, 0.2222222222222222}, {0.6666666666666666, 
-      0.2222222222222222}, {0.6666666666666666, 0.3333333333333333}, {
-      0.5555555555555556, 0.3333333333333333}, {0.5555555555555556, 
-      0.2222222222222222}}]]}, {
-    PointBox[NCache[{Rational[50, 81], Rational[26, 81]}, {0.6172839506172839,
-       0.32098765432098764`}]], InsetBox[
-     StyleBox["16",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[50, 81], Rational[26, 81]}, {0.6172839506172839, 
-      0.32098765432098764`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[5, 9], Rational[1, 9]}, {
-       Rational[2, 3], Rational[1, 9]}, {Rational[2, 3], Rational[2, 9]}, {
-       Rational[5, 9], Rational[2, 9]}, {Rational[5, 9], Rational[1, 9]}}, {{
-      0.5555555555555556, 0.1111111111111111}, {0.6666666666666666, 
-      0.1111111111111111}, {0.6666666666666666, 0.2222222222222222}, {
-      0.5555555555555556, 0.2222222222222222}, {0.5555555555555556, 
-      0.1111111111111111}}]]}, {
-    PointBox[NCache[{Rational[17, 27], Rational[4, 27]}, {0.6296296296296297, 
-      0.14814814814814814`}]], InsetBox[
-     StyleBox["17",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[17, 27], Rational[4, 27]}, {0.6296296296296297, 
-      0.14814814814814814`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[5, 9], 0}, {Rational[2, 3], 0}, {
-       Rational[2, 3], Rational[1, 9]}, {Rational[5, 9], Rational[1, 9]}, {
-       Rational[5, 9], 0}}, {{0.5555555555555556, 0}, {
-       0.6666666666666666, 0}, {0.6666666666666666, 0.1111111111111111}, {
-       0.5555555555555556, 0.1111111111111111}, {0.5555555555555556, 0}}]]}, {
-    PointBox[NCache[{Rational[46, 81], Rational[1, 81]}, {0.5679012345679012, 
-      0.012345679012345678`}]], InsetBox[
-     StyleBox["18",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[46, 81], Rational[1, 81]}, {0.5679012345679012, 
-      0.012345679012345678`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 3], 0}, {Rational[7, 9], 0}, {
-       Rational[7, 9], Rational[1, 9]}, {Rational[2, 3], Rational[1, 9]}, {
-       Rational[2, 3], 0}}, {{0.6666666666666666, 0}, {
-       0.7777777777777778, 0}, {0.7777777777777778, 0.1111111111111111}, {
-       0.6666666666666666, 0.1111111111111111}, {0.6666666666666666, 0}}]]}, {
-    PointBox[NCache[{Rational[20, 27], Rational[1, 27]}, {0.7407407407407407, 
-      0.037037037037037035`}]], InsetBox[
-     StyleBox["19",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[20, 27], Rational[1, 27]}, {0.7407407407407407, 
-      0.037037037037037035`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[7, 9], 0}, {Rational[8, 9], 0}, {
-       Rational[8, 9], Rational[1, 9]}, {Rational[7, 9], Rational[1, 9]}, {
-       Rational[7, 9], 0}}, {{0.7777777777777778, 0}, {
-       0.8888888888888888, 0}, {0.8888888888888888, 0.1111111111111111}, {
-       0.7777777777777778, 0.1111111111111111}, {0.7777777777777778, 0}}]]}, {
-    PointBox[NCache[{Rational[65, 81], Rational[2, 81]}, {0.8024691358024691, 
-      0.024691358024691357`}]], InsetBox[
-     StyleBox["20",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[65, 81], Rational[2, 81]}, {0.8024691358024691, 
-      0.024691358024691357`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[8, 9], 0}, {1, 0}, {1, Rational[1, 9]}, {
-       Rational[8, 9], Rational[1, 9]}, {Rational[8, 9], 0}}, {{
-       0.8888888888888888, 0}, {1, 0}, {1, 0.1111111111111111}, {
-       0.8888888888888888, 0.1111111111111111}, {0.8888888888888888, 0}}]]}, {
-    PointBox[NCache[{Rational[76, 81], Rational[7, 81]}, {0.9382716049382716, 
-      0.08641975308641975}]], InsetBox[
-     StyleBox["21",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[76, 81], Rational[7, 81]}, {0.9382716049382716, 
-      0.08641975308641975}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[8, 9], Rational[1, 9]}, {1, Rational[1, 9]}, {
-       1, Rational[2, 9]}, {Rational[8, 9], Rational[2, 9]}, {
-       Rational[8, 9], Rational[1, 9]}}, {{0.8888888888888888, 
-       0.1111111111111111}, {1, 0.1111111111111111}, {
-       1, 0.2222222222222222}, {0.8888888888888888, 0.2222222222222222}, {
-       0.8888888888888888, 0.1111111111111111}}]]}, {
-    PointBox[NCache[{Rational[8, 9], Rational[1, 9]}, {0.8888888888888888, 
-      0.1111111111111111}]], InsetBox[
-     StyleBox["22",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[8, 9], Rational[1, 9]}, {0.8888888888888888, 
-      0.1111111111111111}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[7, 9], Rational[1, 9]}, {
-       Rational[8, 9], Rational[1, 9]}, {Rational[8, 9], Rational[2, 9]}, {
-       Rational[7, 9], Rational[2, 9]}, {Rational[7, 9], Rational[1, 9]}}, {{
-      0.7777777777777778, 0.1111111111111111}, {0.8888888888888888, 
-      0.1111111111111111}, {0.8888888888888888, 0.2222222222222222}, {
-      0.7777777777777778, 0.2222222222222222}, {0.7777777777777778, 
-      0.1111111111111111}}]]}, {
-    PointBox[NCache[{Rational[70, 81], Rational[13, 81]}, {0.8641975308641975,
-       0.16049382716049382`}]], InsetBox[
-     StyleBox["23",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[70, 81], Rational[13, 81]}, {0.8641975308641975, 
-      0.16049382716049382`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 3], Rational[1, 9]}, {
-       Rational[7, 9], Rational[1, 9]}, {Rational[7, 9], Rational[2, 9]}, {
-       Rational[2, 3], Rational[2, 9]}, {Rational[2, 3], Rational[1, 9]}}, {{
-      0.6666666666666666, 0.1111111111111111}, {0.7777777777777778, 
-      0.1111111111111111}, {0.7777777777777778, 0.2222222222222222}, {
-      0.6666666666666666, 0.2222222222222222}, {0.6666666666666666, 
-      0.1111111111111111}}]]}, {
-    PointBox[NCache[{Rational[59, 81], Rational[17, 81]}, {0.7283950617283951,
-       0.20987654320987653`}]], InsetBox[
-     StyleBox["24",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[59, 81], Rational[17, 81]}, {0.7283950617283951, 
-      0.20987654320987653`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 3], Rational[2, 9]}, {
-       Rational[7, 9], Rational[2, 9]}, {Rational[7, 9], Rational[1, 3]}, {
-       Rational[2, 3], Rational[1, 3]}, {Rational[2, 3], Rational[2, 9]}}, {{
-      0.6666666666666666, 0.2222222222222222}, {0.7777777777777778, 
-      0.2222222222222222}, {0.7777777777777778, 0.3333333333333333}, {
-      0.6666666666666666, 0.3333333333333333}, {0.6666666666666666, 
-      0.2222222222222222}}]]}, {
-    PointBox[NCache[{Rational[55, 81], Rational[19, 81]}, {0.6790123456790124,
-       0.2345679012345679}]], InsetBox[
-     StyleBox["25",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[55, 81], Rational[19, 81]}, {0.6790123456790124, 
-      0.2345679012345679}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[7, 9], Rational[2, 9]}, {
-       Rational[8, 9], Rational[2, 9]}, {Rational[8, 9], Rational[1, 3]}, {
-       Rational[7, 9], Rational[1, 3]}, {Rational[7, 9], Rational[2, 9]}}, {{
-      0.7777777777777778, 0.2222222222222222}, {0.8888888888888888, 
-      0.2222222222222222}, {0.8888888888888888, 0.3333333333333333}, {
-      0.7777777777777778, 0.3333333333333333}, {0.7777777777777778, 
-      0.2222222222222222}}]]}, {
-    PointBox[NCache[{Rational[22, 27], Rational[8, 27]}, {0.8148148148148148, 
-      0.2962962962962963}]], InsetBox[
-     StyleBox["26",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[22, 27], Rational[8, 27]}, {0.8148148148148148, 
-      0.2962962962962963}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[8, 9], Rational[2, 9]}, {1, Rational[2, 9]}, {
-       1, Rational[1, 3]}, {Rational[8, 9], Rational[1, 3]}, {
-       Rational[8, 9], Rational[2, 9]}}, {{0.8888888888888888, 
-       0.2222222222222222}, {1, 0.2222222222222222}, {
-       1, 0.3333333333333333}, {0.8888888888888888, 0.3333333333333333}, {
-       0.8888888888888888, 0.2222222222222222}}]]}, {
-    PointBox[NCache[{Rational[80, 81], Rational[23, 81]}, {0.9876543209876543,
-       0.2839506172839506}]], InsetBox[
-     StyleBox["27",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[80, 81], Rational[23, 81]}, {0.9876543209876543, 
-      0.2839506172839506}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[8, 9], Rational[1, 3]}, {1, Rational[1, 3]}, {
-       1, Rational[4, 9]}, {Rational[8, 9], Rational[4, 9]}, {
-       Rational[8, 9], Rational[1, 3]}}, {{0.8888888888888888, 
-       0.3333333333333333}, {1, 0.3333333333333333}, {
-       1, 0.4444444444444444}, {0.8888888888888888, 0.4444444444444444}, {
-       0.8888888888888888, 0.3333333333333333}}]]}, {
-    PointBox[NCache[{Rational[73, 81], Rational[28, 81]}, {0.9012345679012346,
-       0.345679012345679}]], InsetBox[
-     StyleBox["28",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[73, 81], Rational[28, 81]}, {0.9012345679012346, 
-      0.345679012345679}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[8, 9], Rational[4, 9]}, {1, Rational[4, 9]}, {
-       1, Rational[5, 9]}, {Rational[8, 9], Rational[5, 9]}, {
-       Rational[8, 9], Rational[4, 9]}}, {{0.8888888888888888, 
-       0.4444444444444444}, {1, 0.4444444444444444}, {
-       1, 0.5555555555555556}, {0.8888888888888888, 0.5555555555555556}, {
-       0.8888888888888888, 0.4444444444444444}}]]}, {
-    PointBox[NCache[{Rational[26, 27], Rational[13, 27]}, {0.9629629629629629,
-       0.48148148148148145`}]], InsetBox[
-     StyleBox["29",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[26, 27], Rational[13, 27]}, {0.9629629629629629, 
-      0.48148148148148145`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[8, 9], Rational[5, 9]}, {1, Rational[5, 9]}, {
-       1, Rational[2, 3]}, {Rational[8, 9], Rational[2, 3]}, {
-       Rational[8, 9], Rational[5, 9]}}, {{0.8888888888888888, 
-       0.5555555555555556}, {1, 0.5555555555555556}, {
-       1, 0.6666666666666666}, {0.8888888888888888, 0.6666666666666666}, {
-       0.8888888888888888, 0.5555555555555556}}]]}, {
-    PointBox[NCache[{Rational[77, 81], Rational[53, 81]}, {0.9506172839506173,
-       0.654320987654321}]], InsetBox[
-     StyleBox["30",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[77, 81], Rational[53, 81]}, {0.9506172839506173, 
-      0.654320987654321}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[7, 9], Rational[5, 9]}, {
-       Rational[8, 9], Rational[5, 9]}, {Rational[8, 9], Rational[2, 3]}, {
-       Rational[7, 9], Rational[2, 3]}, {Rational[7, 9], Rational[5, 9]}}, {{
-      0.7777777777777778, 0.5555555555555556}, {0.8888888888888888, 
-      0.5555555555555556}, {0.8888888888888888, 0.6666666666666666}, {
-      0.7777777777777778, 0.6666666666666666}, {0.7777777777777778, 
-      0.5555555555555556}}]]}, {
-    PointBox[NCache[{Rational[7, 9], Rational[5, 9]}, {0.7777777777777778, 
-      0.5555555555555556}]], InsetBox[
-     StyleBox["31",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[7, 9], Rational[5, 9]}, {0.7777777777777778, 
-      0.5555555555555556}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[7, 9], Rational[4, 9]}, {
-       Rational[8, 9], Rational[4, 9]}, {Rational[8, 9], Rational[5, 9]}, {
-       Rational[7, 9], Rational[5, 9]}, {Rational[7, 9], Rational[4, 9]}}, {{
-      0.7777777777777778, 0.4444444444444444}, {0.8888888888888888, 
-      0.4444444444444444}, {0.8888888888888888, 0.5555555555555556}, {
-      0.7777777777777778, 0.5555555555555556}, {0.7777777777777778, 
-      0.4444444444444444}}]]}, {
-    PointBox[NCache[{Rational[67, 81], Rational[43, 81]}, {0.8271604938271605,
-       0.5308641975308642}]], InsetBox[
-     StyleBox["32",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[67, 81], Rational[43, 81]}, {0.8271604938271605, 
-      0.5308641975308642}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[7, 9], Rational[1, 3]}, {
-       Rational[8, 9], Rational[1, 3]}, {Rational[8, 9], Rational[4, 9]}, {
-       Rational[7, 9], Rational[4, 9]}, {Rational[7, 9], Rational[1, 3]}}, {{
-      0.7777777777777778, 0.3333333333333333}, {0.8888888888888888, 
-      0.3333333333333333}, {0.8888888888888888, 0.4444444444444444}, {
-      0.7777777777777778, 0.4444444444444444}, {0.7777777777777778, 
-      0.3333333333333333}}]]}, {
-    PointBox[NCache[{Rational[71, 81], Rational[32, 81]}, {0.8765432098765432,
-       0.3950617283950617}]], InsetBox[
-     StyleBox["33",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[71, 81], Rational[32, 81]}, {0.8765432098765432, 
-      0.3950617283950617}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 3], Rational[1, 3]}, {
-       Rational[7, 9], Rational[1, 3]}, {Rational[7, 9], Rational[4, 9]}, {
-       Rational[2, 3], Rational[4, 9]}, {Rational[2, 3], Rational[1, 3]}}, {{
-      0.6666666666666666, 0.3333333333333333}, {0.7777777777777778, 
-      0.3333333333333333}, {0.7777777777777778, 0.4444444444444444}, {
-      0.6666666666666666, 0.4444444444444444}, {0.6666666666666666, 
-      0.3333333333333333}}]]}, {
-    PointBox[NCache[{Rational[19, 27], Rational[11, 27]}, {0.7037037037037037,
-       0.4074074074074074}]], InsetBox[
-     StyleBox["34",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[19, 27], Rational[11, 27]}, {0.7037037037037037, 
-      0.4074074074074074}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 3], Rational[4, 9]}, {
-       Rational[7, 9], Rational[4, 9]}, {Rational[7, 9], Rational[5, 9]}, {
-       Rational[2, 3], Rational[5, 9]}, {Rational[2, 3], Rational[4, 9]}}, {{
-      0.6666666666666666, 0.4444444444444444}, {0.7777777777777778, 
-      0.4444444444444444}, {0.7777777777777778, 0.5555555555555556}, {
-      0.6666666666666666, 0.5555555555555556}, {0.6666666666666666, 
-      0.4444444444444444}}]]}, {
-    PointBox[NCache[{Rational[56, 81], Rational[38, 81]}, {0.691358024691358, 
-      0.4691358024691358}]], InsetBox[
-     StyleBox["35",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[56, 81], Rational[38, 81]}, {0.691358024691358, 
-      0.4691358024691358}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 3], Rational[5, 9]}, {
-       Rational[7, 9], Rational[5, 9]}, {Rational[7, 9], Rational[2, 3]}, {
-       Rational[2, 3], Rational[2, 3]}, {Rational[2, 3], Rational[5, 9]}}, {{
-      0.6666666666666666, 0.5555555555555556}, {0.7777777777777778, 
-      0.5555555555555556}, {0.7777777777777778, 0.6666666666666666}, {
-      0.6666666666666666, 0.6666666666666666}, {0.6666666666666666, 
-      0.5555555555555556}}]]}, {
-    PointBox[NCache[{Rational[61, 81], Rational[49, 81]}, {0.7530864197530864,
-       0.6049382716049383}]], InsetBox[
-     StyleBox["36",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[61, 81], Rational[49, 81]}, {0.7530864197530864, 
-      0.6049382716049383}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[5, 9], Rational[5, 9]}, {
-       Rational[2, 3], Rational[5, 9]}, {Rational[2, 3], Rational[2, 3]}, {
-       Rational[5, 9], Rational[2, 3]}, {Rational[5, 9], Rational[5, 9]}}, {{
-      0.5555555555555556, 0.5555555555555556}, {0.6666666666666666, 
-      0.5555555555555556}, {0.6666666666666666, 0.6666666666666666}, {
-      0.5555555555555556, 0.6666666666666666}, {0.5555555555555556, 
-      0.5555555555555556}}]]}, {
-    PointBox[NCache[{Rational[47, 81], Rational[47, 81]}, {0.5802469135802469,
-       0.5802469135802469}]], InsetBox[
-     StyleBox["37",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[47, 81], Rational[47, 81]}, {0.5802469135802469, 
-      0.5802469135802469}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[4, 9], Rational[5, 9]}, {
-       Rational[5, 9], Rational[5, 9]}, {Rational[5, 9], Rational[2, 3]}, {
-       Rational[4, 9], Rational[2, 3]}, {Rational[4, 9], Rational[5, 9]}}, {{
-      0.4444444444444444, 0.5555555555555556}, {0.5555555555555556, 
-      0.5555555555555556}, {0.5555555555555556, 0.6666666666666666}, {
-      0.4444444444444444, 0.6666666666666666}, {0.4444444444444444, 
-      0.5555555555555556}}]]}, {
-    PointBox[NCache[{Rational[14, 27], Rational[16, 27]}, {0.5185185185185185,
-       0.5925925925925926}]], InsetBox[
-     StyleBox["38",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[14, 27], Rational[16, 27]}, {0.5185185185185185, 
-      0.5925925925925926}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 3], Rational[5, 9]}, {
-       Rational[4, 9], Rational[5, 9]}, {Rational[4, 9], Rational[2, 3]}, {
-       Rational[1, 3], Rational[2, 3]}, {Rational[1, 3], Rational[5, 9]}}, {{
-      0.3333333333333333, 0.5555555555555556}, {0.4444444444444444, 
-      0.5555555555555556}, {0.4444444444444444, 0.6666666666666666}, {
-      0.3333333333333333, 0.6666666666666666}, {0.3333333333333333, 
-      0.5555555555555556}}]]}, {
-    PointBox[NCache[{Rational[31, 81], Rational[52, 81]}, {
-      0.38271604938271603`, 0.6419753086419753}]], InsetBox[
-     StyleBox["39",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[31, 81], Rational[52, 81]}, {0.38271604938271603`, 
-      0.6419753086419753}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 3], Rational[4, 9]}, {
-       Rational[4, 9], Rational[4, 9]}, {Rational[4, 9], Rational[5, 9]}, {
-       Rational[1, 3], Rational[5, 9]}, {Rational[1, 3], Rational[4, 9]}}, {{
-      0.3333333333333333, 0.4444444444444444}, {0.4444444444444444, 
-      0.4444444444444444}, {0.4444444444444444, 0.5555555555555556}, {
-      0.3333333333333333, 0.5555555555555556}, {0.3333333333333333, 
-      0.4444444444444444}}]]}, {
-    PointBox[NCache[{Rational[35, 81], Rational[41, 81]}, {
-      0.43209876543209874`, 0.5061728395061729}]], InsetBox[
-     StyleBox["40",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[35, 81], Rational[41, 81]}, {0.43209876543209874`, 
-      0.5061728395061729}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[4, 9], Rational[4, 9]}, {
-       Rational[5, 9], Rational[4, 9]}, {Rational[5, 9], Rational[5, 9]}, {
-       Rational[4, 9], Rational[5, 9]}, {Rational[4, 9], Rational[4, 9]}}, {{
-      0.4444444444444444, 0.4444444444444444}, {0.5555555555555556, 
-      0.4444444444444444}, {0.5555555555555556, 0.5555555555555556}, {
-      0.4444444444444444, 0.5555555555555556}, {0.4444444444444444, 
-      0.4444444444444444}}]]}, {
-    PointBox[NCache[{Rational[37, 81], Rational[37, 81]}, {0.4567901234567901,
-       0.4567901234567901}]], InsetBox[
-     StyleBox["41",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[37, 81], Rational[37, 81]}, {0.4567901234567901, 
-      0.4567901234567901}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[5, 9], Rational[4, 9]}, {
-       Rational[2, 3], Rational[4, 9]}, {Rational[2, 3], Rational[5, 9]}, {
-       Rational[5, 9], Rational[5, 9]}, {Rational[5, 9], Rational[4, 9]}}, {{
-      0.5555555555555556, 0.4444444444444444}, {0.6666666666666666, 
-      0.4444444444444444}, {0.6666666666666666, 0.5555555555555556}, {
-      0.5555555555555556, 0.5555555555555556}, {0.5555555555555556, 
-      0.4444444444444444}}]]}, {
-    PointBox[NCache[{Rational[16, 27], Rational[14, 27]}, {0.5925925925925926,
-       0.5185185185185185}]], InsetBox[
-     StyleBox["42",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[16, 27], Rational[14, 27]}, {0.5925925925925926, 
-      0.5185185185185185}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[5, 9], Rational[1, 3]}, {
-       Rational[2, 3], Rational[1, 3]}, {Rational[2, 3], Rational[4, 9]}, {
-       Rational[5, 9], Rational[4, 9]}, {Rational[5, 9], Rational[1, 3]}}, {{
-      0.5555555555555556, 0.3333333333333333}, {0.6666666666666666, 
-      0.3333333333333333}, {0.6666666666666666, 0.4444444444444444}, {
-      0.5555555555555556, 0.4444444444444444}, {0.5555555555555556, 
-      0.3333333333333333}}]]}, {
-    PointBox[
-     NCache[{Rational[52, 81], Rational[31, 81]}, {0.6419753086419753, 
-      0.38271604938271603`}]], InsetBox[
-     StyleBox["43",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[52, 81], Rational[31, 81]}, {0.6419753086419753, 
-      0.38271604938271603`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[4, 9], Rational[1, 3]}, {
-       Rational[5, 9], Rational[1, 3]}, {Rational[5, 9], Rational[4, 9]}, {
-       Rational[4, 9], Rational[4, 9]}, {Rational[4, 9], Rational[1, 3]}}, {{
-      0.4444444444444444, 0.3333333333333333}, {0.5555555555555556, 
-      0.3333333333333333}, {0.5555555555555556, 0.4444444444444444}, {
-      0.4444444444444444, 0.4444444444444444}, {0.4444444444444444, 
-      0.3333333333333333}}]]}, {
-    PointBox[NCache[{Rational[41, 81], Rational[35, 81]}, {0.5061728395061729,
-       0.43209876543209874`}]], InsetBox[
-     StyleBox["44",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[41, 81], Rational[35, 81]}, {0.5061728395061729, 
-      0.43209876543209874`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 3], Rational[1, 3]}, {
-       Rational[4, 9], Rational[1, 3]}, {Rational[4, 9], Rational[4, 9]}, {
-       Rational[1, 3], Rational[4, 9]}, {Rational[1, 3], Rational[1, 3]}}, {{
-      0.3333333333333333, 0.3333333333333333}, {0.4444444444444444, 
-      0.3333333333333333}, {0.4444444444444444, 0.4444444444444444}, {
-      0.3333333333333333, 0.4444444444444444}, {0.3333333333333333, 
-      0.3333333333333333}}]]}, {
-    PointBox[NCache[{Rational[1, 3], Rational[1, 3]}, {0.3333333333333333, 
-      0.3333333333333333}]], InsetBox[
-     StyleBox["45",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[1, 3], Rational[1, 3]}, {0.3333333333333333, 
-      0.3333333333333333}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 9], Rational[1, 3]}, {
-       Rational[1, 3], Rational[1, 3]}, {Rational[1, 3], Rational[4, 9]}, {
-       Rational[2, 9], Rational[4, 9]}, {Rational[2, 9], Rational[1, 3]}}, {{
-      0.2222222222222222, 0.3333333333333333}, {0.3333333333333333, 
-      0.3333333333333333}, {0.3333333333333333, 0.4444444444444444}, {
-      0.2222222222222222, 0.4444444444444444}, {0.2222222222222222, 
-      0.3333333333333333}}]]}, {
-    PointBox[NCache[{Rational[22, 81], Rational[34, 81]}, {0.2716049382716049,
-       0.41975308641975306`}]], InsetBox[
-     StyleBox["46",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[22, 81], Rational[34, 81]}, {0.2716049382716049, 
-      0.41975308641975306`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 9], Rational[4, 9]}, {
-       Rational[1, 3], Rational[4, 9]}, {Rational[1, 3], Rational[5, 9]}, {
-       Rational[2, 9], Rational[5, 9]}, {Rational[2, 9], Rational[4, 9]}}, {{
-      0.2222222222222222, 0.4444444444444444}, {0.3333333333333333, 
-      0.4444444444444444}, {0.3333333333333333, 0.5555555555555556}, {
-      0.2222222222222222, 0.5555555555555556}, {0.2222222222222222, 
-      0.4444444444444444}}]]}, {
-    PointBox[NCache[{Rational[2, 9], Rational[4, 9]}, {0.2222222222222222, 
-      0.4444444444444444}]], InsetBox[
-     StyleBox["47",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[2, 9], Rational[4, 9]}, {0.2222222222222222, 
-      0.4444444444444444}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 9], Rational[5, 9]}, {
-       Rational[1, 3], Rational[5, 9]}, {Rational[1, 3], Rational[2, 3]}, {
-       Rational[2, 9], Rational[2, 3]}, {Rational[2, 9], Rational[5, 9]}}, {{
-      0.2222222222222222, 0.5555555555555556}, {0.3333333333333333, 
-      0.5555555555555556}, {0.3333333333333333, 0.6666666666666666}, {
-      0.2222222222222222, 0.6666666666666666}, {0.2222222222222222, 
-      0.5555555555555556}}]]}, {
-    PointBox[NCache[{Rational[26, 81], Rational[50, 81]}, {
-      0.32098765432098764`, 0.6172839506172839}]], InsetBox[
-     StyleBox["48",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[26, 81], Rational[50, 81]}, {0.32098765432098764`, 
-      0.6172839506172839}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 9], Rational[5, 9]}, {
-       Rational[2, 9], Rational[5, 9]}, {Rational[2, 9], Rational[2, 3]}, {
-       Rational[1, 9], Rational[2, 3]}, {Rational[1, 9], Rational[5, 9]}}, {{
-      0.1111111111111111, 0.5555555555555556}, {0.2222222222222222, 
-      0.5555555555555556}, {0.2222222222222222, 0.6666666666666666}, {
-      0.1111111111111111, 0.6666666666666666}, {0.1111111111111111, 
-      0.5555555555555556}}]]}, {
-    PointBox[NCache[{Rational[4, 27], Rational[17, 27]}, {
-      0.14814814814814814`, 0.6296296296296297}]], InsetBox[
-     StyleBox["49",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[4, 27], Rational[17, 27]}, {0.14814814814814814`, 
-      0.6296296296296297}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 9], Rational[4, 9]}, {
-       Rational[2, 9], Rational[4, 9]}, {Rational[2, 9], Rational[5, 9]}, {
-       Rational[1, 9], Rational[5, 9]}, {Rational[1, 9], Rational[4, 9]}}, {{
-      0.1111111111111111, 0.4444444444444444}, {0.2222222222222222, 
-      0.4444444444444444}, {0.2222222222222222, 0.5555555555555556}, {
-      0.1111111111111111, 0.5555555555555556}, {0.1111111111111111, 
-      0.4444444444444444}}]]}, {
-    PointBox[NCache[{Rational[16, 81], Rational[40, 81]}, {
-      0.19753086419753085`, 0.49382716049382713`}]], InsetBox[
-     StyleBox["50",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[16, 81], Rational[40, 81]}, {0.19753086419753085`, 
-      0.49382716049382713`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[
-     NCache[{{Rational[1, 9], Rational[1, 3]}, {
-       Rational[2, 9], Rational[1, 3]}, {Rational[2, 9], Rational[4, 9]}, {
-       Rational[1, 9], Rational[4, 9]}, {Rational[1, 9], Rational[1, 3]}}, {{
-      0.1111111111111111, 0.3333333333333333}, {0.2222222222222222, 
-      0.3333333333333333}, {0.2222222222222222, 0.4444444444444444}, {
-      0.1111111111111111, 0.4444444444444444}, {0.1111111111111111, 
-      0.3333333333333333}}]]}, {
-    PointBox[NCache[{Rational[11, 81], Rational[29, 81]}, {
-      0.13580246913580246`, 0.35802469135802467`}]], InsetBox[
-     StyleBox["51",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[11, 81], Rational[29, 81]}, {0.13580246913580246`, 
-      0.35802469135802467`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{0, Rational[1, 3]}, {Rational[1, 9], Rational[1, 3]}, {
-       Rational[1, 9], Rational[4, 9]}, {0, Rational[4, 9]}, {
-       0, Rational[1, 3]}}, {{0, 0.3333333333333333}, {0.1111111111111111, 
-       0.3333333333333333}, {0.1111111111111111, 0.4444444444444444}, {
-       0, 0.4444444444444444}, {0, 0.3333333333333333}}]]}, {
-    PointBox[NCache[{Rational[2, 27], Rational[10, 27]}, {0.07407407407407407,
-       0.37037037037037035`}]], InsetBox[
-     StyleBox["52",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[2, 27], Rational[10, 27]}, {0.07407407407407407, 
-      0.37037037037037035`}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{0, Rational[4, 9]}, {Rational[1, 9], Rational[4, 9]}, {
-       Rational[1, 9], Rational[5, 9]}, {0, Rational[5, 9]}, {
-       0, Rational[4, 9]}}, {{0, 0.4444444444444444}, {0.1111111111111111, 
-       0.4444444444444444}, {0.1111111111111111, 0.5555555555555556}, {
-       0, 0.5555555555555556}, {0, 0.4444444444444444}}]]}, {
-    PointBox[NCache[{Rational[5, 81], Rational[44, 81]}, {0.06172839506172839,
-       0.5432098765432098}]], InsetBox[
-     StyleBox["53",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[5, 81], Rational[44, 81]}, {0.06172839506172839, 
-      0.5432098765432098}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{0, Rational[5, 9]}, {Rational[1, 9], Rational[5, 9]}, {
-       Rational[1, 9], Rational[2, 3]}, {0, Rational[2, 3]}, {
-       0, Rational[5, 9]}}, {{0, 0.5555555555555556}, {0.1111111111111111, 
-       0.5555555555555556}, {0.1111111111111111, 0.6666666666666666}, {
-       0, 0.6666666666666666}, {0, 0.5555555555555556}}]]}, {
-    PointBox[NCache[{Rational[1, 81], Rational[46, 81]}, {
-      0.012345679012345678`, 0.5679012345679012}]], InsetBox[
-     StyleBox["54",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[1, 81], Rational[46, 81]}, {0.012345679012345678`, 
-      0.5679012345679012}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{0, Rational[2, 3]}, {Rational[1, 9], Rational[2, 3]}, {
-       Rational[1, 9], Rational[7, 9]}, {0, Rational[7, 9]}, {
-       0, Rational[2, 3]}}, {{0, 0.6666666666666666}, {0.1111111111111111, 
-       0.6666666666666666}, {0.1111111111111111, 0.7777777777777778}, {
-       0, 0.7777777777777778}, {0, 0.6666666666666666}}]]}, {
-    PointBox[NCache[{Rational[1, 27], Rational[20, 27]}, {
-      0.037037037037037035`, 0.7407407407407407}]], InsetBox[
-     StyleBox["55",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[1, 27], Rational[20, 27]}, {0.037037037037037035`, 
-      0.7407407407407407}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 9], Rational[2, 3]}, {
-       Rational[2, 9], Rational[2, 3]}, {Rational[2, 9], Rational[7, 9]}, {
-       Rational[1, 9], Rational[7, 9]}, {Rational[1, 9], Rational[2, 3]}}, {{
-      0.1111111111111111, 0.6666666666666666}, {0.2222222222222222, 
-      0.6666666666666666}, {0.2222222222222222, 0.7777777777777778}, {
-      0.1111111111111111, 0.7777777777777778}, {0.1111111111111111, 
-      0.6666666666666666}}]]}, {
-    PointBox[NCache[{Rational[17, 81], Rational[59, 81]}, {
-      0.20987654320987653`, 0.7283950617283951}]], InsetBox[
-     StyleBox["56",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[17, 81], Rational[59, 81]}, {0.20987654320987653`, 
-      0.7283950617283951}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 9], Rational[2, 3]}, {
-       Rational[1, 3], Rational[2, 3]}, {Rational[1, 3], Rational[7, 9]}, {
-       Rational[2, 9], Rational[7, 9]}, {Rational[2, 9], Rational[2, 3]}}, {{
-      0.2222222222222222, 0.6666666666666666}, {0.3333333333333333, 
-      0.6666666666666666}, {0.3333333333333333, 0.7777777777777778}, {
-      0.2222222222222222, 0.7777777777777778}, {0.2222222222222222, 
-      0.6666666666666666}}]]}, {
-    PointBox[NCache[{Rational[19, 81], Rational[55, 81]}, {0.2345679012345679,
-       0.6790123456790124}]], InsetBox[
-     StyleBox["57",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[19, 81], Rational[55, 81]}, {0.2345679012345679, 
-      0.6790123456790124}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 9], Rational[7, 9]}, {
-       Rational[1, 3], Rational[7, 9]}, {Rational[1, 3], Rational[8, 9]}, {
-       Rational[2, 9], Rational[8, 9]}, {Rational[2, 9], Rational[7, 9]}}, {{
-      0.2222222222222222, 0.7777777777777778}, {0.3333333333333333, 
-      0.7777777777777778}, {0.3333333333333333, 0.8888888888888888}, {
-      0.2222222222222222, 0.8888888888888888}, {0.2222222222222222, 
-      0.7777777777777778}}]]}, {
-    PointBox[NCache[{Rational[8, 27], Rational[22, 27]}, {0.2962962962962963, 
-      0.8148148148148148}]], InsetBox[
-     StyleBox["58",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[8, 27], Rational[22, 27]}, {0.2962962962962963, 
-      0.8148148148148148}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 9], Rational[7, 9]}, {
-       Rational[2, 9], Rational[7, 9]}, {Rational[2, 9], Rational[8, 9]}, {
-       Rational[1, 9], Rational[8, 9]}, {Rational[1, 9], Rational[7, 9]}}, {{
-      0.1111111111111111, 0.7777777777777778}, {0.2222222222222222, 
-      0.7777777777777778}, {0.2222222222222222, 0.8888888888888888}, {
-      0.1111111111111111, 0.8888888888888888}, {0.1111111111111111, 
-      0.7777777777777778}}]]}, {
-    PointBox[NCache[{Rational[13, 81], Rational[70, 81]}, {
-      0.16049382716049382`, 0.8641975308641975}]], InsetBox[
-     StyleBox["59",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[13, 81], Rational[70, 81]}, {0.16049382716049382`, 
-      0.8641975308641975}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{0, Rational[7, 9]}, {Rational[1, 9], Rational[7, 9]}, {
-       Rational[1, 9], Rational[8, 9]}, {0, Rational[8, 9]}, {
-       0, Rational[7, 9]}}, {{0, 0.7777777777777778}, {0.1111111111111111, 
-       0.7777777777777778}, {0.1111111111111111, 0.8888888888888888}, {
-       0, 0.8888888888888888}, {0, 0.7777777777777778}}]]}, {
-    PointBox[NCache[{Rational[2, 81], Rational[65, 81]}, {
-      0.024691358024691357`, 0.8024691358024691}]], InsetBox[
-     StyleBox["60",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[2, 81], Rational[65, 81]}, {0.024691358024691357`, 
-      0.8024691358024691}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{0, Rational[8, 9]}, {Rational[1, 9], Rational[8, 9]}, {
-       Rational[1, 9], 1}, {0, 1}, {0, Rational[8, 9]}}, {{
-       0, 0.8888888888888888}, {0.1111111111111111, 0.8888888888888888}, {
-       0.1111111111111111, 1}, {0, 1}, {0, 0.8888888888888888}}]]}, {
-    PointBox[NCache[{Rational[7, 81], Rational[76, 81]}, {0.08641975308641975,
-       0.9382716049382716}]], InsetBox[
-     StyleBox["61",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[7, 81], Rational[76, 81]}, {0.08641975308641975, 
-      0.9382716049382716}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 9], Rational[8, 9]}, {
-       Rational[2, 9], Rational[8, 9]}, {Rational[2, 9], 1}, {
-       Rational[1, 9], 1}, {Rational[1, 9], Rational[8, 9]}}, {{
-       0.1111111111111111, 0.8888888888888888}, {0.2222222222222222, 
-       0.8888888888888888}, {0.2222222222222222, 1}, {
-       0.1111111111111111, 1}, {0.1111111111111111, 0.8888888888888888}}]]}, {
-    PointBox[NCache[{Rational[1, 9], Rational[8, 9]}, {0.1111111111111111, 
-      0.8888888888888888}]], InsetBox[
-     StyleBox["62",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[1, 9], Rational[8, 9]}, {0.1111111111111111, 
-      0.8888888888888888}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 9], Rational[8, 9]}, {
-       Rational[1, 3], Rational[8, 9]}, {Rational[1, 3], 1}, {
-       Rational[2, 9], 1}, {Rational[2, 9], Rational[8, 9]}}, {{
-       0.2222222222222222, 0.8888888888888888}, {0.3333333333333333, 
-       0.8888888888888888}, {0.3333333333333333, 1}, {
-       0.2222222222222222, 1}, {0.2222222222222222, 0.8888888888888888}}]]}, {
-    PointBox[NCache[{Rational[23, 81], Rational[80, 81]}, {0.2839506172839506,
-       0.9876543209876543}]], InsetBox[
-     StyleBox["63",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[23, 81], Rational[80, 81]}, {0.2839506172839506, 
-      0.9876543209876543}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 3], Rational[8, 9]}, {
-       Rational[4, 9], Rational[8, 9]}, {Rational[4, 9], 1}, {
-       Rational[1, 3], 1}, {Rational[1, 3], Rational[8, 9]}}, {{
-       0.3333333333333333, 0.8888888888888888}, {0.4444444444444444, 
-       0.8888888888888888}, {0.4444444444444444, 1}, {
-       0.3333333333333333, 1}, {0.3333333333333333, 0.8888888888888888}}]]}, {
-    PointBox[NCache[{Rational[28, 81], Rational[73, 81]}, {0.345679012345679, 
-      0.9012345679012346}]], InsetBox[
-     StyleBox["64",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[28, 81], Rational[73, 81]}, {0.345679012345679, 
-      0.9012345679012346}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 3], Rational[7, 9]}, {
-       Rational[4, 9], Rational[7, 9]}, {Rational[4, 9], Rational[8, 9]}, {
-       Rational[1, 3], Rational[8, 9]}, {Rational[1, 3], Rational[7, 9]}}, {{
-      0.3333333333333333, 0.7777777777777778}, {0.4444444444444444, 
-      0.7777777777777778}, {0.4444444444444444, 0.8888888888888888}, {
-      0.3333333333333333, 0.8888888888888888}, {0.3333333333333333, 
-      0.7777777777777778}}]]}, {
-    PointBox[NCache[{Rational[32, 81], Rational[71, 81]}, {0.3950617283950617,
-       0.8765432098765432}]], InsetBox[
-     StyleBox["65",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[32, 81], Rational[71, 81]}, {0.3950617283950617, 
-      0.8765432098765432}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[1, 3], Rational[2, 3]}, {
-       Rational[4, 9], Rational[2, 3]}, {Rational[4, 9], Rational[7, 9]}, {
-       Rational[1, 3], Rational[7, 9]}, {Rational[1, 3], Rational[2, 3]}}, {{
-      0.3333333333333333, 0.6666666666666666}, {0.4444444444444444, 
-      0.6666666666666666}, {0.4444444444444444, 0.7777777777777778}, {
-      0.3333333333333333, 0.7777777777777778}, {0.3333333333333333, 
-      0.6666666666666666}}]]}, {
-    PointBox[NCache[{Rational[11, 27], Rational[19, 27]}, {0.4074074074074074,
-       0.7037037037037037}]], InsetBox[
-     StyleBox["66",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[11, 27], Rational[19, 27]}, {0.4074074074074074, 
-      0.7037037037037037}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[4, 9], Rational[2, 3]}, {
-       Rational[5, 9], Rational[2, 3]}, {Rational[5, 9], Rational[7, 9]}, {
-       Rational[4, 9], Rational[7, 9]}, {Rational[4, 9], Rational[2, 3]}}, {{
-      0.4444444444444444, 0.6666666666666666}, {0.5555555555555556, 
-      0.6666666666666666}, {0.5555555555555556, 0.7777777777777778}, {
-      0.4444444444444444, 0.7777777777777778}, {0.4444444444444444, 
-      0.6666666666666666}}]]}, {
-    PointBox[NCache[{Rational[38, 81], Rational[56, 81]}, {0.4691358024691358,
-       0.691358024691358}]], InsetBox[
-     StyleBox["67",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[38, 81], Rational[56, 81]}, {0.4691358024691358, 
-      0.691358024691358}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[4, 9], Rational[7, 9]}, {
-       Rational[5, 9], Rational[7, 9]}, {Rational[5, 9], Rational[8, 9]}, {
-       Rational[4, 9], Rational[8, 9]}, {Rational[4, 9], Rational[7, 9]}}, {{
-      0.4444444444444444, 0.7777777777777778}, {0.5555555555555556, 
-      0.7777777777777778}, {0.5555555555555556, 0.8888888888888888}, {
-      0.4444444444444444, 0.8888888888888888}, {0.4444444444444444, 
-      0.7777777777777778}}]]}, {
-    PointBox[NCache[{Rational[43, 81], Rational[67, 81]}, {0.5308641975308642,
-       0.8271604938271605}]], InsetBox[
-     StyleBox["68",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[43, 81], Rational[67, 81]}, {0.5308641975308642, 
-      0.8271604938271605}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[4, 9], Rational[8, 9]}, {
-       Rational[5, 9], Rational[8, 9]}, {Rational[5, 9], 1}, {
-       Rational[4, 9], 1}, {Rational[4, 9], Rational[8, 9]}}, {{
-       0.4444444444444444, 0.8888888888888888}, {0.5555555555555556, 
-       0.8888888888888888}, {0.5555555555555556, 1}, {
-       0.4444444444444444, 1}, {0.4444444444444444, 0.8888888888888888}}]]}, {
-    PointBox[NCache[{Rational[13, 27], Rational[26, 27]}, {
-      0.48148148148148145`, 0.9629629629629629}]], InsetBox[
-     StyleBox["69",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[13, 27], Rational[26, 27]}, {0.48148148148148145`, 
-      0.9629629629629629}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[5, 9], Rational[8, 9]}, {
-       Rational[2, 3], Rational[8, 9]}, {Rational[2, 3], 1}, {
-       Rational[5, 9], 1}, {Rational[5, 9], Rational[8, 9]}}, {{
-       0.5555555555555556, 0.8888888888888888}, {0.6666666666666666, 
-       0.8888888888888888}, {0.6666666666666666, 1}, {
-       0.5555555555555556, 1}, {0.5555555555555556, 0.8888888888888888}}]]}, {
-    PointBox[NCache[{Rational[53, 81], Rational[77, 81]}, {0.654320987654321, 
-      0.9506172839506173}]], InsetBox[
-     StyleBox["70",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[53, 81], Rational[77, 81]}, {0.654320987654321, 
-      0.9506172839506173}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[5, 9], Rational[7, 9]}, {
-       Rational[2, 3], Rational[7, 9]}, {Rational[2, 3], Rational[8, 9]}, {
-       Rational[5, 9], Rational[8, 9]}, {Rational[5, 9], Rational[7, 9]}}, {{
-      0.5555555555555556, 0.7777777777777778}, {0.6666666666666666, 
-      0.7777777777777778}, {0.6666666666666666, 0.8888888888888888}, {
-      0.5555555555555556, 0.8888888888888888}, {0.5555555555555556, 
-      0.7777777777777778}}]]}, {
-    PointBox[NCache[{Rational[5, 9], Rational[7, 9]}, {0.5555555555555556, 
-      0.7777777777777778}]], InsetBox[
-     StyleBox["71",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[5, 9], Rational[7, 9]}, {0.5555555555555556, 
-      0.7777777777777778}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[5, 9], Rational[2, 3]}, {
-       Rational[2, 3], Rational[2, 3]}, {Rational[2, 3], Rational[7, 9]}, {
-       Rational[5, 9], Rational[7, 9]}, {Rational[5, 9], Rational[2, 3]}}, {{
-      0.5555555555555556, 0.6666666666666666}, {0.6666666666666666, 
-      0.6666666666666666}, {0.6666666666666666, 0.7777777777777778}, {
-      0.5555555555555556, 0.7777777777777778}, {0.5555555555555556, 
-      0.6666666666666666}}]]}, {
-    PointBox[NCache[{Rational[49, 81], Rational[61, 81]}, {0.6049382716049383,
-       0.7530864197530864}]], InsetBox[
-     StyleBox["72",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[49, 81], Rational[61, 81]}, {0.6049382716049383, 
-      0.7530864197530864}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 3], Rational[2, 3]}, {
-       Rational[7, 9], Rational[2, 3]}, {Rational[7, 9], Rational[7, 9]}, {
-       Rational[2, 3], Rational[7, 9]}, {Rational[2, 3], Rational[2, 3]}}, {{
-      0.6666666666666666, 0.6666666666666666}, {0.7777777777777778, 
-      0.6666666666666666}, {0.7777777777777778, 0.7777777777777778}, {
-      0.6666666666666666, 0.7777777777777778}, {0.6666666666666666, 
-      0.6666666666666666}}]]}, {
-    PointBox[NCache[{Rational[2, 3], Rational[2, 3]}, {0.6666666666666666, 
-      0.6666666666666666}]], InsetBox[
-     StyleBox["73",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[2, 3], Rational[2, 3]}, {0.6666666666666666, 
-      0.6666666666666666}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[7, 9], Rational[2, 3]}, {
-       Rational[8, 9], Rational[2, 3]}, {Rational[8, 9], Rational[7, 9]}, {
-       Rational[7, 9], Rational[7, 9]}, {Rational[7, 9], Rational[2, 3]}}, {{
-      0.7777777777777778, 0.6666666666666666}, {0.8888888888888888, 
-      0.6666666666666666}, {0.8888888888888888, 0.7777777777777778}, {
-      0.7777777777777778, 0.7777777777777778}, {0.7777777777777778, 
-      0.6666666666666666}}]]}, {
-    PointBox[NCache[{Rational[68, 81], Rational[62, 81]}, {0.8395061728395061,
-       0.7654320987654321}]], InsetBox[
-     StyleBox["74",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[68, 81], Rational[62, 81]}, {0.8395061728395061, 
-      0.7654320987654321}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[8, 9], Rational[2, 3]}, {1, Rational[2, 3]}, {
-       1, Rational[7, 9]}, {Rational[8, 9], Rational[7, 9]}, {
-       Rational[8, 9], Rational[2, 3]}}, {{0.8888888888888888, 
-       0.6666666666666666}, {1, 0.6666666666666666}, {
-       1, 0.7777777777777778}, {0.8888888888888888, 0.7777777777777778}, {
-       0.8888888888888888, 0.6666666666666666}}]]}, {
-    PointBox[NCache[{Rational[79, 81], Rational[58, 81]}, {0.9753086419753086,
-       0.7160493827160493}]], InsetBox[
-     StyleBox["75",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[79, 81], Rational[58, 81]}, {0.9753086419753086, 
-      0.7160493827160493}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[8, 9], Rational[7, 9]}, {1, Rational[7, 9]}, {
-       1, Rational[8, 9]}, {Rational[8, 9], Rational[8, 9]}, {
-       Rational[8, 9], Rational[7, 9]}}, {{0.8888888888888888, 
-       0.7777777777777778}, {1, 0.7777777777777778}, {
-       1, 0.8888888888888888}, {0.8888888888888888, 0.8888888888888888}, {
-       0.8888888888888888, 0.7777777777777778}}]]}, {
-    PointBox[NCache[{Rational[25, 27], Rational[23, 27]}, {0.9259259259259259,
-       0.8518518518518519}]], InsetBox[
-     StyleBox["76",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[25, 27], Rational[23, 27]}, {0.9259259259259259, 
-      0.8518518518518519}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[7, 9], Rational[7, 9]}, {
-       Rational[8, 9], Rational[7, 9]}, {Rational[8, 9], Rational[8, 9]}, {
-       Rational[7, 9], Rational[8, 9]}, {Rational[7, 9], Rational[7, 9]}}, {{
-      0.7777777777777778, 0.7777777777777778}, {0.8888888888888888, 
-      0.7777777777777778}, {0.8888888888888888, 0.8888888888888888}, {
-      0.7777777777777778, 0.8888888888888888}, {0.7777777777777778, 
-      0.7777777777777778}}]]}, {
-    PointBox[NCache[{Rational[64, 81], Rational[64, 81]}, {0.7901234567901234,
-       0.7901234567901234}]], InsetBox[
-     StyleBox["77",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[64, 81], Rational[64, 81]}, {0.7901234567901234, 
-      0.7901234567901234}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 3], Rational[7, 9]}, {
-       Rational[7, 9], Rational[7, 9]}, {Rational[7, 9], Rational[8, 9]}, {
-       Rational[2, 3], Rational[8, 9]}, {Rational[2, 3], Rational[7, 9]}}, {{
-      0.6666666666666666, 0.7777777777777778}, {0.7777777777777778, 
-      0.7777777777777778}, {0.7777777777777778, 0.8888888888888888}, {
-      0.6666666666666666, 0.8888888888888888}, {0.6666666666666666, 
-      0.7777777777777778}}]]}, {
-    PointBox[NCache[{Rational[62, 81], Rational[68, 81]}, {0.7654320987654321,
-       0.8395061728395061}]], InsetBox[
-     StyleBox["78",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[62, 81], Rational[68, 81]}, {0.7654320987654321, 
-      0.8395061728395061}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[2, 3], Rational[8, 9]}, {
-       Rational[7, 9], Rational[8, 9]}, {Rational[7, 9], 1}, {
-       Rational[2, 3], 1}, {Rational[2, 3], Rational[8, 9]}}, {{
-       0.6666666666666666, 0.8888888888888888}, {0.7777777777777778, 
-       0.8888888888888888}, {0.7777777777777778, 1}, {
-       0.6666666666666666, 1}, {0.6666666666666666, 0.8888888888888888}}]]}, {
-    PointBox[NCache[{Rational[58, 81], Rational[79, 81]}, {0.7160493827160493,
-       0.9753086419753086}]], InsetBox[
-     StyleBox["79",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[58, 81], Rational[79, 81]}, {0.7160493827160493, 
-      0.9753086419753086}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[7, 9], Rational[8, 9]}, {
-       Rational[8, 9], Rational[8, 9]}, {Rational[8, 9], 1}, {
-       Rational[7, 9], 1}, {Rational[7, 9], Rational[8, 9]}}, {{
-       0.7777777777777778, 0.8888888888888888}, {0.8888888888888888, 
-       0.8888888888888888}, {0.8888888888888888, 1}, {
-       0.7777777777777778, 1}, {0.7777777777777778, 0.8888888888888888}}]]}, {
-    PointBox[NCache[{Rational[23, 27], Rational[25, 27]}, {0.8518518518518519,
-       0.9259259259259259}]], InsetBox[
-     StyleBox["80",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[23, 27], Rational[25, 27]}, {0.8518518518518519, 
-      0.9259259259259259}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}, 
-   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-    LineBox[NCache[{{Rational[8, 9], Rational[8, 9]}, {1, Rational[8, 9]}, {1,
-        1}, {Rational[8, 9], 1}, {Rational[8, 9], Rational[8, 9]}}, {{
-       0.8888888888888888, 0.8888888888888888}, {1, 0.8888888888888888}, {1, 
-       1}, {0.8888888888888888, 1}, {0.8888888888888888, 
-       0.8888888888888888}}]]}, {
-    PointBox[NCache[{Rational[74, 81], Rational[74, 81]}, {0.9135802469135802,
-       0.9135802469135802}]], InsetBox[
-     StyleBox["81",
-      StripOnInput->False,
-      LineColor->RGBColor[0, 0, 1],
-      FrontFaceColor->RGBColor[0, 0, 1],
-      BackFaceColor->RGBColor[0, 0, 1],
-      GraphicsColor->RGBColor[0, 0, 1],
-      FontSize->14,
-      FontWeight->Bold,
-      FontColor->RGBColor[0, 0, 1]], 
-     NCache[{Rational[74, 81], Rational[74, 81]}, {0.9135802469135802, 
-      0.9135802469135802}], 
-     ImageScaled[{-0.09999999999999998, -0.09999999999999998}]]}},
-  ImageSize->{1024, 1024},
-  PlotLabel->FormBox["nsubdivs", TraditionalForm]]], "Print",
- ShowCellLabel->True,
- CellChangeTimes->{
-  3.85995793184674*^9, 3.859958207342412*^9, 3.859958652855845*^9, 
-   3.859958685754745*^9, 3.859960739063092*^9, {3.8599688129310007`*^9, 
-   3.859968831566742*^9}},
- CellLabel->
-  "During evaluation of \
-In[13]:=",ExpressionUUID->"9b041df0-3d13-447b-a6b0-f122aead6466"],
+   3.859968809149794*^9, 3.8600339154284363`*^9, {3.8600360923655043`*^9, 
+   3.860036092544845*^9}},ExpressionUUID->"a4c6923e-13c6-4c8e-acc3-\
+ecd1b38744f2"],
 
 Cell[BoxData["$Aborted"], "Output",
  CellChangeTimes->{
-  3.859957879605462*^9, 3.859957938994691*^9, 3.8599582095945044`*^9, {
-   3.859958657163162*^9, 3.85995868593626*^9}, 3.859960739624511*^9, {
-   3.859968812963007*^9, 3.8599688315906773`*^9}},
- CellLabel->"Out[13]=",ExpressionUUID->"bad31384-4bbe-4e5b-a7f9-f580df3f283f"]
+  3.860034871788938*^9, 3.8600349389586487`*^9, 3.8600350797872343`*^9, {
+   3.860035187355033*^9, 3.8600352628957863`*^9}, 3.860035405209214*^9, 
+   3.86003547029062*^9, {3.860035621777955*^9, 3.860035651409451*^9}, 
+   3.8600356908193073`*^9, 3.860035791109981*^9, 3.860035847392029*^9},
+ CellLabel->"Out[80]=",ExpressionUUID->"3882cf31-c08b-4e38-9b42-b484b029a633"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["tlst"], "Input",
+ CellChangeTimes->{{3.8600348854149113`*^9, 3.860034885417736*^9}},
+ CellLabel->"In[81]:=",ExpressionUUID->"e5138aaa-5239-4287-b41a-0aed4c4b2836"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"2", ",", "0", ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"1", ",", "0"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "1"}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"1", ",", "0"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", 
+         FractionBox["1", "3"]}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "}"}], ",", 
+       RowBox[{"{", "0", "}"}]}], "}"}], ",", 
+     RowBox[{"{", "0", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"3", ",", "0", ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"1", ",", "0"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "1"}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", 
+       FractionBox["1", "3"]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"1", ",", "0"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", 
+         FractionBox["1", "3"]}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "}"}], ",", 
+       RowBox[{"{", "0", "}"}]}], "}"}], ",", 
+     RowBox[{"{", "1", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "0", ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"1", ",", "0"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "1"}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", 
+       FractionBox["2", "3"]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"1", ",", "0"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", 
+         FractionBox["1", "3"]}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "}"}], ",", 
+       RowBox[{"{", "0", "}"}]}], "}"}], ",", 
+     RowBox[{"{", "2", "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.860034886476132*^9, 3.860034938999913*^9, 3.860035079828064*^9, {
+   3.860035187409432*^9, 3.8600352629368*^9}, 3.8600354052499332`*^9, 
+   3.860035470332357*^9, {3.8600356218239594`*^9, 3.8600356514564734`*^9}, 
+   3.860035690868271*^9, 3.8600357911649513`*^9, 3.8600358474415817`*^9},
+ CellLabel->"Out[81]=",ExpressionUUID->"ecbc657d-c478-4e8b-81b3-f36e22028eff"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["dxy"], "Input",
+ CellChangeTimes->{{3.860035088964444*^9, 3.8600350895264463`*^9}},
+ CellLabel->"In[82]:=",ExpressionUUID->"2bca3e72-2264-4595-bf29-d935aa0357dd"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", 
+     RowBox[{"{", "0", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", 
+     RowBox[{"{", "1", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", 
+     RowBox[{"{", "2", "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.860035235577585*^9, 3.86003526294269*^9}, 
+   3.8600354052557917`*^9, 3.8600354703388557`*^9, {3.860035621830021*^9, 
+   3.860035651463481*^9}, 3.8600356908744164`*^9, 3.860035791171363*^9, 
+   3.860035847448394*^9},
+ CellLabel->"Out[82]=",ExpressionUUID->"f58c0150-f79b-4905-9249-53d6e645150f"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["dxy"], "Input",
+ CellChangeTimes->{{3.860035498193475*^9, 3.860035498196549*^9}},
+ CellLabel->"In[83]:=",ExpressionUUID->"8024e91b-b1b2-4563-a7f1-31e82b406fc1"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", 
+     RowBox[{"{", "0", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", 
+     RowBox[{"{", "1", "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", 
+     RowBox[{"{", "2", "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.860035499077792*^9, {3.860035621851519*^9, 3.860035651485941*^9}, 
+   3.860035690896595*^9, 3.860035791197044*^9, 3.860035847471871*^9},
+ CellLabel->"Out[83]=",ExpressionUUID->"dd1e44a0-38c4-4575-9b2e-288361a6c782"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Join", "[", 
+  RowBox[{
+   RowBox[{"{", "}"}], ",", 
+   RowBox[{"dxy", "[", 
+    RowBox[{"[", 
+     RowBox[{"1", ",", "1"}], "]"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.860035509676462*^9, 3.860035571347979*^9}},
+ CellLabel->"In[84]:=",ExpressionUUID->"8f604a12-1a51-4dc2-b16c-6d3fa7702d51"],
+
+Cell[BoxData[
+ RowBox[{"{", "}"}]], "Output",
+ CellChangeTimes->{{3.8600355166971703`*^9, 3.860035572092016*^9}, {
+   3.86003560230333*^9, 3.860035651491351*^9}, 3.8600356909020967`*^9, 
+   3.8600357912026157`*^9, 3.8600358474778147`*^9},
+ CellLabel->"Out[84]=",ExpressionUUID->"33e5449e-d0a7-4adf-954e-ab98b7124818"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"dxy", "[", 
+  RowBox[{"[", 
+   RowBox[{"1", ",", "1"}], "]"}], "]"}]], "Input",
+ CellLabel->"In[85]:=",ExpressionUUID->"3970312b-03ec-4f45-9a46-34b53c4cd52e"],
+
+Cell[BoxData[
+ RowBox[{"{", "}"}]], "Output",
+ CellChangeTimes->{{3.8600355967830763`*^9, 3.860035651513814*^9}, 
+   3.8600356909244204`*^9, 3.86003579122762*^9, 3.860035847501829*^9},
+ CellLabel->"Out[85]=",ExpressionUUID->"08ac1307-68a5-4988-b8a2-5529f1efdd04"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["xcode"], "Input",
+ CellChangeTimes->{{3.860035708017448*^9, 3.860035708019794*^9}},
+ CellLabel->"In[86]:=",ExpressionUUID->"b0c013cf-5b18-46d8-9bef-f5d830bc618b"],
+
+Cell[BoxData[
+ RowBox[{"{", "}"}]], "Output",
+ CellChangeTimes->{3.8600357087001543`*^9, 3.8600357912334003`*^9, 
+  3.860035847508312*^9},
+ CellLabel->"Out[86]=",ExpressionUUID->"8232e49d-b366-43a3-a6f7-1cdd1f76eba3"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["xcode"], "Input",
+ CellChangeTimes->{{3.860035740292536*^9, 3.860035740295537*^9}},
+ CellLabel->"In[87]:=",ExpressionUUID->"02fd91ce-af58-4d9a-b4ee-0c1f6ac9a27a"],
+
+Cell[BoxData[
+ RowBox[{"{", "}"}]], "Output",
+ CellChangeTimes->{3.860035741025588*^9, 3.860035791259323*^9, 
+  3.8600358475343647`*^9},
+ CellLabel->"Out[87]=",ExpressionUUID->"7846426e-1038-4eb5-9693-ab22e38167a8"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"dxy", "[", 
+  RowBox[{"[", 
+   RowBox[{"1", ",", "1"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.860035749687818*^9, 3.860035749690473*^9}},
+ CellLabel->"In[88]:=",ExpressionUUID->"4e8dd038-ff7c-42fb-9e54-52f0eaf3582c"],
+
+Cell[BoxData[
+ RowBox[{"{", "}"}]], "Output",
+ CellChangeTimes->{3.860035750435309*^9, 3.860035791264757*^9, 
+  3.860035847540986*^9},
+ CellLabel->"Out[88]=",ExpressionUUID->"e421c14a-6043-4477-bf81-6f4033439c63"]
 }, Open  ]]
 },
 WindowSize->{1175, 1197},
-WindowMargins->{{Automatic, 355}, {45, Automatic}},
+WindowMargins->{{208, Automatic}, {Automatic, 83}},
 PrintingCopies->1,
 PrintingPageRange->{1, Automatic},
 FrontEndVersion->"13.0 for Mac OS X x86 (64-bit) (February 4, 2022)",
@@ -2135,9 +285,40 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 243, 4, 30, "Input",ExpressionUUID->"a4c6923e-13c6-4c8e-acc3-ecd1b38744f2"],
-Cell[826, 28, 104477, 2079, 1043, "Print",ExpressionUUID->"9b041df0-3d13-447b-a6b0-f122aead6466"],
-Cell[105306, 2109, 328, 5, 34, "Output",ExpressionUUID->"bad31384-4bbe-4e5b-a7f9-f580df3f283f"]
+Cell[580, 22, 288, 5, 30, "Input",ExpressionUUID->"a4c6923e-13c6-4c8e-acc3-ecd1b38744f2"],
+Cell[871, 29, 424, 6, 34, "Output",ExpressionUUID->"3882cf31-c08b-4e38-9b42-b484b029a633"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1332, 40, 177, 2, 30, "Input",ExpressionUUID->"e5138aaa-5239-4287-b41a-0aed4c4b2836"],
+Cell[1512, 44, 2835, 88, 128, "Output",ExpressionUUID->"ecbc657d-c478-4e8b-81b3-f36e22028eff"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4384, 137, 176, 2, 30, "Input",ExpressionUUID->"2bca3e72-2264-4595-bf29-d935aa0357dd"],
+Cell[4563, 141, 689, 19, 34, "Output",ExpressionUUID->"f58c0150-f79b-4905-9249-53d6e645150f"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5289, 165, 174, 2, 30, "Input",ExpressionUUID->"8024e91b-b1b2-4563-a7f1-31e82b406fc1"],
+Cell[5466, 169, 611, 18, 34, "Output",ExpressionUUID->"dd1e44a0-38c4-4575-9b2e-288361a6c782"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6114, 192, 326, 8, 30, "Input",ExpressionUUID->"8f604a12-1a51-4dc2-b16c-6d3fa7702d51"],
+Cell[6443, 202, 317, 5, 34, "Output",ExpressionUUID->"33e5449e-d0a7-4adf-954e-ab98b7124818"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6797, 212, 182, 4, 30, "Input",ExpressionUUID->"3970312b-03ec-4f45-9a46-34b53c4cd52e"],
+Cell[6982, 218, 263, 4, 34, "Output",ExpressionUUID->"08ac1307-68a5-4988-b8a2-5529f1efdd04"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7282, 227, 176, 2, 30, "Input",ExpressionUUID->"b0c013cf-5b18-46d8-9bef-f5d830bc618b"],
+Cell[7461, 231, 217, 4, 34, "Output",ExpressionUUID->"8232e49d-b366-43a3-a6f7-1cdd1f76eba3"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7715, 240, 176, 2, 30, "Input",ExpressionUUID->"02fd91ce-af58-4d9a-b4ee-0c1f6ac9a27a"],
+Cell[7894, 244, 215, 4, 34, "Output",ExpressionUUID->"7846426e-1038-4eb5-9693-ab22e38167a8"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8146, 253, 248, 5, 30, "Input",ExpressionUUID->"4e8dd038-ff7c-42fb-9e54-52f0eaf3582c"],
+Cell[8397, 260, 213, 4, 34, "Output",ExpressionUUID->"e421c14a-6043-4477-bf81-6f4033439c63"]
 }, Open  ]]
 }
 ]
