@@ -44,6 +44,7 @@ showFrame = 32;
 showOrdinalNumber = 64;
 showSamplingPt = 128;
 showTilexycodes = 256;
+showLightGrayTile = 512;
 
 (*------------------------- end of constants -------------------------*)
 
@@ -414,7 +415,7 @@ typeHRec = 	2;
 typeVRec = 	3;
 
 subdivbase3SFCTiles[tlst_] :=
-    Module[ {res={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode },
+    Module[ {res={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,dxy },
     	Table[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
 			prevrefPt = refPt; {prevv1,prevv2} = {v1,v2};
@@ -479,7 +480,7 @@ getsfcbase3SFC[tlst_] :=
 
 
 getbase3SFCTilesGL[tlst_,params_:showSFC] :=
-    Module[ {gl={AbsolutePointSize[5]},tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,cont,sfc,norm1,norm2,fcodelen,
+    Module[ {gl={AbsolutePointSize[10]},tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,cont,sfc,norm1,norm2,fcodelen,
     		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
     	If[BitAnd[params,showSFC] > 0, sfc = getsfcbase3SFC[tlst]; 
     		AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}];
@@ -490,12 +491,13 @@ getbase3SFCTilesGL[tlst_,params_:showSFC] :=
 			{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/2);
 			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
     		If[BitAnd[params,showGrayValue] > 0, AppendTo[gl,{GrayLevel[FromDigits[Reverse@fcode,3]/3^fcodelen],Polygon@cont}] ];
+    		If[BitAnd[params,showLightGrayTile] > 0, AppendTo[gl,{LightGray,Polygon@cont}] ];
 			AppendTo[gl,Flatten[#,1]& @ {(*Point@(refPt+(norm1+norm2)/20),*)bortedStyle,Line@cont } ];
 			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{1.9,-1}]} ] ];		
 			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FromDigits[fcode,3],Bold,14,Red],refPt+(v1+v2)/2,{-1.9,-1}]} ] ];		
 			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2)/2,{0,1}]} ] ];
 			If[BitAnd[params,showTilexycodes] > 0, AppendTo[gl, {Text[Style[tab2snosep@xcode,Bold,14,Red],refPt+(v1+v2)/2,{1,1}], Text[Style[tab2snosep@ycode,Bold,14,Blue],refPt+(v1+v2)/2,{-1,1}]} ] ];
-			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, {Point@samplingPt,Text[Style[ind,Bold,14,Blue], samplingPt,{-1.2,-1.2}]} ] ];
+			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, {Black,Point@samplingPt,Text[Style[ind,Bold,14,Blue], samplingPt,{-1.2,-1.2}]} ] ];
     	,{ind,Length[tlst]}];
     	Return[gl]
     ] (* getbase3SFCTilesGL *)
@@ -607,37 +609,29 @@ readMatBuilderInvMatrices[fname_,nDims_:2,nlevels_:16] :=
     ] (* readMatBuilderInvMatrices *)
  
  
-demoStructureBase3SFC[innlevels_:4, dbg_:False] :=
+prepOptimDataBase3SFC[innlevels_:6, dbg_:False] :=
     Module[ {},
+    	setNo = 1;
+		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
     	nlevels = innlevels;
+    	If[ !FileExistsQ["optim_data/"], CreateDirectory["optim_data/"] ];
+    	If[ !FileExistsQ["optim_figs/"], CreateDirectory["optim_figs/"] ];
+		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
+		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
 		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
 		Do[
 			tlst = subdivbase3SFCTiles @ tlst;
-			flags = If[iter <= 6, showSFC+showTilexycodes+showTileType, showSFC];
-			Graphics[ getbase3SFCTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024} ]//Print;
-			If[dbg, tlst//mf//Print];
-		,{iter,nlevels}];
-		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_000001.dat"];
-		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_000001_inv.dat"];
-		If[EvenQ[nlevels], mxInv = mxInvTab[[nlevels,1]] ];
-		If[OddQ[nlevels],{mxInvH, mxInvV} = mxInvTab[[nlevels]] ];
-		tlst = fillSamplingPtsbase3SFCTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
-		Graphics[ {getbase3SFCTilesGL[tlst,showSFC+showSamplingPt]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;
-	] (* demoStructureBase3SFC *)
-
-(*Abort[];
-		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
-		seltlst = selectbase3SFCTiles[tlst, .33333333];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .33333333 ]//Print;
-		seltlst = selectbase3SFCTiles[tlst, .38];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .38 ]//Print;
-		seltlst = selectbase3SFCTiles[tlst, .5];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .5 ]//Print;
-		seltlst = selectbase3SFCTiles[tlst, .6];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .6 ]//Print;
-		seltlst = selectbase3SFCTiles[tlst, .7];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .7 ]//Print;
-		seltlst = selectbase3SFCTiles[tlst, .8];
-		Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showGrayValue], PlotLabel-> .8 ]//Print;*)
+			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
+			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
+			tlst = fillSamplingPtsbase3SFCTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
+			(*Graphics[ {getbase3SFCTilesGL[tlst,showSFC+showSamplingPt]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
+			Do[
+				seltlst = selectbase3SFCTiles[tlst, ii/3^ilevel];
+				p = Graphics[ Append[background,#]& @ getbase3SFCTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
+				p//Print;
+				Export["optim_figs/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".png", p];
+			,{ii,3^(ilevel-1)+1,3^ilevel}];
+		,{ilevel,nlevels}];
+	] (* prepOptimDataBase3SFC *)
 
 (*----------------------------- end of base3SFC --------------------------------*)
