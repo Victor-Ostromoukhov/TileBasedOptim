@@ -338,7 +338,7 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
         newPointHolder theChosenOne = *std::min_element(discTab+0,discTab+nbThrow,compareTwoNewPointHolder);
         double newDisc = sqrt(pow(currentDisc,2) - pow(apportdupointavant,2) + pow(theChosenOne.apportOfNewPoint,2));
         if (currentDisc > newDisc ) {
-        	std::cout << currentDisc << " -> " << newDisc << std::endl;
+        	std::cout << iter << " : "  << currentDisc << " -> " << newDisc << std::endl;
           currentDisc = newDisc;
           pointSetToOptimize.at(rAM.at(i)).set_pos_x(theChosenOne.point.get_pos_x());
           pointSetToOptimize.at(rAM.at(i)).set_pos_y(theChosenOne.point.get_pos_y());
@@ -351,7 +351,7 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
       // ============= Export the file at regular interval (Number of iterations) ================== //
       if (writeEachNIterations > 0) {
         if (iter % writeEachNIterations == 0) {
-        	std::cout << currentDisc << " exporting into " << outputString << std::endl;
+        	std::cout << iter << " : " << currentDisc << " exporting into " << outputString << std::endl;
           exportTiles(v,outputString);
         }
       }
