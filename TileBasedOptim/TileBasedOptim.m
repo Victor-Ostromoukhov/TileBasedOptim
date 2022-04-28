@@ -249,6 +249,8 @@ getCloseestNND[nDims_:2, n_] := Round[n^(1/nDims)]^nDims
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
+makeWNL2Discrepancy[]
+makeStratL2Discrepancy[]
 
 makeOwenL2Discrepancy[]
 
@@ -299,7 +301,7 @@ makeOwenL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
     ] (* makeOwenL2Discrepancy *)
 
 
-makeWNL2Discrepancy[nlevels_:12, ntrials_:64, nDims_:2] :=
+makeWNL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:2] :=
     Module[ {},
         dtab = {};
         Do[
@@ -315,7 +317,7 @@ makeWNL2Discrepancy[nlevels_:12, ntrials_:64, nDims_:2] :=
         Print[mf @ dtab]
     ]
 
-makeStratL2Discrepancy[nlevels_:12, ntrials_:64, nDims_:2] :=
+makeStratL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:2] :=
     Module[ {},
         dtab = {};
         Do[
