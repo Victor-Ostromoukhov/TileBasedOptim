@@ -398,7 +398,7 @@ int main(int argc, char const *argv[]) {
 
   CLI::App app { "OptimTiles2D" };
 
-  app.add_option("--it,--nbIterationsPerTile",nbIterationsPerTile,"Number of throws (iterations) on a tile, default: "+std::to_string(nbIterationsPerTile));
+  app.add_option("--nbIterationsPerTile",nbIterationsPerTile,"Number of throws (iterations) on a tile, default: "+std::to_string(nbIterationsPerTile));
   app.add_option("-t,--nbThreads",nbThreads,"Number of threads used , default: "+std::to_string(nbThreads) );
   app.add_option("-n,--iterationNumber",niters,"Number of iterations over the pointset, default: "+std::to_string(niters))->check(CLI::PositiveNumber);
   app.add_option("-i,--input",inputString,"Path to input file, default: "+inputString)->check(CLI::ExistingFile)->required();
