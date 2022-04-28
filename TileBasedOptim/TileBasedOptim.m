@@ -670,15 +670,12 @@ prepOptimDataBase3SFC2D[innlevels_:6, dbg_:False] :=
 
 typeCube = 	1;
 typeXPara = 2;
-typeYPara = 3;
-typeZPara = 4;
+typeZPara = 3;
 
+mxRotX180 = {{1,0,0}, {0,-1,0}, {0,0,-1}};
+mxRotY180 = {{-1, 0, 0}, {0, 1, 0}, {0, 0, -1}};
 mxRotZ180 = {{-1,0,0}, {0,-1,0}, {0,0,1}};
-mxRotZ270 = {{0, 1, 0}, {-1, 0, 0}, {0,0,1}};
-(*mxRot0 =   {{1,0}, {0,1}};
-mxRot90 =  {{0, -1}, {1, 0}};
-mxRot270 = {{0, 1}, {-1, 0}};
-*)
+
 subdivBase3SFC3DTiles[tlst_] :=
     Module[ {res={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode,dxyz },
     	Table[
@@ -687,36 +684,33 @@ subdivBase3SFC3DTiles[tlst_] :=
             Switch[tileType
               ,typeCube, 
               		dxyz = Which[
-              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} },
-              			v1[[1]] < 0 && v2[[2]] < 0, {{{},{2}}, {{},{1}}, {{},{0}} },
-              			v1[[2]] > 0 && v2[[1]] < 0, {{{2},{}}, {{1},{}}, {{0},{}} },
-              			v1[[2]] < 0 && v2[[1]] > 0, {{{0},{}}, {{1},{}}, {{2},{}} }
+              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{},{2}}, {{},{},{1}}, {{},{},{0}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{},{}}, {{},{},{}}, {{},{},{}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{},{},{}}, {{},{},{}}, {{},{},{}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} }
               		];
 					AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, 1/3 v3}, 											{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[ycode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					(*AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2+v3/3,	{mxRotZ180.v1, mxRotZ180.v2, 1/3 mxRotZ180.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[ycode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, 1/3 v3},									{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[ycode,dxyz[[3,3]]]}, Append[fcode,2]} ];*)
               ,typeZPara, 
               		dxyz = Which[
-              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} },
               			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} },
               			v1[[2]] > 0 && v2[[1]] < 0, {{{},{0}}, {{},{1}}, {{},{2}} },
               			v1[[2]] < 0 && v2[[1]] > 0, {{{},{2}}, {{},{1}}, {{},{0}} }
               		];
-					AppendTo[res,{typeXPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2/3, v3}, 			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[ycode,dxyz[[1,3]]]}, Append[fcode,0]} ];
-					AppendTo[res,{typeXPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,	{mxRotZ180.v1,mxRotZ180.v2/3,mxRotZ180.v3},	{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[ycode,dxyz[[1,3]]]}, Append[fcode,0]} ];
-					(*AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{1/3 v1, v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1 + v2,	{mxRot270.v1/3, mxRot270.v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,		{1/3 v1, v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];*)
-              ,typeVRec, 
+              		dxyz = {{{},{},{}}, {{},{},{}}, {{},{},{}} };
+					AppendTo[res,{typeXPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2/3, v3}, 										{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[ycode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					AppendTo[res,{typeXPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,{mxRotY180.v1,mxRotY180.v2/3,mxRotY180.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[ycode,dxyz[[2,3]]]}, Append[fcode,0]} ];
+					AppendTo[res,{typeXPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2 2/3,	{v1, v2/3, v3}, 								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[ycode,dxyz[[3,3]]]}, Append[fcode,0]} ];
+              ,typeXPara, 
               		dxyz = Which[
-              			v1[[1]] > 0 && v2[[2]] > 0, {{{},{0}}, {{},{1}}, {{},{2}} },
-              			v1[[1]] < 0 && v2[[2]] < 0, {{{},{2}}, {{},{1}}, {{},{0}} },
-              			v1[[2]] > 0 && v2[[1]] < 0, {{{2},{}}, {{1},{}}, {{0},{}} },
-              			v1[[2]] < 0 && v2[[1]] > 0, {{{0},{}}, {{1},{}}, {{2},{}} }
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} }
               		];
-					AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{v1, 1/3 v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2 + v1,	{mxRot90.v1, mxRot90.v2/3},		{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,		{v1, 1/3 v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
+              		dxyz = {{{},{},{}}, {{},{},{}}, {{},{},{}} };
+					AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1/3, v2, v3},								{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[ycode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					(*AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1/3+v2+v3,	{mxRotX180.v1/3,mxRotX180.v2,mxRotX180.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[ycode,dxyz[[2,3]]]}, Append[fcode,0]} ];
+					AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v1,		{v1/3, v2, v3},								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[ycode,dxyz[[3,3]]]}, Append[fcode,0]} ];*)
             ];
     	,{ind,Length[tlst]}];
     	Return[res]
@@ -730,18 +724,19 @@ demoBase3SFC3D[innsubdivs_:1, dbg_:False] :=
 		Do[
 			tlst = subdivBase3SFC3DTiles @ tlst;
 			flags = showSFC+showArrows+showTilexycodes+showTileType;
+			flags = If[iter <= 4, showSFC+showArrows+showTilexycodes, showSFC];
 			Graphics3D[ getBase3SFC3DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024}3/2 ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,nsubdivs}];
 	] (* demoBase3SFC3D *)
 
 getsfcBase3SFC3D[tlst_] :=
-    Module[ {sfc={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode,norm1,norm2,norm3,delta=5},
+    Module[ {sfc={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode,norm1,norm2,norm3,k=6,delta=12},
     	Do[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,{v1,v2,v3},{xcode,ycode,zcode},fcode} = tlst[[ind]];
-	    	{norm1,norm2,norm3}={v1/Norm[v1],v2/Norm[v2],v3/Norm[v3]}/3^((Length[fcode]+Mod[Length[fcode],3])/3);
-	   		AppendTo[sfc,refPt + (norm1+norm2+norm3)/1/3^((Length[fcode]+delta)/3) ];
-  			AppendTo[sfc,refPt + v1 + v2 + v3 - (norm1+norm2+norm3)/3^((Length[fcode]+delta)/3) ] ;
+	    	{norm1,norm2,norm3}={v1/Norm[v1],v2/Norm[v2],v3/Norm[v3]}/3^((Length[fcode]+Mod[Length[fcode],3])/k );
+	   		AppendTo[sfc,refPt + (norm1+norm2+norm3)/3^((Length[fcode]+delta)/k  ) ];
+  			AppendTo[sfc,refPt + v1 + v2 + v3 - (norm1+norm2+norm3)/3^((Length[fcode]+delta)/k ) ] ;
     	,{ind,Length[tlst]}];
     	Return[sfc]
     ] (* getsfcBase3SFC3D *)
@@ -763,9 +758,9 @@ getBase3SFC3DTilesGL[tlst_,params_:showSFC] :=
 			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FromDigits[fcode,3],Bold,14,Red],refPt+(v1+v2+v3)/2,{-1.9,-1}]} ] ];
 			If[BitAnd[params,showFcodeInvNumber] > 0, AppendTo[gl, {Text[Style[FromDigits[Reverse@fcode,3],Bold,14,Black],refPt+(v1+v2+v3)/2,{1.9,-1}]} ] ];
 			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2+v3)/2,{0,1}]} ] ];
-			If[BitAnd[params,showTilexycodes] > 0, AppendTo[gl, {Text[Style[tab2snosep@xcode,Bold,14,Red],refPt+(v1+v2+v3)/2,{2,1}]
+			If[BitAnd[params,showTilexycodes] > 0, AppendTo[gl, {Text[Style[tab2snosep@xcode,Bold,14,Red],refPt+(v1+v2+v3)/2,{3,1}]
 				, Text[Style[tab2snosep@ycode,Bold,14,Blue],refPt+(v1+v2+v3)/2,{0,1}] 
-				, Text[Style[tab2snosep@zcode,Bold,14,Blue],refPt+(v1+v2+v3)/2,{-2,1}]} ] ];
+				, Text[Style[tab2snosep@zcode,Bold,14,Green],refPt+(v1+v2+v3)/2,{-3,1}]} ] ];
 			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, {Black,Point@samplingPt,Text[Style[FromDigits[Reverse@fcode,3],Bold,14,Blue], samplingPt,{-1.2,-1.2}]} ] ];
     	,{ind,Length[tlst]}];
     	Return[gl]
