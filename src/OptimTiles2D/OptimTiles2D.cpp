@@ -336,8 +336,10 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
 
         // ============= Decide to replace the point or not nd replace it if necessary, along with the discrepancy of the PointSet ================== //
         newPointHolder theChosenOne = *std::min_element(discTab+0,discTab+nbThrow,compareTwoNewPointHolder);
-        if (currentDisc > sqrt(pow(currentDisc,2) - pow(apportdupointavant,2) + pow(theChosenOne.apportOfNewPoint,2) )) {
-          currentDisc = sqrt(pow(currentDisc,2) - pow(apportdupointavant,2) + pow(theChosenOne.apportOfNewPoint,2));
+        double newDisc = sqrt(pow(currentDisc,2) - pow(apportdupointavant,2) + pow(theChosenOne.apportOfNewPoint,2));
+        if (currentDisc > newDisc ) {
+        	std::cout << currentDisc << " -> " << newDisc << std::endl;
+          currentDisc = newDisc;
           pointSetToOptimize.at(rAM.at(i)).set_pos_x(theChosenOne.point.get_pos_x());
           pointSetToOptimize.at(rAM.at(i)).set_pos_y(theChosenOne.point.get_pos_y());
         }
@@ -349,6 +351,7 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
       // ============= Export the file at regular interval (Number of iterations) ================== //
       if (writeEachNIterations > 0) {
         if (iter % writeEachNIterations == 0) {
+        	std::cout << currentDisc << " exporting into " << outputString << std::endl;
           exportTiles(v,outputString);
         }
       }
@@ -359,27 +362,27 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
 int main(int argc, char const *argv[]) {
   // =========== Variables =========== //
   srand (time(NULL));
-  int throwNumber = 4;
-  size_t niters = 10;
-  size_t writeEachNIterations = 0;
-  int maxThread = omp_get_max_threads() > 16 ? 16 : omp_get_max_threads();
-  std::string inputString ="~/pts.dat";
-  std::string outputString ="~/OptimizedPts.dat";
+  int nbIterationsPerTile = 64;
+  size_t niters = 1024*1024;
+  size_t writeEachNIterations = 1024;
+  int maxThread = omp_get_max_threads() > 64 ? 64 : omp_get_max_threads();
+  std::string inputString ="pts.dat";
+  std::string outputString ="OptimizedPts.dat";
 
   // =========== CLI11 Configuration =========== //
 
   CLI::App app { "OptimTiles2D" };
 
-  app.add_option("-t,--threadNumber",throwNumber,"Number of thread used (is also the number of throw on a tile), default: "+std::to_string(throwNumber))->check(CLI::Range(1,maxThread));
+  app.add_option("-t,--nbIterationsPerTile",nbIterationsPerTile,"Number of thread used (is also the number of throw on a tile), default: "+std::to_string(nbIterationsPerTile))->check(CLI::Range(1,maxThread));
   app.add_option("-n,--iterationNumber",niters,"Number of iterations over the pointset, default: "+std::to_string(niters))->check(CLI::PositiveNumber);
   app.add_option("-i,--input",inputString,"Absolute path to input file, default: "+inputString)->check(CLI::ExistingFile)->required();
-  app.add_option("-o,--output",outputString,"Absolute path to output file, default: "+outputString)->required();
-  app.add_option("-w,--writeNTimes",writeEachNIterations,"Will output the result at each N iterations, default: "+std::to_string(writeEachNIterations))->check(CLI::Range(100000,100000000));
+  app.add_option("-o,--output",outputString,"Absolute path to output file, default: "+outputString);
+  app.add_option("-w,--writeEachNIterations",writeEachNIterations,"Will output the result at each N iterations, default: "+std::to_string(writeEachNIterations))->check(CLI::Range(100000,100000000));
 
   CLI11_PARSE(app, argc, argv)
   // =========== OpenMP Configuration =========== //
   omp_set_dynamic(0);
-  omp_set_num_threads(throwNumber);
+  omp_set_num_threads(nbIterationsPerTile);
 
   // =========== Tiles Import =========== //
 
@@ -387,7 +390,7 @@ int main(int argc, char const *argv[]) {
 
   // =========== Tiles Optimisation =========== //
 
-  optimTilesParallel(v,throwNumber,niters,writeEachNIterations,outputString);
+  optimTilesParallel(v,nbIterationsPerTile,niters,writeEachNIterations,outputString);
 
   // =========== Output Writing =========== //
 
