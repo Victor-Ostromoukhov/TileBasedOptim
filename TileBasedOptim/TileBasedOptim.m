@@ -297,6 +297,44 @@ makeOwenL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
         Print[mf @ dtab]
     ] (* makeOwenL2Discrepancy *)
 
+
+makeWNL2Discrepancy[nlevels_:12, ntrials_:64, nDims_:3] :=
+    Module[ {},
+        dtab = {};
+        Do[
+			npts = 2^ilevel;
+			trials = Parallelize @ Table[
+				pts = Table[Table[RandomReal[],{nDims}],{i,npts}];
+				{npts,getStarDiscrepancy[pts]}
+			,{itrail,ntrials}];
+			AppendTo[dtab, Mean @ trials ];
+        	Print["Processing makeWNL2Discrepancy level ",ilevel -> mf[dtab] ];
+	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/WN.dat", dtab]; 
+        ,{ilevel,nlevels}];
+        Print[mf @ dtab]
+    ]
+
+makeStratL2Discrepancy[nlevels_:12, ntrials_:64, nDims_:3] :=
+    Module[ {},
+        dtab = {};
+        Do[
+			npts = getCloseestNND[nDims, 2^ilevel];
+			nstrats = npts^(1/nDims);
+			trials = Parallelize @ Table[
+				Switch[nDims
+				,2, pts = N @ Table[{Mod[i,nstrats], Quotient[i,nstrats]}/nstrats + {RandomReal[],RandomReal[]}/nstrats,{i,0,npts-1}];
+				,3, pts = Flatten[#,2]& @ Table[{ix+RandomReal[],iy+RandomReal[],iz+RandomReal[]}/nstrats,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
+				];
+				{npts,getStarDiscrepancy[pts]}
+			,{itrail,ntrials}];
+			AppendTo[dtab, Mean @ trials ];
+        	Print["Processing makeStratL2Discrepancy level ",ilevel -> mf[dtab] ];
+	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/Strat.dat", dtab]; push
+        ,{ilevel,nlevels}];
+        Print[mf @ dtab]
+    ]
+
+
 makeSobolDiscrepancy[nlevels_:14, nDims_:2,dbg_:True] :=
     Module[ {},
         dtab = {};
@@ -310,43 +348,6 @@ makeSobolDiscrepancy[nlevels_:14, nDims_:2,dbg_:True] :=
 			If[dbg,Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
 			AppendTo[dtab, {npts,getStarDiscrepancy[pts]} ];
 	        (*Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; *)
-        ,{ilevel,nlevels}];
-        Print[mf @ dtab]
-    ]
-
-makeWNStarDiscrepancy[nlevels_:12, ntrials_:64, nDims_:3] :=
-    Module[ {},
-        dtab = {};
-        Do[
-			npts = 2^ilevel;
-        	Print["Processing makeWNStarDiscrepancy level ",ilevel, " npts = ",npts, " nDims = ",nDims];
-			trials = Parallelize @ Table[
-				pts = Table[Table[RandomReal[],{nDims}],{i,npts}];
-				{npts,getStarDiscrepancy[pts]}
-			,{itrail,ntrials}];
-			AppendTo[dtab, Mean @ trials ];
-	        (*Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/WN.dat", dtab]; *)
-        ,{ilevel,nlevels}];
-        Print[mf @ dtab]
-    ]
-
-makeStratStarDiscrepancy[nlevels_:12, ntrials_:64, nDims_:3] :=
-    Module[ {},
-        dtab = {};
-        Do[
-			npts = getCloseestNND[nDims, 2^ilevel];
-			nstrats = npts^(1/nDims);
-        	Print["Processing makeStratStarDiscrepancy level ",ilevel, " npts = ",npts, " nDims = ",nDims];
-			trials = (*Parallelize @*) Table[
-				Switch[nDims
-				,2, pts = N @ Table[{Mod[i,nstrats], Quotient[i,nstrats]}/nstrats + {RandomReal[],RandomReal[]}/nstrats,{i,0,npts-1}];
-				,3, pts = Flatten[#,2]& @ Table[{ix+RandomReal[],iy+RandomReal[],iz+RandomReal[]}/nstrats,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
-				];
-				If[dbg,Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-				{npts,getStarDiscrepancy[pts]}
-			,{itrail,ntrials}];
-			AppendTo[dtab, Mean @ trials ];
-	        Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Strat.dat", dtab]; push
         ,{ilevel,nlevels}];
         Print[mf @ dtab]
     ]
