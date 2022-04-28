@@ -351,7 +351,7 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
         double newDisc = sqrt(pow(currentDisc,2) - pow(apportdupointavant,2) + pow(theChosenOne.apportOfNewPoint,2));
 
         if (currentDisc > newDisc ) {
-          std::cout <<" Iteration " <<iter_over_pointset << " : " << "Initial discrepancy : " << initialDiscrepency << ",  current discrepancy : "<< currentDisc << " becoming " << newDisc << std::endl;
+          std::cout <<" Iteration " << iter_over_pointset << " : " << "Initial discrepancy : " << initialDiscrepency << ",  current discrepancy : "<< currentDisc << " becoming " << newDisc << std::endl;
           currentDisc = newDisc;
           pointSetToOptimize.at(rAM.at(i_tile)).set_pos_x(theChosenOne.point.get_pos_x());
           pointSetToOptimize.at(rAM.at(i_tile)).set_pos_y(theChosenOne.point.get_pos_y());
