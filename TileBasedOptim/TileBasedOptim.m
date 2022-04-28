@@ -251,6 +251,8 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 makeOwenL2Discrepancy[]
 
+makeSobolL2Discrepancy[]
+
 makeWNStarDiscrepancy[]
 makeStratStarDiscrepancy[]
 makeSobolDiscrepancy[]
@@ -263,13 +265,14 @@ makeSobolL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
         nptsMax = 2^nlevels;
         Do[
 			npts = inpts;
-        	Print["Processing makeSobolL2Discrepancy npts = ",npts, " nDims = ",nDims];
 			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 0 -o tmp/pts"<>pid<>".dat > /dev/null";
         	returnCode = Run[execPrefix<>execString];
         	pts = Import["tmp/pts"<>pid<>".dat"];		
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-			AppendTo[dtab, {npts,getL2discrepancy[pts]} ];
+        	d = getL2discrepancy[pts];
+        	Print["Processing makeSobolL2Discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
 	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
         ,{inpts,nptsMax}];
         Print[mf @ dtab]
@@ -281,13 +284,14 @@ makeOwenL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
         nptsMax = 2^nlevels;
         Do[
 			npts = inpts;
-        	Print["Processing makeOwenL2Discrepancy npts = ",npts, " nDims = ",nDims];
-			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 1 -o tmp/pts"<>pid<>".dat > /dev/null";
+			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 1 --max_tree_depth_32_flag 0 -o tmp/pts"<>pid<>".dat > /dev/null";
         	returnCode = Run[execPrefix<>execString];
         	pts = Import["tmp/pts"<>pid<>".dat"];		
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-			AppendTo[dtab, {npts,getL2discrepancy[pts]} ];
+        	d = Mean @ (Parallelize @ Table[getL2discrepancy[pts],{8}]);
+        	Print["Processing makeOwenL2Discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
 	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/Owen.dat", dtab]; 
         ,{inpts,nptsMax}];
         Print[mf @ dtab]
