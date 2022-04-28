@@ -316,8 +316,8 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
   newPointHolder discTab[nbThrow];
 
   // ======= Discrepancy of the current PointSet (Here, the initial one) ======= //
-  double currentDisc,initialDiscrepency = computel2StarDisc(&pointSetToOptimize);
-
+  double initialDiscrepency = computel2StarDisc(&pointSetToOptimize);
+  double currentDisc = initialDiscrepency;
   // ==================== Iteration over the Tiles N times ==================== //
 
   for (size_t iter = 0; iter < niters; iter++) {
