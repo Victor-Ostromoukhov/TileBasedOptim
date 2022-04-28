@@ -284,12 +284,12 @@ makeOwenL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
         nptsMax = 2^nlevels;
         Do[
 			npts = inpts;
-			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 1 --max_tree_depth_32_flag 0 -o tmp/pts"<>pid<>".dat > /dev/null";
-        	returnCode = Run[execPrefix<>execString];
-        	pts = Import["tmp/pts"<>pid<>".dat"];		
-			If[dbg, ipts = Round[ npts pts ];
-				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-        	d = Mean @ (Parallelize @ Table[getL2discrepancy[pts],{8}]);
+        	d = Mean @ (Parallelize @ Table[
+				execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 1 --max_tree_depth_32_flag 0 -s "<>ToString[RandomInteger[2^16]]<>" -o tmp/pts"<>pid<>".dat > /dev/null";
+        		returnCode = Run[execPrefix<>execString];
+        		pts = Import["tmp/pts"<>pid<>".dat"];		
+        		getL2discrepancy[pts]
+        	,{16}]);
         	Print["Processing makeOwenL2Discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
 	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/Owen.dat", dtab]; 
