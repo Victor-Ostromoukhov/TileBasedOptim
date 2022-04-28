@@ -237,12 +237,23 @@ std::vector<Tiles>* importTiles(std::string fileToRead){
   return vectorOfTiles;
 }
 
-/* ==================== Import the Tiles from a file and store them in a Vector of Tiles ==================== */
+/* ==================== Export the Tiles from the Vector and write them in a file ==================== */
 
 void exportTiles(std::vector<Tiles>* v,std::string outputString){
   std::ofstream o;
   o.open(outputString);
   for (std::vector<Tiles>::iterator it = v->begin();it != v->end();  it++) {
+    o << (*it) << '\n';
+  }
+  o.close();
+}
+
+/* ==================== Import the Tiles from a file and store them in a Vector of Tiles ==================== */
+
+void exportPoints(std::vector<Points_2D>* v,std::string outputString){
+  std::ofstream o;
+  o.open(outputString);
+  for (std::vector<Points_2D>::iterator it = v->begin();it != v->end();  it++) {
     o << (*it) << '\n';
   }
   o.close();
@@ -283,7 +294,7 @@ std::vector<int> randomAccessMatriceGenerator(int nbpts){
 
 /* ==================== Main Function : Optimize the discrepancy of a PointSet contained within a Tile-based pattern  ==================== */
 
-void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t writeEachNIterations,std::string outputString) {
+void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t writeEachNIterations,std::string outputString,bool debug) {
 
   // ==================== Variable Initializer ==================== //
   Points_2D oldPoint;
@@ -319,7 +330,7 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
       apportdupointavant = computel2StarDiscPointContribution(&pointSetToOptimize,rAM.at(i));
       // ============= Parallel Beginning ================== //
 
-      #pragma omp parallel for private(pointSetToOptimize)
+      #pragma omp parallel for private(pointSetToOptimize,newPointx,newPointy)
         for (int j = 0; j < nbThrow; j++) {
           pointSetToOptimize = extractSP(v);
           generator.seed((omp_get_thread_num()*1234+5678)+std::chrono::system_clock::now().time_since_epoch().count());
@@ -334,27 +345,38 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
 
         // ============= Parallel Ending ================== //
 
-        // ============= Decide to replace the point or not nd replace it if necessary, along with the discrepancy of the PointSet ================== //
+        // ============= Decide to replace the point or not to replace it if necessary, along with the discrepancy of the PointSet ================== //
         newPointHolder theChosenOne = *std::min_element(discTab+0,discTab+nbThrow,compareTwoNewPointHolder);
+
         double newDisc = sqrt(pow(currentDisc,2) - pow(apportdupointavant,2) + pow(theChosenOne.apportOfNewPoint,2));
+
         if (currentDisc > newDisc ) {
-        	std::cout << iter << " : "  << currentDisc << " -> " << newDisc << std::endl;
           currentDisc = newDisc;
           pointSetToOptimize.at(rAM.at(i)).set_pos_x(theChosenOne.point.get_pos_x());
           pointSetToOptimize.at(rAM.at(i)).set_pos_y(theChosenOne.point.get_pos_y());
+          injectSP(v,&pointSetToOptimize);
         }
+
       }
 
       // ============= Reinject the modified points into the Tiles ================== //
-      injectSP(v,&pointSetToOptimize);
 
       // ============= Export the file at regular interval (Number of iterations) ================== //
       if (writeEachNIterations > 0) {
         if (iter % writeEachNIterations == 0) {
-        	std::cout << iter << " : " << currentDisc << " exporting into " << outputString << std::endl;
-          exportTiles(v,outputString);
+          if (debug) {
+            std::cout << "[DEBUG] Iter  " << iter << " : " << " exporting into " << outputString << std::endl;
+            exportPoints(&pointSetToOptimize,outputString);
+          }else{
+            std::cout << iter << " : " << currentDisc << " exporting into " << outputString << std::endl;
+            exportTiles(v,outputString);
+          }
         }
       }
+  }
+  if (debug) {
+    std::cout << "J'exporte un pointset avec une discrépance de " << currentDisc << '\n';
+    exportPoints(&pointSetToOptimize,outputString);
   }
 }
 
@@ -362,10 +384,10 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
 int main(int argc, char const *argv[]) {
   // =========== Variables =========== //
   srand (time(NULL));
-  int nbIterationsPerTile = 64;
+  int nbIterationsPerTile = omp_get_max_threads() == 64 ? 64 : omp_get_max_threads();
   size_t niters = 1024*1024;
   size_t writeEachNIterations = 1024;
-  int maxThread = omp_get_max_threads() > 64 ? 64 : omp_get_max_threads();
+  bool debug = false;
   std::string inputString ="pts.dat";
   std::string outputString ="OptimizedPts.dat";
 
@@ -373,11 +395,12 @@ int main(int argc, char const *argv[]) {
 
   CLI::App app { "OptimTiles2D" };
 
-  app.add_option("-t,--nbIterationsPerTile",nbIterationsPerTile,"Number of thread used (is also the number of throw on a tile), default: "+std::to_string(nbIterationsPerTile))->check(CLI::Range(1,maxThread));
+  app.add_option("-t,--nbIterationsPerTile",nbIterationsPerTile,"Number of thread used (is also the number of throw on a tile), default: "+std::to_string(nbIterationsPerTile))->check(CLI::Range(1,nbIterationsPerTile));
   app.add_option("-n,--iterationNumber",niters,"Number of iterations over the pointset, default: "+std::to_string(niters))->check(CLI::PositiveNumber);
-  app.add_option("-i,--input",inputString,"Absolute path to input file, default: "+inputString)->check(CLI::ExistingFile)->required();
-  app.add_option("-o,--output",outputString,"Absolute path to output file, default: "+outputString);
-  app.add_option("-w,--writeEachNIterations",writeEachNIterations,"Will output the result at each N iterations, default: "+std::to_string(writeEachNIterations))->check(CLI::Range(100000,100000000));
+  app.add_option("-i,--input",inputString,"Path to input file, default: "+inputString)->check(CLI::ExistingFile)->required();
+  app.add_option("-o,--output",outputString,"Path to output file, default: "+outputString);
+  app.add_option("-w,--writeEachNIterations",writeEachNIterations,"Will output the result at each N iterations, default: "+std::to_string(writeEachNIterations))->check(CLI::Range(100,100000));
+  app.add_option("-d,--debug",debug,"Will print debug logs and output only Points within the file");
 
   CLI11_PARSE(app, argc, argv)
   // =========== OpenMP Configuration =========== //
@@ -390,11 +413,13 @@ int main(int argc, char const *argv[]) {
 
   // =========== Tiles Optimisation =========== //
 
-  optimTilesParallel(v,nbIterationsPerTile,niters,writeEachNIterations,outputString);
+  optimTilesParallel(v,nbIterationsPerTile,niters,writeEachNIterations,outputString,debug);
 
   // =========== Output Writing =========== //
+  if (!debug) {
+    exportTiles(v,outputString);
+  }
 
-  exportTiles(v,outputString);
 
   return 0;
 }
