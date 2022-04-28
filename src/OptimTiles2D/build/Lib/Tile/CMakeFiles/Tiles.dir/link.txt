@@ -1,0 +1,2 @@
+/usr/bin/ar qc libTiles.a  CMakeFiles/Tiles.dir/Tiles.cpp.o
+/usr/bin/ranlib libTiles.a
