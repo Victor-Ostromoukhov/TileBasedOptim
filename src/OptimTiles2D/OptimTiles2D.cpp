@@ -320,27 +320,27 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
 
   // ==================== Iteration over the Tiles N times ==================== //
 
-  for (size_t iter_over_pointset = 0; iter_over_pointset < niters; iter_over_pointset++) {
+  for (size_t iter = 0; iter < niters; iter++) {
     rAM = randomAccessMatriceGenerator(pointSetToOptimize.size());
 
     // ============= Beginning to go all over the PointSet ================== //
-    for (long unsigned int i_tile = 0; i_tile < pointSetToOptimize.size(); i_tile++) {
+    for (long unsigned int i = 0; i < pointSetToOptimize.size(); i++) {
 
-      oldPoint = pointSetToOptimize.at(rAM.at(i_tile));
-      apportdupointavant = computel2StarDiscPointContribution(&pointSetToOptimize,rAM.at(i_tile));
+      oldPoint = pointSetToOptimize.at(rAM.at(i));
+      apportdupointavant = computel2StarDiscPointContribution(&pointSetToOptimize,rAM.at(i));
       // ============= Parallel Beginning ================== //
 
       #pragma omp parallel for private(pointSetToOptimize,newPointx,newPointy)
-        for (int i_pt_in_tile = 0; i_pt_in_tile < nbThrow; i_pt_in_tile++) {
+        for (int j = 0; j < nbThrow; j++) {
           pointSetToOptimize = extractSP(v);
-          generator.seed((i_pt_in_tile*1234+5678)+std::chrono::system_clock::now().time_since_epoch().count());
-          newPointx = v->at(rAM.at(i_tile)).getPreviousRefPoint().get_pos_x() + v->at(rAM.at(i_tile)).getPreviousv1().get_pos_x() * distribution(generator) +  v->at(rAM.at(i_tile)).getPreviousv2().get_pos_x() * distribution(generator);
-          newPointy = v->at(rAM.at(i_tile)).getPreviousRefPoint().get_pos_y()+ v->at(rAM.at(i_tile)).getPreviousv1().get_pos_y() * distribution(generator) + v->at(rAM.at(i_tile)).getPreviousv2().get_pos_y() * distribution(generator);
-          discTab[i_pt_in_tile].point.set_pos_x(newPointx);
-          discTab[i_pt_in_tile].point.set_pos_y(newPointy);
-          pointSetToOptimize.at(rAM.at(i_tile)).set_pos_x(newPointx);
-          pointSetToOptimize.at(rAM.at(i_tile)).set_pos_y(newPointy);
-          discTab[i_pt_in_tile].apportOfNewPoint = computel2StarDiscPointContribution(&pointSetToOptimize,rAM.at(i_tile));
+          generator.seed((omp_get_thread_num()*1234+5678)+std::chrono::system_clock::now().time_since_epoch().count());
+          newPointx = v->at(rAM.at(i)).getPreviousRefPoint().get_pos_x() + v->at(rAM.at(i)).getPreviousv1().get_pos_x() * distribution(generator) +  v->at(rAM.at(i)).getPreviousv2().get_pos_x() * distribution(generator);
+          newPointy = v->at(rAM.at(i)).getPreviousRefPoint().get_pos_y()+ v->at(rAM.at(i)).getPreviousv1().get_pos_y() * distribution(generator) + v->at(rAM.at(i)).getPreviousv2().get_pos_y() * distribution(generator);
+          discTab[omp_get_thread_num()].point.set_pos_x(newPointx);
+          discTab[omp_get_thread_num()].point.set_pos_y(newPointy);
+          pointSetToOptimize.at(rAM.at(i)).set_pos_x(newPointx);
+          pointSetToOptimize.at(rAM.at(i)).set_pos_y(newPointy);
+          discTab[omp_get_thread_num()].apportOfNewPoint = computel2StarDiscPointContribution(&pointSetToOptimize,rAM.at(i));
         }
 
         // ============= Parallel Ending ================== //
@@ -351,10 +351,10 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
         double newDisc = sqrt(pow(currentDisc,2) - pow(apportdupointavant,2) + pow(theChosenOne.apportOfNewPoint,2));
 
         if (currentDisc > newDisc ) {
-          std::cout <<" Iteration " << iter_over_pointset << " : " << "Initial discrepancy : " << initialDiscrepency << ",  current discrepancy : "<< currentDisc << " becoming " << newDisc << std::endl;
+          std::cout <<" Iteration " <<iter << " : " << "Initial discrepancy : " << initialDiscrepency << ",  current discrepancy : "<< currentDisc << " becoming " << newDisc << std::endl;
           currentDisc = newDisc;
-          pointSetToOptimize.at(rAM.at(i_tile)).set_pos_x(theChosenOne.point.get_pos_x());
-          pointSetToOptimize.at(rAM.at(i_tile)).set_pos_y(theChosenOne.point.get_pos_y());
+          pointSetToOptimize.at(rAM.at(i)).set_pos_x(theChosenOne.point.get_pos_x());
+          pointSetToOptimize.at(rAM.at(i)).set_pos_y(theChosenOne.point.get_pos_y());
           injectSP(v,&pointSetToOptimize);
         }
 
@@ -364,12 +364,12 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
 
       // ============= Export the file at regular interval (Number of iterations) ================== //
       if (writeEachNIterations > 0) {
-        if (iter_over_pointset % writeEachNIterations == 0) {
+        if (iter % writeEachNIterations == 0) {
           if (debug) {
-            std::cout << "[DEBUG] Iter  " << iter_over_pointset << " : " << " exporting into " << outputString << std::endl;
+            std::cout << "[DEBUG] Iter  " << iter << " : " << " exporting into " << outputString << std::endl;
             exportPoints(&pointSetToOptimize,outputString);
           }else{
-            std::cout << iter_over_pointset << " : " << currentDisc << " exporting into " << outputString << std::endl;
+            std::cout << iter << " : " << currentDisc << " exporting into " << outputString << std::endl;
             exportTiles(v,outputString);
           }
         }
@@ -385,9 +385,7 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
 int main(int argc, char const *argv[]) {
   // =========== Variables =========== //
   srand (time(NULL));
-  int nbIterationsPerTile = 64;
-
-  int nbThreads = omp_get_max_threads() == 64 ? 64 : omp_get_max_threads();
+  int nbIterationsPerTile = omp_get_max_threads() == 64 ? 64 : omp_get_max_threads();
   size_t niters = 1024*1024;
   size_t writeEachNIterations = 1024;
   bool debug = false;
@@ -398,8 +396,7 @@ int main(int argc, char const *argv[]) {
 
   CLI::App app { "OptimTiles2D" };
 
-  app.add_option("--nbIterationsPerTile",nbIterationsPerTile,"Number of throws (iterations) on a tile, default: "+std::to_string(nbIterationsPerTile));
-  app.add_option("-t,--nbThreads",nbThreads,"Number of threads used , default: "+std::to_string(nbThreads) );
+  app.add_option("-t,--nbIterationsPerTile",nbIterationsPerTile,"Number of thread used (is also the number of throw on a tile), default: "+std::to_string(nbIterationsPerTile))->check(CLI::Range(1,nbIterationsPerTile));
   app.add_option("-n,--iterationNumber",niters,"Number of iterations over the pointset, default: "+std::to_string(niters))->check(CLI::PositiveNumber);
   app.add_option("-i,--input",inputString,"Path to input file, default: "+inputString)->check(CLI::ExistingFile)->required();
   app.add_option("-o,--output",outputString,"Path to output file, default: "+outputString);
@@ -409,7 +406,7 @@ int main(int argc, char const *argv[]) {
   CLI11_PARSE(app, argc, argv)
   // =========== OpenMP Configuration =========== //
   omp_set_dynamic(0);
-  omp_set_num_threads(nbThreads);
+  omp_set_num_threads(nbIterationsPerTile);
 
   // =========== Tiles Import =========== //
 
