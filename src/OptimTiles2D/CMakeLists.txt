@@ -14,3 +14,6 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} Points_2D)
 target_link_libraries(${PROJECT_NAME} Tiles)
+
+set(EXECUTABLE_OUTPUT_PATH ./bin)
+
