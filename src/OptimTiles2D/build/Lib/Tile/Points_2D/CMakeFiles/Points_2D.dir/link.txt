@@ -1,2 +1,0 @@
-/usr/bin/ar qc libPoints_2D.a  CMakeFiles/Points_2D.dir/Points_2D.cpp.o
-/usr/bin/ranlib libPoints_2D.a
