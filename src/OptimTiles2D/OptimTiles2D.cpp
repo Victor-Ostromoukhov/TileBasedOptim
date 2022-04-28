@@ -288,7 +288,9 @@ std::vector<int> randomAccessMatriceGenerator(int nbpts){
   for (int i = 0; i < nbpts; i++) {
     v.push_back(i);
   }
-  random_shuffle(v.begin(), v.end(),mygen);
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(v.begin(), v.end(),g);
   return v;
 }
 
