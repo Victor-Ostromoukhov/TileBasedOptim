@@ -207,6 +207,23 @@ getGeneralizedL2discrepancy[pts_, dbg_:False] :=
         discrepancy
    ] (* getGeneralizedL2discrepancy *)
 
+getL2discrepancy[pts_, dbg_:False] :=
+    Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
+    	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+        prog =  Switch[nDims
+        	,2, "L2Discrepancy_fromfile_2dd"
+        	,3, "L2Discrepancy_fromfile_3dd"
+        	,4, "L2Discrepancy_fromfile_4dd"
+        ];
+        Export["tmp/tmp"<>pid<>".dat",N[pts]];
+        execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat > /dev/null";
+        returnCode = Run[execPrefix<>execString];
+        If[dbg, Print[execString -> returnCode ] ];
+        discrepancy = Import["tmp/res"<>pid<>".dat"][[2,2]];
+        Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
+        discrepancy
+   ] (* getL2discrepancy *)
+
 getStarDiscrepancy[pts_, dbg_:False] :=
     Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
