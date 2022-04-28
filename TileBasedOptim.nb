@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     10917,        318]
-NotebookOptionsPosition[      8626,        267]
-NotebookOutlinePosition[      9079,        285]
-CellTagsIndexPosition[      9036,        282]
+NotebookDataLength[     28367,        647]
+NotebookOptionsPosition[     27606,        624]
+NotebookOutlinePosition[     28057,        642]
+CellTagsIndexPosition[     28014,        639]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -21,252 +21,609 @@ Notebook[{
 
 Cell[CellGroupData[{
 Cell[BoxData[
- RowBox[{"demoBase3SFC", "[", "1", "]"}]], "Input",
- CellChangeTimes->{{3.859957874410015*^9, 3.8599578751918*^9}, 
-   3.859968809149794*^9, 3.8600339154284363`*^9, {3.8600360923655043`*^9, 
-   3.860036092544845*^9}},ExpressionUUID->"a4c6923e-13c6-4c8e-acc3-\
-ecd1b38744f2"],
-
-Cell[BoxData["$Aborted"], "Output",
+ RowBox[{"demoBase3SFC3D", "[", "2", "]"}]], "Input",
  CellChangeTimes->{
-  3.860034871788938*^9, 3.8600349389586487`*^9, 3.8600350797872343`*^9, {
-   3.860035187355033*^9, 3.8600352628957863`*^9}, 3.860035405209214*^9, 
-   3.86003547029062*^9, {3.860035621777955*^9, 3.860035651409451*^9}, 
-   3.8600356908193073`*^9, 3.860035791109981*^9, 3.860035847392029*^9},
- CellLabel->"Out[80]=",ExpressionUUID->"3882cf31-c08b-4e38-9b42-b484b029a633"]
-}, Open  ]],
+  3.8601353331932917`*^9, {3.860135415161344*^9, 3.8601354153325167`*^9}, {
+   3.860135526477346*^9, 3.8601355266263313`*^9}},
+ CellLabel->"In[46]:=",ExpressionUUID->"b92ce913-ccc3-47d4-b409-9391fb48c749"],
 
 Cell[CellGroupData[{
 
-Cell[BoxData["tlst"], "Input",
- CellChangeTimes->{{3.8600348854149113`*^9, 3.860034885417736*^9}},
- CellLabel->"In[81]:=",ExpressionUUID->"e5138aaa-5239-4287-b41a-0aed4c4b2836"],
-
 Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{"2", ",", "0", ",", 
-     RowBox[{"{", 
-      RowBox[{"0", ",", "0"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"0", ",", "0"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{"1", ",", "0"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"0", ",", "1"}], "}"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"0", ",", "0"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{"1", ",", "0"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"0", ",", 
-         FractionBox["1", "3"]}], "}"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", "}"}], ",", 
-       RowBox[{"{", "0", "}"}]}], "}"}], ",", 
-     RowBox[{"{", "0", "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"3", ",", "0", ",", 
-     RowBox[{"{", 
-      RowBox[{"0", ",", "0"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"0", ",", "0"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{"1", ",", "0"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"0", ",", "1"}], "}"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"0", ",", 
-       FractionBox["1", "3"]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{"1", ",", "0"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"0", ",", 
-         FractionBox["1", "3"]}], "}"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", "}"}], ",", 
-       RowBox[{"{", "0", "}"}]}], "}"}], ",", 
-     RowBox[{"{", "1", "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"2", ",", "0", ",", 
-     RowBox[{"{", 
-      RowBox[{"0", ",", "0"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"0", ",", "0"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{"1", ",", "0"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"0", ",", "1"}], "}"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"0", ",", 
-       FractionBox["2", "3"]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", 
-        RowBox[{"1", ",", "0"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"0", ",", 
-         FractionBox["1", "3"]}], "}"}]}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"{", "}"}], ",", 
-       RowBox[{"{", "0", "}"}]}], "}"}], ",", 
-     RowBox[{"{", "2", "}"}]}], "}"}]}], "}"}]], "Output",
+ Graphics3DBox[
+  {AbsolutePointSize[10], 
+   {RGBColor[1, 0.5, 0], AbsoluteThickness[3], 
+    Line3DBox[
+     NCache[{{Rational[1, 3] 3^Rational[-2, 3], Rational[1, 3] 
+        3^Rational[-2, 3], Rational[1, 3] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 3] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 3] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 3] 3^Rational[-2, 3]}}, {{0.16024995225637872`, 
+      0.16024995225637872`, 0.16024995225637872`}, {0.8397500477436213, 
+      0.8397500477436213, 0.8397500477436213}}]]}, 
+   {RGBColor[1, 0.5, 0], AbsoluteThickness[3], 
+    Arrow3DBox[
+     NCache[{{Rational[1, 3] 3^Rational[-2, 3], Rational[1, 3] 
+        3^Rational[-2, 3], Rational[1, 3] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 3] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 3] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 3] 3^Rational[-2, 3]}}, {{0.16024995225637872`, 
+      0.16024995225637872`, 0.16024995225637872`}, {0.8397500477436213, 
+      0.8397500477436213, 0.8397500477436213}}]]}, 
+   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+    Line3DBox[{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, {0, 1, 1}, {1, 1, 
+     1}, {1, 0, 1}, {0, 0, 1}, {0, 0, 0}, {0, 0, 1}, {0, 1, 1}, {0, 1, 0}, {0,
+      0, 0}, {1, 0, 0}, {1, 0, 1}, {1, 1, 1}, {1, 1, 0}}]}, Text3DBox[
+    StyleBox["1",
+     StripOnInput->False,
+     LineColor->RGBColor[0, 0, 1],
+     FrontFaceColor->RGBColor[0, 0, 1],
+     BackFaceColor->RGBColor[0, 0, 1],
+     GraphicsColor->RGBColor[0, 0, 1],
+     FontSize->14,
+     FontWeight->Bold,
+     FontColor->RGBColor[0, 0, 1]], 
+    NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 2]}, {0.5, 0.5, 
+     0.5}], {1.9, -1}], {Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[1, 0, 0],
+      FrontFaceColor->RGBColor[1, 0, 0],
+      BackFaceColor->RGBColor[1, 0, 0],
+      GraphicsColor->RGBColor[1, 0, 0],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[1, 0, 0]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 2]}, {0.5, 0.5, 
+      0.5}], {2, 1}], Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 2]}, {0.5, 0.5, 
+      0.5}], {0, 1}], Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 2]}, {0.5, 0.5, 
+      0.5}], {-2, 1}]}},
+  ImageSize->{1024, 1024},
+  PlotLabel->FormBox["iter", TraditionalForm]]], "Print",
  CellChangeTimes->{
-  3.860034886476132*^9, 3.860034938999913*^9, 3.860035079828064*^9, {
-   3.860035187409432*^9, 3.8600352629368*^9}, 3.8600354052499332`*^9, 
-   3.860035470332357*^9, {3.8600356218239594`*^9, 3.8600356514564734`*^9}, 
-   3.860035690868271*^9, 3.8600357911649513`*^9, 3.8600358474415817`*^9},
- CellLabel->"Out[81]=",ExpressionUUID->"ecbc657d-c478-4e8b-81b3-f36e22028eff"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData["dxy"], "Input",
- CellChangeTimes->{{3.860035088964444*^9, 3.8600350895264463`*^9}},
- CellLabel->"In[82]:=",ExpressionUUID->"2bca3e72-2264-4595-bf29-d935aa0357dd"],
+  3.860126875335894*^9, 3.86012692407635*^9, {3.86012695822606*^9, 
+   3.860126977588892*^9}, 3.860127399261512*^9, 3.860127431768437*^9, 
+   3.86012751482759*^9, 3.8601277434566402`*^9, 3.860127896134323*^9, 
+   3.860135334226119*^9, 3.860135416574584*^9, {3.860135519089752*^9, 
+   3.86013552718668*^9}},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"95834952-0db4-48d8-98de-8b21feb54f7b"],
 
 Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "}"}], ",", 
-     RowBox[{"{", "0", "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "}"}], ",", 
-     RowBox[{"{", "1", "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "}"}], ",", 
-     RowBox[{"{", "2", "}"}]}], "}"}]}], "}"}]], "Output",
- CellChangeTimes->{{3.860035235577585*^9, 3.86003526294269*^9}, 
-   3.8600354052557917`*^9, 3.8600354703388557`*^9, {3.860035621830021*^9, 
-   3.860035651463481*^9}, 3.8600356908744164`*^9, 3.860035791171363*^9, 
-   3.860035847448394*^9},
- CellLabel->"Out[82]=",ExpressionUUID->"f58c0150-f79b-4905-9249-53d6e645150f"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData["dxy"], "Input",
- CellChangeTimes->{{3.860035498193475*^9, 3.860035498196549*^9}},
- CellLabel->"In[83]:=",ExpressionUUID->"8024e91b-b1b2-4563-a7f1-31e82b406fc1"],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "}"}], ",", 
-     RowBox[{"{", "0", "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "}"}], ",", 
-     RowBox[{"{", "1", "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", "}"}], ",", 
-     RowBox[{"{", "2", "}"}]}], "}"}]}], "}"}]], "Output",
+ Graphics3DBox[
+  {AbsolutePointSize[10], 
+   {RGBColor[1, 0.5, 0], AbsoluteThickness[3], 
+    Line3DBox[
+     NCache[{{Rational[1, 9] 3^Rational[-2, 3], Rational[1, 9] 
+        3^Rational[-2, 3], Rational[1, 9] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 9] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 9] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[-1, 9] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 9] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 9] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[1, 9] 3^Rational[-2, 3]}, {
+       Rational[1, 9] 3^Rational[-2, 3], Rational[1, 9] 3^Rational[-2, 3], 
+        Rational[2, 3] + Rational[-1, 9] 3^Rational[-2, 3]}, {
+       Rational[1, 9] 3^Rational[-2, 3], Rational[1, 9] 3^Rational[-2, 3], 
+        Rational[2, 3] + Rational[1, 9] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 9] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 9] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 9] 3^Rational[-2, 3]}}, {{0.05341665075212624, 
+      0.05341665075212624, 0.05341665075212624}, {0.9465833492478738, 
+      0.9465833492478738, 0.27991668258120705`}, {0.9465833492478738, 
+      0.9465833492478738, 0.3867499840854596}, {0.05341665075212624, 
+      0.05341665075212624, 0.6132500159145404}, {0.05341665075212624, 
+      0.05341665075212624, 0.7200833174187928}, {0.9465833492478738, 
+      0.9465833492478738, 0.9465833492478738}}]]}, 
+   {RGBColor[1, 0.5, 0], AbsoluteThickness[3], 
+    Arrow3DBox[
+     NCache[{{Rational[1, 9] 3^Rational[-2, 3], Rational[1, 9] 
+        3^Rational[-2, 3], Rational[1, 9] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 9] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 9] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[-1, 9] 3^Rational[-2, 3]}}, {{0.05341665075212624, 
+      0.05341665075212624, 0.05341665075212624}, {0.9465833492478738, 
+      0.9465833492478738, 0.27991668258120705`}}]], 
+    Arrow3DBox[
+     NCache[{{1 + Rational[-1, 9] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 9] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[1, 9] 3^Rational[-2, 3]}, {
+       Rational[1, 9] 3^Rational[-2, 3], Rational[1, 9] 3^Rational[-2, 3], 
+        Rational[2, 3] + Rational[-1, 9] 3^Rational[-2, 3]}}, {{
+      0.9465833492478738, 0.9465833492478738, 0.3867499840854596}, {
+      0.05341665075212624, 0.05341665075212624, 0.6132500159145404}}]], 
+    Arrow3DBox[
+     NCache[{{Rational[1, 9] 3^Rational[-2, 3], Rational[1, 9] 
+        3^Rational[-2, 3], Rational[2, 3] + 
+        Rational[1, 9] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 9] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 9] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 9] 3^Rational[-2, 3]}}, {{0.05341665075212624, 
+      0.05341665075212624, 0.7200833174187928}, {0.9465833492478738, 
+      0.9465833492478738, 0.9465833492478738}}]]}, 
+   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+    Line3DBox[
+     NCache[{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, {
+       0, 1, Rational[1, 3]}, {1, 1, Rational[1, 3]}, {
+       1, 0, Rational[1, 3]}, {0, 0, Rational[1, 3]}, {0, 0, 0}, {
+       0, 0, Rational[1, 3]}, {0, 1, Rational[1, 3]}, {0, 1, 0}, {0, 0, 0}, {
+       1, 0, 0}, {1, 0, Rational[1, 3]}, {1, 1, Rational[1, 3]}, {1, 1, 
+       0}}, {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, {
+       0, 1, 0.3333333333333333}, {1, 1, 0.3333333333333333}, {
+       1, 0, 0.3333333333333333}, {0, 0, 0.3333333333333333}, {0, 0, 0}, {
+       0, 0, 0.3333333333333333}, {0, 1, 0.3333333333333333}, {0, 1, 0}, {0, 
+       0, 0}, {1, 0, 0}, {1, 0, 0.3333333333333333}, {
+       1, 1, 0.3333333333333333}, {1, 1, 0}}]]}, Text3DBox[
+    StyleBox["4",
+     StripOnInput->False,
+     LineColor->RGBColor[0, 0, 1],
+     FrontFaceColor->RGBColor[0, 0, 1],
+     BackFaceColor->RGBColor[0, 0, 1],
+     GraphicsColor->RGBColor[0, 0, 1],
+     FontSize->14,
+     FontWeight->Bold,
+     FontColor->RGBColor[0, 0, 1]], 
+    NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 6]}, {0.5, 0.5, 
+     0.16666666666666666`}], {1.9, -1}], {Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[1, 0, 0],
+      FrontFaceColor->RGBColor[1, 0, 0],
+      BackFaceColor->RGBColor[1, 0, 0],
+      GraphicsColor->RGBColor[1, 0, 0],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[1, 0, 0]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 6]}, {0.5, 0.5, 
+      0.16666666666666666`}], {2, 1}], Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 6]}, {0.5, 0.5, 
+      0.16666666666666666`}], {0, 1}], Text3DBox[
+     StyleBox["\<\"0\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 6]}, {0.5, 0.5, 
+      0.16666666666666666`}], {-2, 1}]}, 
+   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+    Line3DBox[
+     NCache[{{1, 1, Rational[1, 3]}, {0, 1, Rational[1, 3]}, {
+       0, 0, Rational[1, 3]}, {1, 0, Rational[1, 3]}, {
+       1, 0, Rational[2, 3]}, {0, 0, Rational[2, 3]}, {
+       0, 1, Rational[2, 3]}, {1, 1, Rational[2, 3]}, {
+       1, 1, Rational[1, 3]}, {1, 1, Rational[2, 3]}, {
+       1, 0, Rational[2, 3]}, {1, 0, Rational[1, 3]}, {
+       1, 1, Rational[1, 3]}, {0, 1, Rational[1, 3]}, {
+       0, 1, Rational[2, 3]}, {0, 0, Rational[2, 3]}, {
+       0, 0, Rational[1, 3]}}, {{1, 1, 0.3333333333333333}, {
+       0, 1, 0.3333333333333333}, {0, 0, 0.3333333333333333}, {
+       1, 0, 0.3333333333333333}, {1, 0, 0.6666666666666666}, {
+       0, 0, 0.6666666666666666}, {0, 1, 0.6666666666666666}, {
+       1, 1, 0.6666666666666666}, {1, 1, 0.3333333333333333}, {
+       1, 1, 0.6666666666666666}, {1, 0, 0.6666666666666666}, {
+       1, 0, 0.3333333333333333}, {1, 1, 0.3333333333333333}, {
+       0, 1, 0.3333333333333333}, {0, 1, 0.6666666666666666}, {
+       0, 0, 0.6666666666666666}, {0, 0, 0.3333333333333333}}]]}, Text3DBox[
+    StyleBox["4",
+     StripOnInput->False,
+     LineColor->RGBColor[0, 0, 1],
+     FrontFaceColor->RGBColor[0, 0, 1],
+     BackFaceColor->RGBColor[0, 0, 1],
+     GraphicsColor->RGBColor[0, 0, 1],
+     FontSize->14,
+     FontWeight->Bold,
+     FontColor->RGBColor[0, 0, 1]], 
+    NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 2]}, {0.5, 0.5, 
+     0.5}], {1.9, -1}], {Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[1, 0, 0],
+      FrontFaceColor->RGBColor[1, 0, 0],
+      BackFaceColor->RGBColor[1, 0, 0],
+      GraphicsColor->RGBColor[1, 0, 0],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[1, 0, 0]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 2]}, {0.5, 0.5, 
+      0.5}], {2, 1}], Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 2]}, {0.5, 0.5, 
+      0.5}], {0, 1}], Text3DBox[
+     StyleBox["\<\"1\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 2]}, {0.5, 0.5, 
+      0.5}], {-2, 1}]}, 
+   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+    Line3DBox[
+     NCache[{{0, 0, Rational[2, 3]}, {1, 0, Rational[2, 3]}, {
+       1, 1, Rational[2, 3]}, {0, 1, Rational[2, 3]}, {0, 1, 1}, {1, 1, 1}, {
+       1, 0, 1}, {0, 0, 1}, {0, 0, Rational[2, 3]}, {0, 0, 1}, {0, 1, 1}, {
+       0, 1, Rational[2, 3]}, {0, 0, Rational[2, 3]}, {
+       1, 0, Rational[2, 3]}, {1, 0, 1}, {1, 1, 1}, {
+       1, 1, Rational[2, 3]}}, {{0, 0, 0.6666666666666666}, {
+       1, 0, 0.6666666666666666}, {1, 1, 0.6666666666666666}, {
+       0, 1, 0.6666666666666666}, {0, 1, 1}, {1, 1, 1}, {1, 0, 1}, {0, 0, 
+       1}, {0, 0, 0.6666666666666666}, {0, 0, 1}, {0, 1, 1}, {
+       0, 1, 0.6666666666666666}, {0, 0, 0.6666666666666666}, {
+       1, 0, 0.6666666666666666}, {1, 0, 1}, {1, 1, 1}, {
+       1, 1, 0.6666666666666666}}]]}, Text3DBox[
+    StyleBox["4",
+     StripOnInput->False,
+     LineColor->RGBColor[0, 0, 1],
+     FrontFaceColor->RGBColor[0, 0, 1],
+     BackFaceColor->RGBColor[0, 0, 1],
+     GraphicsColor->RGBColor[0, 0, 1],
+     FontSize->14,
+     FontWeight->Bold,
+     FontColor->RGBColor[0, 0, 1]], 
+    NCache[{Rational[1, 2], Rational[1, 2], Rational[5, 6]}, {0.5, 0.5, 
+     0.8333333333333334}], {1.9, -1}], {Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[1, 0, 0],
+      FrontFaceColor->RGBColor[1, 0, 0],
+      BackFaceColor->RGBColor[1, 0, 0],
+      GraphicsColor->RGBColor[1, 0, 0],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[1, 0, 0]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[5, 6]}, {0.5, 0.5, 
+      0.8333333333333334}], {2, 1}], Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[5, 6]}, {0.5, 0.5, 
+      0.8333333333333334}], {0, 1}], Text3DBox[
+     StyleBox["\<\"2\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 2], Rational[5, 6]}, {0.5, 0.5, 
+      0.8333333333333334}], {-2, 1}]}},
+  ImageSize->{1536, 1536},
+  PlotLabel->FormBox["1", TraditionalForm]]], "Print",
  CellChangeTimes->{
-  3.860035499077792*^9, {3.860035621851519*^9, 3.860035651485941*^9}, 
-   3.860035690896595*^9, 3.860035791197044*^9, 3.860035847471871*^9},
- CellLabel->"Out[83]=",ExpressionUUID->"dd1e44a0-38c4-4575-9b2e-288361a6c782"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"Join", "[", 
-  RowBox[{
-   RowBox[{"{", "}"}], ",", 
-   RowBox[{"dxy", "[", 
-    RowBox[{"[", 
-     RowBox[{"1", ",", "1"}], "]"}], "]"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.860035509676462*^9, 3.860035571347979*^9}},
- CellLabel->"In[84]:=",ExpressionUUID->"8f604a12-1a51-4dc2-b16c-6d3fa7702d51"],
+  3.860126875335894*^9, 3.86012692407635*^9, {3.86012695822606*^9, 
+   3.860126977588892*^9}, 3.860127399261512*^9, 3.860127431768437*^9, 
+   3.86012751482759*^9, 3.8601277434566402`*^9, 3.860127896134323*^9, 
+   3.860135334226119*^9, 3.860135416574584*^9, {3.860135519089752*^9, 
+   3.860135527193552*^9}},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"0199b570-bb96-48c9-b853-7febf32fe8c9"],
 
 Cell[BoxData[
- RowBox[{"{", "}"}]], "Output",
- CellChangeTimes->{{3.8600355166971703`*^9, 3.860035572092016*^9}, {
-   3.86003560230333*^9, 3.860035651491351*^9}, 3.8600356909020967`*^9, 
-   3.8600357912026157`*^9, 3.8600358474778147`*^9},
- CellLabel->"Out[84]=",ExpressionUUID->"33e5449e-d0a7-4adf-954e-ab98b7124818"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"dxy", "[", 
-  RowBox[{"[", 
-   RowBox[{"1", ",", "1"}], "]"}], "]"}]], "Input",
- CellLabel->"In[85]:=",ExpressionUUID->"3970312b-03ec-4f45-9a46-34b53c4cd52e"],
-
-Cell[BoxData[
- RowBox[{"{", "}"}]], "Output",
- CellChangeTimes->{{3.8600355967830763`*^9, 3.860035651513814*^9}, 
-   3.8600356909244204`*^9, 3.86003579122762*^9, 3.860035847501829*^9},
- CellLabel->"Out[85]=",ExpressionUUID->"08ac1307-68a5-4988-b8a2-5529f1efdd04"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData["xcode"], "Input",
- CellChangeTimes->{{3.860035708017448*^9, 3.860035708019794*^9}},
- CellLabel->"In[86]:=",ExpressionUUID->"b0c013cf-5b18-46d8-9bef-f5d830bc618b"],
-
-Cell[BoxData[
- RowBox[{"{", "}"}]], "Output",
- CellChangeTimes->{3.8600357087001543`*^9, 3.8600357912334003`*^9, 
-  3.860035847508312*^9},
- CellLabel->"Out[86]=",ExpressionUUID->"8232e49d-b366-43a3-a6f7-1cdd1f76eba3"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData["xcode"], "Input",
- CellChangeTimes->{{3.860035740292536*^9, 3.860035740295537*^9}},
- CellLabel->"In[87]:=",ExpressionUUID->"02fd91ce-af58-4d9a-b4ee-0c1f6ac9a27a"],
-
-Cell[BoxData[
- RowBox[{"{", "}"}]], "Output",
- CellChangeTimes->{3.860035741025588*^9, 3.860035791259323*^9, 
-  3.8600358475343647`*^9},
- CellLabel->"Out[87]=",ExpressionUUID->"7846426e-1038-4eb5-9693-ab22e38167a8"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"dxy", "[", 
-  RowBox[{"[", 
-   RowBox[{"1", ",", "1"}], "]"}], "]"}]], "Input",
- CellChangeTimes->{{3.860035749687818*^9, 3.860035749690473*^9}},
- CellLabel->"In[88]:=",ExpressionUUID->"4e8dd038-ff7c-42fb-9e54-52f0eaf3582c"],
-
-Cell[BoxData[
- RowBox[{"{", "}"}]], "Output",
- CellChangeTimes->{3.860035750435309*^9, 3.860035791264757*^9, 
-  3.860035847540986*^9},
- CellLabel->"Out[88]=",ExpressionUUID->"e421c14a-6043-4477-bf81-6f4033439c63"]
+ Graphics3DBox[
+  {AbsolutePointSize[10], 
+   {RGBColor[1, 0.5, 0], AbsoluteThickness[3], 
+    Line3DBox[
+     NCache[{{Rational[1, 27] 3^Rational[-2, 3], Rational[1, 27] 
+        3^Rational[-2, 3], Rational[1, 27] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 27] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[-1, 27] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[-1, 27] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 27] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 27] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[1, 27] 3^Rational[-2, 3]}, {
+       Rational[1, 27] 3^Rational[-2, 3], Rational[2, 3] + 
+        Rational[1, 27] 3^Rational[-2, 3], Rational[2, 3] + 
+        Rational[-1, 27] 3^Rational[-2, 3]}, {
+       Rational[1, 27] 3^Rational[-2, 3], Rational[1, 27] 3^Rational[-2, 3], 
+        Rational[2, 3] + Rational[1, 27] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 27] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[-1, 27] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 27] 3^Rational[-2, 3]}}, {{0.017805550250708745`, 
+      0.017805550250708745`, 0.017805550250708745`}, {0.9821944497492913, 
+      0.3155277830826246, 0.3155277830826246}, {0.9821944497492913, 
+      0.9821944497492913, 0.35113888358404205`}, {0.017805550250708745`, 
+      0.6844722169173754, 0.6488611164159579}, {0.017805550250708745`, 
+      0.017805550250708745`, 0.6844722169173754}, {0.9821944497492913, 
+      0.3155277830826246, 0.9821944497492913}}]]}, 
+   {RGBColor[1, 0.5, 0], AbsoluteThickness[3], 
+    Arrow3DBox[
+     NCache[{{Rational[1, 27] 3^Rational[-2, 3], Rational[1, 27] 
+        3^Rational[-2, 3], Rational[1, 27] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 27] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[-1, 27] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[-1, 27] 3^Rational[-2, 3]}}, {{0.017805550250708745`, 
+      0.017805550250708745`, 0.017805550250708745`}, {0.9821944497492913, 
+      0.3155277830826246, 0.3155277830826246}}]], 
+    Arrow3DBox[
+     NCache[{{1 + Rational[-1, 27] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 27] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[1, 27] 3^Rational[-2, 3]}, {
+       Rational[1, 27] 3^Rational[-2, 3], Rational[2, 3] + 
+        Rational[1, 27] 3^Rational[-2, 3], Rational[2, 3] + 
+        Rational[-1, 27] 3^Rational[-2, 3]}}, {{0.9821944497492913, 
+      0.9821944497492913, 0.35113888358404205`}, {0.017805550250708745`, 
+      0.6844722169173754, 0.6488611164159579}}]], 
+    Arrow3DBox[
+     NCache[{{Rational[1, 27] 3^Rational[-2, 3], Rational[1, 27] 
+        3^Rational[-2, 3], Rational[2, 3] + 
+        Rational[1, 27] 3^Rational[-2, 3]}, {
+       1 + Rational[-1, 27] 3^Rational[-2, 3], Rational[1, 3] + 
+        Rational[-1, 27] 3^Rational[-2, 3], 1 + 
+        Rational[-1, 27] 3^Rational[-2, 3]}}, {{0.017805550250708745`, 
+      0.017805550250708745`, 0.6844722169173754}, {0.9821944497492913, 
+      0.3155277830826246, 0.9821944497492913}}]]}, 
+   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+    Line3DBox[
+     NCache[{{0, 0, 0}, {1, 0, 0}, {1, Rational[1, 3], 0}, {
+       0, Rational[1, 3], 0}, {0, Rational[1, 3], Rational[1, 3]}, {
+       1, Rational[1, 3], Rational[1, 3]}, {1, 0, Rational[1, 3]}, {
+       0, 0, Rational[1, 3]}, {0, 0, 0}, {0, 0, Rational[1, 3]}, {
+       0, Rational[1, 3], Rational[1, 3]}, {0, Rational[1, 3], 0}, {0, 0, 
+       0}, {1, 0, 0}, {1, 0, Rational[1, 3]}, {
+       1, Rational[1, 3], Rational[1, 3]}, {1, Rational[1, 3], 0}}, {{0, 0, 
+       0}, {1, 0, 0}, {1, 0.3333333333333333, 0}, {
+       0, 0.3333333333333333, 0}, {
+       0, 0.3333333333333333, 0.3333333333333333}, {
+       1, 0.3333333333333333, 0.3333333333333333}, {
+       1, 0, 0.3333333333333333}, {0, 0, 0.3333333333333333}, {0, 0, 0}, {
+       0, 0, 0.3333333333333333}, {
+       0, 0.3333333333333333, 0.3333333333333333}, {
+       0, 0.3333333333333333, 0}, {0, 0, 0}, {1, 0, 0}, {
+       1, 0, 0.3333333333333333}, {
+       1, 0.3333333333333333, 0.3333333333333333}, {
+       1, 0.3333333333333333, 0}}]]}, Text3DBox[
+    StyleBox["2",
+     StripOnInput->False,
+     LineColor->RGBColor[0, 0, 1],
+     FrontFaceColor->RGBColor[0, 0, 1],
+     BackFaceColor->RGBColor[0, 0, 1],
+     GraphicsColor->RGBColor[0, 0, 1],
+     FontSize->14,
+     FontWeight->Bold,
+     FontColor->RGBColor[0, 0, 1]], 
+    NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 6]}, {0.5, 
+     0.16666666666666666`, 0.16666666666666666`}], {1.9, -1}], {Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[1, 0, 0],
+      FrontFaceColor->RGBColor[1, 0, 0],
+      BackFaceColor->RGBColor[1, 0, 0],
+      GraphicsColor->RGBColor[1, 0, 0],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[1, 0, 0]], 
+     NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 6]}, {0.5, 
+      0.16666666666666666`, 0.16666666666666666`}], {2, 1}], Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 6]}, {0.5, 
+      0.16666666666666666`, 0.16666666666666666`}], {0, 1}], Text3DBox[
+     StyleBox["\<\"0\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 6]}, {0.5, 
+      0.16666666666666666`, 0.16666666666666666`}], {-2, 1}]}, 
+   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+    Line3DBox[
+     NCache[{{1, 1, Rational[1, 3]}, {0, 1, Rational[1, 3]}, {
+       0, Rational[2, 3], Rational[1, 3]}, {
+       1, Rational[2, 3], Rational[1, 3]}, {
+       1, Rational[2, 3], Rational[2, 3]}, {
+       0, Rational[2, 3], Rational[2, 3]}, {0, 1, Rational[2, 3]}, {
+       1, 1, Rational[2, 3]}, {1, 1, Rational[1, 3]}, {
+       1, 1, Rational[2, 3]}, {1, Rational[2, 3], Rational[2, 3]}, {
+       1, Rational[2, 3], Rational[1, 3]}, {1, 1, Rational[1, 3]}, {
+       0, 1, Rational[1, 3]}, {0, 1, Rational[2, 3]}, {
+       0, Rational[2, 3], Rational[2, 3]}, {
+       0, Rational[2, 3], Rational[1, 3]}}, {{1, 1, 0.3333333333333333}, {
+       0, 1, 0.3333333333333333}, {
+       0, 0.6666666666666666, 0.3333333333333333}, {
+       1, 0.6666666666666666, 0.3333333333333333}, {
+       1, 0.6666666666666666, 0.6666666666666666}, {
+       0, 0.6666666666666666, 0.6666666666666666}, {
+       0, 1, 0.6666666666666666}, {1, 1, 0.6666666666666666}, {
+       1, 1, 0.3333333333333333}, {1, 1, 0.6666666666666666}, {
+       1, 0.6666666666666666, 0.6666666666666666}, {
+       1, 0.6666666666666666, 0.3333333333333333}, {
+       1, 1, 0.3333333333333333}, {0, 1, 0.3333333333333333}, {
+       0, 1, 0.6666666666666666}, {
+       0, 0.6666666666666666, 0.6666666666666666}, {
+       0, 0.6666666666666666, 0.3333333333333333}}]]}, Text3DBox[
+    StyleBox["2",
+     StripOnInput->False,
+     LineColor->RGBColor[0, 0, 1],
+     FrontFaceColor->RGBColor[0, 0, 1],
+     BackFaceColor->RGBColor[0, 0, 1],
+     GraphicsColor->RGBColor[0, 0, 1],
+     FontSize->14,
+     FontWeight->Bold,
+     FontColor->RGBColor[0, 0, 1]], 
+    NCache[{Rational[1, 2], Rational[5, 6], Rational[1, 2]}, {0.5, 
+     0.8333333333333334, 0.5}], {1.9, -1}], {Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[1, 0, 0],
+      FrontFaceColor->RGBColor[1, 0, 0],
+      BackFaceColor->RGBColor[1, 0, 0],
+      GraphicsColor->RGBColor[1, 0, 0],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[1, 0, 0]], 
+     NCache[{Rational[1, 2], Rational[5, 6], Rational[1, 2]}, {0.5, 
+      0.8333333333333334, 0.5}], {2, 1}], Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[5, 6], Rational[1, 2]}, {0.5, 
+      0.8333333333333334, 0.5}], {0, 1}], Text3DBox[
+     StyleBox["\<\"0\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[5, 6], Rational[1, 2]}, {0.5, 
+      0.8333333333333334, 0.5}], {-2, 1}]}, 
+   {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+    Line3DBox[
+     NCache[{{0, 0, Rational[2, 3]}, {1, 0, Rational[2, 3]}, {
+       1, Rational[1, 3], Rational[2, 3]}, {
+       0, Rational[1, 3], Rational[2, 3]}, {0, Rational[1, 3], 1}, {
+       1, Rational[1, 3], 1}, {1, 0, 1}, {0, 0, 1}, {0, 0, Rational[2, 3]}, {
+       0, 0, 1}, {0, Rational[1, 3], 1}, {
+       0, Rational[1, 3], Rational[2, 3]}, {0, 0, Rational[2, 3]}, {
+       1, 0, Rational[2, 3]}, {1, 0, 1}, {1, Rational[1, 3], 1}, {
+       1, Rational[1, 3], Rational[2, 3]}}, {{0, 0, 0.6666666666666666}, {
+       1, 0, 0.6666666666666666}, {
+       1, 0.3333333333333333, 0.6666666666666666}, {
+       0, 0.3333333333333333, 0.6666666666666666}, {
+       0, 0.3333333333333333, 1}, {1, 0.3333333333333333, 1}, {1, 0, 1}, {0, 
+       0, 1}, {0, 0, 0.6666666666666666}, {0, 0, 1}, {
+       0, 0.3333333333333333, 1}, {
+       0, 0.3333333333333333, 0.6666666666666666}, {
+       0, 0, 0.6666666666666666}, {1, 0, 0.6666666666666666}, {1, 0, 1}, {
+       1, 0.3333333333333333, 1}, {
+       1, 0.3333333333333333, 0.6666666666666666}}]]}, Text3DBox[
+    StyleBox["2",
+     StripOnInput->False,
+     LineColor->RGBColor[0, 0, 1],
+     FrontFaceColor->RGBColor[0, 0, 1],
+     BackFaceColor->RGBColor[0, 0, 1],
+     GraphicsColor->RGBColor[0, 0, 1],
+     FontSize->14,
+     FontWeight->Bold,
+     FontColor->RGBColor[0, 0, 1]], 
+    NCache[{Rational[1, 2], Rational[1, 6], Rational[5, 6]}, {0.5, 
+     0.16666666666666666`, 0.8333333333333334}], {1.9, -1}], {Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[1, 0, 0],
+      FrontFaceColor->RGBColor[1, 0, 0],
+      BackFaceColor->RGBColor[1, 0, 0],
+      GraphicsColor->RGBColor[1, 0, 0],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[1, 0, 0]], 
+     NCache[{Rational[1, 2], Rational[1, 6], Rational[5, 6]}, {0.5, 
+      0.16666666666666666`, 0.8333333333333334}], {2, 1}], Text3DBox[
+     StyleBox["\<\"\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 6], Rational[5, 6]}, {0.5, 
+      0.16666666666666666`, 0.8333333333333334}], {0, 1}], Text3DBox[
+     StyleBox["\<\"0\"\>",
+      StripOnInput->False,
+      LineColor->RGBColor[0, 0, 1],
+      FrontFaceColor->RGBColor[0, 0, 1],
+      BackFaceColor->RGBColor[0, 0, 1],
+      GraphicsColor->RGBColor[0, 0, 1],
+      FontSize->14,
+      FontWeight->Bold,
+      FontColor->RGBColor[0, 0, 1]], 
+     NCache[{Rational[1, 2], Rational[1, 6], Rational[5, 6]}, {0.5, 
+      0.16666666666666666`, 0.8333333333333334}], {-2, 1}]}},
+  ImageSize->{1244.6189582749637`, 1490.2484633640897`},
+  ImageSizeRaw->Automatic,
+  PlotLabel->FormBox["2", TraditionalForm],
+  ViewPoint->{0.9064944111248215, -2.5184409248246262`, 2.0701988288007374`},
+  ViewVertical->{-0.09999261151910195, -0.012299980323459499`, 
+   0.9949121509588837}]], "Print",
+ CellChangeTimes->{
+  3.860126875335894*^9, 3.86012692407635*^9, {3.86012695822606*^9, 
+   3.860126977588892*^9}, 3.860127399261512*^9, 3.860127431768437*^9, 
+   3.86012751482759*^9, 3.8601277434566402`*^9, 3.860127896134323*^9, 
+   3.860135334226119*^9, 3.860135416574584*^9, {3.860135519089752*^9, 
+   3.86013552720289*^9}},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"41e2b77b-4d44-454a-9412-1c3f4327a088"]
+}, Open  ]]
 }, Open  ]]
 },
-WindowSize->{1175, 1197},
-WindowMargins->{{208, Automatic}, {Automatic, 83}},
+WindowSize->{2005, 1304},
+WindowMargins->{{Automatic, 64}, {Automatic, 0}},
 PrintingCopies->1,
 PrintingPageRange->{1, Automatic},
 FrontEndVersion->"13.0 for Mac OS X x86 (64-bit) (February 4, 2022)",
@@ -285,40 +642,12 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 288, 5, 30, "Input",ExpressionUUID->"a4c6923e-13c6-4c8e-acc3-ecd1b38744f2"],
-Cell[871, 29, 424, 6, 34, "Output",ExpressionUUID->"3882cf31-c08b-4e38-9b42-b484b029a633"]
-}, Open  ]],
+Cell[580, 22, 293, 5, 30, "Input",ExpressionUUID->"b92ce913-ccc3-47d4-b409-9391fb48c749"],
 Cell[CellGroupData[{
-Cell[1332, 40, 177, 2, 30, "Input",ExpressionUUID->"e5138aaa-5239-4287-b41a-0aed4c4b2836"],
-Cell[1512, 44, 2835, 88, 128, "Output",ExpressionUUID->"ecbc657d-c478-4e8b-81b3-f36e22028eff"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[4384, 137, 176, 2, 30, "Input",ExpressionUUID->"2bca3e72-2264-4595-bf29-d935aa0357dd"],
-Cell[4563, 141, 689, 19, 34, "Output",ExpressionUUID->"f58c0150-f79b-4905-9249-53d6e645150f"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[5289, 165, 174, 2, 30, "Input",ExpressionUUID->"8024e91b-b1b2-4563-a7f1-31e82b406fc1"],
-Cell[5466, 169, 611, 18, 34, "Output",ExpressionUUID->"dd1e44a0-38c4-4575-9b2e-288361a6c782"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[6114, 192, 326, 8, 30, "Input",ExpressionUUID->"8f604a12-1a51-4dc2-b16c-6d3fa7702d51"],
-Cell[6443, 202, 317, 5, 34, "Output",ExpressionUUID->"33e5449e-d0a7-4adf-954e-ab98b7124818"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[6797, 212, 182, 4, 30, "Input",ExpressionUUID->"3970312b-03ec-4f45-9a46-34b53c4cd52e"],
-Cell[6982, 218, 263, 4, 34, "Output",ExpressionUUID->"08ac1307-68a5-4988-b8a2-5529f1efdd04"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[7282, 227, 176, 2, 30, "Input",ExpressionUUID->"b0c013cf-5b18-46d8-9bef-f5d830bc618b"],
-Cell[7461, 231, 217, 4, 34, "Output",ExpressionUUID->"8232e49d-b366-43a3-a6f7-1cdd1f76eba3"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[7715, 240, 176, 2, 30, "Input",ExpressionUUID->"02fd91ce-af58-4d9a-b4ee-0c1f6ac9a27a"],
-Cell[7894, 244, 215, 4, 34, "Output",ExpressionUUID->"7846426e-1038-4eb5-9693-ab22e38167a8"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[8146, 253, 248, 5, 30, "Input",ExpressionUUID->"4e8dd038-ff7c-42fb-9e54-52f0eaf3582c"],
-Cell[8397, 260, 213, 4, 34, "Output",ExpressionUUID->"e421c14a-6043-4477-bf81-6f4033439c63"]
+Cell[898, 31, 3392, 79, 1032, "Print",ExpressionUUID->"95834952-0db4-48d8-98de-8b21feb54f7b"],
+Cell[4293, 112, 10911, 240, 1544, "Print",ExpressionUUID->"0199b570-bb96-48c9-b853-7febf32fe8c9"],
+Cell[15207, 354, 12371, 266, 1498, "Print",ExpressionUUID->"41e2b77b-4d44-454a-9412-1c3f4327a088"]
+}, Open  ]]
 }, Open  ]]
 }
 ]
