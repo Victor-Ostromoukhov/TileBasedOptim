@@ -650,15 +650,15 @@ prepOptimDataBase3SFC2D[innlevels_:6, dbg_:False] :=
 			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
 			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
 			tlst = fillSamplingPtsBase3SFC2DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
-			Graphics[ {getBase3SFC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;
+			(*Graphics[ {getBase3SFC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
 			Do[
-				seltlst = selectBase3SFC2DTiles[tlst, ii/3^ilevel];
-				fname = "optim_data/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".dat";
+				seltlst = selectBase3SFC2DTiles[tlst, iOrdinalAbsolute/3^ilevel];
+				fname = "optim_data/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 				exportSelectionBase3SFC2D[fname,seltlst];
-				p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
+				(*p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
 				p//Print;
-				Export["optim_figs/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".png", p];
-			,{ii,3^(ilevel-1)+1,3^ilevel}];
+				Export["optim_figs/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".png", p];*)
+			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
 	] (* prepOptimDataBase3SFC2D *)
 
@@ -870,9 +870,9 @@ prepOptimDataBase3SFC3D[innlevels_:6, dbg_:False] :=
 				seltlst = selectBase3SFC3DTiles[tlst, ii/3^ilevel];
 				fname = "optim_data/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".dat";
 				exportSelectionBase3SFC3D[fname,seltlst];
-				p = Graphics[ Append[background,#]& @ getBase3SFC3DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
+				(*p = Graphics[ Append[background,#]& @ getBase3SFC3DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
 				p//Print;
-				Export["optim_figs/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".png", p];
+				Export["optim_figs/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".png", p];*)
 			,{ii,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
 	] (* prepOptimDataBase3SFC3D *)
