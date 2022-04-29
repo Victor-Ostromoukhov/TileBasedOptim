@@ -337,8 +337,18 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
         for (int i_pt_in_tile = 0; i_pt_in_tile < nbThrow; i_pt_in_tile++) {
           pointSetToOptimize = extractSP(v);
           generator.seed((i_pt_in_tile*1234+5678)+std::chrono::system_clock::now().time_since_epoch().count());
-          newPointx = v->at(rAM.at(i_tile)).getPreviousRefPoint().get_pos_x() + v->at(rAM.at(i_tile)).getPreviousv1().get_pos_x() * distribution(generator) +  v->at(rAM.at(i_tile)).getPreviousv2().get_pos_x() * distribution(generator);
-          newPointy = v->at(rAM.at(i_tile)).getPreviousRefPoint().get_pos_y()+ v->at(rAM.at(i_tile)).getPreviousv1().get_pos_y() * distribution(generator) + v->at(rAM.at(i_tile)).getPreviousv2().get_pos_y() * distribution(generator);
+//          newPointx = v->at(rAM.at(i_tile)).getPreviousRefPoint().get_pos_x() + v->at(rAM.at(i_tile)).getPreviousv1().get_pos_x() * distribution(generator)
+//        																  +  v->at(rAM.at(i_tile)).getPreviousv2().get_pos_x() * distribution(generator);
+//          newPointy = v->at(rAM.at(i_tile)).getPreviousRefPoint().get_pos_y()+ v->at(rAM.at(i_tile)).getPreviousv1().get_pos_y() * distribution(generator)
+//        																  + v->at(rAM.at(i_tile)).getPreviousv2().get_pos_y() * distribution(generator);
+
+          // strat : pts = N @ Table[{Mod[i,nstrats], Quotient[i,nstrats]}/nstrats + {RandomReal[],RandomReal[]}/nstrats,{i,0,npts-1}];
+          double rand_v1 = distribution(generator), rand_v2 = distribution(generator);
+          int ix = i_pt_in_tile / 8, iy = i_pt_in_tile % 8;
+          newPointx = v->at(rAM.at(i_tile)).getPreviousRefPoint().get_pos_x() + v->at(rAM.at(i_tile)).getPreviousv1().get_pos_x() * (ix+rand_v1) / 8.
+        																  +  v->at(rAM.at(i_tile)).getPreviousv2().get_pos_x() * (iy+rand_v1) / 8.;
+          newPointy = v->at(rAM.at(i_tile)).getPreviousRefPoint().get_pos_y()+ v->at(rAM.at(i_tile)).getPreviousv1().get_pos_y() * (ix+rand_v2) / 8.
+        																  + v->at(rAM.at(i_tile)).getPreviousv2().get_pos_y() * (iy+rand_v2) / 8.;
           discTab[i_pt_in_tile].point.set_pos_x(newPointx);
           discTab[i_pt_in_tile].point.set_pos_y(newPointy);
           pointSetToOptimize.at(rAM.at(i_tile)).set_pos_x(newPointx);
