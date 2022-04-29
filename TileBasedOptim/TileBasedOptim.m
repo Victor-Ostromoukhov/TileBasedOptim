@@ -249,9 +249,9 @@ getCloseestNND[nDims_:2, n_] := Round[n^(1/nDims)]^nDims
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
+makeSobolStarDiscrepancy[]
 makeSobolGeneralizedL2Discrepancy[]
 
-makeSobolStarDiscrepancy[]
 
 
 makeWNL2Discrepancy[]
@@ -727,6 +727,7 @@ getDiscrepancy2DBase3SFC2D[niters_:4] :=
         Print[mf @ res]
     ] (* getDiscrepancy2DBase3SFC2D *)
 
+
 makeMatBuilderMatrices0m2net2D[] :=
     Module[ {},
     	If[ !FileExistsQ["MatBuilder_matrices/"], CreateDirectory["MatBuilder_matrices/"] ];
@@ -820,6 +821,23 @@ makeBase3SFC2DL2Discrepancy[dbg_:False] :=
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab]
     ] (* makeBase3SFC2DL2Discrepancy *)
+
+
+showBase3SFC2DOptimImprovement[dbg_:False] :=
+    Module[ {},
+    	nDims = 2;
+        dtab = {};
+         setNo = 1;
+			npts = iOrdinalAbsolute = 3^6;
+			inipts = Import["optim_output/2D_0m2net_set_1_level_"<>ToString[iOrdinalAbsolute]<>".dat"][[;;,3;;4]];
+			optimpts = Import["optim_data/2D_0m2net_set_1_level_"<>ToString[iOrdinalAbsolute]<>".dat"][[;;,3;;4]];
+			pairs = {inipts,optimpts}//T;
+			p = Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],
+				{Red,Point[#[[1]]],Blue,Point[#[[2]]],Yellow,Line[{#[[1]],#[[2]]}]}&/@pairs
+				}, ImageSize->{1024,1024}, PlotLabel->ToString[npts]<>" pts   Red:MatBuilder Blue:optimized"] ;
+			p//Print;
+			Export["OptimImprovement.png",p];
+    ] (* showBase3SFC2DOptimImprovement *)
 
 makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
     Module[ {},
@@ -915,6 +933,7 @@ subdivBase3SFC3DTiles[tlst_] :=
               			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{},{},{}}, {{},{},{}}, {{},{},{}} },
               			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} }
               		];
+              		dxyz = {{{},{},{2}}, {{},{},{1}}, {{},{},{0}} };
 					AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, 1/3 v3}, 											{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[ycode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2+v3/3,	{mxRotZ180.v1, mxRotZ180.v2, 1/3 mxRotZ180.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[ycode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, 1/3 v3},									{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[ycode,dxyz[[3,3]]]}, Append[fcode,2]} ];
@@ -925,7 +944,7 @@ subdivBase3SFC3DTiles[tlst_] :=
               			v1[[2]] > 0 && v2[[1]] < 0, {{{},{0}}, {{},{1}}, {{},{2}} },
               			v1[[2]] < 0 && v2[[1]] > 0, {{{},{2}}, {{},{1}}, {{},{0}} }
               		];
-              		dxyz = {{{},{},{}}, {{},{},{}}, {{},{},{}} };
+              		dxyz = {{{},{},{2}}, {{},{},{1}}, {{},{},{0}} };
 					AppendTo[res,{typeXPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2/3, v3}, 										{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[ycode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					AppendTo[res,{typeXPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,{mxRotY180.v1,mxRotY180.v2/3,mxRotY180.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[ycode,dxyz[[2,3]]]}, Append[fcode,0]} ];
 					AppendTo[res,{typeXPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2 2/3,	{v1, v2/3, v3}, 								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[ycode,dxyz[[3,3]]]}, Append[fcode,0]} ];
@@ -933,7 +952,7 @@ subdivBase3SFC3DTiles[tlst_] :=
               		dxyz = Which[
               			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} }
               		];
-              		dxyz = {{{},{},{}}, {{},{},{}}, {{},{},{}} };
+              		dxyz = {{{},{},{2}}, {{},{},{1}}, {{},{},{0}} };
 					AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1/3, v2, v3},								{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[ycode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1/3+v2+v3,	{mxRotX180.v1/3,mxRotX180.v2,mxRotX180.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[ycode,dxyz[[2,3]]]}, Append[fcode,0]} ];
 					AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v1,		{v1/3, v2, v3},								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[ycode,dxyz[[3,3]]]}, Append[fcode,0]} ];
@@ -995,15 +1014,15 @@ getBase3SFC3DTilesGL[tlst_,params_:showSFC] :=
 selectBase3SFC3DTiles[tlst_,intensity_:.8] := Select[tlst, FromDigits[Reverse@Last[#],3]/3^Length[Last[#]] < intensity & ]
 
 fillSamplingPtsBase3SFC3DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
-     Module[ {tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,v,indVect,nsubdivs,m},
+     Module[ {tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode,v,indVect,nsubdivs,m},
     	Parallelize @ Table[
-			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
-     		nsubdivs = Length[xcode] + Length[ycode];
-			v = Join[xcode,ycode];
+			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,{v1,v2,v3},{xcode,ycode,zcode},fcode} = tlst[[ind]];
+     		nsubdivs = Length[xcode] + Length[ycode] + Length[zcode];
+			v = Join[xcode,ycode,zcode];
 			m = If[Length[xcode] == Length[ycode],
 				mxInv
 			,(*ELSE*)
-				If[Max@(Abs@(First /@ {v1, v2})) > Max@(Abs@(Last /@ {v1, v2})), mxInvH, mxInvV]
+				If[Max@(Abs@(First /@ {v1, v2, v3})) > Max@(Abs@(Last /@ {v1, v2})), mxInvH, mxInvV]
 			];
 			indVect = Mod[#,3]& /@ (m.v);
 			samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) / 3^nsubdivs;
@@ -1014,9 +1033,9 @@ fillSamplingPtsBase3SFC3DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
 
 
 getSamplingPtsBase3SFC3DTiles[tlst_] :=
-    Module[ {tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode},
+    Module[ {tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode},
     	Parallelize @ Table[
-			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
+			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,{v1,v2,v3},{xcode,ycode,zcode},fcode} = tlst[[ind]];
 			(*{k1,k2} = {RandomReal[],RandomReal[]};*)
 			samplingPt
     	,{ind,Length[tlst]}]
@@ -1025,7 +1044,7 @@ getSamplingPtsBase3SFC3DTiles[tlst_] :=
 
 getDiscrepancy2DBase3SFC3D[niters_:4] :=
     Module[ {npts,pts,dND, tlst},
-		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
+		tlst = tlst = {{typeCube,0,{0,0,0}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {{},{},{}} ,{}} };
         res = Table[
 			tlst = subdivBase3SFC3DTiles @ tlst;
 			tlst = fillSamplingPtsBase3SFC3DTiles @ tlst;
@@ -1068,33 +1087,34 @@ makeMatBuilderMatrices0m2net2D[] :=
     ] (* makeMatBuilderMatrices0m2net2D *)
 
 exportSelectionBase3SFC3D[fname_, seltlst_] :=
-Module[{newtlst,tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode},
+Module[{newtlst,tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode},
 	newtlst = Flatten /@ Table[
-			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = seltlst[[ind]];			
-			{tileType,sind,N@samplingPt,N@prevrefPt,N@{prevv1,prevv2},N@refPt,N@{v1,v2},{xcode,ycode},fcode}
+			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,{v1,v2,v3},{xcode,ycode,zcode},fcode} = seltlst[[ind]];			
+			{tileType,sind,N@samplingPt,N@prevrefPt,N@{prevv1,prevv2,prevv3},N@refPt,N@{v1,v2,v3},{xcode,ycode,zcode},fcode}
 		,{ind,Length[seltlst]}];
 	Export[fname,newtlst];
 ] (* exportSelectionBase3SFC3D *)
 
-prepOptimDataBase3SFC3D[innlevels_:6, dbg_:False] :=
+prepOptimDataBase3SFC3D[innlevels_:2, dbg_:False] :=
     Module[ {},
     	setNo = 1;
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
     	nlevels = innlevels;
-    	If[ !FileExistsQ["optim_data/"], CreateDirectory["optim_data/"] ];
-    	If[ !FileExistsQ["optim_figs/"], CreateDirectory["optim_figs/"] ];
-		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
-		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
-		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
+    	If[ !FileExistsQ["optim_data_3D/"], CreateDirectory["optim_data_3D/"] ];
+    	If[ !FileExistsQ["optim_figs_3D/"], CreateDirectory["optim_figs_3D/"] ];
+		(*mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
+		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];*)
+		tlst = {{typeCube,0,{0,0,0}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {{},{},{}} ,{}} };
 		Do[
 			tlst = subdivBase3SFC3DTiles @ tlst;
-			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
-			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
-			tlst = fillSamplingPtsBase3SFC3DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
-			Graphics[ {getBase3SFC3DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;
+			(*If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
+			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];*)
+			(*tlst = fillSamplingPtsBase3SFC3DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];*)
+			Do[tlst[[i,3]] = {Random[],Random[],Random[]},{i,Length[tlst]}];
+			If[dbg, Graphics3D[ {getBase3SFC3DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print];
 			Do[
 				seltlst = selectBase3SFC3DTiles[tlst, ii/3^ilevel];
-				fname = "optim_data/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".dat";
+				fname = "optim_data_3D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".dat";
 				exportSelectionBase3SFC3D[fname,seltlst];
 				(*p = Graphics[ Append[background,#]& @ getBase3SFC3DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
 				p//Print;
