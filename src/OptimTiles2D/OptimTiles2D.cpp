@@ -323,7 +323,7 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
 
   // ==================== Iteration over the Tiles N times ==================== //
 
-  for (size_t iter_over_pointset = 0; iter_over_pointset < niters; iter_over_pointset++) {
+  for (size_t iter_over_pointset = 0; iter_over_pointset <= niters; iter_over_pointset++) {
     rAM = randomAccessMatriceGenerator(pointSetToOptimize.size());
 
     // ============= Beginning to go all over the PointSet ================== //
