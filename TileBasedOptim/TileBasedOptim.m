@@ -304,11 +304,10 @@ makeSobolGeneralizedL2Discrepancy[nlevels_:12, nDims_:2,dbg_:False] :=
         Print[mf @ dtab]
     ] (* makeSobolL2Discrepancy *)
 
-makeSobolStarDiscrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
+makeSobolStarDiscrepancy[nlevels_:12, nDims_:2,dbg_:False] :=
     Module[ {},
-        dtab = {};
         nptsMax = 2^nlevels;
-        Parallelize @ Do[
+        dtab = Parallelize @ Table[
 			npts = inpts;
 			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 0 -o tmp/pts"<>pid<>".dat > /dev/null";
         	returnCode = Run[execPrefix<>execString];
@@ -317,7 +316,7 @@ makeSobolStarDiscrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
 				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getStarDiscrepancy[pts];
         	Print["Processing makeSobolStarDiscrepancy " -> {npts,d}];
-			AppendTo[dtab, {npts,d} ];
+			{npts,d}
         ,{inpts,nptsMax}];
 	    Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
         Print[mf @ dtab]
