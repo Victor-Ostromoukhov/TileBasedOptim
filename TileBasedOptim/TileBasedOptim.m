@@ -249,7 +249,10 @@ getCloseestNND[nDims_:2, n_] := Round[n^(1/nDims)]^nDims
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
+makeSobolGeneralizedL2Discrepancy[]
+
 makeSobolStarDiscrepancy[]
+
 
 makeWNL2Discrepancy[]
 makeStratL2Discrepancy[]
@@ -395,15 +398,15 @@ makeSobolDiscrepancy[nlevels_:14, nDims_:2,dbg_:True] :=
         Print[mf @ dtab]
     ]
 
-showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC",powfromto_:{2,16},col_:Red] := 
-	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D},
+showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D",powfromto_:{2,10},col_:Red] := 
+	Module[{(*dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D*)},
 		{powfrom,powto}=powfromto;
 		fontSz = 20;
         dirDiscrepancy = "data_StarDiscrepancy/"<>ToString[nDims]<>"D/";
         discrepancyWN = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"WN.dat"]);
         discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Import[dirDiscrepancy<>"Strat.dat"]), {discrepancyWN[[1]]} ];
         discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);
-        discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"FiboSFC.dat"], thisDiscrepancy];
+        discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D.dat"], thisDiscrepancy];
         plotLabel = " StarDisrepancy "<>ToString[nDims]<>"D";               
         alldata = If[Length[discrepancyStrat] == 1,
         	{discrepancyWN, discrepancySobol, discrepancyBase3SFC2D},
@@ -414,8 +417,8 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC
        		{"WN","Sobol", "Jitter", thisDiscrepancyLabel}
         ];
         colors = If[Length[discrepancyStrat] == 1,
-        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} },
-        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {Blue,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} }
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,AbsoluteThickness[3]}, {col,AbsoluteThickness[3]} },
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,AbsoluteThickness[3]}, {Blue,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} }
         ];
         range = {Min @@ ((Last /@ #) &@discrepancySobol), Max @@((Last /@ #) &@discrepancyWN) };
         p = ListLogLogPlot[ alldata
@@ -437,24 +440,22 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC
             ,PlotLabel -> Style[ plotLabel, Bold, 24]
         ];
         p//Print;
-        (*p*)
+        Export["StarDiscrepancy_Base3SFC2D.pdf",p];
     ] (* showStarDisrepancyND *)
 
  showGeneralizedL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D",powfromto_:{2,10},col_:Red] := 
-	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D,kPlusMinus,selPows,powstep,data},
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D,kPlusMinus,data},
 		{powfrom,powto}=powfromto;
     	fontSz = 20;
 		kPlusMinus = .5;
 		base = 2;
-    	{powfrom,powto,powstep} = {2,10,2};
-    	selPows = 2^Range[powfrom,powto,powstep];
+
         dirDiscrepancy = "data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/";
 			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"WN.dat"]);
-			discrepancyWN = Select[#,MemberQ[selPows,#[[1]]]&]& @ Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"Sobol.dat"]);
-			discrepancySobol = Select[#,MemberQ[selPows,#[[1]]]&]& @ Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];				
+			discrepancyWN = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);				
 			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"Strat.dat"]);
-			discrepancyStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];				
+			discrepancyStrat = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];				
         discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D.dat"], thisDiscrepancy];
         plotLabel = " GeneralizedL2discrepancyND "<>ToString[nDims]<>"D";               
         alldata = If[Length[discrepancyStrat] == 1,
@@ -466,10 +467,10 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC
        		{"WN","Sobol", "Jitter", thisDiscrepancyLabel}
         ];
         colors = If[Length[discrepancyStrat] == 1,
-        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} },
-        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {Blue,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} }
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,AbsoluteThickness[3]}, {col,AbsoluteThickness[3]} },
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,AbsoluteThickness[3]}, {Blue,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} }
         ];
-        range = {Min @@ ((Last /@ #) &@discrepancySobol), Max @@((Last /@ #) &@discrepancySobol) };
+        range = {Min @@ ((Last /@ #) &@discrepancyBase3SFC2D), Max @@((Last /@ #) &@discrepancyBase3SFC2D) };
         p = ListLogLogPlot[ alldata
             ,PlotLegends -> Placed[#,{.4,.1}]& @  {Style[#,fontSz]& /@ legends }
             ,PlotStyle -> colors
@@ -489,7 +490,8 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC
             ,PlotLabel -> Style[ plotLabel, Bold, 24]
         ];
         p//Print;
-        (*p*)
+        Export["GeneralizedL2Discrepancy_Base3SFC2D.pdf",p];
+        (*P*)
     ] (* showGeneralizedL2discrepancyND *)
  
 showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D",powfromto_:{2,10},col_:Red] := 
@@ -535,7 +537,7 @@ showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC
             ,PlotLabel -> Style[ plotLabel, Bold, 24]
         ];
         p//Print;
-        Export["L2discrepancy_Base3SFC2D.pdf",p];
+        Export["L2Discrepancy_Base3SFC2D.pdf",p];
         (*p*)
     ] (* showL2discrepancyND *)
 
@@ -841,6 +843,28 @@ makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab];
 		p = showGeneralizedL2discrepancyND[nDims,dtab,"Base3SFC2D",{2,10}] ;
+    ] (* makeBase3SFC2DGeneralizedL2Discrepancy *)
+
+makeBase3SFC2DStarDiscrepancy[dbg_:False] :=
+    Module[ {},
+    	nDims = 2;
+        dtab = {};
+        nptsMax = 3^6;
+        setNo = 1;
+        
+        Do[
+			npts = iOrdinalAbsolute;
+			fname = "optim_output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			pts = Import[fname][[;;,3;;4]];
+			If[dbg, ipts = Round[ npts pts ];
+				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+        	d = getStarDiscrepancy[pts];
+        	Print["Processing makeBase3SFC2DStarDiscrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+	        Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
+        ,{iOrdinalAbsolute,2,nptsMax}];
+        Print[mf @ dtab];
+		p = showStarDisrepancyND[nDims,dtab,"Base3SFC2D",{2,10}] ;
     ] (* makeBase3SFC2DGeneralizedL2Discrepancy *)
 
 
