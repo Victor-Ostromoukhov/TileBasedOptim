@@ -249,6 +249,8 @@ getCloseestNND[nDims_:2, n_] := Round[n^(1/nDims)]^nDims
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
+makeSobolStarDiscrepancy[]
+
 makeWNL2Discrepancy[]
 makeStratL2Discrepancy[]
 
@@ -276,8 +278,46 @@ makeSobolL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
         	d = getL2discrepancy[pts];
         	Print["Processing makeSobolL2Discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
-	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
         ,{inpts,nptsMax}];
+        Print[mf @ dtab]
+    ] (* makeSobolL2Discrepancy *)
+
+makeSobolGeneralizedL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
+    Module[ {},
+        dtab = {};
+        nptsMax = 2^nlevels;
+        Parallelize @ Do[
+			npts = inpts;
+			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 0 -o tmp/pts"<>pid<>".dat > /dev/null";
+        	returnCode = Run[execPrefix<>execString];
+        	pts = Import["tmp/pts"<>pid<>".dat"];		
+			If[dbg, ipts = Round[ npts pts ];
+				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+        	d = getGeneralizedL2discrepancy[pts];
+        	Print["Processing makeSobolGeneralizedL2Discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+        ,{inpts,nptsMax}];
+	    Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
+        Print[mf @ dtab]
+    ] (* makeSobolL2Discrepancy *)
+
+makeSobolStarDiscrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
+    Module[ {},
+        dtab = {};
+        nptsMax = 2^nlevels;
+        Parallelize @ Do[
+			npts = inpts;
+			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 0 -o tmp/pts"<>pid<>".dat > /dev/null";
+        	returnCode = Run[execPrefix<>execString];
+        	pts = Import["tmp/pts"<>pid<>".dat"];		
+			If[dbg, ipts = Round[ npts pts ];
+				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+        	d = getStarDiscrepancy[pts];
+        	Print["Processing makeSobolStarDiscrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+        ,{inpts,nptsMax}];
+	    Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
         Print[mf @ dtab]
     ] (* makeSobolL2Discrepancy *)
 
@@ -295,7 +335,7 @@ makeOwenL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
         	,{16}]);
         	Print["Processing makeOwenL2Discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
-	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/Owen.dat", dtab]; 
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Owen.dat", dtab]; 
         ,{inpts,nptsMax}];
         Print[mf @ dtab]
     ] (* makeOwenL2Discrepancy *)
@@ -312,7 +352,7 @@ makeWNL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:2] :=
 			,{itrail,ntrials}];
 			AppendTo[dtab, Mean @ trials ];
         	Print["Processing makeWNL2Discrepancy level ",ilevel -> mf[dtab] ];
-	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/WN.dat", dtab]; 
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/WN.dat", dtab]; 
         ,{ilevel,nlevels}];
         Print[mf @ dtab]
     ]
@@ -332,7 +372,7 @@ makeStratL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:2] :=
 			,{itrail,ntrials}];
 			AppendTo[dtab, Mean @ trials ];
         	Print["Processing makeStratL2Discrepancy level ",ilevel -> mf[dtab] ];
-	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/Strat.dat", dtab]; push
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Strat.dat", dtab]; push
         ,{ilevel,nlevels}];
         Print[mf @ dtab]
     ]
@@ -356,18 +396,18 @@ makeSobolDiscrepancy[nlevels_:14, nDims_:2,dbg_:True] :=
     ]
 
 showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC",powfromto_:{2,16},col_:Red] := 
-	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancy2DFiboSFC},
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D},
 		{powfrom,powto}=powfromto;
 		fontSz = 20;
         dirDiscrepancy = "data_StarDiscrepancy/"<>ToString[nDims]<>"D/";
         discrepancyWN = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"WN.dat"]);
         discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Import[dirDiscrepancy<>"Strat.dat"]), {discrepancyWN[[1]]} ];
         discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);
-        discrepancy2DFiboSFC = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"FiboSFC.dat"], thisDiscrepancy];
+        discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"FiboSFC.dat"], thisDiscrepancy];
         plotLabel = " StarDisrepancy "<>ToString[nDims]<>"D";               
         alldata = If[Length[discrepancyStrat] == 1,
-        	{discrepancyWN, discrepancySobol, discrepancy2DFiboSFC},
-        	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancy2DFiboSFC}
+        	{discrepancyWN, discrepancySobol, discrepancyBase3SFC2D},
+        	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancyBase3SFC2D}
         ];
         legends = If[Length[discrepancyStrat] == 1,
         	{"WN","Sobol", thisDiscrepancyLabel},
@@ -400,31 +440,26 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC
         (*p*)
     ] (* showStarDisrepancyND *)
 
- showGeneralizedL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC",powfromto_:{2,16},col_:Red] := 
-	Module[{(*dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancy2DFiboSFC*)},
+ showGeneralizedL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D",powfromto_:{2,10},col_:Red] := 
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D,kPlusMinus,selPows,powstep,data},
 		{powfrom,powto}=powfromto;
     	fontSz = 20;
 		kPlusMinus = .5;
 		base = 2;
     	{powfrom,powto,powstep} = {2,10,2};
     	selPows = 2^Range[powfrom,powto,powstep];
-        dirDiscrepancy = "data_discrepancyL2/"<>ToString[nDims]<>"D/";
+        dirDiscrepancy = "data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/";
 			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"WN.dat"]);
 			discrepancyWN = Select[#,MemberQ[selPows,#[[1]]]&]& @ Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"Sobol.dat"]);
-			discrepancySobol = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];				
+			discrepancySobol = Select[#,MemberQ[selPows,#[[1]]]&]& @ Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];				
 			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"Strat.dat"]);
 			discrepancyStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];				
-
-        (*discrepancyWN = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"WN.dat"]);
-        discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Import[dirDiscrepancy<>"Strat.dat"]), {discrepancyWN[[1]]} ];
-        discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);*)
-        
-        discrepancy2DFiboSFC = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"FiboSFC.dat"], thisDiscrepancy];
+        discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D.dat"], thisDiscrepancy];
         plotLabel = " GeneralizedL2discrepancyND "<>ToString[nDims]<>"D";               
         alldata = If[Length[discrepancyStrat] == 1,
-        	{discrepancyWN, discrepancySobol, discrepancy2DFiboSFC},
-        	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancy2DFiboSFC}
+        	{discrepancyWN, discrepancySobol, discrepancyBase3SFC2D},
+        	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancyBase3SFC2D}
         ];
         legends = If[Length[discrepancyStrat] == 1,
         	{"WN","Sobol", thisDiscrepancyLabel},
@@ -457,6 +492,53 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"FiboSFC
         (*p*)
     ] (* showGeneralizedL2discrepancyND *)
  
+showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D",powfromto_:{2,10},col_:Red] := 
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D},
+		{powfrom,powto}=powfromto;
+		fontSz = 20;
+        dirDiscrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
+        discrepancyWN = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"WN.dat"]);
+        discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Import[dirDiscrepancy<>"Strat.dat"]), {discrepancyWN[[1]]} ];
+        discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);
+        discrepancyOwen = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Owen.dat"]);
+        discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D.dat"], thisDiscrepancy];
+        plotLabel = " L2-Discrepancy "<>ToString[nDims]<>"D";               
+        alldata = If[Length[discrepancyStrat] == 1,
+        	{discrepancyWN, discrepancySobol,discrepancyOwen, discrepancyBase3SFC2D},
+        	{discrepancyWN, discrepancySobol,discrepancyOwen, discrepancyStrat, discrepancyBase3SFC2D}
+        ];
+        legends = If[Length[discrepancyStrat] == 1,
+        	{"WN","Sobol","Owen", thisDiscrepancyLabel},
+       		{"WN","Sobol","Owen", "Jitter", thisDiscrepancyLabel}
+        ];
+        colors = If[Length[discrepancyStrat] == 1,
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} },
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,AbsoluteThickness[3]}, {Green,AbsoluteThickness[3]}, {Blue,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} }
+        ];
+        range = {Min @@ ((Last /@ #) &@discrepancySobol), Max @@((Last /@ #) &@discrepancyWN) };
+        p = ListLogLogPlot[ alldata
+            ,PlotLegends -> Placed[#,{.4,.1}]& @  {Style[#,fontSz]& /@ legends }
+            ,PlotStyle -> colors
+            ,Joined->True
+            ,FrameTicks->{{Automatic,None},{Table[base^pow,{pow,powfrom,powto,1}],Table[base^pow,{pow,powfrom,powto,1}]}}
+            ,FrameStyle->Directive[Black,20]
+            ,RotateLabel -> True
+            ,PlotMarkers->{{\[FilledCircle],5} }
+            ,Frame->True
+            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "L2-Discrepancy", fontSz] }
+            ,ImageSize -> {1024,1024}
+            ,PlotRange->{{base^powfrom,base^powto},range}
+            ,GridLines->{Table[base^pow,{pow,powfrom,powto,1}],None}
+            ,GridLinesStyle->Directive[Darker@Gray, Dashed]
+            ,AspectRatio->1
+            ,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+            ,PlotLabel -> Style[ plotLabel, Bold, 24]
+        ];
+        p//Print;
+        Export["L2discrepancy_Base3SFC2D.pdf",p];
+        (*p*)
+    ] (* showL2discrepancyND *)
+
 enumerate0m2netSolutions[] :=
     Module[ {},
     	npts = 3^6;
@@ -724,19 +806,65 @@ makeBase3SFC2DL2Discrepancy[dbg_:False] :=
         dtab = {};
         nptsMax = 3^6;
         setNo = 1;
+        
         Do[
 			npts = iOrdinalAbsolute;
 			fname = "optim_output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 			pts = Import[fname][[;;,3;;4]];
 			If[dbg, ipts = Round[ npts pts ];
-				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getL2discrepancy[pts];
         	Print["Processing makeBase3SFC2DL2Discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
-	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab]
     ] (* makeBase3SFC2DL2Discrepancy *)
+
+makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
+    Module[ {},
+    	nDims = 2;
+        dtab = {};
+        nptsMax = 3^6;
+        setNo = 1;
+        
+        Do[
+			npts = iOrdinalAbsolute;
+			fname = "optim_output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			pts = Import[fname][[;;,3;;4]];
+			If[dbg, ipts = Round[ npts pts ];
+				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+        	d = getGeneralizedL2discrepancy[pts];
+        	Print["Processing makeBase3SFC2DGeneralizedL2Discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+	        Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
+        ,{iOrdinalAbsolute,2,nptsMax}];
+        Print[mf @ dtab];
+		p = showGeneralizedL2discrepancyND[nDims,dtab,"Base3SFC2D",{2,10}] ;
+    ] (* makeBase3SFC2DGeneralizedL2Discrepancy *)
+
+
+makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
+    Module[ {},
+    	nDims = 2;
+        dtab = {};
+        nptsMax = 3^6;
+        setNo = 1;
+        
+        Do[
+			npts = iOrdinalAbsolute;
+			fname = "optim_output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			pts = Import[fname][[;;,3;;4]];
+			If[dbg, ipts = Round[ npts pts ];
+				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+        	d = getGeneralizedL2discrepancy[pts];
+        	Print["Processing makeBase3SFC2DGeneralizedL2Discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+	        Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
+        ,{iOrdinalAbsolute,2,nptsMax}];
+        Print[mf @ dtab];
+		p = showGeneralizedL2discrepancyND[nDims,dtab,"Base3SFC2D",{2,10}] ;
+    ] (* makeBase3SFC2DGeneralizedL2Discrepancy *)
 
 (*----------------------------- end of Base3SFC2D --------------------------------*)
 
@@ -766,8 +894,8 @@ subdivBase3SFC3DTiles[tlst_] :=
               			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} }
               		];
 					AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, 1/3 v3}, 											{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[ycode,dxyz[[1,3]]]}, Append[fcode,0]} ];
-					(*AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2+v3/3,	{mxRotZ180.v1, mxRotZ180.v2, 1/3 mxRotZ180.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[ycode,dxyz[[2,3]]]}, Append[fcode,1]} ];
-					AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, 1/3 v3},									{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[ycode,dxyz[[3,3]]]}, Append[fcode,2]} ];*)
+					AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2+v3/3,	{mxRotZ180.v1, mxRotZ180.v2, 1/3 mxRotZ180.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[ycode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeZPara,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, 1/3 v3},									{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[ycode,dxyz[[3,3]]]}, Append[fcode,2]} ];
               ,typeZPara, 
               		dxyz = Which[
               			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} },
@@ -785,8 +913,8 @@ subdivBase3SFC3DTiles[tlst_] :=
               		];
               		dxyz = {{{},{},{}}, {{},{},{}}, {{},{},{}} };
 					AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1/3, v2, v3},								{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[ycode,dxyz[[1,3]]]}, Append[fcode,0]} ];
-					(*AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1/3+v2+v3,	{mxRotX180.v1/3,mxRotX180.v2,mxRotX180.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[ycode,dxyz[[2,3]]]}, Append[fcode,0]} ];
-					AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v1,		{v1/3, v2, v3},								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[ycode,dxyz[[3,3]]]}, Append[fcode,0]} ];*)
+					AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1/3+v2+v3,	{mxRotX180.v1/3,mxRotX180.v2,mxRotX180.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[ycode,dxyz[[2,3]]]}, Append[fcode,0]} ];
+					AppendTo[res,{typeCube,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v1,		{v1/3, v2, v3},								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[ycode,dxyz[[3,3]]]}, Append[fcode,0]} ];
             ];
     	,{ind,Length[tlst]}];
     	Return[res]
