@@ -710,6 +710,34 @@ prepOptimDataBase3SFC2D[innlevels_:6, dbg_:False] :=
 		,{ilevel,nlevels}];
 	] (* prepOptimDataBase3SFC2D *)
 
+
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+makeBase3SFC2DL2Discrepancy[]
+*)
+
+makeBase3SFC2DL2Discrepancy[dbg_:False] :=
+    Module[ {},
+    	nDims = 2;
+        dtab = {};
+        nptsMax = 3^6;
+        setNo = 1;
+        Do[
+			npts = iOrdinalAbsolute;
+			fname = "optim_output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			pts = Import[fname][[;;,3;;4]];
+			If[dbg, ipts = Round[ npts pts ];
+				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+        	d = getL2discrepancy[pts];
+        	Print["Processing makeBase3SFC2DL2Discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+	        Export["data_L2Discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
+        ,{iOrdinalAbsolute,2,nptsMax}];
+        Print[mf @ dtab]
+    ] (* makeBase3SFC2DL2Discrepancy *)
+
 (*----------------------------- end of Base3SFC2D --------------------------------*)
 
 
