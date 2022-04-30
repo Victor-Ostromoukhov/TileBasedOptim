@@ -787,7 +787,7 @@ prepOptimDataBase3MortonC2D[innlevels_:6, dbg_:False] :=
 				fname = "optim_data_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 				exportSelectionBase3MortonC2D[fname,seltlst];
 				If[dbg,
-					p = Graphics[ Append[background,#]& @ getBase3MortonC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
+					p = Graphics[ Append[background,#]& @ getBase3MortonC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ilevel ];
 					p//Print;
 					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".png", p];
 				];
