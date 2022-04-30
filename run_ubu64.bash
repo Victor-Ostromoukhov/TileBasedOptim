@@ -3,7 +3,7 @@
 nthreads=64
 
 #ntrials=1024 or 4096 or 16384 or 65536
-ntrials=4096
+ntrials=1024
 
 srcdir=optim_data_2D
 resdir=optim_output_2D
