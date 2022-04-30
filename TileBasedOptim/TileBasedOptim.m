@@ -642,29 +642,48 @@ subdivBase3SFC2DTiles[tlst_] :=
     	Return[res]
     ] (* subdivBase3SFC2DTiles *)
 
-demoBase3SFC2D[innsubdivs_:6, dbg_:False] :=
+demoBase3SFC2D[innsubdivs_:8, dbg_:False] :=
     Module[ {},
     	nsubdivs = innsubdivs;
 		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
 		Do[
 			tlst = subdivBase3SFC2DTiles @ tlst;
-			flags = If[iter <= 6, showSFC+showTilexycodes+showTileType, showSFC];
+			flags = If[iter <= 4, showSFC+showTilexycodes+showTileType, showSFC];
 			Graphics[ getBase3SFC2DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024}3/2 ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,nsubdivs}];
 	] (* demoBase3SFC2D *)
 
+
 getsfcBase3SFC2D[tlst_] :=
-    Module[ {sfc={}, tileType,sind,refPt,v1,v2,samplingPt,prevrefPt,prevv1,prevv2,xcode,ycode,fcode,norm1,norm2,delta=3},
+    Module[ {sfc={}, tileType,sind,refPt,v1,v2,samplingPt,prevrefPt,prevv1,prevv2,xcode,ycode,fcode,norm1,norm2,factor=4,delta=6},
     	Do[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
-	    	{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/2);
-	   		AppendTo[sfc,refPt + (norm1+norm2)/1/3^((Length[fcode]+delta)/2) ];
-  			AppendTo[sfc,refPt + v1 + v2 + (-norm1-norm2)/3^((Length[fcode]+delta)/2) ] ;
+	    	{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/factor);
+	   		AppendTo[sfc,refPt + (norm1+norm2)/1/3^((Length[fcode]+delta)/factor) ];
+  			AppendTo[sfc,refPt + v1 + v2 + (-norm1-norm2)/3^((Length[fcode]+delta)/factor) ] ;
     	,{ind,Length[tlst]}];
     	Return[sfc]
     ] (* getsfcBase3SFC2D *)
 
+(*getsfcBase3SFC2D[tlst_] :=
+    Module[ {sfc={}, tileType,sind,refPt,v1,v2,samplingPt,prevrefPt,prevv1,prevv2,xcode,ycode,fcode},
+    	Do[
+			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
+			Switch[tileType
+			,typeSq,
+	   			AppendTo[sfc,refPt + (v1+v2)/2 ];
+	   		,typeHRec,
+	   			AppendTo[sfc,refPt + v1 1/6 + v2 1/2 ];
+	   			AppendTo[sfc,refPt + v1 5/6 + v2 1/2 ];
+	   		,typeVRec,
+	   			AppendTo[sfc,refPt + v1 1/2 + v2 1/6 ];
+	   			AppendTo[sfc,refPt + v1 1/2 + v2 5/6 ];
+			];
+    	,{ind,Length[tlst]}];
+    	Return[sfc]
+    ] (* getsfcBase3SFC2D *)
+*)
 
 getBase3SFC2DTilesGL[tlst_,params_:showSFC] :=
     Module[ {gl={AbsolutePointSize[10]},tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,cont,sfc,norm1,norm2,fcodelen,
