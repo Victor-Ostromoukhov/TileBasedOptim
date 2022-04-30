@@ -1,5 +1,5 @@
 (* TileBasedOptim.m
-   2022-04 vo, based on fibo-hilbert.m (version 2002/12/14)
+   2022-04 vo
 *)
  
 (****************** globals *******************)
@@ -396,19 +396,19 @@ makeSobolDiscrepancy[nlevels_:14, nDims_:2,dbg_:True] :=
         Print[mf @ dtab]
     ]
 
-showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D",powfromto_:{2,10},col_:Red] := 
-	Module[{(*dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D*)},
+showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3MortonC2D",powfromto_:{2,10},col_:Red] := 
+	Module[{(*dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3MortonC2D*)},
 		{powfrom,powto}=powfromto;
 		fontSz = 20;
         dirDiscrepancy = "data_StarDiscrepancy/"<>ToString[nDims]<>"D/";
         discrepancyWN = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"WN.dat"]);
         discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Import[dirDiscrepancy<>"Strat.dat"]), {discrepancyWN[[1]]} ];
         discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);
-        discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D.dat"], thisDiscrepancy];
+        discrepancyBase3MortonC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3MortonC2D.dat"], thisDiscrepancy];
         plotLabel = " StarDisrepancy "<>ToString[nDims]<>"D";               
         alldata = If[Length[discrepancyStrat] == 1,
-        	{discrepancyWN, discrepancySobol, discrepancyBase3SFC2D},
-        	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancyBase3SFC2D}
+        	{discrepancyWN, discrepancySobol, discrepancyBase3MortonC2D},
+        	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancyBase3MortonC2D}
         ];
         legends = If[Length[discrepancyStrat] == 1,
         	{"WN","Sobol", thisDiscrepancyLabel},
@@ -438,11 +438,11 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SF
             ,PlotLabel -> Style[ plotLabel, Bold, 24]
         ];
         p//Print;
-        Export["StarDiscrepancy_Base3SFC2D.pdf",p];
+        Export["StarDiscrepancy_Base3MortonC2D.pdf",p];
     ] (* showStarDisrepancyND *)
 
- showGeneralizedL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D",powfromto_:{2,10},col_:Red] := 
-	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D,kPlusMinus,data},
+ showGeneralizedL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3MortonC2D",powfromto_:{2,10},col_:Red] := 
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3MortonC2D,kPlusMinus,data},
 		{powfrom,powto}=powfromto;
     	fontSz = 20;
 		kPlusMinus = .5;
@@ -454,11 +454,11 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SF
 			discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);				
 			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"Strat.dat"]);
 			discrepancyStrat = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];				
-        discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D.dat"], thisDiscrepancy];
+        discrepancyBase3MortonC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3MortonC2D.dat"], thisDiscrepancy];
         plotLabel = " GeneralizedL2discrepancyND "<>ToString[nDims]<>"D";               
         alldata = If[Length[discrepancyStrat] == 1,
-        	{discrepancyWN, discrepancySobol, discrepancyBase3SFC2D},
-        	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancyBase3SFC2D}
+        	{discrepancyWN, discrepancySobol, discrepancyBase3MortonC2D},
+        	{discrepancyWN, discrepancySobol, discrepancyStrat, discrepancyBase3MortonC2D}
         ];
         legends = If[Length[discrepancyStrat] == 1,
         	{"WN","Sobol", thisDiscrepancyLabel},
@@ -468,7 +468,7 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SF
         	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,AbsoluteThickness[3]}, {col,AbsoluteThickness[3]} },
         	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,AbsoluteThickness[3]}, {Blue,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} }
         ];
-        range = {Min @@ ((Last /@ #) &@discrepancyBase3SFC2D), Max @@((Last /@ #) &@discrepancyBase3SFC2D) };
+        range = {Min @@ ((Last /@ #) &@discrepancyBase3MortonC2D), Max @@((Last /@ #) &@discrepancyBase3MortonC2D) };
         p = ListLogLogPlot[ alldata
             ,PlotLegends -> Placed[#,{.4,.1}]& @  {Style[#,fontSz]& /@ legends }
             ,PlotStyle -> colors
@@ -488,12 +488,12 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SF
             ,PlotLabel -> Style[ plotLabel, Bold, 24]
         ];
         p//Print;
-        Export["GeneralizedL2Discrepancy_Base3SFC2D.pdf",p];
+        Export["GeneralizedL2Discrepancy_Base3MortonC2D.pdf",p];
         (*P*)
     ] (* showGeneralizedL2discrepancyND *)
  
-showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D",powfromto_:{2,10},col_:Red] := 
-	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D},
+showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3MortonC2D",powfromto_:{2,10},col_:Red] := 
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3MortonC2D},
 		{powfrom,powto}=powfromto;
 		fontSz = 20;
         dirDiscrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
@@ -501,11 +501,11 @@ showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC
         discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Import[dirDiscrepancy<>"Strat.dat"]), {discrepancyWN[[1]]} ];
         discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);
         discrepancyOwen = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Owen.dat"]);
-        discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D.dat"], thisDiscrepancy];
+        discrepancyBase3MortonC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3MortonC2D.dat"], thisDiscrepancy];
         plotLabel = " L2-Discrepancy "<>ToString[nDims]<>"D";               
         alldata = If[Length[discrepancyStrat] == 1,
-        	{discrepancyWN, discrepancySobol,discrepancyOwen, discrepancyBase3SFC2D},
-        	{discrepancyWN, discrepancySobol,discrepancyOwen, discrepancyStrat, discrepancyBase3SFC2D}
+        	{discrepancyWN, discrepancySobol,discrepancyOwen, discrepancyBase3MortonC2D},
+        	{discrepancyWN, discrepancySobol,discrepancyOwen, discrepancyStrat, discrepancyBase3MortonC2D}
         ];
         legends = If[Length[discrepancyStrat] == 1,
         	{"WN","Sobol","Owen", thisDiscrepancyLabel},
@@ -535,7 +535,7 @@ showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC
             ,PlotLabel -> Style[ plotLabel, Bold, 24]
         ];
         p//Print;
-        Export["L2Discrepancy_Base3SFC2D.pdf",p];
+        Export["L2Discrepancy_Base3MortonC2D.pdf",p];
         (*p*)
     ] (* showL2discrepancyND *)
 
@@ -586,76 +586,47 @@ readMatBuilderInvMatrices[fname_,nDims_:2,nlevels_:16] :=
     	Return[res]
     ] (* readMatBuilderInvMatrices *)
 
-(*----------------------------- Base3SFC2D --------------------------------*)
+(*----------------------------- Base3MortonC2D --------------------------------*)
 
 typeSq = 	1;
 typeHRec = 	2;
 typeVRec = 	3;
 
-subdivBase3SFC2DTiles[tlst_] :=
+subdivBase3MortonC2DTiles[tlst_] :=
     Module[ {res={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,dxy },
     	Table[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
 			prevrefPt = refPt; {prevv1,prevv2} = {v1,v2};
             Switch[tileType
               ,typeSq, 
-              		dxy = Which[
-              			v1[[1]] > 0 && v2[[2]] > 0, {{{},{0}}, {{},{1}}, {{},{2}} },
-              			v1[[1]] < 0 && v2[[2]] < 0, {{{},{2}}, {{},{1}}, {{},{0}} },
-              			v1[[2]] > 0 && v2[[1]] < 0, {{{2},{}}, {{1},{}}, {{0},{}} },
-              			v1[[2]] < 0 && v2[[1]] > 0, {{{0},{}}, {{1},{}}, {{2},{}} }
-              		];
-					AppendTo[res,{typeHRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,					{v1, 1/3 v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
-	                AppendTo[res,{typeVRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + v1 + 1/3 v2,	{mxRot90.v1/3, mxRot90.v2},		{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
-	                AppendTo[res,{typeHRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,		{v1, 1/3 v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
-					(*AppendTo[res,{typeHRec,sind,samplingPt,refPt,					{v1, 1/3 v2},			refPt,					{v1, 1/3 v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
-	                AppendTo[res,{typeVRec,sind,samplingPt,refPt + v1 + 1/3 v2,	{mxRot90.v1/3, mxRot90.v2},	refPt + v1 + 1/3 v2,	{mxRot90.v1/3, mxRot90.v2},		{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
-	                AppendTo[res,{typeHRec,sind,samplingPt,refPt + 2/3 v2,		{v1, 1/3 v2},				refPt + 2/3 v2,		{v1, 1/3 v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];*)
+             		dxy = {{{},{0}}, {{},{1}}, {{},{2}} };
+ 					AppendTo[res,{typeHRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{v1, 1/3 v2},	{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeHRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,	{v1, 1/3 v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeHRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,	{v1, 1/3 v2},	{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
               ,typeHRec, 
-              		dxy = Which[
-              			v1[[1]] > 0 && v2[[2]] > 0, {{{0},{}}, {{1},{}}, {{2},{}} },
-              			v1[[1]] < 0 && v2[[2]] < 0, {{{2},{}}, {{1},{}}, {{0},{}} },
-              			v1[[2]] > 0 && v2[[1]] < 0, {{{},{0}}, {{},{1}}, {{},{2}} },
-              			v1[[2]] < 0 && v2[[1]] > 0, {{{},{2}}, {{},{1}}, {{},{0}} }
-              		];
-					AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{1/3 v1, v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1 + v2,	{mxRot270.v1/3, mxRot270.v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,		{1/3 v1, v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
-					(*AppendTo[res,{typeSq,sind,samplingPt,refPt,				{1/3 v1, v2},						refPt,				{1/3 v1, v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,refPt + 1/3 v1 + v2,	{mxRot270.v1/3, mxRot270.v2},	refPt + 1/3 v1 + v2,	{mxRot270.v1/3, mxRot270.v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,refPt + 2/3 v1,		{1/3 v1, v2},					refPt + 2/3 v1,		{1/3 v1, v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];*)
-              ,typeVRec, 
-              		dxy = Which[
-              			v1[[1]] > 0 && v2[[2]] > 0, {{{},{0}}, {{},{1}}, {{},{2}} },
-              			v1[[1]] < 0 && v2[[2]] < 0, {{{},{2}}, {{},{1}}, {{},{0}} },
-              			v1[[2]] > 0 && v2[[1]] < 0, {{{2},{}}, {{1},{}}, {{0},{}} },
-              			v1[[2]] < 0 && v2[[1]] > 0, {{{0},{}}, {{1},{}}, {{2},{}} }
-              		];
-					AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{v1, 1/3 v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2 + v1,	{mxRot90.v1, mxRot90.v2/3},		{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,		{v1, 1/3 v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
-					(*AppendTo[res,{typeSq,sind,samplingPt,refPt,				{v1, 1/3 v2},					refPt,				{v1, 1/3 v2}, 					{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,refPt + 1/3 v2 + v1,	{mxRot90.v1, mxRot90.v2/3},	refPt + 1/3 v2 + v1,	{mxRot90.v1, mxRot90.v2/3},		{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,refPt + 2/3 v2,		{v1, 1/3 v2},				refPt + 2/3 v2,		{v1, 1/3 v2}, 					{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];*)
+              		dxy = {{{0},{}}, {{1},{}}, {{2},{}} };
+					AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{1/3 v1, v2},	{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,		{1/3 v1, v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,		{1/3 v1, v2},	{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
             ];
     	,{ind,Length[tlst]}];
     	Return[res]
-    ] (* subdivBase3SFC2DTiles *)
+    ] (* subdivBase3MortonC2DTiles *)
 
-demoBase3SFC2D[innsubdivs_:8, dbg_:False] :=
+demoBase3MortonC2D[innsubdivs_:8, dbg_:False] :=
     Module[ {},
     	nsubdivs = innsubdivs;
 		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
 		Do[
-			tlst = subdivBase3SFC2DTiles @ tlst;
+			tlst = subdivBase3MortonC2DTiles @ tlst;
 			flags = If[iter <= 4, showSFC+showTilexycodes+showTileType, showSFC];
-			Graphics[ getBase3SFC2DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024}3/2 ]//Print;
+			Graphics[ getBase3MortonC2DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024}3/2 ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,nsubdivs}];
-	] (* demoBase3SFC2D *)
+	] (* demoBase3MortonC2D *)
 
 
-getsfcBase3SFC2D[tlst_] :=
+(*getsfcBase3MortonC2D[tlst_] :=
     Module[ {sfc={}, tileType,sind,refPt,v1,v2,samplingPt,prevrefPt,prevv1,prevv2,xcode,ycode,fcode,norm1,norm2,factor=4,delta=6},
     	Do[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
@@ -664,13 +635,14 @@ getsfcBase3SFC2D[tlst_] :=
   			AppendTo[sfc,refPt + v1 + v2 + (-norm1-norm2)/3^((Length[fcode]+delta)/factor) ] ;
     	,{ind,Length[tlst]}];
     	Return[sfc]
-    ] (* getsfcBase3SFC2D *)
+    ] (* getsfcBase3MortonC2D *)*)
 
-(*getsfcBase3SFC2D[tlst_] :=
+getsfcBase3MortonC2D[tlst_] :=
     Module[ {sfc={}, tileType,sind,refPt,v1,v2,samplingPt,prevrefPt,prevv1,prevv2,xcode,ycode,fcode},
     	Do[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
-			Switch[tileType
+			AppendTo[sfc,refPt + (v1+v2)/2 ];
+			(*Switch[tileType
 			,typeSq,
 	   			AppendTo[sfc,refPt + (v1+v2)/2 ];
 	   		,typeHRec,
@@ -679,16 +651,16 @@ getsfcBase3SFC2D[tlst_] :=
 	   		,typeVRec,
 	   			AppendTo[sfc,refPt + v1 1/2 + v2 1/6 ];
 	   			AppendTo[sfc,refPt + v1 1/2 + v2 5/6 ];
-			];
+			];*)
     	,{ind,Length[tlst]}];
     	Return[sfc]
-    ] (* getsfcBase3SFC2D *)
-*)
+    ] (* getsfcBase3MortonC2D *)
 
-getBase3SFC2DTilesGL[tlst_,params_:showSFC] :=
+
+getBase3MortonC2DTilesGL[tlst_,params_:showSFC] :=
     Module[ {gl={AbsolutePointSize[10]},tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,cont,sfc,norm1,norm2,fcodelen,
     		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
-    	If[BitAnd[params,showSFC] > 0, sfc = getsfcBase3SFC2D[tlst]; 
+    	If[BitAnd[params,showSFC] > 0, sfc = getsfcBase3MortonC2D[tlst]; 
     		AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}];
     		If[BitAnd[params,showArrows] > 0, AppendTo[gl,Flatten[#,1]& @ {sfcStyle,(*Arrowheads[1/3^(3+(Length[fcode]+Mod[Length[fcode],2])/2)],*)Arrow/@(Partition[#,2]&@sfc)}] ] ];    	
     	Do[
@@ -707,53 +679,53 @@ getBase3SFC2DTilesGL[tlst_,params_:showSFC] :=
 			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, {Black,Point@samplingPt,Text[Style[FromDigits[Reverse@fcode,3],Bold,14,Blue], samplingPt,{-1.2,-1.2}]} ] ];
     	,{ind,Length[tlst]}];
     	Return[gl]
-    ] (* getBase3SFC2DTilesGL *)
+    ] (* getBase3MortonC2DTilesGL *)
 
-selectBase3SFC2DTiles[tlst_,intensity_:.8] := Select[tlst, FromDigits[Reverse@Last[#],3]/3^Length[Last[#]] < intensity & ]
+selectBase3MortonC2DTiles[tlst_,intensity_:.8] := Select[tlst, FromDigits[Reverse@Last[#],3]/3^Length[Last[#]] < intensity & ]
 
-fillSamplingPtsBase3SFC2DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
+fillSamplingPtsBase3MortonC2DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
      Module[ {tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,v,indVect,nsubdivs,m},
     	Parallelize @ Table[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
      		nsubdivs = Length[xcode] + Length[ycode];
 			v = Join[xcode,ycode];
-			m = If[Length[xcode] == Length[ycode],
+			m = If[EvenQ[nsubdivs],
 				mxInv
 			,(*ELSE*)
-				If[Max@(Abs@(First /@ {v1, v2})) > Max@(Abs@(Last /@ {v1, v2})), mxInvH, mxInvV]
+				mxInvH
 			];
 			indVect = Mod[#,3]& /@ (m.v);
 			samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) / 3^nsubdivs;
 			If[dbg, Print[i -> {tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},fcode}] ];
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode}
     	,{ind,Length[tlst]}]
-    ] (* getSamplingPtsBase3SFC2DTiles *)
+    ] (* getSamplingPtsBase3MortonC2DTiles *)
 
 
-getSamplingPtsBase3SFC2DTiles[tlst_] :=
+getSamplingPtsBase3MortonC2DTiles[tlst_] :=
     Module[ {tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode},
     	Parallelize @ Table[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
 			(*{k1,k2} = {RandomReal[],RandomReal[]};*)
 			samplingPt
     	,{ind,Length[tlst]}]
-    ] (* getSamplingPtsBase3SFC2DTiles *)
+    ] (* getSamplingPtsBase3MortonC2DTiles *)
 
 
-getDiscrepancy2DBase3SFC2D[niters_:4] :=
+getDiscrepancy2DBase3MortonC2D[niters_:4] :=
     Module[ {npts,pts,dND, tlst},
 		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
         res = Table[
-			tlst = subdivBase3SFC2DTiles @ tlst;
-			tlst = fillSamplingPtsBase3SFC2DTiles @ tlst;
+			tlst = subdivBase3MortonC2DTiles @ tlst;
+			tlst = fillSamplingPtsBase3MortonC2DTiles @ tlst;
             npts = Length[tlst];
-            pts = getSamplingPtsBase3SFC2DTiles[tlst];
+            pts = getSamplingPtsBase3MortonC2DTiles[tlst];
             dND = getGeneralizedL2discrepancy[pts];
 			{npts,dND}
 		,{iter,niters}];
-        Export["data_discrepancyL2/2D/Base3SFC2D.dat", res]; 
+        Export["data_discrepancyL2/2D/Base3MortonC2D.dat", res]; 
         Print[mf @ res]
-    ] (* getDiscrepancy2DBase3SFC2D *)
+    ] (* getDiscrepancy2DBase3MortonC2D *)
 
 
 makeMatBuilderMatrices0m2net2D[] :=
@@ -785,51 +757,53 @@ makeMatBuilderMatrices0m2net2D[] :=
 		,{i,16}];
     ] (* makeMatBuilderMatrices0m2net2D *)
 
-exportSelectionBase3SFC2D[fname_, seltlst_] :=
+exportSelectionBase3MortonC2D[fname_, seltlst_] :=
 Module[{newtlst,tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode},
 	newtlst = Flatten /@ Table[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = seltlst[[ind]];			
 			{tileType,sind,N@samplingPt,N@prevrefPt,N@{prevv1,prevv2},N@refPt,N@{v1,v2},{xcode,ycode},fcode}
 		,{ind,Length[seltlst]}];
 	Export[fname,newtlst];
-] (* exportSelectionBase3SFC2D *)
+] (* exportSelectionBase3MortonC2D *)
 
-prepOptimDataBase3SFC2D[innlevels_:6, dbg_:False] :=
+prepOptimDataBase3MortonC2D[innlevels_:6, dbg_:False] :=
     Module[ {},
     	setNo = 1;
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
     	nlevels = innlevels;
-    	If[ !FileExistsQ["optim_data/"], CreateDirectory["optim_data/"] ];
-    	If[ !FileExistsQ["optim_figs/"], CreateDirectory["optim_figs/"] ];
+    	If[ !FileExistsQ["optim_data_2D/"], CreateDirectory["optim_data_2D/"] ];
+    	If[ !FileExistsQ["optim_figs_2D/"], CreateDirectory["optim_figs_2D/"] ];
 		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
 		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
 		Do[
-			tlst = subdivBase3SFC2DTiles @ tlst;
+			tlst = subdivBase3MortonC2DTiles @ tlst;
 			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
 			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
-			tlst = fillSamplingPtsBase3SFC2DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
-			(*Graphics[ {getBase3SFC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
+			tlst = fillSamplingPtsBase3MortonC2DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
+			(*Graphics[ {getBase3MortonC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
 			Do[
-				seltlst = selectBase3SFC2DTiles[tlst, iOrdinalAbsolute/3^ilevel];
-				fname = "optim_data/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
-				exportSelectionBase3SFC2D[fname,seltlst];
-				(*p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
-				p//Print;
-				Export["optim_figs/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".png", p];*)
+				seltlst = selectBase3MortonC2DTiles[tlst, iOrdinalAbsolute/3^ilevel];
+				fname = "optim_data_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+				exportSelectionBase3MortonC2D[fname,seltlst];
+				If[dbg,
+					p = Graphics[ Append[background,#]& @ getBase3MortonC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
+					p//Print;
+					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".png", p];
+				];
 			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
-	] (* prepOptimDataBase3SFC2D *)
+	] (* prepOptimDataBase3MortonC2D *)
 
 
 (*
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-makeBase3SFC2DL2Discrepancy[]
+makeBase3MortonC2DL2Discrepancy[]
 *)
 
-makeBase3SFC2DL2Discrepancy[dbg_:False] :=
+makeBase3MortonC2DL2Discrepancy[dbg_:False] :=
     Module[ {},
     	nDims = 2;
         dtab = {};
@@ -843,15 +817,15 @@ makeBase3SFC2DL2Discrepancy[dbg_:False] :=
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getL2discrepancy[pts];
-        	Print["Processing makeBase3SFC2DL2Discrepancy " -> {npts,d}];
+        	Print["Processing makeBase3MortonC2DL2Discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
-	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Base3MortonC2D.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab]
-    ] (* makeBase3SFC2DL2Discrepancy *)
+    ] (* makeBase3MortonC2DL2Discrepancy *)
 
 
-showBase3SFC2DOptimImprovement[dbg_:False] :=
+showBase3MortonC2DOptimImprovement[dbg_:False] :=
     Module[ {},
     	nDims = 2;
         dtab = {};
@@ -865,9 +839,9 @@ showBase3SFC2DOptimImprovement[dbg_:False] :=
 				}, ImageSize->{1024,1024}, PlotLabel->ToString[npts]<>" pts   Red:MatBuilder Blue:optimized"] ;
 			p//Print;
 			Export["OptimImprovement.png",p];
-    ] (* showBase3SFC2DOptimImprovement *)
+    ] (* showBase3MortonC2DOptimImprovement *)
 
-makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
+makeBase3MortonC2DGeneralizedL2Discrepancy[dbg_:False] :=
     Module[ {},
     	nDims = 2;
         dtab = {};
@@ -881,15 +855,15 @@ makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getGeneralizedL2discrepancy[pts];
-        	Print["Processing makeBase3SFC2DGeneralizedL2Discrepancy " -> {npts,d}];
+        	Print["Processing makeBase3MortonC2DGeneralizedL2Discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
-	        Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
+	        Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Base3MortonC2D.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab];
-		p = showGeneralizedL2discrepancyND[nDims,dtab,"Base3SFC2D",{2,10}] ;
-    ] (* makeBase3SFC2DGeneralizedL2Discrepancy *)
+		p = showGeneralizedL2discrepancyND[nDims,dtab,"Base3MortonC2D",{2,10}] ;
+    ] (* makeBase3MortonC2DGeneralizedL2Discrepancy *)
 
-makeBase3SFC2DStarDiscrepancy[dbg_:False] :=
+makeBase3MortonC2DStarDiscrepancy[dbg_:False] :=
     Module[ {},
     	nDims = 2;
         dtab = {};
@@ -903,16 +877,16 @@ makeBase3SFC2DStarDiscrepancy[dbg_:False] :=
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getStarDiscrepancy[pts];
-        	Print["Processing makeBase3SFC2DStarDiscrepancy " -> {npts,d}];
+        	Print["Processing makeBase3MortonC2DStarDiscrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
-	        Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
+	        Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Base3MortonC2D.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab];
-		p = showStarDisrepancyND[nDims,dtab,"Base3SFC2D",{2,10}] ;
-    ] (* makeBase3SFC2DGeneralizedL2Discrepancy *)
+		p = showStarDisrepancyND[nDims,dtab,"Base3MortonC2D",{2,10}] ;
+    ] (* makeBase3MortonC2DGeneralizedL2Discrepancy *)
 
 
-makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
+makeBase3MortonC2DGeneralizedL2Discrepancy[dbg_:False] :=
     Module[ {},
     	nDims = 2;
         dtab = {};
@@ -926,19 +900,19 @@ makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getGeneralizedL2discrepancy[pts];
-        	Print["Processing makeBase3SFC2DGeneralizedL2Discrepancy " -> {npts,d}];
+        	Print["Processing makeBase3MortonC2DGeneralizedL2Discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
-	        Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
+	        Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Base3MortonC2D.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab];
-		p = showGeneralizedL2discrepancyND[nDims,dtab,"Base3SFC2D",{2,10}] ;
-    ] (* makeBase3SFC2DGeneralizedL2Discrepancy *)
+		p = showGeneralizedL2discrepancyND[nDims,dtab,"Base3MortonC2D",{2,10}] ;
+    ] (* makeBase3MortonC2DGeneralizedL2Discrepancy *)
 
-(*----------------------------- end of Base3SFC2D --------------------------------*)
+(*----------------------------- end of Base3MortonC2D --------------------------------*)
 
 
 
-(*----------------------------- Base3SFC3D --------------------------------*)
+(*----------------------------- Base3MortonC3D --------------------------------*)
 
 typeCube = 	1;
 typeXPara = 2;
@@ -948,7 +922,7 @@ mxRotX180 = {{1,0,0}, {0,-1,0}, {0,0,-1}};
 mxRotY180 = {{-1, 0, 0}, {0, 1, 0}, {0, 0, -1}};
 mxRotZ180 = {{-1,0,0}, {0,-1,0}, {0,0,1}};
 
-subdivBase3SFC3DTiles[tlst_] :=
+subdivBase3MortonC3DTiles[tlst_] :=
     Module[ {res={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode,dxyz },
     	Table[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,{v1,v2,v3},{xcode,ycode,zcode},fcode} = tlst[[ind]];
@@ -987,23 +961,23 @@ subdivBase3SFC3DTiles[tlst_] :=
             ];
     	,{ind,Length[tlst]}];
     	Return[res]
-    ] (* subdivBase3SFC3DTiles *)
+    ] (* subdivBase3MortonC3DTiles *)
 
-demoBase3SFC3D[innsubdivs_:1, dbg_:False] :=
+demoBase3MortonC3D[innsubdivs_:1, dbg_:False] :=
     Module[ {},
     	nsubdivs = innsubdivs;
 		tlst = {{typeCube,0,{0,0,0}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {{},{},{}} ,{}} };
-		Graphics3D[ getBase3SFC3DTilesGL[tlst,showSFC+showArrows+showTilexycodes+showTileType], PlotLabel-> iter, ImageSize -> {1024,1024} ]//Print;
+		Graphics3D[ getBase3MortonC3DTilesGL[tlst,showSFC+showArrows+showTilexycodes+showTileType], PlotLabel-> iter, ImageSize -> {1024,1024} ]//Print;
 		Do[
-			tlst = subdivBase3SFC3DTiles @ tlst;
+			tlst = subdivBase3MortonC3DTiles @ tlst;
 			flags = showSFC+showArrows+showTilexycodes+showTileType;
 			flags = If[iter <= 4, showSFC+showArrows+showTilexycodes, showSFC];
-			Graphics3D[ getBase3SFC3DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024}3/2 ]//Print;
+			Graphics3D[ getBase3MortonC3DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024}3/2 ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,nsubdivs}];
-	] (* demoBase3SFC3D *)
+	] (* demoBase3MortonC3D *)
 
-getsfcBase3SFC3D[tlst_] :=
+getsfcBase3MortonC3D[tlst_] :=
     Module[ {sfc={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode,norm1,norm2,norm3,k=6,delta=12},
     	Do[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,{v1,v2,v3},{xcode,ycode,zcode},fcode} = tlst[[ind]];
@@ -1012,13 +986,13 @@ getsfcBase3SFC3D[tlst_] :=
   			AppendTo[sfc,refPt + v1 + v2 + v3 - (norm1+norm2+norm3)/3^((Length[fcode]+delta)/k ) ] ;
     	,{ind,Length[tlst]}];
     	Return[sfc]
-    ] (* getsfcBase3SFC3D *)
+    ] (* getsfcBase3MortonC3D *)
 
 
-getBase3SFC3DTilesGL[tlst_,params_:showSFC] :=
+getBase3MortonC3DTilesGL[tlst_,params_:showSFC] :=
     Module[ {gl={AbsolutePointSize[10]},tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode,cont,sfc,norm1,norm2,fcodelen,
     		bortedStyle={Cyan,AbsoluteThickness[1]}, sfcStyle={Orange,AbsoluteThickness[3]}},
-    	If[BitAnd[params,showSFC] > 0, sfc = getsfcBase3SFC3D[tlst]; 
+    	If[BitAnd[params,showSFC] > 0, sfc = getsfcBase3MortonC3D[tlst]; 
     		AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Line@sfc}];
     		If[BitAnd[params,showArrows] > 0, AppendTo[gl,Flatten[#,1]& @ {sfcStyle,Arrow/@(Partition[#,2]&@sfc)}] ] ];    	
     	Do[
@@ -1037,11 +1011,11 @@ getBase3SFC3DTilesGL[tlst_,params_:showSFC] :=
 			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, {Black,Point@samplingPt,Text[Style[FromDigits[Reverse@fcode,3],Bold,14,Blue], samplingPt,{-1.2,-1.2}]} ] ];
     	,{ind,Length[tlst]}];
     	Return[gl]
-    ] (* getBase3SFC3DTilesGL *)
+    ] (* getBase3MortonC3DTilesGL *)
 
-selectBase3SFC3DTiles[tlst_,intensity_:.8] := Select[tlst, FromDigits[Reverse@Last[#],3]/3^Length[Last[#]] < intensity & ]
+selectBase3MortonC3DTiles[tlst_,intensity_:.8] := Select[tlst, FromDigits[Reverse@Last[#],3]/3^Length[Last[#]] < intensity & ]
 
-fillSamplingPtsBase3SFC3DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
+fillSamplingPtsBase3MortonC3DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
      Module[ {tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode,v,indVect,nsubdivs,m},
     	Parallelize @ Table[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,{v1,v2,v3},{xcode,ycode,zcode},fcode} = tlst[[ind]];
@@ -1057,33 +1031,33 @@ fillSamplingPtsBase3SFC3DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
 			If[dbg, Print[i -> {tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},fcode}] ];
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode}
     	,{ind,Length[tlst]}]
-    ] (* getSamplingPtsBase3SFC3DTiles *)
+    ] (* getSamplingPtsBase3MortonC3DTiles *)
 
 
-getSamplingPtsBase3SFC3DTiles[tlst_] :=
+getSamplingPtsBase3MortonC3DTiles[tlst_] :=
     Module[ {tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode},
     	Parallelize @ Table[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,{v1,v2,v3},{xcode,ycode,zcode},fcode} = tlst[[ind]];
 			(*{k1,k2} = {RandomReal[],RandomReal[]};*)
 			samplingPt
     	,{ind,Length[tlst]}]
-    ] (* getSamplingPtsBase3SFC3DTiles *)
+    ] (* getSamplingPtsBase3MortonC3DTiles *)
 
 
-getDiscrepancy2DBase3SFC3D[niters_:4] :=
+getDiscrepancy2DBase3MortonC3D[niters_:4] :=
     Module[ {npts,pts,dND, tlst},
 		tlst = tlst = {{typeCube,0,{0,0,0}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {{},{},{}} ,{}} };
         res = Table[
-			tlst = subdivBase3SFC3DTiles @ tlst;
-			tlst = fillSamplingPtsBase3SFC3DTiles @ tlst;
+			tlst = subdivBase3MortonC3DTiles @ tlst;
+			tlst = fillSamplingPtsBase3MortonC3DTiles @ tlst;
             npts = Length[tlst];
-            pts = getSamplingPtsBase3SFC3DTiles[tlst];
+            pts = getSamplingPtsBase3MortonC3DTiles[tlst];
             dND = getGeneralizedL2discrepancy[pts];
 			{npts,dND}
 		,{iter,niters}];
-        Export["data_discrepancyL2/2D/Base3SFC3D.dat", res]; 
+        Export["data_discrepancyL2/2D/Base3MortonC3D.dat", res]; 
         Print[mf @ res]
-    ] (* getDiscrepancy2DBase3SFC3D *)
+    ] (* getDiscrepancy2DBase3MortonC3D *)
 
 makeMatBuilderMatrices0m2net2D[] :=
     Module[ {},
@@ -1114,16 +1088,16 @@ makeMatBuilderMatrices0m2net2D[] :=
 		,{i,16}];
     ] (* makeMatBuilderMatrices0m2net2D *)
 
-exportSelectionBase3SFC3D[fname_, seltlst_] :=
+exportSelectionBase3MortonC3D[fname_, seltlst_] :=
 Module[{newtlst,tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode},
 	newtlst = Flatten /@ Table[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,{v1,v2,v3},{xcode,ycode,zcode},fcode} = seltlst[[ind]];			
 			{tileType,sind,N@samplingPt,N@prevrefPt,N@{prevv1,prevv2,prevv3},N@refPt,N@{v1,v2,v3},{xcode,ycode,zcode},fcode}
 		,{ind,Length[seltlst]}];
 	Export[fname,newtlst];
-] (* exportSelectionBase3SFC3D *)
+] (* exportSelectionBase3MortonC3D *)
 
-prepOptimDataBase3SFC3D[innlevels_:2, dbg_:False] :=
+prepOptimDataBase3MortonC3D[innlevels_:2, dbg_:False] :=
     Module[ {},
     	setNo = 1;
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
@@ -1134,21 +1108,21 @@ prepOptimDataBase3SFC3D[innlevels_:2, dbg_:False] :=
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];*)
 		tlst = {{typeCube,0,{0,0,0}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {{},{},{}} ,{}} };
 		Do[
-			tlst = subdivBase3SFC3DTiles @ tlst;
+			tlst = subdivBase3MortonC3DTiles @ tlst;
 			(*If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
 			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];*)
-			(*tlst = fillSamplingPtsBase3SFC3DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];*)
+			(*tlst = fillSamplingPtsBase3MortonC3DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];*)
 			Do[tlst[[i,3]] = {Random[],Random[],Random[]},{i,Length[tlst]}];
-			If[dbg, Graphics3D[ {getBase3SFC3DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print];
+			If[dbg, Graphics3D[ {getBase3MortonC3DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print];
 			Do[
-				seltlst = selectBase3SFC3DTiles[tlst, ii/3^ilevel];
+				seltlst = selectBase3MortonC3DTiles[tlst, ii/3^ilevel];
 				fname = "optim_data_3D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".dat";
-				exportSelectionBase3SFC3D[fname,seltlst];
-				(*p = Graphics[ Append[background,#]& @ getBase3SFC3DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
+				exportSelectionBase3MortonC3D[fname,seltlst];
+				(*p = Graphics[ Append[background,#]& @ getBase3MortonC3DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ii ];
 				p//Print;
 				Export["optim_figs/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".png", p];*)
 			,{ii,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
-	] (* prepOptimDataBase3SFC3D *)
+	] (* prepOptimDataBase3MortonC3D *)
 
-(*----------------------------- end of Base3SFC3D --------------------------------*)
+(*----------------------------- end of Base3MortonC3D --------------------------------*)
