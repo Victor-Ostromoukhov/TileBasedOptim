@@ -493,7 +493,7 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3Mo
     ] (* showGeneralizedL2discrepancyND *)
  
 showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3MortonC2D",powfromto_:{2,10},col_:Red] := 
-	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3MortonC2D},
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,discrepancyOwen,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3MortonC2D},
 		{powfrom,powto}=powfromto;
 		fontSz = 20;
         dirDiscrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
@@ -787,9 +787,9 @@ prepOptimDataBase3MortonC2D[innlevels_:6, dbg_:False] :=
 				fname = "optim_data_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 				exportSelectionBase3MortonC2D[fname,seltlst];
 				If[dbg,
-					p = Graphics[ Append[background,#]& @ getBase3MortonC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> ilevel ];
+					p = Graphics[ Append[background,#]& @ getBase3MortonC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
-					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[ii]<>".png", p];
+					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 				];
 			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
@@ -812,7 +812,7 @@ makeBase3MortonC2DL2Discrepancy[dbg_:False] :=
         
         Do[
 			npts = iOrdinalAbsolute;
-			fname = "optim_output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			fname = "optim_output_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 			pts = Import[fname][[;;,3;;4]];
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
@@ -831,8 +831,8 @@ showBase3MortonC2DOptimImprovement[dbg_:False] :=
         dtab = {};
          setNo = 1;
 			npts = iOrdinalAbsolute = 3^6;
-			inipts = Import["optim_output/2D_0m2net_set_1_level_"<>ToString[iOrdinalAbsolute]<>".dat"][[;;,3;;4]];
-			optimpts = Import["optim_data/2D_0m2net_set_1_level_"<>ToString[iOrdinalAbsolute]<>".dat"][[;;,3;;4]];
+			inipts = Import["optim_output_2D/2D_0m2net_set_1_level_"<>ToString[iOrdinalAbsolute]<>".dat"][[;;,3;;4]];
+			optimpts = Import["optim_output_2D/2D_0m2net_set_1_level_"<>ToString[iOrdinalAbsolute]<>".dat"][[;;,3;;4]];
 			pairs = {inipts,optimpts}//T;
 			p = Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],
 				{Red,Point[#[[1]]],Blue,Point[#[[2]]],Yellow,Line[{#[[1]],#[[2]]}]}&/@pairs
@@ -850,7 +850,7 @@ makeBase3MortonC2DGeneralizedL2Discrepancy[dbg_:False] :=
         
         Do[
 			npts = iOrdinalAbsolute;
-			fname = "optim_output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			fname = "optim_output_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 			pts = Import[fname][[;;,3;;4]];
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
@@ -872,7 +872,7 @@ makeBase3MortonC2DStarDiscrepancy[dbg_:False] :=
         
         Do[
 			npts = iOrdinalAbsolute;
-			fname = "optim_output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			fname = "optim_output_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 			pts = Import[fname][[;;,3;;4]];
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
@@ -885,28 +885,6 @@ makeBase3MortonC2DStarDiscrepancy[dbg_:False] :=
 		p = showStarDisrepancyND[nDims,dtab,"Base3MortonC2D",{2,10}] ;
     ] (* makeBase3MortonC2DGeneralizedL2Discrepancy *)
 
-
-makeBase3MortonC2DGeneralizedL2Discrepancy[dbg_:False] :=
-    Module[ {},
-    	nDims = 2;
-        dtab = {};
-        nptsMax = 3^6;
-        setNo = 1;
-        
-        Do[
-			npts = iOrdinalAbsolute;
-			fname = "optim_output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
-			pts = Import[fname][[;;,3;;4]];
-			If[dbg, ipts = Round[ npts pts ];
-				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-        	d = getGeneralizedL2discrepancy[pts];
-        	Print["Processing makeBase3MortonC2DGeneralizedL2Discrepancy " -> {npts,d}];
-			AppendTo[dtab, {npts,d} ];
-	        Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Base3MortonC2D.dat", dtab]; 
-        ,{iOrdinalAbsolute,2,nptsMax}];
-        Print[mf @ dtab];
-		p = showGeneralizedL2discrepancyND[nDims,dtab,"Base3MortonC2D",{2,10}] ;
-    ] (* makeBase3MortonC2DGeneralizedL2Discrepancy *)
 
 (*----------------------------- end of Base3MortonC2D --------------------------------*)
 
