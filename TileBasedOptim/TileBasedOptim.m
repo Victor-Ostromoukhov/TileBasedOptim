@@ -588,9 +588,12 @@ readMatBuilderInvMatrices[fname_,nDims_:2,nlevels_:16] :=
 
 (*----------------------------- Base3MortonC2D --------------------------------*)
 
-typeSq = 	1;
-typeHRec = 	2;
-typeVRec = 	3;
+typeSq1 = 	1;
+typeSq2 = 	2;
+typeHRec1 = 	3;
+typeHRec2 = 	4;
+typeVRec1 = 	5;
+typeVRec2 = 	6;
 
 subdivBase3MortonC2DTiles[tlst_] :=
     Module[ {res={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,dxy },
@@ -598,25 +601,45 @@ subdivBase3MortonC2DTiles[tlst_] :=
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
 			prevrefPt = refPt; {prevv1,prevv2} = {v1,v2};
             Switch[tileType
-              ,typeSq, 
+              ,typeSq1, 
              		dxy = {{{},{0}}, {{},{1}}, {{},{2}} };
- 					AppendTo[res,{typeHRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{v1, 1/3 v2},	{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
-	                AppendTo[res,{typeHRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,	{v1, 1/3 v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
-	                AppendTo[res,{typeHRec,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,	{v1, 1/3 v2},	{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
-              ,typeHRec, 
+ 					AppendTo[res,{typeHRec1,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{v1, 1/3 v2},	{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeHRec2,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,	{v1, 1/3 v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeHRec1,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,	{v1, 1/3 v2},	{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
+              ,typeSq2, 
+             		dxy = {{{0},{}}, {{1},{}}, {{2},{}} };
+ 					AppendTo[res,{typeVRec1,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,			{1/3 v1, v2},	{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeVRec2,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,	{1/3 v1, v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeVRec1,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,	{1/3 v1, v2},	{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
+              ,typeHRec1, 
               		dxy = {{{0},{}}, {{1},{}}, {{2},{}} };
-					AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{1/3 v1, v2},	{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,		{1/3 v1, v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
-	                AppendTo[res,{typeSq,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,		{1/3 v1, v2},	{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
+					AppendTo[res,{typeSq1,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{1/3 v1, v2},	{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeSq2,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,		{1/3 v1, v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeSq1,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,		{1/3 v1, v2},	{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
+              ,typeHRec2, 
+              		dxy = {{{0},{}}, {{1},{}}, {{2},{}} };
+					AppendTo[res,{typeSq2,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{1/3 v1, v2},	{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeSq1,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v1,		{1/3 v1, v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeSq2,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v1,		{1/3 v1, v2},	{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
+              ,typeVRec1, 
+             		dxy = {{{},{0}}, {{},{1}}, {{},{2}} };
+					AppendTo[res,{typeSq1,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{v1, 1/3 v2},	{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeSq2,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,		{v1, 1/3 v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeSq1,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,		{v1, 1/3 v2},	{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
+              ,typeVRec2, 
+             		dxy = {{{},{0}}, {{},{1}}, {{},{2}} };
+					AppendTo[res,{typeSq2,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,				{v1, 1/3 v2},	{Join[xcode,dxy[[1,1]]],Join[ycode,dxy[[1,2]]]}, Append[fcode,0]} ];
+	                AppendTo[res,{typeSq1,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 1/3 v2,		{v1, 1/3 v2},	{Join[xcode,dxy[[2,1]]],Join[ycode,dxy[[2,2]]]}, Append[fcode,1]} ];
+	                AppendTo[res,{typeSq2,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt + 2/3 v2,		{v1, 1/3 v2},	{Join[xcode,dxy[[3,1]]],Join[ycode,dxy[[3,2]]]}, Append[fcode,2]} ];
             ];
     	,{ind,Length[tlst]}];
     	Return[res]
     ] (* subdivBase3MortonC2DTiles *)
 
-demoBase3MortonC2D[innsubdivs_:8, dbg_:False] :=
+demoBase3MortonC2D[innsubdivs_:6, dbg_:False] :=
     Module[ {},
     	nsubdivs = innsubdivs;
-		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
+		tlst = {{typeSq1,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
 		Do[
 			tlst = subdivBase3MortonC2DTiles @ tlst;
 			flags = If[iter <= 4, showSFC+showTilexycodes+showTileType, showSFC];
@@ -689,10 +712,10 @@ fillSamplingPtsBase3MortonC2DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
      		nsubdivs = Length[xcode] + Length[ycode];
 			v = Join[xcode,ycode];
-			m = If[EvenQ[nsubdivs],
+			m = If[Length[xcode] == Length[ycode],
 				mxInv
 			,(*ELSE*)
-				mxInvH
+				If[Max@(Abs@(First /@ {v1, v2})) > Max@(Abs@(Last /@ {v1, v2})), mxInvH, mxInvV]
 			];
 			indVect = Mod[#,3]& /@ (m.v);
 			samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) / 3^nsubdivs;
@@ -766,7 +789,7 @@ Module[{newtlst,tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xco
 	Export[fname,newtlst];
 ] (* exportSelectionBase3MortonC2D *)
 
-prepOptimDataBase3MortonC2D[innlevels_:6, dbg_:False] :=
+prepOptimDataBase3MortonC2D[innlevels_:6, dbg_:True] :=
     Module[ {},
     	setNo = 1;
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
@@ -775,7 +798,7 @@ prepOptimDataBase3MortonC2D[innlevels_:6, dbg_:False] :=
     	If[ !FileExistsQ["optim_figs_2D/"], CreateDirectory["optim_figs_2D/"] ];
 		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
-		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
+		tlst = {{typeSq1,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
 		Do[
 			tlst = subdivBase3MortonC2DTiles @ tlst;
 			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
