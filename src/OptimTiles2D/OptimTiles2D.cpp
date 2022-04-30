@@ -401,7 +401,7 @@ int main(int argc, char const *argv[]) {
   int nbIterationsPerTile = 64;
 
   int nbThreads = omp_get_max_threads() == 64 ? 64 : omp_get_max_threads();
-  size_t niters = 1024*1024;
+  size_t niters = 64*1024;
   size_t writeEachNIterations = 1024;
   bool debug = false;
   std::string inputString ="pts.dat";
