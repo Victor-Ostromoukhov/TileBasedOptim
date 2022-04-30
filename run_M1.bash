@@ -2,12 +2,24 @@
 
 nthreads=8
 
-#ntrials=1024 4096 0r 16384 or 65536
-ntrials=1024
+#ntrials=1024 or 4096 or 16384 or 65536
+ntrials=4096
 
-for (( level=180; level<=199; level++ )) do
-    echo ~/bin/OptimTiles2D -t ${nthreads} -i optim_data/2D_0m2net_set_1_level_${level}.dat -o optim_output/2D_0m2net_set_1_level_${level}.dat -n ${ntrials}
-    ~/bin/OptimTiles2D -t ${nthreads} -i optim_data/2D_0m2net_set_1_level_${level}.dat -o optim_output/2D_0m2net_set_1_level_${level}.dat -n ${ntrials} >> traces/tr_${level}.txt
+srcdir=optim_data_2D
+resdir=optim_output_2D
+
+if [[ ! -d ${srcdir} ]]; then
+    echo ${resdir} does not exist
+    exit
+fi
+if [[ ! -d ${resdir} ]]; then
+    mkdir ${resdir}
+fi
+if [[ ! -d traces ]]; then
+    mkdir traces
+fi
+
+for (( level=600; level<=729; level++ )) do
+    echo ~/bin/OptimTiles2D -t ${nthreads} -i ${srcdir}/2D_0m2net_set_1_level_${level}.dat -o ${resdir}/2D_0m2net_set_1_level_${level}.dat -n ${ntrials}
+         ~/bin/OptimTiles2D -t ${nthreads} -i ${srcdir}/2D_0m2net_set_1_level_${level}.dat -o ${resdir}/2D_0m2net_set_1_level_${level}.dat -n ${ntrials} >> traces/tr_${level}.txt
 done
-
-
