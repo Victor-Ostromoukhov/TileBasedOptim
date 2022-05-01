@@ -2,7 +2,7 @@
 
 nthreads=64
 
-#ntrials=1024 or 4096 or 16384 or 65536
+#ntrials=1024 or 4096 or 16384 or 65536 or 262144
 ntrials=4096
 
 srcdir=optim_data_2D

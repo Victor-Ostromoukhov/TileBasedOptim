@@ -2,7 +2,7 @@
 
 nthreads=8
 
-#ntrials=1024 or 4096 or 16384 or 65536
+#ntrials=1024 or 4096 or 16384 or 65536 or 262144
 ntrials=4096
 
 srcdir=optim_data_2D
@@ -19,7 +19,7 @@ if [[ ! -d traces ]]; then
     mkdir traces
 fi
 
-for (( level=600; level<=729; level++ )) do
+for (( level=650; level<=729; level++ )) do
     echo ~/bin/OptimTiles2D -t ${nthreads} -i ${srcdir}/2D_0m2net_set_1_level_${level}.dat -o ${resdir}/2D_0m2net_set_1_level_${level}.dat -n ${ntrials}
          ~/bin/OptimTiles2D -t ${nthreads} -i ${srcdir}/2D_0m2net_set_1_level_${level}.dat -o ${resdir}/2D_0m2net_set_1_level_${level}.dat -n ${ntrials} >> traces/tr_${level}.txt
 done
