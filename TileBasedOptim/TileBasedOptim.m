@@ -633,14 +633,15 @@ subdivBase3SFC2DTiles[tlst_] :=
     	Return[res]
     ] (* subdivBase3SFC2DTiles *)
 
-demoBase3SFC2D[innsubdivs_:8, dbg_:False] :=
+demoBase3SFC2D[innsubdivs_:6, dbg_:False] :=
     Module[ {},
     	nsubdivs = innsubdivs;
 		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
+		Graphics[ getBase3SFC2DTilesGL[tlst,showSFC+showTilexycodes+showTileType+showArrows], PlotLabel-> 0, ImageSize -> {1024,1024} ]//Print;
 		Do[
 			tlst = subdivBase3SFC2DTiles @ tlst;
-			flags = If[iter <= 4, showSFC+showTilexycodes+showTileType, showSFC];
-			Graphics[ getBase3SFC2DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024}3/2 ]//Print;
+			flags = If[iter <= 4, showSFC+showTilexycodes+showTileType+showArrows, showSFC];
+			Graphics[ getBase3SFC2DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024} ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,nsubdivs}];
 	] (* demoBase3SFC2D *)
@@ -986,12 +987,12 @@ demoBase3SFC3D[innsubdivs_:6, dbg_:False] :=
     Module[ {},
     	nsubdivs = innsubdivs;
 		tlst = {{typeCube,0,{0,0,0}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {{},{},{}} ,{}} };
-		Graphics3D[ getBase3SFC3DTilesGL[tlst,showSFC+showArrows+showTilexycodes+showTileType], PlotLabel-> iter, ImageSize -> {1024,1024} ]//Print;
+		Graphics3D[ getBase3SFC3DTilesGL[tlst,showSFC+showArrows+showTilexycodes+showTileType], PlotLabel-> iter, ImageSize -> {1024,1024}3/2  ]//Print;
 		Do[
 			tlst = subdivBase3SFC3DTiles @ tlst;
 			flags = showSFC+showArrows+showTilexycodes+showTileType;
 			flags = If[iter <= 4, showSFC+showArrows, showSFC];
-			Graphics3D[ getBase3SFC3DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024} 2 ]//Print;
+			Graphics3D[ getBase3SFC3DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024} 3/2 ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,nsubdivs}];
 	] (* demoBase3SFC3D *)
@@ -1123,15 +1124,15 @@ prepOptimDataBase3SFC3D[innlevels_:2, dbg_:False] :=
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
     	nlevels = innlevels;
     	If[ !FileExistsQ["optim_data_3D/"], CreateDirectory["optim_data_3D/"] ];
-    	If[ !FileExistsQ["optim_figs_3D/"], CreateDirectory["optim_figs_3D/"] ];
+    	If[dbg && !FileExistsQ["optim_figs_3D/"], CreateDirectory["optim_figs_3D/"] ];
 		(*mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];*)
 		tlst = {{typeCube,0,{0,0,0}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {0,0,0},{{1,0,0},{0,1,0},{0,0,1}}, {{},{},{}} ,{}} };
 		Do[
 			tlst = subdivBase3SFC3DTiles @ tlst;
-			(*If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
-			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];*)
-			(*tlst = fillSamplingPtsBase3SFC3DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];*)
+			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
+			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
+			tlst = fillSamplingPtsBase3SFC3DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
 			Do[tlst[[i,3]] = {Random[],Random[],Random[]},{i,Length[tlst]}];
 			If[dbg, Graphics3D[ {getBase3SFC3DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print];
 			Do[
@@ -1141,5 +1142,35 @@ prepOptimDataBase3SFC3D[innlevels_:2, dbg_:False] :=
 			,{ii,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
 	] (* prepOptimDataBase3SFC3D *)
+
+makeMatBuilderMatrices0m2net3D[] :=
+    Module[ {},
+    	If[ !FileExistsQ["MatBuilder_matrices/"], CreateDirectory["MatBuilder_matrices/"] ];
+    	nlevels = 16;
+		Do[
+			execString = "testCplex -i MatBuilder_profiles/3D_0m2net.txt -o MatBuilder_matrices/3D_0m2net_"<>i2s[i]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
+        	returnCode = Run[execPrefix<>execString];
+        	Print[execString -> returnCode];
+			mxTab = readMatBuilderMatrix["MatBuilder_matrices/3D_0m2net_"<>i2s[i]<>".dat"];
+			Print[mf /@ mxTab];
+			mxInvTab = {};
+			Abort[];
+        	Do[
+				If[ilevel != 0,
+					mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2, ;; ilevel]], mxTab[[2, ;; ilevel/2, ;; ilevel]]];
+					Print[ilevel -> mf[mxInv] ];
+					AppendTo[mxInvTab,mxInv];
+        		];
+				If[ilevel != nlevels, 
+					mxInvH = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2, ;; ilevel + 1]], mxTab[[2, ;; ilevel/2 + 1, ;; ilevel + 1]]] ;
+					mxInvV = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2 + 1, ;; ilevel + 1]], mxTab[[2, ;; ilevel/2, ;; ilevel + 1]]] ;
+					Print[ilevel+1 -> mf[mxInvH] -> mf[mxInvV] ] ;
+					AppendTo[mxInvTab,mxInvH];
+					AppendTo[mxInvTab,mxInvV];
+				];
+        	,{ilevel,0,nlevels,2}];
+			Export["MatBuilder_matrices/3D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];
+		,{i,1}];
+    ] (* makeMatBuilderMatrices0m2net3D *)
 
 (*----------------------------- end of Base3SFC3D --------------------------------*)
