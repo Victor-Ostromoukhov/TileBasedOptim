@@ -990,7 +990,7 @@ demoBase3SFC3D[innsubdivs_:6, dbg_:False] :=
 		Do[
 			tlst = subdivBase3SFC3DTiles @ tlst;
 			flags = showSFC+showArrows+showTilexycodes+showTileType;
-			flags = If[iter <= 6, showSFC+showTilexycodes, showSFC];
+			flags = If[iter <= 4, showSFC+showArrows, showSFC];
 			Graphics3D[ getBase3SFC3DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024} 2 ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,nsubdivs}];
