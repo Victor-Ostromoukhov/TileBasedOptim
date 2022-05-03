@@ -487,7 +487,7 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SF
     ] (* showGeneralizedL2discrepancyND *)
  
 showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D",powfromto_:{2,10},col_:Red] := 
-	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D},
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D,discrepancyOwen},
 		{powfrom,powto}=powfromto;
 		fontSz = 20;
         dirDiscrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
@@ -732,7 +732,7 @@ getSamplingPtsBase3SFC2DTiles[tlst_] :=
     ] (* getSamplingPtsBase3SFC2DTiles *)
 
 
-getDiscrepancy2DBase3SFC2D[niters_:4] :=
+(*getDiscrepancy2DBase3SFC2D[niters_:4] :=
     Module[ {npts,pts,dND, tlst},
 		tlst = {{type1,{0,0}, {{1,0},{0,1}}, {0,0}, {}} };
         res = Table[
@@ -746,7 +746,7 @@ getDiscrepancy2DBase3SFC2D[niters_:4] :=
         Export["data_discrepancyL2/2D/Base3SFC2D.dat", res]; 
         Print[mf @ res]
     ] (* getDiscrepancy2DBase3SFC2D *)
-
+*)
 
 makeMatBuilderMatrices0m2net2D[] :=
     Module[ {},
@@ -815,6 +815,71 @@ prepOptimDataBase3SFC2D[innlevels_:6, dbg_:True] :=
 		,{ilevel,nlevels}];
 	] (* prepOptimDataBase3SFC2D *)
 
+prepOptimDataBase3SFC2DExperiment1Tanguy[innlevels_:6, dbg_:True] :=
+    Module[ {},
+    	setNo = 1;
+		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
+    	nlevels = innlevels;
+    	If[ !FileExistsQ["optim_data_2D/"], CreateDirectory["optim_data_2D/"] ];
+    	If[ !FileExistsQ["optim_figs_2D/"], CreateDirectory["optim_figs_2D/"] ];
+		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
+		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
+		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
+		Do[
+			tlst = subdivBase3SFC2DTiles @ tlst;
+			Do[{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[i]];
+				prevrefPt = refPt;
+				{prevv1,prevv2} = {v1,v2};
+				tlst[[i]] = {tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode};
+			,{i,Length[tlst]}];
+			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
+			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
+			tlst = fillSamplingPtsBase3SFC2DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
+			(*Graphics[ {getBase3SFC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
+			Do[
+				seltlst = selectBase3SFC2DTiles[tlst, iOrdinalAbsolute/3^ilevel];
+				fname = "optim_data_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+				exportSelectionBase3SFC2D[fname,seltlst];
+				If[dbg,
+				p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
+					p//Print;
+					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
+				];
+			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
+		,{ilevel,nlevels}];
+	] (* prepOptimDataBase3SFC2DExperiment1Tanguy *)
+
+prepOptimDataBase3SFC2DExperiment2Tanguy[innlevels_:6, dbg_:True] :=
+    Module[ {},
+    	setNo = 1;
+		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
+    	nlevels = innlevels;
+    	If[ !FileExistsQ["optim_data_2D/"], CreateDirectory["optim_data_2D/"] ];
+    	If[ !FileExistsQ["optim_figs_2D/"], CreateDirectory["optim_figs_2D/"] ];
+		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
+		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
+		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
+		Do[
+			tlst = subdivBase3SFC2DTiles @ tlst;
+			Do[{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[i]];
+				samplingPt = prevrefPt + RandomReal[] prevv1 + RandomReal[] prevv2;
+				tlst[[i]] = {tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode};
+				,{i,Length[tlst]}];
+
+			(*Graphics[ {getBase3SFC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
+			Do[
+				seltlst = selectBase3SFC2DTiles[tlst, iOrdinalAbsolute/3^ilevel];
+				fname = "optim_data_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+				exportSelectionBase3SFC2D[fname,seltlst];
+				If[dbg,
+				p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
+					p//Print;
+					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
+				];
+			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
+		,{ilevel,nlevels}];
+	] (* prepOptimDataBase3SFC2DExperiment2Tanguy *)
+
 
 (*
 gitpull
@@ -843,6 +908,27 @@ makeBase3SFC2DL2Discrepancy[dbg_:False] :=
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab]
     ] (* makeBase3SFC2DL2Discrepancy *)
+
+makeBase3SFC2DL2DiscrepancyExperimentTanguy[dbg_:False] :=
+    Module[ {},
+    	nDims = 2;
+        dtab = {};
+        nptsMax = 3^6;
+        setNo = 1;
+        
+        Do[
+			npts = iOrdinalAbsolute;
+			fname = "optim_output_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			pts = Import[fname][[;;,3;;4]];
+			If[dbg, ipts = Round[ npts pts ];
+				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+        	d = getL2discrepancy[pts];
+        	Print["Processing makeBase3SFC2DL2Discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D_ExperimentTanguy.dat", dtab]; 
+        ,{iOrdinalAbsolute,2,nptsMax}];
+        Print[mf @ dtab]
+    ] (* makeBase3SFC2DL2DiscrepancyExperimentTanguy *)
 
 
 showBase3SFC2DOptimImprovement[dbg_:False] :=
