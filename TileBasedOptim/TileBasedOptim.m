@@ -28,12 +28,6 @@ phi = N[GoldenRatio,16];
 oneoverphi = 1/phi;
 oneoverphi2 = oneoverphi^2;
 
-mxRot0 =   {{1,0}, {0,1}};
-mxRot90 =  {{0, -1}, {1, 0}};
-mxRot180 = {{-1,0}, {0,-1}};
-mxRot270 = {{0, 1}, {-1, 0}};
-
-
 (* debugging flags *)
 showTileType = 1;
 showTilefcode = 2;
@@ -592,6 +586,12 @@ typeSq = 	1;
 typeHRec = 	2;
 typeVRec = 	3;
 
+
+mxRot0 =   {{1,0}, {0,1}};
+mxRot90 =  {{0, -1}, {1, 0}};
+mxRot180 = {{-1,0}, {0,-1}};
+mxRot270 = {{0, 1}, {-1, 0}};
+
 subdivBase3SFC2DTiles[tlst_] :=
     Module[ {res={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,dxy },
     	Table[
@@ -990,8 +990,8 @@ demoBase3SFC3D[innsubdivs_:6, dbg_:False] :=
 		Graphics3D[ getBase3SFC3DTilesGL[tlst,showSFC+showArrows+showTilexycodes+showTileType], PlotLabel-> iter, ImageSize -> {1024,1024}3/2  ]//Print;
 		Do[
 			tlst = subdivBase3SFC3DTiles @ tlst;
-			flags = showSFC+showArrows+showTilexycodes+showTileType;
-			flags = If[iter <= 4, showSFC+showArrows, showSFC];
+			flags = showSFC+showArrows+showTilexycodes+showTileType+showArrows;
+			flags = If[iter <= 5, showSFC+showArrows, showSFC];
 			Graphics3D[ getBase3SFC3DTilesGL[tlst,flags], PlotLabel-> iter, ImageSize -> {1024,1024} 3/2 ]//Print;
 			If[dbg, tlst//mf//Print];
 		,{iter,nsubdivs}];
@@ -1080,35 +1080,6 @@ getDiscrepancy2DBase3SFC3D[niters_:4] :=
         Print[mf @ res]
     ] (* getDiscrepancy2DBase3SFC3D *)
 
-makeMatBuilderMatrices0m2net2D[] :=
-    Module[ {},
-    	If[ !FileExistsQ["MatBuilder_matrices/"], CreateDirectory["MatBuilder_matrices/"] ];
-    	nlevels = 16;
-		Do[
-			execString = "testCplex -i MatBuilder_profiles/2D_0m2net.txt -o MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
-        	returnCode = Run[execPrefix<>execString];
-        	Print[execString -> returnCode];
-			mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>".dat"];
-			Print[mf /@ mxTab];
-			mxInvTab = {};
-        	Do[
-				If[ilevel != 0,
-					mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2, ;; ilevel]], mxTab[[2, ;; ilevel/2, ;; ilevel]]];
-					Print[ilevel -> mf[mxInv] ];
-					AppendTo[mxInvTab,mxInv];
-        		];
-				If[ilevel != nlevels, 
-					mxInvH = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2, ;; ilevel + 1]], mxTab[[2, ;; ilevel/2 + 1, ;; ilevel + 1]]] ;
-					mxInvV = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2 + 1, ;; ilevel + 1]], mxTab[[2, ;; ilevel/2, ;; ilevel + 1]]] ;
-					Print[ilevel+1 -> mf[mxInvH] -> mf[mxInvV] ] ;
-					AppendTo[mxInvTab,mxInvH];
-					AppendTo[mxInvTab,mxInvV];
-				];
-        	,{ilevel,0,nlevels,2}];
-			Export["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];
-		,{i,16}];
-    ] (* makeMatBuilderMatrices0m2net2D *)
-
 exportSelectionBase3SFC3D[fname_, seltlst_] :=
 Module[{newtlst,tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode},
 	newtlst = Flatten /@ Table[
@@ -1143,21 +1114,22 @@ prepOptimDataBase3SFC3D[innlevels_:2, dbg_:False] :=
 		,{ilevel,nlevels}];
 	] (* prepOptimDataBase3SFC3D *)
 
-makeMatBuilderMatrices0m2net3D[] :=
+makeMatBuilderMatrices0m2net3D[generateMatBuilderMatrix_:False] :=
     Module[ {},
     	If[ !FileExistsQ["MatBuilder_matrices/"], CreateDirectory["MatBuilder_matrices/"] ];
     	nlevels = 16;
 		Do[
-			execString = "testCplex -i MatBuilder_profiles/3D_0m2net.txt -o MatBuilder_matrices/3D_0m2net_"<>i2s[i]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
-        	returnCode = Run[execPrefix<>execString];
-        	Print[execString -> returnCode];
-			mxTab = readMatBuilderMatrix["MatBuilder_matrices/3D_0m2net_"<>i2s[i]<>".dat"];
+			If[generateMatBuilderMatrix,
+				execString = "testCplex -i MatBuilder_profiles/3D_0m2net.txt -o MatBuilder_matrices/3D_0m2net_"<>i2s[i]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
+    	    	returnCode = Run[execPrefix<>execString];
+        		Print[execString -> returnCode];
+			];
+			mxTab = readMatBuilderMatrix["MatBuilder_matrices/3D_0m2net_"<>i2s[i]<>".dat",3];
 			Print[mf /@ mxTab];
 			mxInvTab = {};
-			Abort[];
         	Do[
 				If[ilevel != 0,
-					mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2, ;; ilevel]], mxTab[[2, ;; ilevel/2, ;; ilevel]]];
+					mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/3, ;; ilevel]], mxTab[[2, ;; ilevel/3, ;; ilevel]], mxTab[[3, ;; ilevel/3, ;; ilevel]]];
 					Print[ilevel -> mf[mxInv] ];
 					AppendTo[mxInvTab,mxInv];
         		];
@@ -1168,7 +1140,7 @@ makeMatBuilderMatrices0m2net3D[] :=
 					AppendTo[mxInvTab,mxInvH];
 					AppendTo[mxInvTab,mxInvV];
 				];
-        	,{ilevel,0,nlevels,2}];
+        	,{ilevel,0,nlevels,3}];
 			Export["MatBuilder_matrices/3D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];
 		,{i,1}];
     ] (* makeMatBuilderMatrices0m2net3D *)
