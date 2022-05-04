@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     66797,       1371]
-NotebookOptionsPosition[     66135,       1349]
-NotebookOutlinePosition[     66585,       1367]
-CellTagsIndexPosition[     66542,       1364]
+NotebookDataLength[     67744,       1393]
+NotebookOptionsPosition[     67082,       1371]
+NotebookOutlinePosition[     67532,       1389]
+CellTagsIndexPosition[     67489,       1386]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -570,9 +570,14 @@ Cell[BoxData[
         NCache[{{Rational[2, 3], 0, 0}, {
           Rational[2, 3], 0, Rational[1, 3]}}, {{0.6666666666666666, 0, 0}, {
           0.6666666666666666, 0, 0.3333333333333333}}]]}}},
-    ImageSize->{512, 512},
+    ImageSize->{512., 512.},
     PlotLabel->FormBox["1", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}}], ",", 
+    PlotRange->{{0, 1}, {0, 1}, {0, 1}},
+    SphericalRegion->True,
+    ViewAngle->0.5011114127587017,
+    ViewPoint->{1.0129225486833229`, -3.06091644775658, 1.0270240553278778`},
+    ViewVertical->{0.21932128993766084`, -0.2658490070644977, 
+     0.9387345083797128}], ",", 
    Graphics3DBox[
     {AbsolutePointSize[10], 
      {GrayLevel[0.6], AbsoluteThickness[5], 
@@ -821,9 +826,15 @@ Cell[BoxData[
        Arrow3DBox[
         NCache[{{0, 0, Rational[2, 3]}, {0, 0, 1}}, {{
           0, 0, 0.6666666666666666}, {0, 0, 1}}]]}}},
-    ImageSize->{512, 512},
+    ImageSize->{512., 512.},
     PlotLabel->FormBox["1", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}}], ",", 
+    PlotRange->{{0, 1}, {0, 1}, {0, 1}},
+    SphericalRegion->True,
+    ViewAngle->0.5011114127587017,
+    ViewPoint->{1.7595897431981482`, -2.0369340316476316`, 
+     2.0505471675500666`},
+    ViewVertical->{-0.027587022920368395`, 0.0006011621547358445, 
+     0.9996192248903853}], ",", 
    Graphics3DBox[
     {AbsolutePointSize[10], 
      {GrayLevel[0.6], AbsoluteThickness[5], 
@@ -1071,9 +1082,15 @@ Cell[BoxData[
         NCache[{{Rational[2, 3], 0, 0}, {
           Rational[2, 3], 0, Rational[1, 3]}}, {{0.6666666666666666, 0, 0}, {
           0.6666666666666666, 0, 0.3333333333333333}}]]}}},
-    ImageSize->{512, 512},
+    ImageSize->{512., 512.},
     PlotLabel->FormBox["1", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}}], ",", 
+    PlotRange->{{0, 1}, {0, 1}, {0, 1}},
+    SphericalRegion->True,
+    ViewAngle->0.5011114127587017,
+    ViewPoint->{1.6175635555469372`, -0.19706757955032073`, 
+     2.9655779390966153`},
+    ViewVertical->{-0.3176341417423409, 0.3716307334036186, 
+     0.8723526523083971}], ",", 
    Graphics3DBox[
     {AbsolutePointSize[10], 
      {GrayLevel[0.6], AbsoluteThickness[5], 
@@ -1326,9 +1343,14 @@ Cell[BoxData[
         NCache[{{0, Rational[2, 3], 0}, {
           0, Rational[2, 3], Rational[1, 3]}}, {{0, 0.6666666666666666, 0}, {
           0, 0.6666666666666666, 0.3333333333333333}}]]}}},
-    ImageSize->{512, 512},
+    ImageSize->{512., 512.},
     PlotLabel->FormBox["1", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}}]}], "}"}]], "Print",
+    PlotRange->{{0, 1}, {0, 1}, {0, 1}},
+    SphericalRegion->True,
+    ViewAngle->0.5011114127587017,
+    ViewPoint->{-2.8980225387124277`, 0.3127534477658643, 1.7186188192922083`},
+    ViewVertical->{-0.19540264942835844`, 0.6751058480930558, 
+     0.7113718426160358}]}], "}"}]], "Print",
  CellChangeTimes->{
   3.860636529983921*^9, {3.860636714670272*^9, 3.8606367417110643`*^9}, 
    3.860636832348198*^9, 3.860637012419848*^9, 3.860637192957165*^9, {
@@ -1370,7 +1392,7 @@ Cell[CellGroupData[{
 Cell[580, 22, 233, 4, 30, "Input",ExpressionUUID->"e7f65834-2b78-48e1-87c8-71c9f7698b1e"],
 Cell[CellGroupData[{
 Cell[838, 30, 13873, 290, 522, "Print",ExpressionUUID->"11209ff6-ed1a-4458-9d1a-e349002b716c"],
-Cell[14714, 322, 51393, 1023, 522, "Print",ExpressionUUID->"021bb6aa-05a6-4153-beeb-e0bcbeaaf6a6"]
+Cell[14714, 322, 52340, 1045, 522, "Print",ExpressionUUID->"021bb6aa-05a6-4153-beeb-e0bcbeaaf6a6"]
 }, Open  ]]
 }, Open  ]]
 }
