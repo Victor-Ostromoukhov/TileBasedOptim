@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     67744,       1393]
-NotebookOptionsPosition[     67082,       1371]
-NotebookOutlinePosition[     67532,       1389]
-CellTagsIndexPosition[     67489,       1386]
+NotebookDataLength[     44164,        940]
+NotebookOptionsPosition[     43502,        918]
+NotebookOutlinePosition[     43955,        936]
+CellTagsIndexPosition[     43912,        933]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -21,10 +21,9 @@ Notebook[{
 
 Cell[CellGroupData[{
 Cell[BoxData[
- RowBox[{"demoBase3SFC3D", "[", "]"}]], "Input",
- CellChangeTimes->{{3.860550409706132*^9, 3.860550411603629*^9}, 
-   3.860636523300448*^9},
- CellLabel->"In[98]:=",ExpressionUUID->"e7f65834-2b78-48e1-87c8-71c9f7698b1e"],
+ RowBox[{"debugBase3SFC3D", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.860666536738337*^9, 3.86066653674154*^9}},
+ CellLabel->"In[3]:=",ExpressionUUID->"b005de8f-1e2d-48b4-9d3d-8882c9153064"],
 
 Cell[CellGroupData[{
 
@@ -36,15 +35,244 @@ Cell[BoxData[
      {GrayLevel[0.6], AbsoluteThickness[5], 
       Line3DBox[
        NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
-         Rational[8, 9], Rational[2, 9], Rational[2, 9]}}, {{
+         Rational[8, 9], Rational[8, 9], Rational[2, 9]}}, {{
         0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
-        0.8888888888888888, 0.2222222222222222, 0.2222222222222222}}]]}, 
+        0.8888888888888888, 0.8888888888888888, 0.2222222222222222}}]]}, 
      {GrayLevel[0.6], AbsoluteThickness[5], 
       Arrow3DBox[
        NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
-         Rational[8, 9], Rational[2, 9], Rational[2, 9]}}, {{
+         Rational[8, 9], Rational[8, 9], Rational[2, 9]}}, {{
         0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
-        0.8888888888888888, 0.2222222222222222, 0.2222222222222222}}]]}, 
+        0.8888888888888888, 0.8888888888888888, 0.2222222222222222}}]]}, 
+     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+      Line3DBox[
+       NCache[{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, {
+         0, 1, Rational[1, 3]}, {1, 1, Rational[1, 3]}, {
+         1, 0, Rational[1, 3]}, {0, 0, Rational[1, 3]}, {0, 0, 0}, {
+         0, 0, Rational[1, 3]}, {0, 1, Rational[1, 3]}, {0, 1, 0}, {0, 0, 
+         0}, {1, 0, 0}, {1, 0, Rational[1, 3]}, {1, 1, Rational[1, 3]}, {1, 1,
+          0}}, {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, {
+         0, 1, 0.3333333333333333}, {1, 1, 0.3333333333333333}, {
+         1, 0, 0.3333333333333333}, {0, 0, 0.3333333333333333}, {0, 0, 0}, {
+         0, 0, 0.3333333333333333}, {0, 1, 0.3333333333333333}, {0, 1, 0}, {0,
+          0, 0}, {1, 0, 0}, {1, 0, 0.3333333333333333}, {
+         1, 1, 0.3333333333333333}, {1, 1, 0}}]]}, Text3DBox[
+      StyleBox["15",
+       StripOnInput->False,
+       LineColor->RGBColor[0, 0, 1],
+       FrontFaceColor->RGBColor[0, 0, 1],
+       BackFaceColor->RGBColor[0, 0, 1],
+       GraphicsColor->RGBColor[0, 0, 1],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[0, 0, 1]], 
+      NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 6]}, {0.5, 0.5, 
+       0.16666666666666666`}], {1.9, -1}], Text3DBox[
+      StyleBox["1",
+       StripOnInput->False,
+       LineColor->RGBColor[1, 0, 0],
+       FrontFaceColor->RGBColor[1, 0, 0],
+       BackFaceColor->RGBColor[1, 0, 0],
+       GraphicsColor->RGBColor[1, 0, 0],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[1, 0, 0]], 
+      NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 6]}, {0.5, 0.5, 
+       0.16666666666666666`}], {-1.9, -1}], 
+     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
+      Arrow3DBox[{{0, 0, 0}, {1, 0, 0}}], 
+      {RGBColor[0, 1, 0], Arrow3DBox[{{0, 0, 0}, {0, 1, 0}}]}, 
+      {RGBColor[0, 0, 1], 
+       Arrow3DBox[
+        NCache[{{0, 0, 0}, {0, 0, Rational[1, 3]}}, {{0, 0, 0}, {
+          0, 0, 0.3333333333333333}}]]}}},
+    ImageSize->{512, 512},
+    PlotLabel->FormBox["0", TraditionalForm],
+    PlotRange->{{-0.25, 1.25}, {-0.25, 1.25}, {-0.25, 1.25}}], ",", 
+   Graphics3DBox[
+    {AbsolutePointSize[10], 
+     {GrayLevel[0.6], AbsoluteThickness[5], 
+      Line3DBox[
+       NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
+         Rational[8, 9], Rational[2, 9], Rational[8, 9]}}, {{
+        0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
+        0.8888888888888888, 0.2222222222222222, 0.8888888888888888}}]]}, 
+     {GrayLevel[0.6], AbsoluteThickness[5], 
+      Arrow3DBox[
+       NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
+         Rational[8, 9], Rational[2, 9], Rational[8, 9]}}, {{
+        0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
+        0.8888888888888888, 0.2222222222222222, 0.8888888888888888}}]]}, 
+     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+      Line3DBox[
+       NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}, {1, Rational[1, 3], 0}, {1, 
+         0, 0}, {1, 0, 1}, {1, Rational[1, 3], 1}, {0, Rational[1, 3], 1}, {0,
+          0, 1}, {0, 0, 0}, {0, 0, 1}, {1, 0, 1}, {1, 0, 0}, {0, 0, 0}, {
+         0, Rational[1, 3], 0}, {0, Rational[1, 3], 1}, {
+         1, Rational[1, 3], 1}, {1, Rational[1, 3], 0}}, {{0, 0, 0}, {
+         0, 0.3333333333333333, 0}, {1, 0.3333333333333333, 0}, {1, 0, 0}, {1,
+          0, 1}, {1, 0.3333333333333333, 1}, {0, 0.3333333333333333, 1}, {0, 
+         0, 1}, {0, 0, 0}, {0, 0, 1}, {1, 0, 1}, {1, 0, 0}, {0, 0, 0}, {
+         0, 0.3333333333333333, 0}, {0, 0.3333333333333333, 1}, {
+         1, 0.3333333333333333, 1}, {1, 0.3333333333333333, 0}}]]}, 
+     Text3DBox[
+      StyleBox["12",
+       StripOnInput->False,
+       LineColor->RGBColor[0, 0, 1],
+       FrontFaceColor->RGBColor[0, 0, 1],
+       BackFaceColor->RGBColor[0, 0, 1],
+       GraphicsColor->RGBColor[0, 0, 1],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[0, 0, 1]], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 2]}, {0.5, 
+       0.16666666666666666`, 0.5}], {1.9, -1}], Text3DBox[
+      StyleBox["1",
+       StripOnInput->False,
+       LineColor->RGBColor[1, 0, 0],
+       FrontFaceColor->RGBColor[1, 0, 0],
+       BackFaceColor->RGBColor[1, 0, 0],
+       GraphicsColor->RGBColor[1, 0, 0],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[1, 0, 0]], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 2]}, {0.5, 
+       0.16666666666666666`, 0.5}], {-1.9, -1}], 
+     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
+      Arrow3DBox[
+       NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}}, {{0, 0, 0}, {
+         0, 0.3333333333333333, 0}}]], 
+      {RGBColor[0, 1, 0], Arrow3DBox[{{0, 0, 0}, {1, 0, 0}}]}, 
+      {RGBColor[0, 0, 1], Arrow3DBox[{{0, 0, 0}, {0, 0, 1}}]}}},
+    ImageSize->{512, 512},
+    PlotLabel->FormBox["0", TraditionalForm],
+    PlotRange->{{-0.25, 1.25}, {-0.25, 1.25}, {-0.25, 1.25}}], ",", 
+   Graphics3DBox[
+    {AbsolutePointSize[10], 
+     {GrayLevel[0.6], AbsoluteThickness[5], 
+      Line3DBox[
+       NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
+         Rational[8, 9], Rational[2, 9], Rational[8, 9]}}, {{
+        0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
+        0.8888888888888888, 0.2222222222222222, 0.8888888888888888}}]]}, 
+     {GrayLevel[0.6], AbsoluteThickness[5], 
+      Arrow3DBox[
+       NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
+         Rational[8, 9], Rational[2, 9], Rational[8, 9]}}, {{
+        0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
+        0.8888888888888888, 0.2222222222222222, 0.8888888888888888}}]]}, 
+     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+      Line3DBox[
+       NCache[{{0, 0, 0}, {1, 0, 0}, {1, Rational[1, 3], 0}, {
+         0, Rational[1, 3], 0}, {0, Rational[1, 3], 1}, {
+         1, Rational[1, 3], 1}, {1, 0, 1}, {0, 0, 1}, {0, 0, 0}, {0, 0, 1}, {
+         0, Rational[1, 3], 1}, {0, Rational[1, 3], 0}, {0, 0, 0}, {1, 0, 
+         0}, {1, 0, 1}, {1, Rational[1, 3], 1}, {1, Rational[1, 3], 0}}, {{0, 
+         0, 0}, {1, 0, 0}, {1, 0.3333333333333333, 0}, {
+         0, 0.3333333333333333, 0}, {0, 0.3333333333333333, 1}, {
+         1, 0.3333333333333333, 1}, {1, 0, 1}, {0, 0, 1}, {0, 0, 0}, {0, 0, 
+         1}, {0, 0.3333333333333333, 1}, {0, 0.3333333333333333, 0}, {0, 0, 
+         0}, {1, 0, 0}, {1, 0, 1}, {1, 0.3333333333333333, 1}, {
+         1, 0.3333333333333333, 0}}]]}, Text3DBox[
+      StyleBox["13",
+       StripOnInput->False,
+       LineColor->RGBColor[0, 0, 1],
+       FrontFaceColor->RGBColor[0, 0, 1],
+       BackFaceColor->RGBColor[0, 0, 1],
+       GraphicsColor->RGBColor[0, 0, 1],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[0, 0, 1]], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 2]}, {0.5, 
+       0.16666666666666666`, 0.5}], {1.9, -1}], Text3DBox[
+      StyleBox["1",
+       StripOnInput->False,
+       LineColor->RGBColor[1, 0, 0],
+       FrontFaceColor->RGBColor[1, 0, 0],
+       BackFaceColor->RGBColor[1, 0, 0],
+       GraphicsColor->RGBColor[1, 0, 0],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[1, 0, 0]], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 2]}, {0.5, 
+       0.16666666666666666`, 0.5}], {-1.9, -1}], 
+     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
+      Arrow3DBox[{{0, 0, 0}, {1, 0, 0}}], 
+      {RGBColor[0, 1, 0], 
+       Arrow3DBox[
+        NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}}, {{0, 0, 0}, {
+          0, 0.3333333333333333, 0}}]]}, 
+      {RGBColor[0, 0, 1], Arrow3DBox[{{0, 0, 0}, {0, 0, 1}}]}}},
+    ImageSize->{512, 512},
+    PlotLabel->FormBox["0", TraditionalForm],
+    PlotRange->{{-0.25, 1.25}, {-0.25, 1.25}, {-0.25, 1.25}}]}], 
+  "}"}]], "Print",
+ CellChangeTimes->{3.860666545183857*^9},
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"2f85e08b-7c54-4429-9a67-4bc8bb676b8c"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   Graphics3DBox[
+    {AbsolutePointSize[10], 
+     {GrayLevel[0.6], AbsoluteThickness[5], 
+      Line3DBox[
+       NCache[{{
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}, {
+         Rational[1, 9] 3^Rational[-1, 2], Rational[2, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 9] 
+          3^Rational[-1, 2]}, {
+         Rational[1, 9] 3^Rational[-1, 2], Rational[2, 3] + 
+          Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 
+          3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], 1 + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
+        0.06415002990995843, 0.06415002990995843}, {0.9358499700900416, 
+        0.2691833034233749, 0.2691833034233749}, {0.9358499700900416, 
+        0.39748336324329175`, 0.2691833034233749}, {0.06415002990995843, 
+        0.6025166367567082, 0.06415002990995843}, {0.06415002990995843, 
+        0.7308166965766251, 0.06415002990995843}, {0.9358499700900416, 
+        0.9358499700900416, 0.2691833034233749}}]]}, 
+     {GrayLevel[0.6], AbsoluteThickness[5], 
+      Arrow3DBox[
+       NCache[{{
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
+        0.06415002990995843, 0.06415002990995843}, {0.9358499700900416, 
+        0.2691833034233749, 0.2691833034233749}}]], 
+      Arrow3DBox[
+       NCache[{{
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}, {
+         Rational[1, 9] 3^Rational[-1, 2], Rational[2, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 9] 
+          3^Rational[-1, 2]}}, {{0.9358499700900416, 0.39748336324329175`, 
+        0.2691833034233749}, {0.06415002990995843, 0.6025166367567082, 
+        0.06415002990995843}}]], 
+      Arrow3DBox[
+       NCache[{{
+         Rational[1, 9] 3^Rational[-1, 2], Rational[2, 3] + 
+          Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 
+          3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], 1 + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
+        0.7308166965766251, 0.06415002990995843}, {0.9358499700900416, 
+        0.9358499700900416, 0.2691833034233749}}]]}, 
      {RGBColor[0, 1, 1], AbsoluteThickness[1], 
       Line3DBox[
        NCache[{{0, 0, 0}, {1, 0, 0}, {1, Rational[1, 3], 0}, {
@@ -96,44 +324,34 @@ Cell[BoxData[
       {RGBColor[0, 0, 1], 
        Arrow3DBox[
         NCache[{{0, 0, 0}, {0, 0, Rational[1, 3]}}, {{0, 0, 0}, {
-          0, 0, 0.3333333333333333}}]]}}},
-    ImageSize->{512, 512},
-    PlotLabel->FormBox["0", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}}], ",", 
-   Graphics3DBox[
-    {AbsolutePointSize[10], 
-     {GrayLevel[0.6], AbsoluteThickness[5], 
-      Line3DBox[
-       NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
-         Rational[2, 9], Rational[2, 9], Rational[8, 9]}}, {{
-        0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
-        0.2222222222222222, 0.2222222222222222, 0.8888888888888888}}]]}, 
-     {GrayLevel[0.6], AbsoluteThickness[5], 
-      Arrow3DBox[
-       NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
-         Rational[2, 9], Rational[2, 9], Rational[8, 9]}}, {{
-        0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
-        0.2222222222222222, 0.2222222222222222, 0.8888888888888888}}]]}, 
+          0, 0, 0.3333333333333333}}]]}}, 
      {RGBColor[0, 1, 1], AbsoluteThickness[1], 
       Line3DBox[
-       NCache[{{0, 0, 0}, {Rational[1, 3], 0, 0}, {
-         Rational[1, 3], Rational[1, 3], 0}, {0, Rational[1, 3], 0}, {
-         0, Rational[1, 3], 1}, {Rational[1, 3], Rational[1, 3], 1}, {
-         Rational[1, 3], 0, 1}, {0, 0, 1}, {0, 0, 0}, {0, 0, 1}, {
-         0, Rational[1, 3], 1}, {0, Rational[1, 3], 0}, {0, 0, 0}, {
-         Rational[1, 3], 0, 0}, {Rational[1, 3], 0, 1}, {
-         Rational[1, 3], Rational[1, 3], 1}, {
-         Rational[1, 3], Rational[1, 3], 0}}, {{0, 0, 0}, {
-         0.3333333333333333, 0, 0}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {
-         0, 0.3333333333333333, 0}, {0, 0.3333333333333333, 1}, {
-         0.3333333333333333, 0.3333333333333333, 1}, {
-         0.3333333333333333, 0, 1}, {0, 0, 1}, {0, 0, 0}, {0, 0, 1}, {
-         0, 0.3333333333333333, 1}, {0, 0.3333333333333333, 0}, {0, 0, 0}, {
-         0.3333333333333333, 0, 0}, {0.3333333333333333, 0, 1}, {
-         0.3333333333333333, 0.3333333333333333, 1}, {
-         0.3333333333333333, 0.3333333333333333, 0}}]]}, Text3DBox[
-      StyleBox["25",
+       NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+         0, Rational[1, 3], Rational[1, 3]}, {
+         0, Rational[2, 3], Rational[1, 3]}, {
+         1, Rational[2, 3], Rational[1, 3]}, {1, Rational[2, 3], 0}, {
+         0, Rational[2, 3], 0}, {0, Rational[1, 3], 0}, {
+         1, Rational[1, 3], 0}, {1, Rational[1, 3], Rational[1, 3]}, {
+         1, Rational[1, 3], 0}, {1, Rational[2, 3], 0}, {
+         1, Rational[2, 3], Rational[1, 3]}, {
+         1, Rational[1, 3], Rational[1, 3]}, {
+         0, Rational[1, 3], Rational[1, 3]}, {0, Rational[1, 3], 0}, {
+         0, Rational[2, 3], 0}, {0, Rational[2, 3], Rational[1, 3]}}, {{
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         0, 0.3333333333333333, 0.3333333333333333}, {
+         0, 0.6666666666666666, 0.3333333333333333}, {
+         1, 0.6666666666666666, 0.3333333333333333}, {
+         1, 0.6666666666666666, 0}, {0, 0.6666666666666666, 0}, {
+         0, 0.3333333333333333, 0}, {1, 0.3333333333333333, 0}, {
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         1, 0.3333333333333333, 0}, {1, 0.6666666666666666, 0}, {
+         1, 0.6666666666666666, 0.3333333333333333}, {
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         0, 0.3333333333333333, 0.3333333333333333}, {
+         0, 0.3333333333333333, 0}, {0, 0.6666666666666666, 0}, {
+         0, 0.6666666666666666, 0.3333333333333333}}]]}, Text3DBox[
+      StyleBox["24",
        StripOnInput->False,
        LineColor->RGBColor[0, 0, 1],
        FrontFaceColor->RGBColor[0, 0, 1],
@@ -142,10 +360,9 @@ Cell[BoxData[
        FontSize->14,
        FontWeight->Bold,
        FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 2]}, {
-       0.16666666666666666`, 0.16666666666666666`, 0.5}], {1.9, -1}], 
-     Text3DBox[
-      StyleBox["1",
+      NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 6]}, {0.5, 0.5, 
+       0.16666666666666666`}], {1.9, -1}], Text3DBox[
+      StyleBox["2",
        StripOnInput->False,
        LineColor->RGBColor[1, 0, 0],
        FrontFaceColor->RGBColor[1, 0, 0],
@@ -154,34 +371,138 @@ Cell[BoxData[
        FontSize->14,
        FontWeight->Bold,
        FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 2]}, {
-       0.16666666666666666`, 0.16666666666666666`, 0.5}], {-1.9, -1}], 
+      NCache[{Rational[1, 2], Rational[1, 2], Rational[1, 6]}, {0.5, 0.5, 
+       0.16666666666666666`}], {-1.9, -1}], 
      {RGBColor[1, 0, 0], AbsoluteThickness[3], 
       Arrow3DBox[
-       NCache[{{0, 0, 0}, {Rational[1, 3], 0, 0}}, {{0, 0, 0}, {
-         0.3333333333333333, 0, 0}}]], 
+       NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+         0, Rational[1, 3], Rational[1, 3]}}, {{
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         0, 0.3333333333333333, 0.3333333333333333}}]], 
       {RGBColor[0, 1, 0], 
        Arrow3DBox[
-        NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}}, {{0, 0, 0}, {
-          0, 0.3333333333333333, 0}}]]}, 
-      {RGBColor[0, 0, 1], Arrow3DBox[{{0, 0, 0}, {0, 0, 1}}]}}},
+        NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+          1, Rational[2, 3], Rational[1, 3]}}, {{
+          1, 0.3333333333333333, 0.3333333333333333}, {
+          1, 0.6666666666666666, 0.3333333333333333}}]]}, 
+      {RGBColor[0, 0, 1], 
+       Arrow3DBox[
+        NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+          1, Rational[1, 3], 0}}, {{
+          1, 0.3333333333333333, 0.3333333333333333}, {
+          1, 0.3333333333333333, 0}}]]}}, 
+     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+      Line3DBox[
+       NCache[{{0, Rational[2, 3], 0}, {1, Rational[2, 3], 0}, {1, 1, 0}, {0, 
+         1, 0}, {0, 1, Rational[1, 3]}, {1, 1, Rational[1, 3]}, {
+         1, Rational[2, 3], Rational[1, 3]}, {
+         0, Rational[2, 3], Rational[1, 3]}, {0, Rational[2, 3], 0}, {
+         0, Rational[2, 3], Rational[1, 3]}, {0, 1, Rational[1, 3]}, {0, 1, 
+         0}, {0, Rational[2, 3], 0}, {1, Rational[2, 3], 0}, {
+         1, Rational[2, 3], Rational[1, 3]}, {1, 1, Rational[1, 3]}, {1, 1, 
+         0}}, {{0, 0.6666666666666666, 0}, {1, 0.6666666666666666, 0}, {1, 1, 
+         0}, {0, 1, 0}, {0, 1, 0.3333333333333333}, {
+         1, 1, 0.3333333333333333}, {
+         1, 0.6666666666666666, 0.3333333333333333}, {
+         0, 0.6666666666666666, 0.3333333333333333}, {
+         0, 0.6666666666666666, 0}, {
+         0, 0.6666666666666666, 0.3333333333333333}, {
+         0, 1, 0.3333333333333333}, {0, 1, 0}, {0, 0.6666666666666666, 0}, {
+         1, 0.6666666666666666, 0}, {
+         1, 0.6666666666666666, 0.3333333333333333}, {
+         1, 1, 0.3333333333333333}, {1, 1, 0}}]]}, Text3DBox[
+      StyleBox["21",
+       StripOnInput->False,
+       LineColor->RGBColor[0, 0, 1],
+       FrontFaceColor->RGBColor[0, 0, 1],
+       BackFaceColor->RGBColor[0, 0, 1],
+       GraphicsColor->RGBColor[0, 0, 1],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[0, 0, 1]], 
+      NCache[{Rational[1, 2], Rational[5, 6], Rational[1, 6]}, {0.5, 
+       0.8333333333333334, 0.16666666666666666`}], {1.9, -1}], Text3DBox[
+      StyleBox["3",
+       StripOnInput->False,
+       LineColor->RGBColor[1, 0, 0],
+       FrontFaceColor->RGBColor[1, 0, 0],
+       BackFaceColor->RGBColor[1, 0, 0],
+       GraphicsColor->RGBColor[1, 0, 0],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[1, 0, 0]], 
+      NCache[{Rational[1, 2], Rational[5, 6], Rational[1, 6]}, {0.5, 
+       0.8333333333333334, 0.16666666666666666`}], {-1.9, -1}], 
+     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
+      Arrow3DBox[
+       NCache[{{0, Rational[2, 3], 0}, {1, Rational[2, 3], 0}}, {{
+         0, 0.6666666666666666, 0}, {1, 0.6666666666666666, 0}}]], 
+      {RGBColor[0, 1, 0], 
+       Arrow3DBox[
+        NCache[{{0, Rational[2, 3], 0}, {0, 1, 0}}, {{
+          0, 0.6666666666666666, 0}, {0, 1, 0}}]]}, 
+      {RGBColor[0, 0, 1], 
+       Arrow3DBox[
+        NCache[{{0, Rational[2, 3], 0}, {
+          0, Rational[2, 3], Rational[1, 3]}}, {{0, 0.6666666666666666, 0}, {
+          0, 0.6666666666666666, 0.3333333333333333}}]]}}},
     ImageSize->{512, 512},
-    PlotLabel->FormBox["0", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}}], ",", 
+    PlotLabel->FormBox["1", TraditionalForm],
+    PlotRange->{{-0.25, 1.25}, {-0.25, 1.25}, {-0.25, 1.25}}], ",", 
    Graphics3DBox[
     {AbsolutePointSize[10], 
      {GrayLevel[0.6], AbsoluteThickness[5], 
       Line3DBox[
-       NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
-         Rational[8, 9], Rational[2, 9], Rational[2, 9]}}, {{
-        0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
-        0.8888888888888888, 0.2222222222222222, 0.2222222222222222}}]]}, 
+       NCache[{{
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[1, 9] 3^Rational[-1, 2]}, {
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[2, 3] + Rational[-1, 9] 3^Rational[-1, 2]}, {
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[2, 3] + Rational[1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], 1 + 
+          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
+        0.06415002990995843, 0.06415002990995843}, {0.9358499700900416, 
+        0.2691833034233749, 0.2691833034233749}, {0.9358499700900416, 
+        0.2691833034233749, 0.39748336324329175`}, {0.06415002990995843, 
+        0.06415002990995843, 0.6025166367567082}, {0.06415002990995843, 
+        0.06415002990995843, 0.7308166965766251}, {0.9358499700900416, 
+        0.2691833034233749, 0.9358499700900416}}]]}, 
      {GrayLevel[0.6], AbsoluteThickness[5], 
       Arrow3DBox[
-       NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
-         Rational[8, 9], Rational[2, 9], Rational[2, 9]}}, {{
-        0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
-        0.8888888888888888, 0.2222222222222222, 0.2222222222222222}}]]}, 
+       NCache[{{
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
+        0.06415002990995843, 0.06415002990995843}, {0.9358499700900416, 
+        0.2691833034233749, 0.2691833034233749}}]], 
+      Arrow3DBox[
+       NCache[{{
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[1, 9] 3^Rational[-1, 2]}, {
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[2, 3] + Rational[-1, 9] 3^Rational[-1, 2]}}, {{
+        0.9358499700900416, 0.2691833034233749, 0.39748336324329175`}, {
+        0.06415002990995843, 0.06415002990995843, 0.6025166367567082}}]], 
+      Arrow3DBox[
+       NCache[{{
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[2, 3] + Rational[1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], 1 + 
+          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
+        0.06415002990995843, 0.7308166965766251}, {0.9358499700900416, 
+        0.2691833034233749, 0.9358499700900416}}]]}, 
      {RGBColor[0, 1, 1], AbsoluteThickness[1], 
       Line3DBox[
        NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}, {1, Rational[1, 3], 0}, {1, 
@@ -230,44 +551,265 @@ Cell[BoxData[
       {RGBColor[0, 0, 1], 
        Arrow3DBox[
         NCache[{{0, 0, 0}, {0, 0, Rational[1, 3]}}, {{0, 0, 0}, {
-          0, 0, 0.3333333333333333}}]]}}},
+          0, 0, 0.3333333333333333}}]]}}, 
+     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+      Line3DBox[
+       NCache[{{1, Rational[1, 3], Rational[1, 3]}, {1, 0, Rational[1, 3]}, {
+         0, 0, Rational[1, 3]}, {0, Rational[1, 3], Rational[1, 3]}, {
+         0, Rational[1, 3], Rational[2, 3]}, {0, 0, Rational[2, 3]}, {
+         1, 0, Rational[2, 3]}, {1, Rational[1, 3], Rational[2, 3]}, {
+         1, Rational[1, 3], Rational[1, 3]}, {
+         1, Rational[1, 3], Rational[2, 3]}, {
+         0, Rational[1, 3], Rational[2, 3]}, {
+         0, Rational[1, 3], Rational[1, 3]}, {
+         1, Rational[1, 3], Rational[1, 3]}, {1, 0, Rational[1, 3]}, {
+         1, 0, Rational[2, 3]}, {0, 0, Rational[2, 3]}, {
+         0, 0, Rational[1, 3]}}, {{
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         1, 0, 0.3333333333333333}, {0, 0, 0.3333333333333333}, {
+         0, 0.3333333333333333, 0.3333333333333333}, {
+         0, 0.3333333333333333, 0.6666666666666666}, {
+         0, 0, 0.6666666666666666}, {1, 0, 0.6666666666666666}, {
+         1, 0.3333333333333333, 0.6666666666666666}, {
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         1, 0.3333333333333333, 0.6666666666666666}, {
+         0, 0.3333333333333333, 0.6666666666666666}, {
+         0, 0.3333333333333333, 0.3333333333333333}, {
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         1, 0, 0.3333333333333333}, {1, 0, 0.6666666666666666}, {
+         0, 0, 0.6666666666666666}, {0, 0, 0.3333333333333333}}]]}, 
+     Text3DBox[
+      StyleBox["25",
+       StripOnInput->False,
+       LineColor->RGBColor[0, 0, 1],
+       FrontFaceColor->RGBColor[0, 0, 1],
+       BackFaceColor->RGBColor[0, 0, 1],
+       GraphicsColor->RGBColor[0, 0, 1],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[0, 0, 1]], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 2]}, {0.5, 
+       0.16666666666666666`, 0.5}], {1.9, -1}], Text3DBox[
+      StyleBox["2",
+       StripOnInput->False,
+       LineColor->RGBColor[1, 0, 0],
+       FrontFaceColor->RGBColor[1, 0, 0],
+       BackFaceColor->RGBColor[1, 0, 0],
+       GraphicsColor->RGBColor[1, 0, 0],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[1, 0, 0]], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 2]}, {0.5, 
+       0.16666666666666666`, 0.5}], {-1.9, -1}], 
+     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
+      Arrow3DBox[
+       NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+         1, 0, Rational[1, 3]}}, {{
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         1, 0, 0.3333333333333333}}]], 
+      {RGBColor[0, 1, 0], 
+       Arrow3DBox[
+        NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+          0, Rational[1, 3], Rational[1, 3]}}, {{
+          1, 0.3333333333333333, 0.3333333333333333}, {
+          0, 0.3333333333333333, 0.3333333333333333}}]]}, 
+      {RGBColor[0, 0, 1], 
+       Arrow3DBox[
+        NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+          1, Rational[1, 3], Rational[2, 3]}}, {{
+          1, 0.3333333333333333, 0.3333333333333333}, {
+          1, 0.3333333333333333, 0.6666666666666666}}]]}}, 
+     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+      Line3DBox[
+       NCache[{{0, 0, Rational[2, 3]}, {0, Rational[1, 3], Rational[2, 3]}, {
+         1, Rational[1, 3], Rational[2, 3]}, {1, 0, Rational[2, 3]}, {1, 0, 
+         1}, {1, Rational[1, 3], 1}, {0, Rational[1, 3], 1}, {0, 0, 1}, {
+         0, 0, Rational[2, 3]}, {0, 0, 1}, {1, 0, 1}, {
+         1, 0, Rational[2, 3]}, {0, 0, Rational[2, 3]}, {
+         0, Rational[1, 3], Rational[2, 3]}, {0, Rational[1, 3], 1}, {
+         1, Rational[1, 3], 1}, {1, Rational[1, 3], Rational[2, 3]}}, {{
+         0, 0, 0.6666666666666666}, {
+         0, 0.3333333333333333, 0.6666666666666666}, {
+         1, 0.3333333333333333, 0.6666666666666666}, {
+         1, 0, 0.6666666666666666}, {1, 0, 1}, {1, 0.3333333333333333, 1}, {
+         0, 0.3333333333333333, 1}, {0, 0, 1}, {0, 0, 0.6666666666666666}, {0,
+          0, 1}, {1, 0, 1}, {1, 0, 0.6666666666666666}, {
+         0, 0, 0.6666666666666666}, {
+         0, 0.3333333333333333, 0.6666666666666666}, {
+         0, 0.3333333333333333, 1}, {1, 0.3333333333333333, 1}, {
+         1, 0.3333333333333333, 0.6666666666666666}}]]}, Text3DBox[
+      StyleBox["24",
+       StripOnInput->False,
+       LineColor->RGBColor[0, 0, 1],
+       FrontFaceColor->RGBColor[0, 0, 1],
+       BackFaceColor->RGBColor[0, 0, 1],
+       GraphicsColor->RGBColor[0, 0, 1],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[0, 0, 1]], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[5, 6]}, {0.5, 
+       0.16666666666666666`, 0.8333333333333334}], {1.9, -1}], Text3DBox[
+      StyleBox["3",
+       StripOnInput->False,
+       LineColor->RGBColor[1, 0, 0],
+       FrontFaceColor->RGBColor[1, 0, 0],
+       BackFaceColor->RGBColor[1, 0, 0],
+       GraphicsColor->RGBColor[1, 0, 0],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[1, 0, 0]], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[5, 6]}, {0.5, 
+       0.16666666666666666`, 0.8333333333333334}], {-1.9, -1}], 
+     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
+      Arrow3DBox[
+       NCache[{{0, 0, Rational[2, 3]}, {
+         0, Rational[1, 3], Rational[2, 3]}}, {{0, 0, 0.6666666666666666}, {
+         0, 0.3333333333333333, 0.6666666666666666}}]], 
+      {RGBColor[0, 1, 0], 
+       Arrow3DBox[
+        NCache[{{0, 0, Rational[2, 3]}, {1, 0, Rational[2, 3]}}, {{
+          0, 0, 0.6666666666666666}, {1, 0, 0.6666666666666666}}]]}, 
+      {RGBColor[0, 0, 1], 
+       Arrow3DBox[
+        NCache[{{0, 0, Rational[2, 3]}, {0, 0, 1}}, {{
+          0, 0, 0.6666666666666666}, {0, 0, 1}}]]}}},
     ImageSize->{512, 512},
-    PlotLabel->FormBox["0", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}}], ",", 
+    PlotLabel->FormBox["1", TraditionalForm],
+    PlotRange->{{-0.25, 1.25}, {-0.25, 1.25}, {-0.25, 1.25}}], ",", 
    Graphics3DBox[
     {AbsolutePointSize[10], 
      {GrayLevel[0.6], AbsoluteThickness[5], 
       Line3DBox[
-       NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
-         Rational[2, 9], Rational[8, 9], Rational[2, 9]}}, {{
-        0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
-        0.2222222222222222, 0.8888888888888888, 0.2222222222222222}}]]}, 
+       NCache[{{
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[1, 9] 3^Rational[-1, 2]}, {
+         2 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 9] 
+          3^Rational[-1, 2], Rational[2, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}, {
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[2, 3] + Rational[1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], 1 + 
+          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
+        0.06415002990995843, 0.06415002990995843}, {0.9358499700900416, 
+        0.2691833034233749, 0.2691833034233749}, {1.0641500299099584`, 
+        0.2691833034233749, 0.39748336324329175`}, {1.9358499700900416`, 
+        0.06415002990995843, 0.6025166367567082}, {0.06415002990995843, 
+        0.06415002990995843, 0.7308166965766251}, {0.9358499700900416, 
+        0.2691833034233749, 0.9358499700900416}}]]}, 
      {GrayLevel[0.6], AbsoluteThickness[5], 
       Arrow3DBox[
-       NCache[{{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
-         Rational[2, 9], Rational[8, 9], Rational[2, 9]}}, {{
-        0.1111111111111111, 0.1111111111111111, 0.1111111111111111}, {
-        0.2222222222222222, 0.8888888888888888, 0.2222222222222222}}]]}, 
+       NCache[{{
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
+        0.06415002990995843, 0.06415002990995843}, {0.9358499700900416, 
+        0.2691833034233749, 0.2691833034233749}}]], 
+      Arrow3DBox[
+       NCache[{{
+         1 + Rational[1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[1, 9] 3^Rational[-1, 2]}, {
+         2 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 9] 
+          3^Rational[-1, 2], Rational[2, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2]}}, {{1.0641500299099584`, 
+        0.2691833034233749, 0.39748336324329175`}, {1.9358499700900416`, 
+        0.06415002990995843, 0.6025166367567082}}]], 
+      Arrow3DBox[
+       NCache[{{
+         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
+          Rational[2, 3] + Rational[1, 9] 3^Rational[-1, 2]}, {
+         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
+          Rational[-1, 9] 3^Rational[-1, 2], 1 + 
+          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
+        0.06415002990995843, 0.7308166965766251}, {0.9358499700900416, 
+        0.2691833034233749, 0.9358499700900416}}]]}, 
      {RGBColor[0, 1, 1], AbsoluteThickness[1], 
       Line3DBox[
-       NCache[{{0, 0, 0}, {0, 1, 0}, {Rational[1, 3], 1, 0}, {
-         Rational[1, 3], 0, 0}, {Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], 1, Rational[1, 3]}, {0, 1, Rational[1, 3]}, {
+       NCache[{{0, 0, 0}, {1, 0, 0}, {1, Rational[1, 3], 0}, {
+         0, Rational[1, 3], 0}, {0, Rational[1, 3], Rational[1, 3]}, {
+         1, Rational[1, 3], Rational[1, 3]}, {1, 0, Rational[1, 3]}, {
          0, 0, Rational[1, 3]}, {0, 0, 0}, {0, 0, Rational[1, 3]}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {Rational[1, 3], 0, 0}, {0, 0, 
-         0}, {0, 1, 0}, {0, 1, Rational[1, 3]}, {
-         Rational[1, 3], 1, Rational[1, 3]}, {Rational[1, 3], 1, 0}}, {{0, 0, 
-         0}, {0, 1, 0}, {0.3333333333333333, 1, 0}, {
-         0.3333333333333333, 0, 0}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {
-         0.3333333333333333, 1, 0.3333333333333333}, {
-         0, 1, 0.3333333333333333}, {0, 0, 0.3333333333333333}, {0, 0, 0}, {
+         0, Rational[1, 3], Rational[1, 3]}, {0, Rational[1, 3], 0}, {0, 0, 
+         0}, {1, 0, 0}, {1, 0, Rational[1, 3]}, {
+         1, Rational[1, 3], Rational[1, 3]}, {1, Rational[1, 3], 0}}, {{0, 0, 
+         0}, {1, 0, 0}, {1, 0.3333333333333333, 0}, {
+         0, 0.3333333333333333, 0}, {
+         0, 0.3333333333333333, 0.3333333333333333}, {
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         1, 0, 0.3333333333333333}, {0, 0, 0.3333333333333333}, {0, 0, 0}, {
          0, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0}, {0, 0, 0}, {0, 1, 0}, {
-         0, 1, 0.3333333333333333}, {
-         0.3333333333333333, 1, 0.3333333333333333}, {
-         0.3333333333333333, 1, 0}}]]}, Text3DBox[
+         0, 0.3333333333333333, 0.3333333333333333}, {
+         0, 0.3333333333333333, 0}, {0, 0, 0}, {1, 0, 0}, {
+         1, 0, 0.3333333333333333}, {
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         1, 0.3333333333333333, 0}}]]}, Text3DBox[
+      StyleBox["21",
+       StripOnInput->False,
+       LineColor->RGBColor[0, 0, 1],
+       FrontFaceColor->RGBColor[0, 0, 1],
+       BackFaceColor->RGBColor[0, 0, 1],
+       GraphicsColor->RGBColor[0, 0, 1],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[0, 0, 1]], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 6]}, {0.5, 
+       0.16666666666666666`, 0.16666666666666666`}], {1.9, -1}], Text3DBox[
+      StyleBox["1",
+       StripOnInput->False,
+       LineColor->RGBColor[1, 0, 0],
+       FrontFaceColor->RGBColor[1, 0, 0],
+       BackFaceColor->RGBColor[1, 0, 0],
+       GraphicsColor->RGBColor[1, 0, 0],
+       FontSize->14,
+       FontWeight->Bold,
+       FontColor->RGBColor[1, 0, 0]], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 6]}, {0.5, 
+       0.16666666666666666`, 0.16666666666666666`}], {-1.9, -1}], 
+     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
+      Arrow3DBox[{{0, 0, 0}, {1, 0, 0}}], 
+      {RGBColor[0, 1, 0], 
+       Arrow3DBox[
+        NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}}, {{0, 0, 0}, {
+          0, 0.3333333333333333, 0}}]]}, 
+      {RGBColor[0, 0, 1], 
+       Arrow3DBox[
+        NCache[{{0, 0, 0}, {0, 0, Rational[1, 3]}}, {{0, 0, 0}, {
+          0, 0, 0.3333333333333333}}]]}}, 
+     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
+      Line3DBox[
+       NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+         2, Rational[1, 3], Rational[1, 3]}, {
+         2, Rational[1, 3], Rational[2, 3]}, {
+         1, Rational[1, 3], Rational[2, 3]}, {1, 0, Rational[2, 3]}, {
+         2, 0, Rational[2, 3]}, {2, 0, Rational[1, 3]}, {
+         1, 0, Rational[1, 3]}, {1, Rational[1, 3], Rational[1, 3]}, {
+         1, 0, Rational[1, 3]}, {1, 0, Rational[2, 3]}, {
+         1, Rational[1, 3], Rational[2, 3]}, {
+         1, Rational[1, 3], Rational[1, 3]}, {
+         2, Rational[1, 3], Rational[1, 3]}, {2, 0, Rational[1, 3]}, {
+         2, 0, Rational[2, 3]}, {2, Rational[1, 3], Rational[2, 3]}}, {{
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         2, 0.3333333333333333, 0.3333333333333333}, {
+         2, 0.3333333333333333, 0.6666666666666666}, {
+         1, 0.3333333333333333, 0.6666666666666666}, {
+         1, 0, 0.6666666666666666}, {2, 0, 0.6666666666666666}, {
+         2, 0, 0.3333333333333333}, {1, 0, 0.3333333333333333}, {
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         1, 0, 0.3333333333333333}, {1, 0, 0.6666666666666666}, {
+         1, 0.3333333333333333, 0.6666666666666666}, {
+         1, 0.3333333333333333, 0.3333333333333333}, {
+         2, 0.3333333333333333, 0.3333333333333333}, {
+         2, 0, 0.3333333333333333}, {2, 0, 0.6666666666666666}, {
+         2, 0.3333333333333333, 0.6666666666666666}}]]}, Text3DBox[
       StyleBox["22",
        StripOnInput->False,
        LineColor->RGBColor[0, 0, 1],
@@ -277,207 +819,8 @@ Cell[BoxData[
        FontSize->14,
        FontWeight->Bold,
        FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 6], Rational[1, 2], Rational[1, 6]}, {
-       0.16666666666666666`, 0.5, 0.16666666666666666`}], {1.9, -1}], 
-     Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 6], Rational[1, 2], Rational[1, 6]}, {
-       0.16666666666666666`, 0.5, 0.16666666666666666`}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[{{0, 0, 0}, {0, 1, 0}}], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{0, 0, 0}, {Rational[1, 3], 0, 0}}, {{0, 0, 0}, {
-          0.3333333333333333, 0, 0}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{0, 0, 0}, {0, 0, Rational[1, 3]}}, {{0, 0, 0}, {
-          0, 0, 0.3333333333333333}}]]}}},
-    ImageSize->{512, 512},
-    PlotLabel->FormBox["0", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}}]}], "}"}]], "Print",
- CellChangeTimes->{
-  3.860636529983921*^9, {3.860636714670272*^9, 3.8606367417110643`*^9}, 
-   3.860636832348198*^9, 3.860637012419848*^9, 3.860637192957165*^9, {
-   3.860637231979021*^9, 3.860637256727985*^9}, 3.860637394114477*^9, 
-   3.860637447088935*^9, 3.860637555829674*^9, 3.86063771609454*^9, {
-   3.8606377494415007`*^9, 3.8606377647123823`*^9}, 3.860637911417996*^9, {
-   3.8606379520836477`*^9, 3.86063797561681*^9}, 3.860638190969297*^9, 
-   3.8606453105589933`*^9, {3.8606453457452383`*^9, 3.860645458674664*^9}, {
-   3.860645506201515*^9, 3.860645534910459*^9}, 3.860645568855899*^9, {
-   3.860645629590012*^9, 3.860645688024385*^9}, 3.860645747860446*^9, {
-   3.8606457869904747`*^9, 3.860645832659967*^9}, 3.860645869119177*^9, 
-   3.860645901413694*^9, {3.86064593711887*^9, 3.860646035652429*^9}},
- CellLabel->
-  "During evaluation of \
-In[98]:=",ExpressionUUID->"11209ff6-ed1a-4458-9d1a-e349002b716c"],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   Graphics3DBox[
-    {AbsolutePointSize[10], 
-     {GrayLevel[0.6], AbsoluteThickness[5], 
-      Line3DBox[
-       NCache[{{
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[2, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[2, 3] + Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2]}, {
-         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
-        0.06415002990995843, 0.06415002990995843}, {0.2691833034233749, 
-        0.2691833034233749, 0.2691833034233749}, {0.39748336324329175`, 
-        0.2691833034233749, 0.2691833034233749}, {0.6025166367567082, 
-        0.06415002990995843, 0.06415002990995843}, {0.7308166965766251, 
-        0.06415002990995843, 0.06415002990995843}, {0.9358499700900416, 
-        0.2691833034233749, 0.2691833034233749}}]]}, 
-     {GrayLevel[0.6], AbsoluteThickness[5], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
-        0.06415002990995843, 0.06415002990995843}, {0.2691833034233749, 
-        0.2691833034233749, 0.2691833034233749}}]], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[1, 3] + Rational[1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[2, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2]}}, {{
-        0.39748336324329175`, 0.2691833034233749, 0.2691833034233749}, {
-        0.6025166367567082, 0.06415002990995843, 0.06415002990995843}}]], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[2, 3] + Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2]}, {
-         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.7308166965766251, 
-        0.06415002990995843, 0.06415002990995843}, {0.9358499700900416, 
-        0.2691833034233749, 0.2691833034233749}}]]}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{0, 0, 0}, {Rational[1, 3], 0, 0}, {
-         Rational[1, 3], Rational[1, 3], 0}, {0, Rational[1, 3], 0}, {
-         0, Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {0, 0, Rational[1, 3]}, {0, 0, 
-         0}, {0, 0, Rational[1, 3]}, {0, Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], 0}, {0, 0, 0}, {Rational[1, 3], 0, 0}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], 0}}, {{0, 0, 0}, {
-         0.3333333333333333, 0, 0}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {
-         0, 0.3333333333333333, 0}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {
-         0, 0, 0.3333333333333333}, {0, 0, 0}, {0, 0, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0}, {0, 0, 0}, {0.3333333333333333, 0, 0}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0.3333333333333333, 0}}]]}, Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.16666666666666666`, 0.16666666666666666`, 0.16666666666666666`}], {
-      1.9, -1}], Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.16666666666666666`, 0.16666666666666666`, 
-       0.16666666666666666`}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[
-       NCache[{{0, 0, 0}, {Rational[1, 3], 0, 0}}, {{0, 0, 0}, {
-         0.3333333333333333, 0, 0}}]], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}}, {{0, 0, 0}, {
-          0, 0.3333333333333333, 0}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{0, 0, 0}, {0, 0, Rational[1, 3]}}, {{0, 0, 0}, {
-          0, 0, 0.3333333333333333}}]]}}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[2, 3], 0, Rational[1, 3]}, {
-         Rational[2, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[2, 3], Rational[1, 3], 0}, {Rational[2, 3], 0, 0}, {
-         Rational[1, 3], 0, 0}, {Rational[1, 3], Rational[1, 3], 0}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], 0}, {
-         Rational[2, 3], Rational[1, 3], 0}, {
-         Rational[2, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {Rational[1, 3], 0, 0}, {
-         Rational[2, 3], 0, 0}, {Rational[2, 3], 0, Rational[1, 3]}}, {{
-         0.3333333333333333, 0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {
-         0.6666666666666666, 0, 0.3333333333333333}, {0.6666666666666666, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.6666666666666666, 0.3333333333333333, 0}, {
-         0.6666666666666666, 0, 0}, {0.3333333333333333, 0, 0}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {
-         0.6666666666666666, 0.3333333333333333, 0}, {0.6666666666666666, 
-         0.3333333333333333, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0}, {0.6666666666666666, 0, 0}, {
-         0.6666666666666666, 0, 0.3333333333333333}}]]}, Text3DBox[
-      StyleBox["2",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 6]}, {0.5, 
-       0.16666666666666666`, 0.16666666666666666`}], {1.9, -1}], Text3DBox[
+      NCache[{Rational[3, 2], Rational[1, 6], Rational[1, 2]}, {1.5, 
+       0.16666666666666666`, 0.5}], {1.9, -1}], Text3DBox[
       StyleBox["2",
        StripOnInput->False,
        LineColor->RGBColor[1, 0, 0],
@@ -487,308 +830,47 @@ Cell[BoxData[
        FontSize->14,
        FontWeight->Bold,
        FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 6]}, {0.5, 
-       0.16666666666666666`, 0.16666666666666666`}], {-1.9, -1}], 
+      NCache[{Rational[3, 2], Rational[1, 6], Rational[1, 2]}, {1.5, 
+       0.16666666666666666`, 0.5}], {-1.9, -1}], 
      {RGBColor[1, 0, 0], AbsoluteThickness[3], 
       Arrow3DBox[
-       NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], 0, Rational[1, 3]}}, {{0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}}]], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-          Rational[2, 3], Rational[1, 3], Rational[1, 3]}}, {{
-         0.3333333333333333, 0.3333333333333333, 0.3333333333333333}, {
-         0.6666666666666666, 0.3333333333333333, 0.3333333333333333}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-          Rational[1, 3], Rational[1, 3], 0}}, {{0.3333333333333333, 
-          0.3333333333333333, 0.3333333333333333}, {
-          0.3333333333333333, 0.3333333333333333, 0}}]]}}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{Rational[2, 3], 0, 0}, {1, 0, 0}, {1, Rational[1, 3], 0}, {
-         Rational[2, 3], Rational[1, 3], 0}, {
-         Rational[2, 3], Rational[1, 3], Rational[1, 3]}, {
-         1, Rational[1, 3], Rational[1, 3]}, {1, 0, Rational[1, 3]}, {
-         Rational[2, 3], 0, Rational[1, 3]}, {Rational[2, 3], 0, 0}, {
-         Rational[2, 3], 0, Rational[1, 3]}, {
-         Rational[2, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[2, 3], Rational[1, 3], 0}, {Rational[2, 3], 0, 0}, {1, 0, 
-         0}, {1, 0, Rational[1, 3]}, {1, Rational[1, 3], Rational[1, 3]}, {
-         1, Rational[1, 3], 0}}, {{0.6666666666666666, 0, 0}, {1, 0, 0}, {
-         1, 0.3333333333333333, 0}, {
-         0.6666666666666666, 0.3333333333333333, 0}, {0.6666666666666666, 
-         0.3333333333333333, 0.3333333333333333}, {
+       NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+         2, Rational[1, 3], Rational[1, 3]}}, {{
          1, 0.3333333333333333, 0.3333333333333333}, {
-         1, 0, 0.3333333333333333}, {
-         0.6666666666666666, 0, 0.3333333333333333}, {
-         0.6666666666666666, 0, 0}, {
-         0.6666666666666666, 0, 0.3333333333333333}, {0.6666666666666666, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.6666666666666666, 0.3333333333333333, 0}, {
-         0.6666666666666666, 0, 0}, {1, 0, 0}, {1, 0, 0.3333333333333333}, {
-         1, 0.3333333333333333, 0.3333333333333333}, {
-         1, 0.3333333333333333, 0}}]]}, Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[5, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.8333333333333334, 0.16666666666666666`, 0.16666666666666666`}], {
-      1.9, -1}], Text3DBox[
-      StyleBox["3",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[5, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.8333333333333334, 0.16666666666666666`, 
-       0.16666666666666666`}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[
-       NCache[{{Rational[2, 3], 0, 0}, {1, 0, 0}}, {{
-         0.6666666666666666, 0, 0}, {1, 0, 0}}]], 
+         2, 0.3333333333333333, 0.3333333333333333}}]], 
       {RGBColor[0, 1, 0], 
        Arrow3DBox[
-        NCache[{{Rational[2, 3], 0, 0}, {
-          Rational[2, 3], Rational[1, 3], 0}}, {{0.6666666666666666, 0, 0}, {
-          0.6666666666666666, 0.3333333333333333, 0}}]]}, 
+        NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+          1, Rational[1, 3], Rational[2, 3]}}, {{
+          1, 0.3333333333333333, 0.3333333333333333}, {
+          1, 0.3333333333333333, 0.6666666666666666}}]]}, 
       {RGBColor[0, 0, 1], 
        Arrow3DBox[
-        NCache[{{Rational[2, 3], 0, 0}, {
-          Rational[2, 3], 0, Rational[1, 3]}}, {{0.6666666666666666, 0, 0}, {
-          0.6666666666666666, 0, 0.3333333333333333}}]]}}},
-    ImageSize->{512., 512.},
-    PlotLabel->FormBox["1", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}},
-    SphericalRegion->True,
-    ViewAngle->0.5011114127587017,
-    ViewPoint->{1.0129225486833229`, -3.06091644775658, 1.0270240553278778`},
-    ViewVertical->{0.21932128993766084`, -0.2658490070644977, 
-     0.9387345083797128}], ",", 
-   Graphics3DBox[
-    {AbsolutePointSize[10], 
-     {GrayLevel[0.6], AbsoluteThickness[5], 
-      Line3DBox[
-       NCache[{{
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[2, 3] + Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[2, 3] + Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], 1 + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
-        0.06415002990995843, 0.06415002990995843}, {0.2691833034233749, 
-        0.2691833034233749, 0.2691833034233749}, {0.2691833034233749, 
-        0.2691833034233749, 0.39748336324329175`}, {0.06415002990995843, 
-        0.06415002990995843, 0.6025166367567082}, {0.06415002990995843, 
-        0.06415002990995843, 0.7308166965766251}, {0.2691833034233749, 
-        0.2691833034233749, 0.9358499700900416}}]]}, 
-     {GrayLevel[0.6], AbsoluteThickness[5], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
-        0.06415002990995843, 0.06415002990995843}, {0.2691833034233749, 
-        0.2691833034233749, 0.2691833034233749}}]], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[2, 3] + Rational[-1, 9] 3^Rational[-1, 2]}}, {{
-        0.2691833034233749, 0.2691833034233749, 0.39748336324329175`}, {
-        0.06415002990995843, 0.06415002990995843, 0.6025166367567082}}]], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[2, 3] + Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], 1 + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
-        0.06415002990995843, 0.7308166965766251}, {0.2691833034233749, 
-        0.2691833034233749, 0.9358499700900416}}]]}, 
+        NCache[{{1, Rational[1, 3], Rational[1, 3]}, {
+          1, 0, Rational[1, 3]}}, {{
+          1, 0.3333333333333333, 0.3333333333333333}, {
+          1, 0, 0.3333333333333333}}]]}}, 
      {RGBColor[0, 1, 1], AbsoluteThickness[1], 
       Line3DBox[
-       NCache[{{0, 0, 0}, {Rational[1, 3], 0, 0}, {
-         Rational[1, 3], Rational[1, 3], 0}, {0, Rational[1, 3], 0}, {
-         0, Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {0, 0, Rational[1, 3]}, {0, 0, 
-         0}, {0, 0, Rational[1, 3]}, {0, Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], 0}, {0, 0, 0}, {Rational[1, 3], 0, 0}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], 0}}, {{0, 0, 0}, {
-         0.3333333333333333, 0, 0}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {
-         0, 0.3333333333333333, 0}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {
-         0, 0, 0.3333333333333333}, {0, 0, 0}, {0, 0, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0}, {0, 0, 0}, {0.3333333333333333, 0, 0}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0.3333333333333333, 0}}]]}, Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.16666666666666666`, 0.16666666666666666`, 0.16666666666666666`}], {
-      1.9, -1}], Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.16666666666666666`, 0.16666666666666666`, 
-       0.16666666666666666`}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[
-       NCache[{{0, 0, 0}, {Rational[1, 3], 0, 0}}, {{0, 0, 0}, {
-         0.3333333333333333, 0, 0}}]], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}}, {{0, 0, 0}, {
-          0, 0.3333333333333333, 0}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{0, 0, 0}, {0, 0, Rational[1, 3]}}, {{0, 0, 0}, {
-          0, 0, 0.3333333333333333}}]]}}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], Rational[2, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[2, 3]}, {
-         Rational[1, 3], 0, Rational[2, 3]}, {0, 0, Rational[2, 3]}, {
-         0, 0, Rational[1, 3]}, {Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], 0, Rational[2, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[2, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], Rational[1, 3]}, {0, 0, Rational[1, 3]}, {
-         0, 0, Rational[2, 3]}, {0, Rational[1, 3], Rational[2, 3]}}, {{
-         0.3333333333333333, 0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.6666666666666666}, {0.3333333333333333, 
-         0.3333333333333333, 0.6666666666666666}, {
-         0.3333333333333333, 0, 0.6666666666666666}, {
-         0, 0, 0.6666666666666666}, {0, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.6666666666666666}, {0.3333333333333333, 
-         0.3333333333333333, 0.6666666666666666}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {
-         0, 0, 0.3333333333333333}, {0, 0, 0.6666666666666666}, {
-         0, 0.3333333333333333, 0.6666666666666666}}]]}, Text3DBox[
-      StyleBox["2",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 2]}, {
-       0.16666666666666666`, 0.16666666666666666`, 0.5}], {1.9, -1}], 
-     Text3DBox[
-      StyleBox["2",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 2]}, {
-       0.16666666666666666`, 0.16666666666666666`, 0.5}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[
-       NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], Rational[1, 3]}}, {{0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.3333333333333333}}]], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-          Rational[1, 3], Rational[1, 3], Rational[2, 3]}}, {{
-         0.3333333333333333, 0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0.3333333333333333, 0.6666666666666666}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-          Rational[1, 3], 0, Rational[1, 3]}}, {{0.3333333333333333, 
-          0.3333333333333333, 0.3333333333333333}, {
-          0.3333333333333333, 0, 0.3333333333333333}}]]}}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{0, 0, Rational[2, 3]}, {Rational[1, 3], 0, Rational[2, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[2, 3]}, {
+       NCache[{{0, 0, Rational[2, 3]}, {1, 0, Rational[2, 3]}, {
+         1, Rational[1, 3], Rational[2, 3]}, {
          0, Rational[1, 3], Rational[2, 3]}, {0, Rational[1, 3], 1}, {
-         Rational[1, 3], Rational[1, 3], 1}, {Rational[1, 3], 0, 1}, {0, 0, 
-         1}, {0, 0, Rational[2, 3]}, {0, 0, 1}, {0, Rational[1, 3], 1}, {
+         1, Rational[1, 3], 1}, {1, 0, 1}, {0, 0, 1}, {
+         0, 0, Rational[2, 3]}, {0, 0, 1}, {0, Rational[1, 3], 1}, {
          0, Rational[1, 3], Rational[2, 3]}, {0, 0, Rational[2, 3]}, {
-         Rational[1, 3], 0, Rational[2, 3]}, {Rational[1, 3], 0, 1}, {
-         Rational[1, 3], Rational[1, 3], 1}, {
-         Rational[1, 3], Rational[1, 3], Rational[2, 3]}}, {{
-         0, 0, 0.6666666666666666}, {
-         0.3333333333333333, 0, 0.6666666666666666}, {0.3333333333333333, 
-         0.3333333333333333, 0.6666666666666666}, {
+         1, 0, Rational[2, 3]}, {1, 0, 1}, {1, Rational[1, 3], 1}, {
+         1, Rational[1, 3], Rational[2, 3]}}, {{0, 0, 0.6666666666666666}, {
+         1, 0, 0.6666666666666666}, {
+         1, 0.3333333333333333, 0.6666666666666666}, {
          0, 0.3333333333333333, 0.6666666666666666}, {
+         0, 0.3333333333333333, 1}, {1, 0.3333333333333333, 1}, {1, 0, 1}, {0,
+          0, 1}, {0, 0, 0.6666666666666666}, {0, 0, 1}, {
          0, 0.3333333333333333, 1}, {
-         0.3333333333333333, 0.3333333333333333, 1}, {
-         0.3333333333333333, 0, 1}, {0, 0, 1}, {0, 0, 0.6666666666666666}, {0,
-          0, 1}, {0, 0.3333333333333333, 1}, {
          0, 0.3333333333333333, 0.6666666666666666}, {
-         0, 0, 0.6666666666666666}, {
-         0.3333333333333333, 0, 0.6666666666666666}, {
-         0.3333333333333333, 0, 1}, {
-         0.3333333333333333, 0.3333333333333333, 1}, {0.3333333333333333, 
-         0.3333333333333333, 0.6666666666666666}}]]}, Text3DBox[
-      StyleBox["1",
+         0, 0, 0.6666666666666666}, {1, 0, 0.6666666666666666}, {1, 0, 1}, {
+         1, 0.3333333333333333, 1}, {
+         1, 0.3333333333333333, 0.6666666666666666}}]]}, Text3DBox[
+      StyleBox["21",
        StripOnInput->False,
        LineColor->RGBColor[0, 0, 1],
        FrontFaceColor->RGBColor[0, 0, 1],
@@ -797,9 +879,8 @@ Cell[BoxData[
        FontSize->14,
        FontWeight->Bold,
        FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[5, 6]}, {
-       0.16666666666666666`, 0.16666666666666666`, 0.8333333333333334}], {
-      1.9, -1}], Text3DBox[
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[5, 6]}, {0.5, 
+       0.16666666666666666`, 0.8333333333333334}], {1.9, -1}], Text3DBox[
       StyleBox["3",
        StripOnInput->False,
        LineColor->RGBColor[1, 0, 0],
@@ -809,14 +890,12 @@ Cell[BoxData[
        FontSize->14,
        FontWeight->Bold,
        FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[5, 6]}, {
-       0.16666666666666666`, 0.16666666666666666`, 
-       0.8333333333333334}], {-1.9, -1}], 
+      NCache[{Rational[1, 2], Rational[1, 6], Rational[5, 6]}, {0.5, 
+       0.16666666666666666`, 0.8333333333333334}], {-1.9, -1}], 
      {RGBColor[1, 0, 0], AbsoluteThickness[3], 
       Arrow3DBox[
-       NCache[{{0, 0, Rational[2, 3]}, {
-         Rational[1, 3], 0, Rational[2, 3]}}, {{0, 0, 0.6666666666666666}, {
-         0.3333333333333333, 0, 0.6666666666666666}}]], 
+       NCache[{{0, 0, Rational[2, 3]}, {1, 0, Rational[2, 3]}}, {{
+         0, 0, 0.6666666666666666}, {1, 0, 0.6666666666666666}}]], 
       {RGBColor[0, 1, 0], 
        Arrow3DBox[
         NCache[{{0, 0, Rational[2, 3]}, {
@@ -826,551 +905,19 @@ Cell[BoxData[
        Arrow3DBox[
         NCache[{{0, 0, Rational[2, 3]}, {0, 0, 1}}, {{
           0, 0, 0.6666666666666666}, {0, 0, 1}}]]}}},
-    ImageSize->{512., 512.},
+    ImageSize->{512, 512},
     PlotLabel->FormBox["1", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}},
-    SphericalRegion->True,
-    ViewAngle->0.5011114127587017,
-    ViewPoint->{1.7595897431981482`, -2.0369340316476316`, 
-     2.0505471675500666`},
-    ViewVertical->{-0.027587022920368395`, 0.0006011621547358445, 
-     0.9996192248903853}], ",", 
-   Graphics3DBox[
-    {AbsolutePointSize[10], 
-     {GrayLevel[0.6], AbsoluteThickness[5], 
-      Line3DBox[
-       NCache[{{
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[2, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[2, 3] + Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2]}, {
-         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
-        0.06415002990995843, 0.06415002990995843}, {0.2691833034233749, 
-        0.2691833034233749, 0.2691833034233749}, {0.39748336324329175`, 
-        0.2691833034233749, 0.2691833034233749}, {0.6025166367567082, 
-        0.06415002990995843, 0.06415002990995843}, {0.7308166965766251, 
-        0.06415002990995843, 0.06415002990995843}, {0.9358499700900416, 
-        0.2691833034233749, 0.2691833034233749}}]]}, 
-     {GrayLevel[0.6], AbsoluteThickness[5], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
-        0.06415002990995843, 0.06415002990995843}, {0.2691833034233749, 
-        0.2691833034233749, 0.2691833034233749}}]], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[1, 3] + Rational[1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[2, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2]}}, {{
-        0.39748336324329175`, 0.2691833034233749, 0.2691833034233749}, {
-        0.6025166367567082, 0.06415002990995843, 0.06415002990995843}}]], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[2, 3] + Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2]}, {
-         1 + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.7308166965766251, 
-        0.06415002990995843, 0.06415002990995843}, {0.9358499700900416, 
-        0.2691833034233749, 0.2691833034233749}}]]}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}, {
-         Rational[1, 3], Rational[1, 3], 0}, {Rational[1, 3], 0, 0}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], Rational[1, 3]}, {0, 0, Rational[1, 3]}, {0, 0, 
-         0}, {0, 0, Rational[1, 3]}, {Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], 0, 0}, {0, 0, 0}, {0, Rational[1, 3], 0}, {
-         0, Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], 0}}, {{0, 0, 0}, {
-         0, 0.3333333333333333, 0}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {
-         0.3333333333333333, 0, 0}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {
-         0, 0, 0.3333333333333333}, {0, 0, 0}, {0, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0}, {0, 0, 0}, {0, 0.3333333333333333, 0}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0.3333333333333333, 0}}]]}, Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.16666666666666666`, 0.16666666666666666`, 0.16666666666666666`}], {
-      1.9, -1}], Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.16666666666666666`, 0.16666666666666666`, 
-       0.16666666666666666`}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[
-       NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}}, {{0, 0, 0}, {
-         0, 0.3333333333333333, 0}}]], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{0, 0, 0}, {Rational[1, 3], 0, 0}}, {{0, 0, 0}, {
-          0.3333333333333333, 0, 0}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{0, 0, 0}, {0, 0, Rational[1, 3]}}, {{0, 0, 0}, {
-          0, 0, 0.3333333333333333}}]]}}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[2, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[2, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {Rational[1, 3], 0, 0}, {
-         Rational[2, 3], 0, 0}, {Rational[2, 3], Rational[1, 3], 0}, {
-         Rational[1, 3], Rational[1, 3], 0}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], 0}, {Rational[1, 3], 0, 0}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[2, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[2, 3], Rational[1, 3], 0}, {Rational[2, 3], 0, 0}, {
-         Rational[2, 3], 0, Rational[1, 3]}}, {{0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {0.6666666666666666, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.6666666666666666, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0}, {0.6666666666666666, 0, 0}, {
-         0.6666666666666666, 0.3333333333333333, 0}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {
-         0.3333333333333333, 0, 0}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {0.6666666666666666, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.6666666666666666, 0.3333333333333333, 0}, {
-         0.6666666666666666, 0, 0}, {
-         0.6666666666666666, 0, 0.3333333333333333}}]]}, Text3DBox[
-      StyleBox["2",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 6]}, {0.5, 
-       0.16666666666666666`, 0.16666666666666666`}], {1.9, -1}], Text3DBox[
-      StyleBox["2",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 2], Rational[1, 6], Rational[1, 6]}, {0.5, 
-       0.16666666666666666`, 0.16666666666666666`}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[
-       NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[2, 3], Rational[1, 3], Rational[1, 3]}}, {{
-        0.3333333333333333, 0.3333333333333333, 0.3333333333333333}, {
-        0.6666666666666666, 0.3333333333333333, 0.3333333333333333}}]], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-          Rational[1, 3], 0, Rational[1, 3]}}, {{0.3333333333333333, 
-          0.3333333333333333, 0.3333333333333333}, {
-          0.3333333333333333, 0, 0.3333333333333333}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-          Rational[1, 3], Rational[1, 3], 0}}, {{0.3333333333333333, 
-          0.3333333333333333, 0.3333333333333333}, {
-          0.3333333333333333, 0.3333333333333333, 0}}]]}}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{Rational[2, 3], 0, 0}, {Rational[2, 3], Rational[1, 3], 0}, {
-         1, Rational[1, 3], 0}, {1, 0, 0}, {1, 0, Rational[1, 3]}, {
-         1, Rational[1, 3], Rational[1, 3]}, {
-         Rational[2, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[2, 3], 0, Rational[1, 3]}, {Rational[2, 3], 0, 0}, {
-         Rational[2, 3], 0, Rational[1, 3]}, {1, 0, Rational[1, 3]}, {1, 0, 
-         0}, {Rational[2, 3], 0, 0}, {Rational[2, 3], Rational[1, 3], 0}, {
-         Rational[2, 3], Rational[1, 3], Rational[1, 3]}, {
-         1, Rational[1, 3], Rational[1, 3]}, {1, Rational[1, 3], 0}}, {{
-         0.6666666666666666, 0, 0}, {
-         0.6666666666666666, 0.3333333333333333, 0}, {
-         1, 0.3333333333333333, 0}, {1, 0, 0}, {1, 0, 0.3333333333333333}, {
-         1, 0.3333333333333333, 0.3333333333333333}, {0.6666666666666666, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.6666666666666666, 0, 0.3333333333333333}, {
-         0.6666666666666666, 0, 0}, {
-         0.6666666666666666, 0, 0.3333333333333333}, {
-         1, 0, 0.3333333333333333}, {1, 0, 0}, {0.6666666666666666, 0, 0}, {
-         0.6666666666666666, 0.3333333333333333, 0}, {0.6666666666666666, 
-         0.3333333333333333, 0.3333333333333333}, {
-         1, 0.3333333333333333, 0.3333333333333333}, {
-         1, 0.3333333333333333, 0}}]]}, Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[5, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.8333333333333334, 0.16666666666666666`, 0.16666666666666666`}], {
-      1.9, -1}], Text3DBox[
-      StyleBox["3",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[5, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.8333333333333334, 0.16666666666666666`, 
-       0.16666666666666666`}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[
-       NCache[{{Rational[2, 3], 0, 0}, {
-         Rational[2, 3], Rational[1, 3], 0}}, {{0.6666666666666666, 0, 0}, {
-         0.6666666666666666, 0.3333333333333333, 0}}]], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{Rational[2, 3], 0, 0}, {1, 0, 0}}, {{
-          0.6666666666666666, 0, 0}, {1, 0, 0}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{Rational[2, 3], 0, 0}, {
-          Rational[2, 3], 0, Rational[1, 3]}}, {{0.6666666666666666, 0, 0}, {
-          0.6666666666666666, 0, 0.3333333333333333}}]]}}},
-    ImageSize->{512., 512.},
-    PlotLabel->FormBox["1", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}},
-    SphericalRegion->True,
-    ViewAngle->0.5011114127587017,
-    ViewPoint->{1.6175635555469372`, -0.19706757955032073`, 
-     2.9655779390966153`},
-    ViewVertical->{-0.3176341417423409, 0.3716307334036186, 
-     0.8723526523083971}], ",", 
-   Graphics3DBox[
-    {AbsolutePointSize[10], 
-     {GrayLevel[0.6], AbsoluteThickness[5], 
-      Line3DBox[
-       NCache[{{
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 9] 3^Rational[-1, 2], Rational[2, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2]}, {
-         Rational[1, 9] 3^Rational[-1, 2], Rational[2, 3] + 
-          Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], 1 + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
-        0.06415002990995843, 0.06415002990995843}, {0.2691833034233749, 
-        0.2691833034233749, 0.2691833034233749}, {0.2691833034233749, 
-        0.39748336324329175`, 0.2691833034233749}, {0.06415002990995843, 
-        0.6025166367567082, 0.06415002990995843}, {0.06415002990995843, 
-        0.7308166965766251, 0.06415002990995843}, {0.2691833034233749, 
-        0.9358499700900416, 0.2691833034233749}}]]}, 
-     {GrayLevel[0.6], AbsoluteThickness[5], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 3^Rational[-1, 2], 
-          Rational[1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
-        0.06415002990995843, 0.06415002990995843}, {0.2691833034233749, 
-        0.2691833034233749, 0.2691833034233749}}]], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}, {
-         Rational[1, 9] 3^Rational[-1, 2], Rational[2, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2]}}, {{0.2691833034233749, 0.39748336324329175`, 
-        0.2691833034233749}, {0.06415002990995843, 0.6025166367567082, 
-        0.06415002990995843}}]], 
-      Arrow3DBox[
-       NCache[{{
-         Rational[1, 9] 3^Rational[-1, 2], Rational[2, 3] + 
-          Rational[1, 9] 3^Rational[-1, 2], Rational[1, 9] 
-          3^Rational[-1, 2]}, {
-         Rational[1, 3] + Rational[-1, 9] 3^Rational[-1, 2], 1 + 
-          Rational[-1, 9] 3^Rational[-1, 2], Rational[1, 3] + 
-          Rational[-1, 9] 3^Rational[-1, 2]}}, {{0.06415002990995843, 
-        0.7308166965766251, 0.06415002990995843}, {0.2691833034233749, 
-        0.9358499700900416, 0.2691833034233749}}]]}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}, {
-         Rational[1, 3], Rational[1, 3], 0}, {Rational[1, 3], 0, 0}, {
-         Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], Rational[1, 3]}, {0, 0, Rational[1, 3]}, {0, 0, 
-         0}, {0, 0, Rational[1, 3]}, {Rational[1, 3], 0, Rational[1, 3]}, {
-         Rational[1, 3], 0, 0}, {0, 0, 0}, {0, Rational[1, 3], 0}, {
-         0, Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], 0}}, {{0, 0, 0}, {
-         0, 0.3333333333333333, 0}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {
-         0.3333333333333333, 0, 0}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {
-         0, 0, 0.3333333333333333}, {0, 0, 0}, {0, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0.3333333333333333}, {
-         0.3333333333333333, 0, 0}, {0, 0, 0}, {0, 0.3333333333333333, 0}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0.3333333333333333, 0}}]]}, Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.16666666666666666`, 0.16666666666666666`, 0.16666666666666666`}], {
-      1.9, -1}], Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 6], Rational[1, 6], Rational[1, 6]}, {
-       0.16666666666666666`, 0.16666666666666666`, 
-       0.16666666666666666`}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[
-       NCache[{{0, 0, 0}, {0, Rational[1, 3], 0}}, {{0, 0, 0}, {
-         0, 0.3333333333333333, 0}}]], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{0, 0, 0}, {Rational[1, 3], 0, 0}}, {{0, 0, 0}, {
-          0.3333333333333333, 0, 0}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{0, 0, 0}, {0, 0, Rational[1, 3]}}, {{0, 0, 0}, {
-          0, 0, 0.3333333333333333}}]]}}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[2, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[2, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[2, 3], 0}, {0, Rational[2, 3], 0}, {
-         0, Rational[1, 3], 0}, {Rational[1, 3], Rational[1, 3], 0}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], 0}, {
-         Rational[1, 3], Rational[2, 3], 0}, {
-         Rational[1, 3], Rational[2, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], Rational[1, 3]}, {0, Rational[1, 3], 0}, {
-         0, Rational[2, 3], 0}, {0, Rational[2, 3], Rational[1, 3]}}, {{
-         0.3333333333333333, 0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {
-         0, 0.6666666666666666, 0.3333333333333333}, {0.3333333333333333, 
-         0.6666666666666666, 0.3333333333333333}, {
-         0.3333333333333333, 0.6666666666666666, 0}, {
-         0, 0.6666666666666666, 0}, {0, 0.3333333333333333, 0}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0.3333333333333333, 0}, {
-         0.3333333333333333, 0.6666666666666666, 0}, {0.3333333333333333, 
-         0.6666666666666666, 0.3333333333333333}, {0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0}, {0, 0.6666666666666666, 0}, {
-         0, 0.6666666666666666, 0.3333333333333333}}]]}, Text3DBox[
-      StyleBox["2",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 6], Rational[1, 2], Rational[1, 6]}, {
-       0.16666666666666666`, 0.5, 0.16666666666666666`}], {1.9, -1}], 
-     Text3DBox[
-      StyleBox["2",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 6], Rational[1, 2], Rational[1, 6]}, {
-       0.16666666666666666`, 0.5, 0.16666666666666666`}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[
-       NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-         0, Rational[1, 3], Rational[1, 3]}}, {{0.3333333333333333, 
-         0.3333333333333333, 0.3333333333333333}, {
-         0, 0.3333333333333333, 0.3333333333333333}}]], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-          Rational[1, 3], Rational[2, 3], Rational[1, 3]}}, {{
-         0.3333333333333333, 0.3333333333333333, 0.3333333333333333}, {
-         0.3333333333333333, 0.6666666666666666, 0.3333333333333333}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
-          Rational[1, 3], Rational[1, 3], 0}}, {{0.3333333333333333, 
-          0.3333333333333333, 0.3333333333333333}, {
-          0.3333333333333333, 0.3333333333333333, 0}}]]}}, 
-     {RGBColor[0, 1, 1], AbsoluteThickness[1], 
-      Line3DBox[
-       NCache[{{0, Rational[2, 3], 0}, {0, 1, 0}, {Rational[1, 3], 1, 0}, {
-         Rational[1, 3], Rational[2, 3], 0}, {
-         Rational[1, 3], Rational[2, 3], Rational[1, 3]}, {
-         Rational[1, 3], 1, Rational[1, 3]}, {0, 1, Rational[1, 3]}, {
-         0, Rational[2, 3], Rational[1, 3]}, {0, Rational[2, 3], 0}, {
-         0, Rational[2, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[2, 3], Rational[1, 3]}, {
-         Rational[1, 3], Rational[2, 3], 0}, {0, Rational[2, 3], 0}, {0, 1, 
-         0}, {0, 1, Rational[1, 3]}, {Rational[1, 3], 1, Rational[1, 3]}, {
-         Rational[1, 3], 1, 0}}, {{0, 0.6666666666666666, 0}, {0, 1, 0}, {
-         0.3333333333333333, 1, 0}, {
-         0.3333333333333333, 0.6666666666666666, 0}, {0.3333333333333333, 
-         0.6666666666666666, 0.3333333333333333}, {
-         0.3333333333333333, 1, 0.3333333333333333}, {
-         0, 1, 0.3333333333333333}, {
-         0, 0.6666666666666666, 0.3333333333333333}, {
-         0, 0.6666666666666666, 0}, {
-         0, 0.6666666666666666, 0.3333333333333333}, {0.3333333333333333, 
-         0.6666666666666666, 0.3333333333333333}, {
-         0.3333333333333333, 0.6666666666666666, 0}, {
-         0, 0.6666666666666666, 0}, {0, 1, 0}, {0, 1, 0.3333333333333333}, {
-         0.3333333333333333, 1, 0.3333333333333333}, {
-         0.3333333333333333, 1, 0}}]]}, Text3DBox[
-      StyleBox["1",
-       StripOnInput->False,
-       LineColor->RGBColor[0, 0, 1],
-       FrontFaceColor->RGBColor[0, 0, 1],
-       BackFaceColor->RGBColor[0, 0, 1],
-       GraphicsColor->RGBColor[0, 0, 1],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[0, 0, 1]], 
-      NCache[{Rational[1, 6], Rational[5, 6], Rational[1, 6]}, {
-       0.16666666666666666`, 0.8333333333333334, 0.16666666666666666`}], {
-      1.9, -1}], Text3DBox[
-      StyleBox["3",
-       StripOnInput->False,
-       LineColor->RGBColor[1, 0, 0],
-       FrontFaceColor->RGBColor[1, 0, 0],
-       BackFaceColor->RGBColor[1, 0, 0],
-       GraphicsColor->RGBColor[1, 0, 0],
-       FontSize->14,
-       FontWeight->Bold,
-       FontColor->RGBColor[1, 0, 0]], 
-      NCache[{Rational[1, 6], Rational[5, 6], Rational[1, 6]}, {
-       0.16666666666666666`, 0.8333333333333334, 
-       0.16666666666666666`}], {-1.9, -1}], 
-     {RGBColor[1, 0, 0], AbsoluteThickness[3], 
-      Arrow3DBox[
-       NCache[{{0, Rational[2, 3], 0}, {0, 1, 0}}, {{
-         0, 0.6666666666666666, 0}, {0, 1, 0}}]], 
-      {RGBColor[0, 1, 0], 
-       Arrow3DBox[
-        NCache[{{0, Rational[2, 3], 0}, {
-          Rational[1, 3], Rational[2, 3], 0}}, {{0, 0.6666666666666666, 0}, {
-          0.3333333333333333, 0.6666666666666666, 0}}]]}, 
-      {RGBColor[0, 0, 1], 
-       Arrow3DBox[
-        NCache[{{0, Rational[2, 3], 0}, {
-          0, Rational[2, 3], Rational[1, 3]}}, {{0, 0.6666666666666666, 0}, {
-          0, 0.6666666666666666, 0.3333333333333333}}]]}}},
-    ImageSize->{512., 512.},
-    PlotLabel->FormBox["1", TraditionalForm],
-    PlotRange->{{0, 1}, {0, 1}, {0, 1}},
-    SphericalRegion->True,
-    ViewAngle->0.5011114127587017,
-    ViewPoint->{-2.8980225387124277`, 0.3127534477658643, 1.7186188192922083`},
-    ViewVertical->{-0.19540264942835844`, 0.6751058480930558, 
-     0.7113718426160358}]}], "}"}]], "Print",
- CellChangeTimes->{
-  3.860636529983921*^9, {3.860636714670272*^9, 3.8606367417110643`*^9}, 
-   3.860636832348198*^9, 3.860637012419848*^9, 3.860637192957165*^9, {
-   3.860637231979021*^9, 3.860637256727985*^9}, 3.860637394114477*^9, 
-   3.860637447088935*^9, 3.860637555829674*^9, 3.86063771609454*^9, {
-   3.8606377494415007`*^9, 3.8606377647123823`*^9}, 3.860637911417996*^9, {
-   3.8606379520836477`*^9, 3.86063797561681*^9}, 3.860638190969297*^9, 
-   3.8606453105589933`*^9, {3.8606453457452383`*^9, 3.860645458674664*^9}, {
-   3.860645506201515*^9, 3.860645534910459*^9}, 3.860645568855899*^9, {
-   3.860645629590012*^9, 3.860645688024385*^9}, 3.860645747860446*^9, {
-   3.8606457869904747`*^9, 3.860645832659967*^9}, 3.860645869119177*^9, 
-   3.860645901413694*^9, {3.86064593711887*^9, 3.860646035676394*^9}},
+    PlotRange->{{-0.25, 1.25}, {-0.25, 1.25}, {-0.25, 1.25}}]}], 
+  "}"}]], "Print",
+ CellChangeTimes->{3.860666545287332*^9},
  CellLabel->
   "During evaluation of \
-In[98]:=",ExpressionUUID->"021bb6aa-05a6-4153-beeb-e0bcbeaaf6a6"]
+In[3]:=",ExpressionUUID->"d2b8eec0-81a3-4f17-9390-89810e9481db"]
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{2503, 1387},
-WindowMargins->{{Automatic, 0}, {Automatic, 0}},
+WindowSize->{2503, 1318},
+WindowMargins->{{Automatic, -173}, {Automatic, 0}},
 PrintingCopies->1,
 PrintingPageRange->{1, Automatic},
 FrontEndVersion->"13.0 for Mac OS X x86 (64-bit) (February 4, 2022)",
@@ -1389,10 +936,10 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 233, 4, 30, "Input",ExpressionUUID->"e7f65834-2b78-48e1-87c8-71c9f7698b1e"],
+Cell[580, 22, 206, 3, 30, "Input",ExpressionUUID->"b005de8f-1e2d-48b4-9d3d-8882c9153064"],
 Cell[CellGroupData[{
-Cell[838, 30, 13873, 290, 522, "Print",ExpressionUUID->"11209ff6-ed1a-4458-9d1a-e349002b716c"],
-Cell[14714, 322, 52340, 1045, 522, "Print",ExpressionUUID->"021bb6aa-05a6-4153-beeb-e0bcbeaaf6a6"]
+Cell[811, 29, 8650, 183, 522, "Print",ExpressionUUID->"2f85e08b-7c54-4429-9a67-4bc8bb676b8c"],
+Cell[9464, 214, 34010, 700, 522, "Print",ExpressionUUID->"d2b8eec0-81a3-4f17-9390-89810e9481db"]
 }, Open  ]]
 }, Open  ]]
 }
