@@ -1024,16 +1024,15 @@ makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
 mxRotX180 = {{1,0,0}, {0,-1,0}, {0,0,-1}};
 mxRotY180 = {{-1, 0, 0}, {0, 1, 0}, {0, 0, -1}};
 mxRotZ180 = {{-1,0,0}, {0,-1,0}, {0,0,1}};
-mxRotZ180 = {{-1,0,0}, {0,-1,0}, {0,0,1}};
 
-mxRotX90 =  {{-1,0,0}, {0,0,-1}, {0,1,0}};
-mxRotX270 =  {{-1,0,0}, {0,0,1}, {0,-1,0}};
-mxRotY90 =  {{0,0,-1}, {0,-1,0}, {1,0,0}};
-mxRotY270 =  {{0,0,1}, {0,-1,0}, {-1,0,0}};
-
+mxRotX90 =  {{1,0,0}, {0,0,-1}, {0,1,0}};
+mxRotX270 =  {{1,0,0}, {0,0,1}, {0,-1,0}};
+mxRotY90 =  {{0,0,-1}, {0,1,0}, {1,0,0}};
+mxRotY270 =  {{0,0,1}, {0,1,0}, {-1,0,0}};
 mxRotZ270 = {{0,1,0}, {-1,0,0}, {0,0,-1}};
-mxRotZ90 =  {{0,-1,0}, {1,0,0}, {0,0,-1}};
+mxRotZ90 =  {{0,-1,0}, {1,0,0}, {0,0,1}};
 
+rotmx3D[theta_, {ux_, uy_, uz_}] :=  Cos[theta] IdentityMatrix[3] + Sin[theta] {{0, -uz, uy}, {uz, 0, -ux}, {-uy, ux, 0}} + (1-Cos[theta]) {{ux^2, ux uy, ux uz},{ux uy, uy^2, uy uz},{ux uz, uy uz, uz^2}}
 typeCubeRight = 1;	(* Right-hand Coordinate Systems, XYZ *)
 typeCubeLeft = 	2;	(* Left-hand Coordinate Systems, YZZ *)
 
@@ -1065,9 +1064,9 @@ subdivBase3SFC3DTiles[tlst_] :=
               			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} }
               		];
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
-					AppendTo[res,{typeParaZflatRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, v3/3}, 									{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					(*AppendTo[res,{typeParaZflatRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, v3/3}, 									{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ]*);
 					AppendTo[res,{typeParaXflatLeft, sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2+v3/3,	{mxRotY90.v1/3, mxRotY90.v2, mxRotY90.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
-					AppendTo[res,{typeParaZflatRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, 1/3 v3},								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+					(*AppendTo[res,{typeParaZflatRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, 1/3 v3},								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ]*);
               ,typeCubeLeft, 
               		dxyz = Which[
               			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} },
@@ -1090,7 +1089,7 @@ subdivBase3SFC3DTiles[tlst_] :=
 					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2/3, v3}, 										{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,{mxRotZ90.v1/3,mxRotZ90.v2,mxRotZ90.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2 2/3,	{v1, v2/3, v3}, 								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
-              ,typeParaXflatLeft, 
+              ,typeParaXflatLeft, (*<<<<<<<<<<*)
                		dxyz = Which[
              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
               			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{0},{}}, {{},{1}x,{}}, {{},{2},{}} },
@@ -1099,7 +1098,8 @@ subdivBase3SFC3DTiles[tlst_] :=
              		];
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
 					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, v3/3}, 										{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
-					AppendTo[res,{typeParaZlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v3/3+v2,{mxRotY90.v1,mxRotY90.v2/3,mxRotY90.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					mx = rotmx3D[Pi, v3];
+					AppendTo[res,{typeParaZlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v3/3+v2,{1,1,1}{mx.v1,mx.v2,mx.v3/3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, v3/3}, 								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
               ,typeParaYflatRight, 
                		dxyz = Which[
@@ -1161,30 +1161,48 @@ subdivBase3SFC3DTiles[tlst_] :=
     	Return[res]
     ] (* subdivBase3SFC3DTiles *)
 
-demoBase3SFC3D[innsubdivs_:1, dbg_:False] :=
+debugBase3SFC3D[innsubdivs_:1, dbg_:False] :=
     Module[ {},
     	nsubdivs = innsubdivs;
     	
     	flags = showSFC+showArrows+showTileType+showOrdinalNumber+showBasicVectors;
 		tlst = {{typeCubeRight,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{1,0,0},{0,1,0},{0,0,1}}, {{},{},{}},{}},
 				{typeCubeLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0},{1,0,0},{0,0,1}}, {{},{},{}},{}} };
-		tlst = {{typeParaZflatRight,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{1,0,0},{0,1,0},{0,0,1}/3}, {{},{},{}},{}},
-				{typeParaXflatLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0}/3,{1,0,0},{0,0,1}}, {{},{},{}},{}},
-				{typeParaYflatRight,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{1,0,0},{0,1,0}/3,{0,0,1}}, {{},{},{}},{}} };
 		tlst = {{typeParaXlongRight,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{1,0,0},{0,1,0}/3,{0,0,1}/3}, {{},{},{}},{}},
 				{typeParaZlongRight,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{1,0,0}/3,{0,1,0}/3,{0,0,1}}, {{},{},{}},{}},
 				{typeParaYlongLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0}/3,{1,0,0},{0,0,1}/3}, {{},{},{}},{}},
 				{typeParaXlongLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0},{1,0,0}/3,{0,0,1}/3}, {{},{},{}},{}}
 				 };
+		tlst = {{typeParaZflatRight,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{1,0,0},{0,1,0},{0,0,1}/3}, {{},{},{}},{}},
+				{typeParaXflatLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0}/3,{1,0,0},{0,0,1}}, {{},{},{}},{}},
+				{typeParaYflatRight,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{1,0,0},{0,1,0}/3,{0,0,1}}, {{},{},{}},{}} };
+
+		tlst = {
+				{typeParaXflatLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0}/3,{1,0,0},{0,0,1}}, {{},{},{}},{}},
+				{12,0,{0,0,0},{0,0,0},{{1,0,0},{0,1,0},{0,0,1}},{1,1,1/3},{{0,0,1/3},{0,-1,0},{-1,0,0}},{{1},{},{}},{1}} };
 		Table[
-				Graphics3D[ getBase3SFC3DTilesGL[{tlst[[idemo]]}, flags], PlotLabel-> 0, ImageSize -> {1024,1024}/2 , PlotRange->{{0,1},{0,1},{0,1}} ]
+				Graphics3D[ getBase3SFC3DTilesGL[{tlst[[idemo]]}, flags], PlotLabel-> 0, ImageSize -> {1024,1024}/2 , PlotRange->{{-.25,1.25},{-.25,1.25},{-.25,1.25}} ]
 		,{idemo,Length[tlst]}]//Print;		
 		Do[
 			flags = If[iter <= 5, showSFC+showArrows+showTileType+showOrdinalNumber+showBasicVectors, showSFC];
 			Table[
 				tlst[[idemo]] = subdivBase3SFC3DTiles @ {tlst[[idemo]]};
-				Graphics3D[ getBase3SFC3DTilesGL[tlst[[idemo]],flags], PlotLabel-> iter, ImageSize -> {1024,1024}/2 , PlotRange->{{0,1},{0,1},{0,1}} ]
+				Graphics3D[ getBase3SFC3DTilesGL[tlst[[idemo]],flags], PlotLabel-> iter, ImageSize -> {1024,1024}/2 , PlotRange->{{-.25,1.25},{-.25,1.25},{-.25,1.25}} ]
 			,{idemo,Length[tlst]}]//Print;
+		,{iter,nsubdivs}];
+	] (* debugBase3SFC3D *)
+
+demoBase3SFC3D[innsubdivs_:1, dbg_:False] :=
+    Module[ {},
+    	nsubdivs = innsubdivs;
+    	
+    	flags = showSFC+showArrows+showTileType+showOrdinalNumber+showBasicVectors;
+		tlst = {{typeCubeRight,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{1,0,0},{0,1,0},{0,0,1}}, {{},{},{}},{}} };
+		Graphics3D[ getBase3SFC3DTilesGL[tlst, flags], PlotLabel-> 0, ImageSize -> {1024,1024} , PlotRange->{{0,1},{0,1},{0,1}} ] //Print;		
+		Do[
+			flags = If[iter <= 5, showSFC+showArrows+showTileType+showOrdinalNumber+showBasicVectors, showSFC];
+			tlst = subdivBase3SFC3DTiles @ tlst;
+			Graphics3D[ getBase3SFC3DTilesGL[tlst, flags], PlotLabel-> 0, ImageSize -> {1024,1024} , PlotRange->{{0,1},{0,1},{0,1}} ] //Print;	
 		,{iter,nsubdivs}];
 	] (* demoBase3SFC3D *)
 
