@@ -1032,7 +1032,7 @@ mxRotY270 =  {{0,0,1}, {0,1,0}, {-1,0,0}};
 mxRotZ270 = {{0,1,0}, {-1,0,0}, {0,0,-1}};
 mxRotZ90 =  {{0,-1,0}, {1,0,0}, {0,0,1}};
 
-rotmx3D[theta_, {ux_, uy_, uz_}] :=  Cos[theta] IdentityMatrix[3] + Sin[theta] {{0, -uz, uy}, {uz, 0, -ux}, {-uy, ux, 0}} + (1-Cos[theta]) {{ux^2, ux uy, ux uz},{ux uy, uy^2, uy uz},{ux uz, uy uz, uz^2}}
+rotmx3D[theta_, {x_,y_,z_}] := Module[{ux,uy,uz},{ux,uy,uz}={x,y,z}/Norm[{x,y,z}]; Cos[theta] IdentityMatrix[3] + Sin[theta] {{0, -uz, uy}, {uz, 0, -ux}, {-uy, ux, 0}} + (1-Cos[theta]) {{ux^2, ux uy, ux uz},{ux uy, uy^2, uy uz},{ux uz, uy uz, uz^2}} ]
 typeCubeRight = 1;	(* Right-hand Coordinate Systems, XYZ *)
 typeCubeLeft = 	2;	(* Left-hand Coordinate Systems, YZZ *)
 
@@ -1087,8 +1087,8 @@ subdivBase3SFC3DTiles[tlst_] :=
              		];
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
 					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2/3, v3}, 										{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
-					mx = rotmx3D[Pi, v3];
-					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,{mx.v1/3,mx.v2,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					mx = rotmx3D[Pi, v2];
+					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,{mx.v1,mx.v2/3,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2 2/3,	{v1, v2/3, v3}, 								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
               ,typeParaXflatLeft,
                		dxyz = Which[
