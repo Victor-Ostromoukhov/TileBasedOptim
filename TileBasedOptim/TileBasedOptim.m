@@ -1087,9 +1087,10 @@ subdivBase3SFC3DTiles[tlst_] :=
              		];
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
 					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2/3, v3}, 										{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
-					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,{mxRotZ90.v1/3,mxRotZ90.v2,mxRotZ90.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					mx = rotmx3D[Pi, v3];
+					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,{mx.v1/3,mx.v2,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2 2/3,	{v1, v2/3, v3}, 								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
-              ,typeParaXflatLeft, (*<<<<<<<<<<*)
+              ,typeParaXflatLeft,
                		dxyz = Which[
              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
               			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{0},{}}, {{},{1}x,{}}, {{},{2},{}} },
@@ -1177,9 +1178,6 @@ debugBase3SFC3D[innsubdivs_:1, dbg_:False] :=
 				{typeParaXflatLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0}/3,{1,0,0},{0,0,1}}, {{},{},{}},{}},
 				{typeParaYflatRight,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{1,0,0},{0,1,0}/3,{0,0,1}}, {{},{},{}},{}} };
 
-		tlst = {
-				{typeParaXflatLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0}/3,{1,0,0},{0,0,1}}, {{},{},{}},{}},
-				{12,0,{0,0,0},{0,0,0},{{1,0,0},{0,1,0},{0,0,1}},{1,1,1/3},{{0,0,1/3},{0,-1,0},{-1,0,0}},{{1},{},{}},{1}} };
 		Table[
 				Graphics3D[ getBase3SFC3DTilesGL[{tlst[[idemo]]}, flags], PlotLabel-> 0, ImageSize -> {1024,1024}/2 , PlotRange->{{-.25,1.25},{-.25,1.25},{-.25,1.25}} ]
 		,{idemo,Length[tlst]}]//Print;		
