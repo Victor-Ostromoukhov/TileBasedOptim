@@ -1021,18 +1021,12 @@ makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
 
 (*----------------------------- Base3SFC3D --------------------------------*)
 
-mxRotX180 = {{1,0,0}, {0,-1,0}, {0,0,-1}};
-mxRotY180 = {{-1, 0, 0}, {0, 1, 0}, {0, 0, -1}};
-mxRotZ180 = {{-1,0,0}, {0,-1,0}, {0,0,1}};
-
-mxRotX90 =  {{1,0,0}, {0,0,-1}, {0,1,0}};
-mxRotX270 =  {{1,0,0}, {0,0,1}, {0,-1,0}};
-mxRotY90 =  {{0,0,-1}, {0,1,0}, {1,0,0}};
-mxRotY270 =  {{0,0,1}, {0,1,0}, {-1,0,0}};
-mxRotZ270 = {{0,1,0}, {-1,0,0}, {0,0,-1}};
-mxRotZ90 =  {{0,-1,0}, {1,0,0}, {0,0,1}};
-
 rotmx3D[theta_, {x_,y_,z_}] := Module[{ux,uy,uz},{ux,uy,uz}={x,y,z}/Norm[{x,y,z}]; Cos[theta] IdentityMatrix[3] + Sin[theta] {{0, -uz, uy}, {uz, 0, -ux}, {-uy, ux, 0}} + (1-Cos[theta]) {{ux^2, ux uy, ux uz},{ux uy, uy^2, uy uz},{ux uz, uy uz, uz^2}} ]
+
+permut12[{v1_,v2_,v3_}] := {v2,v1,v3}
+permut23[{v1_,v2_,v3_}] := {v1,v3,v2}
+permut13[{v1_,v2_,v3_}] := {v3,v2,v1}
+
 typeCubeRight = 1;	(* Right-hand Coordinate Systems, XYZ *)
 typeCubeLeft = 	2;	(* Left-hand Coordinate Systems, YZZ *)
 
@@ -1066,7 +1060,7 @@ subdivBase3SFC3DTiles[tlst_] :=
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
 					AppendTo[res,{typeParaZflatRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, v3/3}, 				{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					mx = rotmx3D[Pi, v3];
-					AppendTo[res,{typeParaZflatRight, sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2+v3/3,	{mx.v1, mx.v2, mx.v3/3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeParaZflatLeft, sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2+v3/3,	permut12 @ {mx.v1, mx.v2, mx.v3/3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeParaZflatRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, 1/3 v3},			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
               ,typeCubeLeft, 
               		dxyz = Which[
@@ -1077,21 +1071,9 @@ subdivBase3SFC3DTiles[tlst_] :=
               		];
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
 					AppendTo[res,{typeParaXflatLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1/3, v2, v3}, 					{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
-					mx = rotmx3D[Pi, v1];
-					AppendTo[res,{typeParaXflatLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2+v3+v1/3,	{mx.v1/3, mx.v2, mx.v3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					mx =  rotmx3D[Pi, v1];
+					AppendTo[res,{typeParaXflatRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2+v3+v1/3,	permut23 @ {mx.v1/3, mx.v2, mx.v3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeParaXflatLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1 2/3,	{v1/3, v2, v3},				{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
-              ,typeParaZflatRight, 
-               		dxyz = Which[
-             			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
-              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{0},{}}, {{},{1}x,{}}, {{},{2},{}} },
-              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
-              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} }
-             		];
-             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
-					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2/3, v3}, 				{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
-					mx = rotmx3D[Pi, v2];
-					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,{mx.v1,mx.v2/3,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
-					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2 2/3,	{v1, v2/3, v3}, 			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
               ,typeParaXflatLeft,
                		dxyz = Which[
              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
@@ -1100,10 +1082,10 @@ subdivBase3SFC3DTiles[tlst_] :=
               			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} }
              		];
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
-					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, v3/3}, 						{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
-					mx = rotmx3D[Pi, v3];
-					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v3/3+v2,{1,1,1}{mx.v1,mx.v2,mx.v3/3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
-					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, v3/3}, 				{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1/3, v2, v3}, 						{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v1];
+					AppendTo[res,{typeParaYlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3+v1/3+v2,(permut23 @ {mx.v1/3,mx.v2,mx.v3}),{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1 2/3,	{v1/3, v2, v3}, 				{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
               ,typeParaYflatRight, 
                		dxyz = Which[
              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
@@ -1114,8 +1096,32 @@ subdivBase3SFC3DTiles[tlst_] :=
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
 					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, v3/3}, 			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					mx = rotmx3D[Pi, v3];
-					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v3/3+v2,{mx.v1,mx.v2,mx.v3/3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeParaXlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v3/3+v2,permut12 @ {mx.v1,mx.v2,mx.v3/3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, v3/3}, 		{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+              ,typeParaZflatRight, 
+               		dxyz = Which[
+             			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{0},{}}, {{},{1}x,{}}, {{},{2},{}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} }
+             		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2/3, v3}, 				{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v2];
+					AppendTo[res,{typeParaXlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,permut13 @ {mx.v1,mx.v2/3,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2 2/3,	{v1, v2/3, v3}, 			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+              ,typeParaZflatLeft, 
+               		dxyz = Which[
+             			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{0},{}}, {{},{1}x,{}}, {{},{2},{}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} }
+             		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeParaXlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2/3, v3}, 				{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v2];
+					AppendTo[res,{typeParaXlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,permut13 @ {mx.v1,mx.v2/3,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeParaXlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2 2/3,	{v1, v2/3, v3}, 			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
               ,typeParaXlongRight, 
               		dxyz = Which[
               			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{2},{},{}}, {{1},{},{}}, {{0},{},{}} },
@@ -1126,7 +1132,7 @@ subdivBase3SFC3DTiles[tlst_] :=
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
 					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1/3, v2, v3},			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					mx = rotmx3D[Pi, v1];
-					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1/3+v2+v3,	{mx.v1/3,mx.v2,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1/3+v2+v3,permut23 @ {mx.v1/3,mx.v2,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v1,		{v1/3, v2, v3},			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
               ,typeParaZlongRight, 
               		dxyz = Which[
@@ -1138,7 +1144,7 @@ subdivBase3SFC3DTiles[tlst_] :=
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
 					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1, v2, v3/3},			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					mx = rotmx3D[Pi, v3];
-					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3/3+v1+v2,	{mx.v1,mx.v2,mx.v3/3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3/3+v1+v2,permut12 @ {mx.v1,mx.v2,mx.v3/3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v3,		{v1, v2, v3/3},			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
               ,typeParaYlongLeft, 
               		dxyz = Which[
@@ -1150,7 +1156,7 @@ subdivBase3SFC3DTiles[tlst_] :=
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
 					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1, v2/3, v3},			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					mx = rotmx3D[Pi, v2];
-					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2/3+v1+v3,	{mx.v1,mx.v2/3,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2/3+v1+v3,permut13 @ {mx.v1,mx.v2/3,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v2,		{v1, v2/3, v3},			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
               ,typeParaXlongLeft, 
               		dxyz = Which[
@@ -1162,7 +1168,7 @@ subdivBase3SFC3DTiles[tlst_] :=
              		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
 					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1/3, v2, v3},			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					mx = rotmx3D[Pi, v1];
-					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1/3+v2+v3,	{mx.v1/3,mx.v2,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1/3+v2+v3,permut23 @ {mx.v1/3,mx.v2,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v1,		{v1/3, v2, v3},			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
             ];
     	,{ind,Length[tlst]}];
@@ -1175,14 +1181,15 @@ debugBase3SFC3D[innsubdivs_:1, dbg_:False] :=
     	
     	flags = showSFC+showArrows+showTileType+showBasicVectors;
 		tlst = {{typeCubeRight,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{1,0,0},{0,1,0},{0,0,1}}, {{},{},{}},{}},
-				{typeCubeLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0},{1,0,0},{0,0,1}}, {{},{},{}},{}} };
-		tlst = {{typeParaXlongRight,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{1,0,0},{0,1,0}/3,{0,0,1}/3}, {{},{},{}},{}},
+				{typeCubeLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0},{1,0,0},{0,0,1}}, {{},{},{}},{}},
+				{typeParaXlongRight,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{1,0,0},{0,1,0}/3,{0,0,1}/3}, {{},{},{}},{}},
 				{typeParaZlongRight,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{1,0,0}/3,{0,1,0}/3,{0,0,1}}, {{},{},{}},{}},
 				{typeParaYlongLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0}/3,{1,0,0},{0,0,1}/3}, {{},{},{}},{}},
-				{typeParaXlongLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0},{1,0,0}/3,{0,0,1}/3}, {{},{},{}},{}}};
-		tlst = {{typeParaZflatRight,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{1,0,0},{0,1,0},{0,0,1}/3}, {{},{},{}},{}},
+				{typeParaXlongLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0},{1,0,0}/3,{0,0,1}/3}, {{},{},{}},{}},
 				{typeParaXflatLeft,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{0,1,0},{1,0,0},{0,0,1}/3}, {{},{},{}},{}},
-				{typeParaYflatRight,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{1,0,0},{0,1,0}/3,{0,0,1}}, {{},{},{}},{}} };
+				{typeParaYflatRight,0,{0,0,0}, {},{{},{},{}},		{0,0,0},	{{1,0,0},{0,1,0}/3,{0,0,1}}, {{},{},{}},{}},
+				{typeParaZflatRight,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{1,0,0},{0,1,0},{0,0,1}/3}, {{},{},{}},{}},
+				{typeParaZflatLeft,0,{0,0,0}, {},{{},{},{}}, 		{0,0,0},	{{0,1,0},{1,0,0},{0,0,1}/3}, {{},{},{}},{}} };
 
 		Table[
 				Graphics3D[ getBase3SFC3DTilesGL[{tlst[[idemo]]}, flags], PlotLabel-> 0, ImageSize -> {1024,1024}/2 , PlotRange->{{-.25,1.25},{-.25,1.25},{-.25,1.25}} ]
@@ -1459,4 +1466,125 @@ makeMatBuilderMatrices0m2net3D[generateMatBuilderMatrix_:False] :=
 					AppendTo[res,{typeZflatParaX,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, v3/3}, 									{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
 					AppendTo[res,{typeZflatParaY,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2+v3/3,	{mxRotY90.v1, mxRotY90.v2/3, mxRotY90.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
 					AppendTo[res,{typeZflatParaX,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, 1/3 v3},								{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+*)
+
+(*
+subdivBase3SFC3DTiles[tlst_] :=
+    Module[ {res={}, tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,prevv3,refPt,v1,v2,v3,xcode,ycode,zcode,fcode,dxyz },
+    	Table[
+			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,{v1,v2,v3},{xcode,ycode,zcode},fcode} = tlst[[ind]];
+			prevrefPt = refPt; {prevv1,prevv2,prevv3} = {v1,v2,v3};
+            Switch[tileType
+              ,typeCubeRight, 
+              		dxyz = Which[
+              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{},{2}}, {{},{},{1}}, {{},{},{0}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{},{},{2}}, {{},{},{1}}, {{},{},{0}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} }
+              		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeParaZflatRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, v3/3}, 				{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v3];
+					AppendTo[res,{typeParaZflatRight, sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2+v3/3,	{mx.v1, mx.v2, mx.v3/3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeParaZflatRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, 1/3 v3},			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+              ,typeCubeLeft, 
+              		dxyz = Which[
+              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{},{2}}, {{},{},{1}}, {{},{},{0}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{},{},{2}}, {{},{},{1}}, {{},{},{0}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{},{0}}, {{},{},{1}}, {{},{},{2}} }
+              		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeParaXflatLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1/3, v2, v3}, 					{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v1];
+					AppendTo[res,{typeParaXflatLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2+v3+v1/3,	{mx.v1/3, mx.v2, mx.v3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeParaXflatLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1 2/3,	{v1/3, v2, v3},				{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+              ,typeParaZflatRight, 
+               		dxyz = Which[
+             			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{0},{}}, {{},{1}x,{}}, {{},{2},{}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} }
+             		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2/3, v3}, 				{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v2];
+					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v2/3+v3,{mx.v1,mx.v2/3,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2 2/3,	{v1, v2/3, v3}, 			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+              ,typeParaXflatLeft,
+               		dxyz = Which[
+             			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{0},{}}, {{},{1}x,{}}, {{},{2},{}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} }
+             		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, v3/3}, 						{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v3];
+					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v3/3+v2,{1,1,1}{mx.v1,mx.v2,mx.v3/3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeParaYlongLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, v3/3}, 				{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+              ,typeParaYflatRight, 
+               		dxyz = Which[
+             			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{},{0},{}}, {{},{1}x,{}}, {{},{2},{}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{},{2},{}}, {{},{1},{}}, {{},{0},{}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{},{0},{}}, {{},{1},{}}, {{},{2},{}} }
+             		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,	{v1, v2, v3/3}, 			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v3];
+					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1+v3/3+v2,{mx.v1,mx.v2,mx.v3/3},{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeParaXlongRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3 2/3,	{v1, v2, v3/3}, 		{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+              ,typeParaXlongRight, 
+              		dxyz = Which[
+              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{2},{},{}}, {{1},{},{}}, {{0},{},{}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{2},{},{}}, {{1},{},{}}, {{0},{},{}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} }
+             		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1/3, v2, v3},			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v1];
+					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1/3+v2+v3,	{mx.v1/3,mx.v2,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v1,		{v1/3, v2, v3},			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+              ,typeParaZlongRight, 
+              		dxyz = Which[
+              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{2},{},{}}, {{1},{},{}}, {{0},{},{}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{2},{},{}}, {{1},{},{}}, {{0},{},{}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} }
+             		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1, v2, v3/3},			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v3];
+					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v3/3+v1+v2,	{mx.v1,mx.v2,mx.v3/3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeCubeRight,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v3,		{v1, v2, v3/3},			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+              ,typeParaYlongLeft, 
+              		dxyz = Which[
+              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{2},{},{}}, {{1},{},{}}, {{0},{},{}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{2},{},{}}, {{1},{},{}}, {{0},{},{}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} }
+             		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1, v2/3, v3},			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v2];
+					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v2/3+v1+v3,	{mx.v1,mx.v2/3,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v2,		{v1, v2/3, v3},			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+              ,typeParaXlongLeft, 
+              		dxyz = Which[
+              			v1[[1]] < 0 && v2[[2]] < 0 && v3[[3]] > 0, {{{2},{},{}}, {{1},{},{}}, {{0},{},{}} },
+              			v1[[1]] < 0 && v2[[2]] > 0 && v3[[3]] < 0, {{{2},{},{}}, {{1},{},{}}, {{0},{},{}} },
+              			v1[[1]] > 0 && v2[[2]] < 0 && v3[[3]] < 0, {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} },
+              			v1[[1]] > 0 && v2[[2]] > 0 && v3[[3]] > 0, {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} }
+             		];
+             		dxyz = {{{0},{},{}}, {{1},{},{}}, {{2},{},{}} };
+					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt,				{v1/3, v2, v3},			{Join[xcode,dxyz[[1,1]]],Join[ycode,dxyz[[1,2]]],Join[zcode,dxyz[[1,3]]]}, Append[fcode,0]} ];
+					mx = rotmx3D[Pi, v1];
+					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+v1/3+v2+v3,	{mx.v1/3,mx.v2,mx.v3},	{Join[xcode,dxyz[[2,1]]],Join[ycode,dxyz[[2,2]]],Join[zcode,dxyz[[2,3]]]}, Append[fcode,1]} ];
+					AppendTo[res,{typeCubeLeft,sind,samplingPt,prevrefPt,{prevv1,prevv2,prevv3},refPt+2/3 v1,		{v1/3, v2, v3},			{Join[xcode,dxyz[[3,1]]],Join[ycode,dxyz[[3,2]]],Join[zcode,dxyz[[3,3]]]}, Append[fcode,2]} ];
+            ];
+    	,{ind,Length[tlst]}];
+    	Return[res]
+    ] (* subdivBase3SFC3DTiles *)
 *)
