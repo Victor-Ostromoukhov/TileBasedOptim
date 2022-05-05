@@ -27,6 +27,15 @@ str2n[str_] := FromDigits[#, 2] & @ Table[StringTake[str, {i}] // ToExpression, 
 pid := "_pid"<>ToString[$ProcessID]<>"_kid"<>ToString[$KernelID]
 execPrefix = "~/bin/";
 
+absoluteTime = Floor[1000000*AbsoluteTime[]];
+
+first := First
+second[x_]:= If[Length[x] > 1, x[[2]], First[x] ] (* like First *)
+third[x_]:= If[Length[x] > 2, x[[3]], First[x] ] (* like First *)
+fourth[x_]:= If[Length[x] > 3, x[[4]], First[x] ] (* like First *)
+last := Last
+slightlyDarker[color_] := Darker[color,1/5]
+
 Print["module TileBasedOptim loaded."];
 
 (*------------------------- constants -------------------------*)
@@ -775,7 +784,7 @@ getBase3SFC2DTilesGL[tlst_,params_:showSFC] :=
 selectBase3SFC2DTiles[tlst_,intensity_:.8] := Select[tlst, FromDigits[Reverse@Last[#],3]/3^Length[Last[#]] < intensity & ]
 
 fillSamplingPtsBase3SFC2DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
-     Module[ {tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,v,indVect,nsubdivs,m},
+     Module[ {tileType,sind,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode,v,indVect,nsubdivs,m,matBuilderIndex},
     	Parallelize @ Table[
 			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
      		nsubdivs = Length[xcode] + Length[ycode];
@@ -786,9 +795,10 @@ fillSamplingPtsBase3SFC2DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
 				If[Max@(Abs@(First /@ {v1, v2})) > Max@(Abs@(Last /@ {v1, v2})), mxInvH, mxInvV]
 			];
 			indVect = Mod[#,3]& /@ (m.v);
+			matBuilderIndex = FromDigits[#,3]& @ indVect;
 			samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) / 3^nsubdivs;
 			If[dbg, Print[i -> {tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},fcode}] ];
-			{tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode}
+			{tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode}
     	,{ind,Length[tlst]}]
     ] (* getSamplingPtsBase3SFC2DTiles *)
 
@@ -881,6 +891,45 @@ prepOptimDataBase3SFC2D[innlevels_:6, dbg_:True] :=
 				p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
 					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
+				];
+			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
+		,{ilevel,nlevels}];
+	] (* prepOptimDataBase3SFC2D *)
+
+selectBase3SFC2DTilesMatBuilderOnly[tlst_,intensity_:.8] := Select[tlst, second[#]/3^Length[Last[#]] < intensity & ]
+
+
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+prepOptimDataBase3SFCMatBuilderOnly2D[]
+*)
+
+prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:2, dbg_:True] :=
+    Module[ {},
+    	setNo = 1;
+		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
+    	nlevels = innlevels;
+    	If[ !FileExistsQ["optim_data_2D/"], CreateDirectory["optim_data_2D/"] ];
+    	If[ !FileExistsQ["optim_figs_2D_MatBuilderOnly/"], CreateDirectory["optim_figs_2D_MatBuilderOnly/"] ];
+		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
+		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
+		tlst = {{typeSq,0,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, {{},{}} ,{}} };
+		Do[
+			tlst = subdivBase3SFC2DTiles @ tlst;
+			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
+			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
+			tlst = fillSamplingPtsBase3SFC2DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
+			(*Graphics[ {getBase3SFC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
+			Do[
+				seltlst = selectBase3SFC2DTilesMatBuilderOnly[tlst, iOrdinalAbsolute/3^ilevel];
+				fname = "optim_data_2D_MatBuilderOnly/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_MatBuilderOnly.dat";
+				exportSelectionBase3SFC2DMatBuilderOnly[fname,seltlst];
+				If[dbg,
+				p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
+					p//Print;
+					Export["optim_figs_2D_MatBuilderOnly/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>"_MatBuilderOnly.png", p];
 				];
 			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
