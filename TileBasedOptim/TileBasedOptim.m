@@ -924,12 +924,12 @@ prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
 			(*Graphics[ {getBase3SFC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
 			Parallelize @Do[
 				seltlst = selectBase3SFC2DTilesMatBuilderOnly[tlst, iOrdinalAbsolute ];
-				fname = "optim_data_2D_MatBuilderOnly/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_MatBuilderOnly.dat";
+				fname = "optim_data_2D_MatBuilderOnly/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 				exportSelectionBase3SFC2DMatBuilderOnly[fname,seltlst];
 				If[dbg,
 				p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
-					Export["optim_figs_2D_MatBuilderOnly/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>"_MatBuilderOnly.png", p];
+					Export["optim_figs_2D_MatBuilderOnly/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 				];
 			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
