@@ -1,5 +1,7 @@
 (* TileBasedOptim.m
    2022-04 vo, based on fibo-hilbert.m (version 2002/12/14)
+   
+   
 *)
  
 (****************** globals *******************)
@@ -910,6 +912,12 @@ makeBase3SFC2DL2Discrepancy[dbg_:False] :=
         Print[mf @ dtab]
     ] (* makeBase3SFC2DL2Discrepancy *)
 
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+makeBase3SFC2DL2DiscrepancyExperimentTanguy[]
+*)
 makeBase3SFC2DL2DiscrepancyExperimentTanguy[dbg_:False] :=
     Module[ {},
     	nDims = 2;
@@ -919,14 +927,14 @@ makeBase3SFC2DL2DiscrepancyExperimentTanguy[dbg_:False] :=
         
         Do[
 			npts = iOrdinalAbsolute;
-			fname = "optim_output_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			fname = "~tanguy/optim_output_2D_1K_Exp2/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"Experiment2.dat";
 			pts = Import[fname][[;;,3;;4]];
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getL2discrepancy[pts];
         	Print["Processing makeBase3SFC2DL2Discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
-	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D_ExperimentTanguy.dat", dtab]; 
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D_Experiment2Tanguy.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab]
     ] (* makeBase3SFC2DL2DiscrepancyExperimentTanguy *)
