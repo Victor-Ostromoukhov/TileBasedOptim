@@ -1,6 +1,6 @@
 #!/bin/bash
 
-nthreads=64
+nthreads=16
 
 #ntrials=1024 or 4096 or 16384 or 65536 or 262144
 ntrials=1024
