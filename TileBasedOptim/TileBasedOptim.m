@@ -563,6 +563,55 @@ showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC
         (*p*)
     ] (* showL2discrepancyND *)
 
+showL2discrepancyNDMatBuilderOnly[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D (ref)",powfromto_:{2,10},col_:Red] := 
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D,discrepancyOwen},
+		{powfrom,powto}=powfromto;
+		fontSz = 20;
+        dirDiscrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
+        discrepancyWN = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"WN.dat"]);
+        discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Import[dirDiscrepancy<>"Strat.dat"]), {discrepancyWN[[1]]} ];
+        discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);
+        discrepancyOwen = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Owen.dat"]);
+        discrepancyBase3SFC2DRef = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D.dat"], thisDiscrepancy];
+        discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D_MatBuilderOnly.dat"], thisDiscrepancy];
+        plotLabel = " L2-Discrepancy "<>ToString[nDims]<>"D";               
+        alldata = If[Length[discrepancyStrat] == 1,
+        	{discrepancyWN, discrepancySobol,discrepancyOwen, discrepancyBase3SFC2DRef, discrepancyBase3SFC2D},
+        	{discrepancyWN, discrepancySobol,discrepancyOwen, discrepancyStrat, discrepancyBase3SFC2DRef, discrepancyBase3SFC2D}
+        ];
+        legends = If[Length[discrepancyStrat] == 1,
+        	{"WN","Sobol","Owen", thisDiscrepancyLabel,"Base3SFC2D + MatBuilderOnly"},
+       		{"WN","Sobol","Owen", "Jitter", thisDiscrepancyLabel,"Base3SFC2D + MatBuilderOnly"}
+        ];
+        colors = If[Length[discrepancyStrat] == 1,
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} },
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,AbsoluteThickness[3]}, {Green,AbsoluteThickness[3]}, {Blue,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]}, {Black,AbsoluteThickness[3]} }
+        ];
+        range = {Min @@ ((Last /@ #) &@discrepancySobol), Max @@((Last /@ #) &@discrepancyWN) };
+        p = ListLogLogPlot[ alldata
+            ,PlotLegends -> Placed[#,{.4,.1}]& @  {Style[#,fontSz]& /@ legends }
+            ,PlotStyle -> colors
+            ,Joined->True
+            ,FrameTicks->{{Automatic,None},{Table[base^pow,{pow,powfrom,powto,1}],Table[base^pow,{pow,powfrom,powto,1}]}}
+            ,FrameStyle->Directive[Black,20]
+            ,RotateLabel -> True
+            ,PlotMarkers->{{\[FilledCircle],5} }
+            ,Frame->True
+            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "L2-Discrepancy", fontSz] }
+            ,ImageSize -> {1024,1024}
+            ,PlotRange->{{base^powfrom,base^powto},range}
+            ,GridLines->{Table[base^pow,{pow,powfrom,powto,1}],None}
+            ,GridLinesStyle->Directive[Darker@Gray, Dashed]
+            ,AspectRatio->1
+            ,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+            ,PlotLabel -> Style[ plotLabel, Bold, 24]
+        ];
+        p//Print;
+        Export["L2Discrepancy_Base3SFC2D_MatBuilderOnly.dat.pdf",p];
+        (*p*)
+    ] (* showL2discrepancyNDMatBuilderOnly *)
+
+
 showL2discrepancyNDExperiment2Tanguy[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D (based on MatBuilder)",powfromto_:{2,10},col_:Red] := 
 	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D,discrepancyOwen},
 		{powfrom,powto}=powfromto;
@@ -1056,6 +1105,28 @@ makeBase3SFC2DL2DiscrepancyExperimentTanguy[dbg_:False] :=
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab]
     ] (* makeBase3SFC2DL2DiscrepancyExperimentTanguy *)
+
+makeBase3SFC2DL2DiscrepancyMatBuilderOnly[dbg_:False] :=
+    Module[ {},
+    	nDims = 2;
+        dtab = {};
+        nptsMax = 3^6;
+        setNo = 1;
+        
+        Do[
+			npts = iOrdinalAbsolute;
+			fname = "optim_output_2D_MatBuilderOnly/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			pts = Import[fname][[;;,3;;4]];
+			If[dbg, ipts = Round[ npts pts ];
+				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+        	d = getL2discrepancy[pts];
+        	Print["Processing makeBase3SFC2DL2Discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D_MatBuilderOnly.dat", dtab]; 
+        ,{iOrdinalAbsolute,2,nptsMax}];
+        Print[mf @ dtab]
+    ] (* makeBase3SFC2DL2DiscrepancyMatBuilderOnly *)
+
 
 
 showBase3SFC2DOptimImprovement[dbg_:False] :=
