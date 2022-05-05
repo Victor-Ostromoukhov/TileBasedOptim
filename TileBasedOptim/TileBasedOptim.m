@@ -903,10 +903,10 @@ selectBase3SFC2DTilesMatBuilderOnly[tlst_,intensity_:.8] := Select[tlst, second[
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-prepOptimDataBase3SFCMatBuilderOnly2D[]
+prepOptimDataBase3SFCMatBuilderOnly2D[6]
 *)
 
-prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:2, dbg_:True] :=
+prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
     Module[ {},
     	setNo = 1;
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
