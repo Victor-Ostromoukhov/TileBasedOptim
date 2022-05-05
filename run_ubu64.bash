@@ -20,8 +20,8 @@ if [[ ! -d traces ]]; then
 fi
 
 for (( level=2; level<=729; level++ )) do
-    echo ~/bin/OptimTiles2D -t ${nthreads} -i ${srcdir}/2D_0m2net_set_1_level_${level}.dat -o ${resdir}/2D_0m2net_set_1_level_${level}.dat -n ${ntrials}
-         ~/bin/OptimTiles2D -t ${nthreads} -i ${srcdir}/2D_0m2net_set_1_level_${level}.dat -o ${resdir}/2D_0m2net_set_1_level_${level}.dat -n ${ntrials} >> traces/tr_${level}.txt
+    echo ~/bin/OptimTiles2D -i ${srcdir}/2D_0m2net_set_1_level_${level}.dat -o ${resdir}/2D_0m2net_set_1_level_${level}.dat -n ${ntrials}
+         ~/bin/OptimTiles2D -i ${srcdir}/2D_0m2net_set_1_level_${level}.dat -o ${resdir}/2D_0m2net_set_1_level_${level}.dat -n ${ntrials} >> traces/tr_${level}.txt
 done
 
 
