@@ -795,7 +795,7 @@ fillSamplingPtsBase3SFC2DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
 				If[Max@(Abs@(First /@ {v1, v2})) > Max@(Abs@(Last /@ {v1, v2})), mxInvH, mxInvV]
 			];
 			indVect = Mod[#,3]& /@ (m.v);
-			matBuilderIndex = FromDigits[#,3]& @ indVect;
+			matBuilderIndex = FromDigits[#,3]& @ (Reverse @ indVect);
 			samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) / 3^nsubdivs;
 			If[dbg, Print[i -> {tileType,sind,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},fcode}] ];
 			{tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode}
@@ -896,7 +896,7 @@ prepOptimDataBase3SFC2D[innlevels_:6, dbg_:True] :=
 		,{ilevel,nlevels}];
 	] (* prepOptimDataBase3SFC2D *)
 
-selectBase3SFC2DTilesMatBuilderOnly[tlst_,intensity_:.8] := Select[tlst, second[#]/3^Length[Last[#]] < intensity & ]
+selectBase3SFC2DTilesMatBuilderOnly[tlst_,intensityInt_] := Select[tlst, second[#] < intensityInt & ]
 
 
 (*
@@ -923,7 +923,7 @@ prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
 			tlst = fillSamplingPtsBase3SFC2DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
 			(*Graphics[ {getBase3SFC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
 			Parallelize @Do[
-				seltlst = selectBase3SFC2DTilesMatBuilderOnly[tlst, iOrdinalAbsolute/3^ilevel];
+				seltlst = selectBase3SFC2DTilesMatBuilderOnly[tlst, iOrdinalAbsolute ];
 				fname = "optim_data_2D_MatBuilderOnly/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_MatBuilderOnly.dat";
 				exportSelectionBase3SFC2DMatBuilderOnly[fname,seltlst];
 				If[dbg,
