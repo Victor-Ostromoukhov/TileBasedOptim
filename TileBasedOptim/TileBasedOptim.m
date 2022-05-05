@@ -264,25 +264,6 @@ makeSobolDiscrepancy[]
 *)
 
 
-makeSobolL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
-    Module[ {},
-        dtab = {};
-        nptsMax = 2^nlevels;
-        Do[
-			npts = inpts;
-			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 0 -o tmp/pts"<>pid<>".dat > /dev/null";
-        	returnCode = Run[execPrefix<>execString];
-        	pts = Import["tmp/pts"<>pid<>".dat"];		
-			If[dbg, ipts = Round[ npts pts ];
-				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-        	d = getL2discrepancy[pts];
-        	Print["Processing makeSobolL2Discrepancy " -> {npts,d}];
-			AppendTo[dtab, {npts,d} ];
-	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
-        ,{inpts,nptsMax}];
-        Print[mf @ dtab]
-    ] (* makeSobolL2Discrepancy *)
-
 makeSobolGeneralizedL2Discrepancy[nlevels_:12, nDims_:2,dbg_:False] :=
     Module[ {},
         nptsMax = 2^nlevels;
@@ -319,7 +300,38 @@ makeSobolStarDiscrepancy[nlevels_:12, nDims_:2,dbg_:False] :=
         Print[mf @ dtab]
     ] (* makeSobolL2Discrepancy *)
 
-makeOwenL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
+(* <<<<<<<<<<<<<<<<<<<<<< L2Discrepancy
+
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+makeWNL2Discrepancy[]
+makeStratL2Discrepancy[]
+makeSobolL2Discrepancy[]
+makeOwenL2Discrepancy[]
+
+*)
+
+makeSobolL2Discrepancy[nlevels_:14, nDims_:3,dbg_:False] :=
+    Module[ {},
+        dtab = {};
+        nptsMax = 2^nlevels;
+        Do[
+			npts = inpts;
+			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 0 -o tmp/pts"<>pid<>".dat > /dev/null";
+        	returnCode = Run[execPrefix<>execString];
+        	pts = Import["tmp/pts"<>pid<>".dat"];		
+			If[dbg, ipts = Round[ npts pts ];
+				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+        	d = getL2discrepancy[pts];
+        	Print["Processing makeSobolL2Discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
+        ,{inpts,nptsMax}];
+        Print[mf @ dtab]
+    ] (* makeSobolL2Discrepancy *)
+
+makeOwenL2Discrepancy[nlevels_:14, nDims_:3,dbg_:False] :=
     Module[ {},
         dtab = {};
         nptsMax = 2^nlevels;
@@ -338,15 +350,14 @@ makeOwenL2Discrepancy[nlevels_:14, nDims_:2,dbg_:False] :=
         Print[mf @ dtab]
     ] (* makeOwenL2Discrepancy *)
 
-
-makeWNL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:2] :=
+makeWNL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:3] :=
     Module[ {},
         dtab = {};
         Do[
 			npts = 2^ilevel;
 			trials = Parallelize @ Table[
 				pts = Table[Table[RandomReal[],{nDims}],{i,npts}];
-				{npts,getStarDiscrepancy[pts]}
+				{npts,getL2discrepancy[pts]}
 			,{itrail,ntrials}];
 			AppendTo[dtab, Mean @ trials ];
         	Print["Processing makeWNL2Discrepancy level ",ilevel -> mf[dtab] ];
@@ -355,7 +366,8 @@ makeWNL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:2] :=
         Print[mf @ dtab]
     ]
 
-makeStratL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:2] :=
+
+makeStratL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:3] :=
     Module[ {},
         dtab = {};
         Do[
@@ -366,7 +378,7 @@ makeStratL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:2] :=
 				,2, pts = N @ Table[{Mod[i,nstrats], Quotient[i,nstrats]}/nstrats + {RandomReal[],RandomReal[]}/nstrats,{i,0,npts-1}];
 				,3, pts = Flatten[#,2]& @ Table[{ix+RandomReal[],iy+RandomReal[],iz+RandomReal[]}/nstrats,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
 				];
-				{npts,getStarDiscrepancy[pts]}
+				{npts,getL2discrepancy[pts]}
 			,{itrail,ntrials}];
 			AppendTo[dtab, Mean @ trials ];
         	Print["Processing makeStratL2Discrepancy level ",ilevel -> mf[dtab] ];
@@ -374,6 +386,8 @@ makeStratL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:2] :=
         ,{ilevel,nlevels}];
         Print[mf @ dtab]
     ]
+(*
+*)
 
 
 makeSobolDiscrepancy[nlevels_:14, nDims_:2,dbg_:True] :=
@@ -535,6 +549,56 @@ showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC
         Export["L2Discrepancy_Base3SFC2D.pdf",p];
         (*p*)
     ] (* showL2discrepancyND *)
+
+showL2discrepancyNDExperiment2Tanguy[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC2D (based on MatBuilder)",powfromto_:{2,10},col_:Red] := 
+	Module[{dirDiscrepancy,discrepancyWN,discrepancyStrat,discrepancySobol,plotLabel,legends,alldata,p,powfrom,powto,fontSz,range,colors,base=2,discrepancyBase3SFC2D,discrepancyOwen},
+		{powfrom,powto}=powfromto;
+		fontSz = 20;
+        dirDiscrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
+        discrepancyWN = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"WN.dat"]);
+        discrepancyStrat = Select[#,1<=#[[1]]<=base^(powto+1)&]& @ If[FileExistsQ[dirDiscrepancy<>"Strat.dat"], (Import[dirDiscrepancy<>"Strat.dat"]), {discrepancyWN[[1]]} ];
+        discrepancySobol = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Sobol.dat"]);
+        discrepancyOwen = Select[#,base^powfrom<=#[[1]]<=base^(powto+1)&]& @ (Import[dirDiscrepancy<>"Owen.dat"]);
+        discrepancyBase3SFC2DRef = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D.dat"], thisDiscrepancy];
+        discrepancyBase3SFC2D = If[thisDiscrepancy==={}, Import[dirDiscrepancy<>"Base3SFC2D_Experiment2Tanguy.dat"], thisDiscrepancy];
+        plotLabel = " L2-Discrepancy "<>ToString[nDims]<>"D";               
+        alldata = If[Length[discrepancyStrat] == 1,
+        	{discrepancyWN, discrepancySobol,discrepancyOwen, discrepancyBase3SFC2DRef, discrepancyBase3SFC2D},
+        	{discrepancyWN, discrepancySobol,discrepancyOwen, discrepancyStrat, discrepancyBase3SFC2DRef, discrepancyBase3SFC2D}
+        ];
+        legends = If[Length[discrepancyStrat] == 1,
+        	{"WN","Sobol","Owen", thisDiscrepancyLabel,"Base3SFC2D + random init"},
+       		{"WN","Sobol","Owen", "Jitter", thisDiscrepancyLabel,"Base3SFC2D + random init"}
+        ];
+        colors = If[Length[discrepancyStrat] == 1,
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]} },
+        	{ {Red,Dotted,AbsoluteThickness[10]}, {Gray,AbsoluteThickness[3]}, {Green,AbsoluteThickness[3]}, {Blue,Dotted,AbsoluteThickness[10]}, {col,AbsoluteThickness[3]}, {Black,AbsoluteThickness[3]} }
+        ];
+        range = {Min @@ ((Last /@ #) &@discrepancySobol), Max @@((Last /@ #) &@discrepancyWN) };
+        p = ListLogLogPlot[ alldata
+            ,PlotLegends -> Placed[#,{.4,.1}]& @  {Style[#,fontSz]& /@ legends }
+            ,PlotStyle -> colors
+            ,Joined->True
+            ,FrameTicks->{{Automatic,None},{Table[base^pow,{pow,powfrom,powto,1}],Table[base^pow,{pow,powfrom,powto,1}]}}
+            ,FrameStyle->Directive[Black,20]
+            ,RotateLabel -> True
+            ,PlotMarkers->{{\[FilledCircle],5} }
+            ,Frame->True
+            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "L2-Discrepancy", fontSz] }
+            ,ImageSize -> {1024,1024}
+            ,PlotRange->{{base^powfrom,base^powto},range}
+            ,GridLines->{Table[base^pow,{pow,powfrom,powto,1}],None}
+            ,GridLinesStyle->Directive[Darker@Gray, Dashed]
+            ,AspectRatio->1
+            ,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+            ,PlotLabel -> Style[ plotLabel, Bold, 24]
+        ];
+        p//Print;
+        Export["L2Discrepancy_Base3SFC2D_Experiment2Tanguy.dat.pdf",p];
+        (*p*)
+    ] (* showL2discrepancyNDExperiment2Tanguy *)
+
+
 
 enumerate0m2netSolutions[] :=
     Module[ {},
