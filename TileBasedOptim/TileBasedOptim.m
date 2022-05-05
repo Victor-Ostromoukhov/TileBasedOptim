@@ -776,7 +776,7 @@ getBase3SFC2DTilesGL[tlst_,params_:showSFC] :=
 			If[BitAnd[params,showFcodeInvNumber] > 0, AppendTo[gl, {Text[Style[FromDigits[Reverse@fcode,3],Bold,14,Black],refPt+(v1+v2)/2,{1.9,-1}]} ] ];
 			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2)/2,{0,1}]} ] ];
 			If[BitAnd[params,showTilexycodes] > 0, AppendTo[gl, {Text[Style[tab2snosep@xcode,Bold,14,Red],refPt+(v1+v2)/2,{1,1}], Text[Style[tab2snosep@ycode,Bold,14,Blue],refPt+(v1+v2)/2,{-1,1}]} ] ];
-			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, {Black,Point@samplingPt,Text[Style[sind (*FromDigits[Reverse@fcode,3]*),Bold,14,Blue], samplingPt,{-1.2,-1.2}]} ] ];
+			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, {Black,Point@samplingPt,Text[Style[sind (*FromDigits[Reverse@fcode,3]*),Bold,10,Blue], samplingPt,{-1.1,-1.1}]} ] ];
     	,{ind,Length[tlst]}];
     	Return[gl]
     ] (* getBase3SFC2DTilesGL *)
