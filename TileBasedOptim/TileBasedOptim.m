@@ -1,7 +1,11 @@
 (* TileBasedOptim.m
    2022-04 vo, based on fibo-hilbert.m (version 2002/12/14)
    
-   
+makeWNL2Discrepancy[]
+makeStratL2Discrepancy[]
+makeSobolL2Discrepancy[]
+makeOwenL2Discrepancy[]
+
 *)
  
 (****************** globals *******************)
@@ -342,7 +346,7 @@ makeOwenL2Discrepancy[nlevels_:14, nDims_:3,dbg_:False] :=
         		returnCode = Run[execPrefix<>execString];
         		pts = Import["tmp/pts"<>pid<>".dat"];		
         		getL2discrepancy[pts]
-        	,{16}]);
+        	,{64}]);
         	Print["Processing makeOwenL2Discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
 	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Owen.dat", dtab]; 
