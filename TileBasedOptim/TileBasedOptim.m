@@ -911,7 +911,7 @@ prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
     	setNo = 1;
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
     	nlevels = innlevels;
-    	If[ !FileExistsQ["optim_data_2D/"], CreateDirectory["optim_data_2D/"] ];
+    	If[ !FileExistsQ["optim_data_2D_MatBuilderOnly/"], CreateDirectory["optim_data_2D_MatBuilderOnly/"] ];
     	If[ !FileExistsQ["optim_figs_2D_MatBuilderOnly/"], CreateDirectory["optim_figs_2D_MatBuilderOnly/"] ];
 		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
