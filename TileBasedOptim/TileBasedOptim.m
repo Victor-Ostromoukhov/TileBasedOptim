@@ -926,6 +926,7 @@ prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
 				seltlst = selectBase3SFC2DTilesMatBuilderOnly[tlst, iOrdinalAbsolute ];
 				fname = "optim_data_2D_MatBuilderOnly/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 				exportSelectionBase3SFC2DMatBuilderOnly[fname,seltlst];
+				Print[Length[seltlst] -> " Exporting " -> fname];
 				If[dbg,
 				p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
