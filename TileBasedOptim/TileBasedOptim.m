@@ -346,6 +346,7 @@ makeSobolL2Discrepancy[nlevels_:14, nDims_:3,dbg_:False] :=
 
 makeOwenL2Discrepancy[nlevels_:14, nDims_:3,dbg_:False] :=
     Module[ {},
+		If[ Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2]];
         dtab = {};
         nptsMax = 2^nlevels;
         Do[
