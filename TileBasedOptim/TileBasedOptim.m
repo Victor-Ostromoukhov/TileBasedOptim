@@ -1785,3 +1785,286 @@ subdivBase3SFC3DTiles[tlst_] :=
     	Return[res]
     ] (* subdivBase3SFC3DTiles *)
 *)
+
+
+(*----------------------------------------- MSE *)
+(*
+
+
+gitpull
+math
+<<uniformity/uniformity.m
+integrandType = 2;
+nPointsets = 1024;
+nintegrands = 1024;
+nDims = 4;
+makeMSEref[10, nPointsets, {2,16,2}, integrandType, nDims, nintegrands];
+
+*)
+makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegrandType_:2, innDims_:2, nIntegrands_:1024, dbg_:False] :=
+    Module[ {},
+    	firstDim = 0;
+    	(*If[ Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2]];*)
+    	nDims = innDims;
+    	integrandType = inIntegrandType;
+		integrandTypeLabel = Switch[integrandType,  1,"Heaviside", 2,"Gauss", 3,"Smooth", 4,"Cont", 5,"HeaviBell", 6,"HeaviCont", 7,"HeaviGauss" ];
+       	header = "#Nbpts	#Mean	#Var	#Min	#Max	#Analytical	#MSE	#NbPtsets	#Nbintegrands\n";
+		fnameLabel = integrandTypeLabel ;
+		nPointsets 	= nTrialsMSE ;
+        {powfrom,powto,powstep} = powParams;
+
+		dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
+        If[ !FileExistsQ[dirMSE], CreateDirectory[dirMSE] ];
+        If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+		pointsetType = inpointsetTypes;
+		pointsetLabel = Switch[pointsetType 
+				(* sequence, ND *)   ,1,"Sobol" ,2,"Halton" ,3,"Faure" ,4,"Niederreiter" ,5,"SobolPlusPlus",6,"SobolGlobal",7,"OwenGlobal"
+			(* pointsets, ND *)  ,10,"WN" ,11,"Strat" ,12,"OwenPlus" ,13,"Rank1Lattice" ,14,"DartThrowing"  ,15,"RegGrid" ,16,"SOT" ,17,"SOTPlusLloyd",18,"OwenPureFirstDim2",19,"OwenPure" 
+			(* ExtensibleLattices, ND *),20,"ExtensibleLatticeType0" ,21,"ExtensibleLatticeType1" ,22,"ExtensibleLatticeType2" ,23,"ExtensibleLatticeType3"
+			(* pointsets, 2D only *) ,200,"HexGrid"  ,201,"Hammersley" ,202,"LarcherPillichshammer" ,203,"NRooks" ,204,"BNOT" ,205,"CMJ" ,206,"BNLDS" 
+									 ,207,"PMJ" ,208,"PMJ02" ,209,"LDBN" ,210,"Penrose" ,211,"Fattal" ,212, "HexGridTorApprox"
+	    	(* pointsets, 3D only *) ,300,"BCC", 301,"FCC", 302,"HCP", 303,"WeairePhelan"
+    		(* 4D Variants of Sobol,OwenPlus,OwenPure *) ,400,"Sobol2356" ,401,"OwenPlus2356" ,402,"OwenPure2356",403,"Sobol2367" ,404,"OwenPlus2367" ,405,"OwenPure2367"
+			(* uniformND *) ,500,"UniformND" ,501,"UniformNDwithoutSobol"
+			(* uniformND *) ,600,"zsampler",601,"morton",602,"morton01"
+			(* pointsets, SobolShiftedKx *) ,701,"SobolShifted1x",702,"SobolShifted2x",703,"SobolShifted3x",704,"SobolShifted4x"
+			(* pointsets, OwenPlusShiftedKx *) ,801,"OwenPlusShifted1x",802,"OwenPlusShifted2x",803,"OwenPlusShifted3x",804,"OwenPlusShifted4x"
+			(* pointsets, OwenShiftedKx *) ,900,"OwenMicroShift",999,"OwenMicroShiftGlobal",901,"OwenShifted1x",902,"OwenShifted2x",903,"OwenShifted3x",904,"OwenShifted4x"
+	    	,_, "unknown" 
+		];
+    	If[pointsetLabel == "SOT", {powfrom,powto,powstep} = Switch[nDims,2,{2,17,1},3,{2,16,1},4,{2,17,1}] ];
+		Print[pointsetLabel,{powfrom,powto,powstep} -> " makeMSEref from ",2^powfrom," to ",2^powto];
+		dataMSE = {};
+		Do[	
+     		If[pointsetLabel == "SOT" && nDims == 4 && iptsPow == 17, nPointsets = 1 ]; (* Only 1 available *)
+   			npts = getRealNPts[nDims, 2^iptsPow, pointsetType];
+    		resFname = pointsetLabel<>"_"<>fnameLabel<>".dat";
+			mseTab = ( Parallelize @  Table[   				
+				ptsfname = "tmp/pts_"<>ToString[iPointSet]<>".dat";
+				msefname = "tmp/mse"<>pid<>".dat";
+				Switch[pointsetLabel					
+				,"UniformND",
+					getUniformND[nDims, npts, ptsfname];
+				,"OwenPureFirstDim2", execString = "owen --firstDim 2 --nDims "<>ToString[nDims]<>" -p 1 -t 32 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+				,"HexGrid", 
+					pts = makeHexGridPts[npts];
+		     		Export[ptsfname,pts]
+				,"SOT", navailable = Switch[nDims,2,64,3,64,4,16,_,64];
+					ptsfname = "_pointsets_SobolPlusPlus/"<>ToString[nDims]<>"D/SOT/SOT_"<>i2s[npts,8]<>"/SOT_"<>i2s[npts,8]<>"_"<>i2s[Mod[iPointSet,navailable,1],6]<>".dat";
+				,"Rank1Lattice", 
+					dir="_pointsets_SobolPlusPlus/"<>ToString[nDims]<>"D/"<>pointsetLabel<>"/"<>pointsetLabel<>"_"<>i2s[npts,8]<>"/";
+					ptsfname = dir<>pointsetLabel<>"_"<>i2s[npts,8]<>"_"<>i2s[iPointSet,6]<>".dat";
+				,"Sobol", execString = "owen --nDims "<>ToString[nDims]<>" -o "<>ptsfname<>" -n "<>ToString[npts]<>" --permut 0  > /dev/null";
+					res = Run[execPrefix<>execString];
+		     		If[dbg, Print[execString -> res] ];
+				,"OwenPure", execString = "owen --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   					res = Run[execPrefix<>execString];
+			     	If[dbg, Print[execString -> res] ];
+					,"SobolShifted1x", execString = "owen --start "<>ToString[1*npts]<>" --nDims "<>ToString[nDims]<>" -p 0 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"SobolShifted2x", execString = "owen --start "<>ToString[2*npts]<>" --nDims "<>ToString[nDims]<>" -p 0 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"SobolShifted3x", execString = "owen --start "<>ToString[3*npts]<>" --nDims "<>ToString[nDims]<>" -p 0 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"SobolShifted4x", execString = "owen --start "<>ToString[4*npts]<>" --nDims "<>ToString[nDims]<>" -p 0 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+(*>>>>>>>>>>>>>*)   ,"OwenMicroShift", execString = "owen -f "<>ToString[firstDim]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+			     		data = If[2/npts  <= #[[1]] < 1-2/npts && 2/npts  <= #[[2]] < 1-2/npts, Plus[#, {RandomReal[],RandomReal[]}/npts ], #] & /@ Import[ptsfname];
+			     		Export[ptsfname, data];
+(*>>>>>>>>>>>>>*)   ,"OwenMicroShiftGlobal", execString = "owen -f "<>ToString[firstDim]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+			     		delta = 1/npts Table[RandomReal[], {nDims}];
+			     		data = Plus[#, delta] & /@ Import[ptsfname];
+			     		Export[ptsfname, data];
+					,"OwenShifted1x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[1*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"OwenShifted2x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[2*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"OwenShifted3x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[3*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"OwenShifted4x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[4*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"OwenPlus", execString = "owen --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"OwenPlusShifted1x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[1*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"OwenPlusShifted2x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[2*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"OwenPlusShifted3x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[3*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+					,"OwenPlusShifted4x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[4*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+				,"Sobol2356", execString = "owen --nDims 4 -d data/sobol_init_2356.dat -f 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" --permut 0  > /dev/null";
+					res = Run[execPrefix<>execString];
+		     		If[dbg, Print[execString -> res] ];
+				,"OwenPlus2356", execString = "owen --nDims 4 -d data/sobol_init_2356.dat -f 1 -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+				,"OwenPure2356", execString = "owen --nDims 4 -d data/sobol_init_2356.dat -f 1 -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+				,"Sobol2367", execString = "owen --nDims 4 -d data/sobol_init_2367.dat -f 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" --permut 0  > /dev/null";
+					res = Run[execPrefix<>execString];
+		     		If[dbg, Print[execString -> res] ];
+				,"OwenPlus2367", execString = "owen --nDims 4 -d data/sobol_init_2367.dat -f 1 -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+				,"OwenPure2367", execString = "owen --nDims 4 -d data/sobol_init_2367.dat -f 1 -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+				,"WN", 
+					pts = getWN[nDims, npts];
+		     		Export[ptsfname,pts];
+				,"Strat", (* something goes wrong in Stratified_3dd *)
+					pts = getStratND[nDims, npts];
+		     		Export[ptsfname,pts]
+				,"OwenPlusTree16bits", execString = "owen --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" -t 16 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+				,"ExtensibleLatticeType0", execString = Switch[nDims
+					,2,"getExtensibleLattice2D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 0 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,3,"getExtensibleLattice3D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 0 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,4,"getExtensibleLattice4D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 0 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,6,"getExtensibleLattice6D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 0 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					];
+					res = Run[execPrefix<>execString];
+		     		If[dbg, Print[execString -> res] ];
+				,"ExtensibleLatticeType1", execString = Switch[nDims
+					,2,"getExtensibleLattice2D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 1 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,3,"getExtensibleLattice3D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 1 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,4,"getExtensibleLattice4D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 1 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,6,"getExtensibleLattice6D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 1 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					];
+					res = Run[execPrefix<>execString];
+		     		If[dbg, Print[execString -> res] ];
+				,"ExtensibleLatticeType2", execString = Switch[nDims
+					,2,"getExtensibleLattice2D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 2 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,3,"getExtensibleLattice3D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 2 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,4,"getExtensibleLattice4D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 2 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,6,"getExtensibleLattice6D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 2 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					];
+					res = Run[execPrefix<>execString];
+		     		If[dbg, Print[execString -> res] ];
+				,"ExtensibleLatticeType3", execString = Switch[nDims
+					,2,"getExtensibleLattice2D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 3 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,3,"getExtensibleLattice3D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 3 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,4,"getExtensibleLattice4D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 3 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					,6,"getExtensibleLattice6D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 3 --seed "<>ToString[RandomInteger[{0, 2^31}]]
+					];
+					res = Run[execPrefix<>execString];
+		     		If[dbg, Print[execString -> res] ];
+				,_, Print["makeMSEref ",pointsetType -> pointsetLabel, " not implemented yet"]; Abort[];
+					];
+ 				execString = "integrateND_from_file --nintegrands "<>ToString[nIntegrands]<>" -i "<>ptsfname<>" -o "<>msefname<>" --integrandType "<>ToString[integrandType]<>" --nDims "<>ToString[nDims]<>" > /dev/null";
+				res = Run[execPrefix<>execString];
+		     	mse = Last @ (Flatten @ Import[msefname]);
+		     	If[dbg, Print[execString -> res -> mse] ];
+		     	If[!NumberQ[mse], Abort[] ];
+		     	If[ pointsetLabel != "SOT" && pointsetLabel != "Rank1Lattice" && FileExistsQ[ptsfname], DeleteFile[ptsfname] ];
+		     	If[ FileExistsQ[msefname], DeleteFile[msefname] ];
+				If[dbg, Print[{pointsetLabel,integrandTypeLabel}," ",{npts,iPointSet,mse} ] ];
+				Run["rm -rf "<>ptsfname<>" "<>msefname ];
+     			mse
+     		,{iPointSet,nPointsets}]);
+
+			If[dbg, Print[Sort@mseTab] ];
+			
+     		mseMean = Mean @ mseTab;
+     		mseVariance = Variance @ mseTab;
+     		{mseMin,mseMax} = {Min@mseTab, Max@mseTab};
+     		AppendTo[dataMSE,{Round[npts],mseMean,mseVariance,mseMin,mseMax,0,0,nPointsets,nIntegrands}];
+
+     		Print["makeMSEref: ",integrandTypeLabel -> pointsetLabel," ",ToString[nDims]<>"D" -> nTrialsMSE ->  Last[ dataMSE[[;;,1;;2]] ] -> dirMSE];
+   				Export[dirMSE<>resFname,header,"TEXT"];
+ 				Export["tmp/tmpdat"<>pid<>".dat",dataMSE];
+ 				Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFname];
+				Print[dirMSE<>resFname, " written."];
+		,{iptsPow,powfrom,powto,powstep}];	 (* available from 1K *)
+        (*Run["rm -rf tmp/" ];*)
+   ] (* makeMSEref *)
+
+getCloseestN2D[n_] := Round[Sqrt[n]]^2
+getCloseestNND[nDims_:2, n_] := Round[n^(1/nDims)]^nDims
+
+getRealNPts[nDims_:2, npts_:16, pointsetType_:10] :=
+    Switch[pointsetType
+    ,11, getCloseestNND[nDims, npts]    (* Strat *)
+    ,15, getCloseestNND[nDims, npts]    (* RegGrid *)
+    ,777,	First @ getOmegaApproxRealNpts[nDims, npts]
+    (*,200, getHexGridRealNpts[nDims, npts]*)    (* HexGrid *)
+    ,212, getHexGridTorApproxRealNpts[nDims, npts]    (* HexGridTorApproxReal *)
+    ,209, getLDBNRealNpts[nDims, npts]    (* LDBN *)
+    ,_, npts
+    ]
+(*		pointsetLabel = Switch[pointsetType 
+				(* sequence, ND *)   ,1,"Sobol" ,2,"Halton" ,3,"Faure" ,4,"Niederreiter" ,5,"SobolPlusPlus",6,"SobolGlobal",7,"OwenGlobal"
+			(* pointsets, ND *)  ,10,"WN" ,11,"Strat" ,12,"OwenPlus" ,13,"Rank1Lattice" ,14,"DartThrowing"  ,15,"RegGrid" ,16,"SOT" ,17,"SOTPlusLloyd",18,"OwenPureFirstDim2",19,"OwenPure" 
+			(* ExtensibleLattices, ND *),20,"ExtensibleLatticeType0" ,21,"ExtensibleLatticeType1" ,22,"ExtensibleLatticeType2" ,23,"ExtensibleLatticeType3"
+			(* pointsets, 2D only *) ,200,"HexGrid"  ,201,"Hammersley" ,202,"LarcherPillichshammer" ,203,"NRooks" ,204,"BNOT" ,205,"CMJ" ,206,"BNLDS" 
+									 ,207,"PMJ" ,208,"PMJ02" ,209,"LDBN" ,210,"Penrose" ,211,"Fattal" ,212, "HexGridTorApprox"
+	    	(* pointsets, 3D only *) ,300,"BCC", 301,"FCC", 302,"HCP", 303,"WeairePhelan"
+    		(* 4D Variants of Sobol,OwenPlus,OwenPure *) ,400,"Sobol2356" ,401,"OwenPlus2356" ,402,"OwenPure2356",403,"Sobol2367" ,404,"OwenPlus2367" ,405,"OwenPure2367"
+			(* uniformND *) ,500,"UniformND" ,501,"UniformNDwithoutSobol"
+			(* uniformND *) ,600,"zsampler",601,"morton",602,"morton01"
+			(* pointsets, SobolShiftedKx *) ,701,"SobolShifted1x",702,"SobolShifted2x",703,"SobolShifted3x",704,"SobolShifted4x"
+			(* pointsets, OwenPlusShiftedKx *) ,801,"OwenPlusShifted1x",802,"OwenPlusShifted2x",803,"OwenPlusShifted3x",804,"OwenPlusShifted4x"
+			(* pointsets, OwenShiftedKx *) ,900,"OwenMicroShift",999,"OwenMicroShiftGlobal",901,"OwenShifted1x",902,"OwenShifted2x",903,"OwenShifted3x",904,"OwenShifted4x"
+	    	,_, "unknown" 
+		];
+*)
+getStrat2D[npts_:256] :=
+    Block[ {nstrats,xshift,yshift},
+    	nstrats = Sqrt[npts];
+    	Flatten[#,1]& @ Parallelize @ (Table[
+    		{xshift,yshift} = {RandomReal[], RandomReal[]}/nstrats;
+   			{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift}
+    	,{ix,nstrats},{iy,nstrats}]) //N
+    ] (* getStrat2D *)
+
+getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
+	
+getStratND[nDims_:3,npts_:512] :=
+    Block[ {nstrats,xshift,yshift,ushift,vshift,sshift,tshift},
+    	nstrats = npts^(1/nDims);	(* suppose that npts is already appropriate, passed through getRealNPts[] *)
+    	Switch[nDims
+    	,1, Flatten[#,1]& @ (Table[
+    			xshift = RandomReal[]/nstrats;
+   				(ix-1)/nstrats + xshift
+    		,{ix,nstrats}]) //N
+    	,2, Flatten[#,1]& @ (Table[
+    			{xshift,yshift} = {RandomReal[], RandomReal[]}/nstrats;
+   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift}
+    		,{ix,nstrats},{iy,nstrats}]) //N
+    	,3, Flatten[#,2]& @ (Table[
+    			{xshift,yshift,ushift} = {RandomReal[], RandomReal[], RandomReal[]}/nstrats;
+   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift, (iu-1)/nstrats + ushift}
+    		,{ix,nstrats},{iy,nstrats},{iu,nstrats}]) //N
+    	,4, Flatten[#,3]& @ (Table[
+    			{xshift,yshift,ushift,vshift} = Table[RandomReal[],{4}]/nstrats;
+   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift, (iu-1)/nstrats + ushift, (iv-1)/nstrats + vshift}
+    		,{ix,nstrats},{iy,nstrats},{iu,nstrats},{iv,nstrats}]) //N
+    	,6, Flatten[#,5]& @ (Table[
+    			{xshift,yshift,ushift,vshift,sshift,tshift} = Table[RandomReal[],{6}]/nstrats;
+   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift, (iu-1)/nstrats + ushift, (iv-1)/nstrats + vshift, (is-1)/nstrats + sshift, (it-1)/nstrats + tshift}
+    		,{ix,nstrats},{iy,nstrats},{iu,nstrats},{iv,nstrats},{is,nstrats},{it,nstrats}]) //N
+    	]
+    ] (* getStratND *)
+
