@@ -1795,18 +1795,24 @@ subdivBase3SFC3DTiles[tlst_] :=
 gitpull
 math
 <<uniformity/uniformity.m
-integrandType = 2;
+integrandType = 1;
 nintegrands = 1024;
 nDims = 2;
 
-nPointsets = 32;
-makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+nPointsets = 16;
+makeMSEref[1, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+
+nPointsets = 64;
+makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
 nPointsets = 1024;
-makeMSEref[10, nPointsets, {2,16,2}, integrandType, nDims, nintegrands];
+makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
-nPointsets = 1;
-makeMSEref[10, nPointsets, {2,16,2}, integrandType, nDims, nintegrands];
+nPointsets = 64;
+makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+
+nPointsets = 32;
+makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
 *)
 makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegrandType_:2, innDims_:2, nIntegrands_:1024, dbg_:False] :=
@@ -1826,7 +1832,7 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
         If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
 		pointsetType = inpointsetTypes;
 		pointsetLabel = Switch[pointsetType 
-				(* sequence, ND *)   ,1,"Sobol" ,2,"Halton" ,3,"Faure" ,4,"Niederreiter" ,5,"SobolPlusPlus",6,"SobolGlobal",7,"OwenGlobal"
+			(* sequence, ND *)   ,1,"Sobol" ,2,"Halton" ,3,"Faure" ,4,"Niederreiter" ,5,"SobolPlusPlus",6,"SobolGlobal",7,"OwenGlobal"
 			(* pointsets, ND *)  ,10,"WN" ,11,"Strat" ,12,"OwenPlus" ,13,"Rank1Lattice" ,14,"DartThrowing"  ,15,"RegGrid" ,16,"SOT" ,17,"SOTPlusLloyd",18,"OwenPureFirstDim2",19,"OwenPure" 
 			(* ExtensibleLattices, ND *),20,"ExtensibleLatticeType0" ,21,"ExtensibleLatticeType1" ,22,"ExtensibleLatticeType2" ,23,"ExtensibleLatticeType3"
 			(* pointsets, 2D only *) ,200,"HexGrid"  ,201,"Hammersley" ,202,"LarcherPillichshammer" ,203,"NRooks" ,204,"BNOT" ,205,"CMJ" ,206,"BNLDS" 
@@ -1866,7 +1872,6 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
 					ptsfname = dir<>pointsetLabel<>"_"<>i2s[npts,8]<>"_"<>i2s[iPointSet,6]<>".dat";
 				,"PMJ02", 
 					ptsfname = "pointsets/"<>ToString[nDims]<>"D/pmj02/pmj02_set"<>i2s[iPointSet-1,5]<>"_"<>i2s[npts,8]<>".dat";
-					Print[ptsfname];
 				,"Sobol", execString = "owen --nDims "<>ToString[nDims]<>" -o "<>ptsfname<>" -n "<>ToString[npts]<>" --permut 0  > /dev/null";
 					res = Run[execPrefix<>execString];
 		     		If[dbg, Print[execString -> res] ];
@@ -1989,7 +1994,7 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
 		     	mse = Last @ (Flatten @ Import[msefname]);
 		     	If[dbg, Print[execString -> res -> mse] ];
 		     	If[!NumberQ[mse], Abort[] ];
-		     	If[ pointsetLabel != "SOT" && pointsetLabel != "Rank1Lattice" && FileExistsQ[ptsfname], DeleteFile[ptsfname] ];
+		     	If[ pointsetLabel != "SOT" && pointsetLabel != "Rank1Lattice"  && pointsetLabel != "PMJ02" && FileExistsQ[ptsfname], DeleteFile[ptsfname] ];
 		     	If[ FileExistsQ[msefname], DeleteFile[msefname] ];
 				If[dbg, Print[{pointsetLabel,integrandTypeLabel}," ",{npts,iPointSet,mse} ] ];
 				Run["rm -rf "<>ptsfname<>" "<>msefname ];
@@ -2009,7 +2014,7 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
  				Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFname];
 				Print[dirMSE<>resFname, " written."];
 		,{iptsPow,powfrom,powto,powstep}];	 (* available from 1K *)
-        (*Run["rm -rf tmp/" ];*)
+        Run["rm -rf tmp/" ];
    ] (* makeMSEref *)
 
 getCloseestN2D[n_] := Round[Sqrt[n]]^2
@@ -2078,4 +2083,82 @@ getStratND[nDims_:3,npts_:512] :=
     		,{ix,nstrats},{iy,nstrats},{iu,nstrats},{iv,nstrats},{is,nstrats},{it,nstrats}]) //N
     	]
     ] (* getStratND *)
+
+
+
+showstdRefMSEandDiscrepancy[] := {showstdRefMSE[], showstdRefDiscrepancy[]}
+
+showstdRefMSE[] :=
+    Module[ {fontSz=20(*,powfrom,powto,powstep,kPlusMinus,data,ffitpow10,fitpow10,ffitpow15,fitpow15,ffitpow20,fitpow20,ffitpow30,fitpow30,delta,plotLabel,legends,alldata,fnameLabel*)},
+		kPlusMinus = .5;
+    	{powfrom,powto,powstep} = {2,16,1};
+
+		(*integrandTypeLabel = "Gauss";
+		nDims = 2;*)
+		Manipulate[
+			fnameLabel = integrandTypeLabel ;
+	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
+			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
+			Switch[nDims
+			,6,
+				data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>fnameLabel<>".dat"]);
+				mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>".dat"]);
+				mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			    alldata = {mseWN,mseOwen01Pure};
+		        legends = {"WN","Owen"};
+			,_,
+				data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>fnameLabel<>".dat"]);
+				mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>fnameLabel<>".dat"]);
+				mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>".dat"]);
+				mseOwenPure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
+				mseSobol = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				data = (Drop[#,1]& @ Import[dirMSE<>"PMJ02_"<>fnameLabel<>".dat"]);
+				msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				
+			    alldata = {mseWN,mseStrat,mseSobol,mseOwenPure,msePMJ02} ;
+		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Sobol", "Owen", "PMJ02"} ] ];
+			];
+	        
+			ListLogLogPlot[ alldata
+						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
+						,PlotStyle -> {
+							{Green,AbsoluteThickness[10]},
+							{Blue,AbsoluteThickness[10]},
+							{Black,AbsoluteThickness[12]},
+							{Cyan,AbsoluteThickness[8]},
+							{Red,AbsoluteThickness[6]},
+							{Darker@Green,AbsoluteDashing[{10, 5}], AbsoluteThickness[6]},
+							{Yellow,AbsoluteThickness[6]},
+							
+							{Blue,Dotted,AbsoluteThickness[2]},
+
+							{Blue,Dotted,AbsoluteThickness[5]},
+							{Black,Dotted,AbsoluteThickness[5]},
+							{Red,Dotted,AbsoluteThickness[5]},
+
+							{Red,AbsoluteThickness[10]}
+						}
+						,Joined->True
+		            	,FrameTicks->{{Automatic,None},{Table[2^pow,{pow,powfrom,powto,2}],Table[2^pow,{pow,powfrom,powto,2}]}}
+			            ,FrameStyle->Directive[Black,20]
+			            ,RotateLabel -> True
+			            ,PlotMarkers->{{\[FilledCircle],5} }
+			            ,Frame->True
+		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
+		           		,ImageSize -> {1024,1024}
+		            	,PlotRange->{{2^powfrom,2^powto},{Max[First /@ (second /@ mseWN)], Min[ First /@ Flatten[ (second /@ #)& /@ ( alldata)] ]}} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,2}],None}
+		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
+		            	,AspectRatio->1
+		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
+		            ]
+			,Control[{{nDims,2},{2,3,4,6}}]
+			,Control[{{integrandTypeLabel,"Gauss"},{"Heaviside", "Gauss" }}]
+         ]
+     ] (* showstdRefMSE *)
 
