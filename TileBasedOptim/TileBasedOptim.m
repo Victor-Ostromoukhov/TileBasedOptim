@@ -1796,9 +1796,16 @@ gitpull
 math
 <<uniformity/uniformity.m
 integrandType = 2;
-nPointsets = 1024;
 nintegrands = 1024;
-nDims = 4;
+nDims = 2;
+
+nPointsets = 32;
+makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+
+nPointsets = 1024;
+makeMSEref[10, nPointsets, {2,16,2}, integrandType, nDims, nintegrands];
+
+nPointsets = 1;
 makeMSEref[10, nPointsets, {2,16,2}, integrandType, nDims, nintegrands];
 
 *)
@@ -1857,6 +1864,9 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
 				,"Rank1Lattice", 
 					dir="_pointsets_SobolPlusPlus/"<>ToString[nDims]<>"D/"<>pointsetLabel<>"/"<>pointsetLabel<>"_"<>i2s[npts,8]<>"/";
 					ptsfname = dir<>pointsetLabel<>"_"<>i2s[npts,8]<>"_"<>i2s[iPointSet,6]<>".dat";
+				,"PMJ02", 
+					ptsfname = "pointsets/"<>ToString[nDims]<>"D/pmj02/pmj02_set"<>i2s[iPointSet-1,5]<>"_"<>i2s[npts,8]<>".dat";
+					Print[ptsfname];
 				,"Sobol", execString = "owen --nDims "<>ToString[nDims]<>" -o "<>ptsfname<>" -n "<>ToString[npts]<>" --permut 0  > /dev/null";
 					res = Run[execPrefix<>execString];
 		     		If[dbg, Print[execString -> res] ];
