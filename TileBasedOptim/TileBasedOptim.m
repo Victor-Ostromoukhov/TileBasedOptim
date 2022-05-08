@@ -1994,7 +1994,7 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
 		     	mse = Last @ (Flatten @ Import[msefname]);
 		     	If[dbg, Print[execString -> res -> mse] ];
 		     	If[!NumberQ[mse], Abort[] ];
-		     	If[ pointsetLabel != "SOT" && pointsetLabel != "Rank1Lattice"  && pointsetLabel != "PMJ02" && FileExistsQ[ptsfname], DeleteFile[ptsfname] ];
+		     	(*If[ pointsetLabel != "SOT" && pointsetLabel != "Rank1Lattice"  && pointsetLabel != "PMJ02" && FileExistsQ[ptsfname], DeleteFile[ptsfname] ];*)
 		     	If[ FileExistsQ[msefname], DeleteFile[msefname] ];
 				Run["rm -rf "<>ptsfname<>" "<>msefname ];
 				If[dbg, Print[{pointsetLabel,integrandTypeLabel}," ",{npts,iPointSet,mse} ] ];
@@ -2093,9 +2093,9 @@ showstdRefMSE[] :=
 		kPlusMinus = .5;
     	{powfrom,powto,powstep} = {2,16,1};
 
-		(*integrandTypeLabel = "Gauss";
-		nDims = 2;*)
-		Manipulate[
+		integrandTypeLabel = "Gauss";
+		nDims = 2;
+		(*Manipulate[*)
 			fnameLabel = integrandTypeLabel ;
 	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
 			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
@@ -2150,15 +2150,15 @@ showstdRefMSE[] :=
 			            ,Frame->True
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
 		           		,ImageSize -> {1024,1024}
-		            	,PlotRange->{{2^powfrom,2^powto},{Max[First /@ (second /@ mseWN)], Min[ First /@ Flatten[ (second /@ #)& /@ ( alldata)] ]}} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,PlotRange->{{2^powfrom,2^powto},{Min[ (second /@ mseSobol)], Max[First /@ (second /@ mseWN)] (*Min[ First /@ Flatten[ (second /@ #)& /@ ( alldata)] ]*) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,2}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]
-			,Control[{{nDims,2},{2,3,4,6}}]
+			(*,Control[{{nDims,2},{2,3,4,6}}]
 			,Control[{{integrandTypeLabel,"Gauss"},{"Heaviside", "Gauss" }}]
-         ]
+         ]*)
      ] (* showstdRefMSE *)
 
