@@ -1795,17 +1795,17 @@ subdivBase3SFC3DTiles[tlst_] :=
 gitpull
 math
 <<uniformity/uniformity.m
-integrandType = 1;
-nintegrands = 1024;
+integrandType = 2;
+nintegrands = 512;
 nDims = 2;
 
-nPointsets = 16;
+nPointsets = 2;
 makeMSEref[1, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
 nPointsets = 64;
 makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
-nPointsets = 1024;
+nPointsets = 64;
 makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
 nPointsets = 64;
@@ -1996,8 +1996,8 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
 		     	If[!NumberQ[mse], Abort[] ];
 		     	If[ pointsetLabel != "SOT" && pointsetLabel != "Rank1Lattice"  && pointsetLabel != "PMJ02" && FileExistsQ[ptsfname], DeleteFile[ptsfname] ];
 		     	If[ FileExistsQ[msefname], DeleteFile[msefname] ];
-				If[dbg, Print[{pointsetLabel,integrandTypeLabel}," ",{npts,iPointSet,mse} ] ];
 				Run["rm -rf "<>ptsfname<>" "<>msefname ];
+				If[dbg, Print[{pointsetLabel,integrandTypeLabel}," ",{npts,iPointSet,mse} ] ];
      			mse
      		,{iPointSet,nPointsets}]);
 
