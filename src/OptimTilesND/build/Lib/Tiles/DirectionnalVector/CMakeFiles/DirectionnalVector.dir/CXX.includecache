@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/DirectionnalVector/DirectionnalVector.cpp
+DirectionnalVector.hpp
+/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/DirectionnalVector/DirectionnalVector.hpp
+
+/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/DirectionnalVector/DirectionnalVector.hpp
+iostream
+-
+
