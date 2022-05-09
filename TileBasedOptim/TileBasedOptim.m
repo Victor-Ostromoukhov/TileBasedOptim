@@ -1796,7 +1796,7 @@ gitpull
 math
 <<uniformity/uniformity.m
 integrandType = 2;
-nintegrands = 13312;
+nintegrands = 4096;
 nDims = 2;
 
 nPointsets = 2;
@@ -2088,8 +2088,9 @@ getStratND[nDims_:3,npts_:512] :=
 
 showstdRefMSEandDiscrepancy[] := {showstdRefMSE[], showstdRefDiscrepancy[]}
 
-showstdRefMSE[] :=
+showstdRefMSE[inlbl_:"Gauss2D_strat_nIntegrands4096_kmag50_setno0"] :=
     Module[ {fontSz=20(*,powfrom,powto,powstep,kPlusMinus,data,ffitpow10,fitpow10,ffitpow15,fitpow15,ffitpow20,fitpow20,ffitpow30,fitpow30,delta,plotLabel,legends,alldata,fnameLabel*)},
+		lbl = inlbl;
 		kPlusMinus = .5;
     	{powfrom,powto,powstep} = {2,16,1};
 
@@ -2098,6 +2099,7 @@ showstdRefMSE[] :=
 		(*Manipulate[*)
 			fnameLabel = integrandTypeLabel ;
 	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
+	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = ";
 			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
 			Switch[nDims
 			,6,
@@ -2123,7 +2125,7 @@ showstdRefMSE[] :=
 		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "PMJ02"} ] ];
 			];
 	        
-			ListLogLogPlot[ alldata
+			p = ListLogLogPlot[ alldata
 						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
 						,PlotStyle -> {
 							{Green,AbsoluteThickness[10]},
@@ -2155,10 +2157,12 @@ showstdRefMSE[] :=
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
-		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
-		            ]
+		            	,PlotLabel -> Style[ plotLabel<>lbl, Bold, 24] 
+		            ];
 			(*,Control[{{nDims,2},{2,3,4,6}}]
 			,Control[{{integrandTypeLabel,"Gauss"},{"Heaviside", "Gauss" }}]
          ]*)
+         p//Print;
+         Export["p_"<>lbl<>".png",p]
      ] (* showstdRefMSE *)
 
