@@ -1796,7 +1796,7 @@ gitpull
 math
 <<uniformity/uniformity.m
 integrandType = 2;
-nintegrands = 512;
+nintegrands = 13312;
 nDims = 2;
 
 nPointsets = 2;
@@ -1996,7 +1996,7 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
 		     	If[!NumberQ[mse], Abort[] ];
 		     	(*If[ pointsetLabel != "SOT" && pointsetLabel != "Rank1Lattice"  && pointsetLabel != "PMJ02" && FileExistsQ[ptsfname], DeleteFile[ptsfname] ];*)
 		     	If[ FileExistsQ[msefname], DeleteFile[msefname] ];
-				Run["rm -rf "<>ptsfname<>" "<>msefname ];
+				(*Run["rm -rf "<>ptsfname<>" "<>msefname ];*)
 				If[dbg, Print[{pointsetLabel,integrandTypeLabel}," ",{npts,iPointSet,mse} ] ];
      			mse
      		,{iPointSet,nPointsets}]);
@@ -2119,8 +2119,8 @@ showstdRefMSE[] :=
 				data = (Drop[#,1]& @ Import[dirMSE<>"PMJ02_"<>fnameLabel<>".dat"]);
 				msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 				
-			    alldata = {mseWN,mseStrat,mseSobol,mseOwenPure,msePMJ02} ;
-		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Sobol", "Owen", "PMJ02"} ] ];
+			    alldata = {mseWN,mseStrat,mseOwenPure,msePMJ02} ;
+		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "PMJ02"} ] ];
 			];
 	        
 			ListLogLogPlot[ alldata
@@ -2150,7 +2150,7 @@ showstdRefMSE[] :=
 			            ,Frame->True
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
 		           		,ImageSize -> {1024,1024}
-		            	,PlotRange->{{2^powfrom,2^powto},{Min[ (second /@ mseSobol)], Max[First /@ (second /@ mseWN)] (*Min[ First /@ Flatten[ (second /@ #)& /@ ( alldata)] ]*) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,PlotRange->{{2^powfrom,2^powto},{Min[First /@ Flatten[(second /@ mseOwenPure)]], Max[First /@ (second /@ mseOwenPure)] (*Min[ First /@ Flatten[ (second /@ #)& /@ ( alldata)] ]*) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,2}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
