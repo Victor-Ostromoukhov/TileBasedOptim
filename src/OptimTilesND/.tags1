@@ -1,0 +1,29 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Tiles	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^class Tiles$/;"	class	line:9
+beforeSamplingPoint	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^    std::string beforeSamplingPoint;$/;"	member	line:12	class:Tiles
+samplingPoint	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^    Points<dimension> samplingPoint;$/;"	member	line:13	class:Tiles
+previousRefPoint	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^    Points<dimension> previousRefPoint;$/;"	member	line:14	class:Tiles
+previousDirectionnalVectors	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^    std::array<DirectionnalVector,dimension> previousDirectionnalVectors;$/;"	member	line:15	class:Tiles
+afterPreviousDirectionnalVectors	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^    std::string afterPreviousDirectionnalVectors;$/;"	member	line:16	class:Tiles
+operator <<	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^    friend std::ostream& operator<<(std::ostream& os, Tiles t) {$/;"	function	line:41	class:Tiles	signature:(std::ostream& os, Tiles t)
+vectorPointSumRand	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline void Tiles<dimension>::vectorPointSumRand(Points<dimension>* point,Points<dimension> refPoint,double valToMultiplyBy,int indice,DirectionnalVector dV){$/;"	function	line:53	class:Tiles	signature:(Points<dimension>* point,Points<dimension> refPoint,double valToMultiplyBy,int indice,DirectionnalVector dV)
+Tiles	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline Tiles<dimension>::Tiles(void){}$/;"	function	line:88	class:Tiles	signature:(void)
+~Tiles	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline Tiles<dimension>::~Tiles(){$/;"	function	line:91	class:Tiles	signature:()
+setSamplingPoint	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline void Tiles<dimension>::setSamplingPoint(Points<dimension> newSP){$/;"	function	line:96	class:Tiles	signature:(Points<dimension> newSP)
+getSamplingPoint	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline Points<dimension>* Tiles<dimension>::getSamplingPoint(){$/;"	function	line:101	class:Tiles	signature:()
+getDim	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline int Tiles<dimension>::getDim(){$/;"	function	line:106	class:Tiles	signature:()
+getPreviousRefPoint	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline Points<dimension>* Tiles<dimension>::getPreviousRefPoint(){$/;"	function	line:111	class:Tiles	signature:()
+getPreviousDirectionnalVector	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline DirectionnalVector Tiles<dimension>::getPreviousDirectionnalVector(int Dim) const{$/;"	function	line:116	class:Tiles	signature:(int Dim) const
+setPreviousDirectionnalVector	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline void Tiles<dimension>::setPreviousDirectionnalVector(int index,DirectionnalVector dV){$/;"	function	line:121	class:Tiles	signature:(int index,DirectionnalVector dV)
+printDebug	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline void Tiles<dimension>::printDebug(){$/;"	function	line:126	class:Tiles	signature:()
+getBeforeSP	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline std::string Tiles<dimension>::getBeforeSP(){$/;"	function	line:135	class:Tiles	signature:()
+setBeforeSP	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline void Tiles<dimension>::setBeforeSP(std::string bef){$/;"	function	line:140	class:Tiles	signature:(std::string bef)
+getAfterDV	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline std::string Tiles<dimension>::getAfterDV(){$/;"	function	line:145	class:Tiles	signature:()
+setAfterDV	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^inline void Tiles<dimension>::setAfterDV(std::string aFDV){$/;"	function	line:150	class:Tiles	signature:(std::string aFDV)
+parseLine	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^Tiles<dimension> parseLine(std::string  lineToParse){$/;"	function	line:155	signature:(std::string lineToParse)
+importTiles	/home/tanguy/Documents/Stage/Projets/OptimTilesND/Lib/Tiles/Tiles.hpp	/^std::vector<Tiles<dimension>>* importTiles(std::string fileToRead){$/;"	function	line:203	signature:(std::string fileToRead)
