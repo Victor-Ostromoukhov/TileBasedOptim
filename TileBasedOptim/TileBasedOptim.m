@@ -2088,7 +2088,7 @@ getStratND[nDims_:3,npts_:512] :=
 
 showstdRefMSEandDiscrepancy[] := {showstdRefMSE[], showstdRefDiscrepancy[]}
 
-showstdRefMSE[inlbl_:"Gauss2D_strat_nIntegrands4096_kmag50_setno0"] :=
+showstdRefMSE[inlbl_:"Gauss2D_pbnot_nIntegrands4096_kmag100_setno0"] :=
     Module[ {fontSz=20(*,powfrom,powto,powstep,kPlusMinus,data,ffitpow10,fitpow10,ffitpow15,fitpow15,ffitpow20,fitpow20,ffitpow30,fitpow30,delta,plotLabel,legends,alldata,fnameLabel*)},
 		lbl = inlbl;
 		kPlusMinus = .5;
