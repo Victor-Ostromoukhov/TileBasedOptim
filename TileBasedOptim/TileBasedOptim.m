@@ -1796,7 +1796,7 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 integrandType = 2;
-nintegrands = 16 1024;
+nintegrands = 4 1024;
 nDims = 2;
 
 nPointsets = 2;
@@ -2166,3 +2166,6 @@ showstdRefMSE[inlbl_:"Gauss2D_pbnot_nIntegrands4096_kmag100_setno0"] :=
          Export["p_"<>lbl<>".png",p]
      ] (* showstdRefMSE *)
 
+(*
+rotmx = RandomVariate[CircularRealMatrixDistribution[2], 1]
+*)
