@@ -1794,9 +1794,9 @@ subdivBase3SFC3DTiles[tlst_] :=
 
 gitpull
 math
-<<uniformity/uniformity.m
+<<TileBasedOptim/TileBasedOptim.m
 integrandType = 2;
-nintegrands = 4096;
+nintegrands = 16 1024;
 nDims = 2;
 
 nPointsets = 2;
