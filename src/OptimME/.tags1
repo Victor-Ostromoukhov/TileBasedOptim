@@ -1,0 +1,16 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+STATTOOLSSAMPLING_MULTIVARIATEGAUSSIAN_H	/home/tanguy/Documents/Stage/Projets/OptimME/Lib/MultivariateGaussian/multivariateGaussian.h	/^#define STATTOOLSSAMPLING_MULTIVARIATEGAUSSIAN_H$/;"	macro	line:6
+Gaussian	/home/tanguy/Documents/Stage/Projets/OptimME/Lib/MultivariateGaussian/multivariateGaussian.h	/^class Gaussian {$/;"	class	line:12
+mu	/home/tanguy/Documents/Stage/Projets/OptimME/Lib/MultivariateGaussian/multivariateGaussian.h	/^    VecXDynamic mu;$/;"	member	line:13	class:Gaussian
+invSigma	/home/tanguy/Documents/Stage/Projets/OptimME/Lib/MultivariateGaussian/multivariateGaussian.h	/^    MatXDynamic invSigma;$/;"	member	line:14	class:Gaussian
+normFactor	/home/tanguy/Documents/Stage/Projets/OptimME/Lib/MultivariateGaussian/multivariateGaussian.h	/^    double normFactor;$/;"	member	line:15	class:Gaussian
+dim	/home/tanguy/Documents/Stage/Projets/OptimME/Lib/MultivariateGaussian/multivariateGaussian.h	/^    int dim;$/;"	member	line:16	class:Gaussian
+eval	/home/tanguy/Documents/Stage/Projets/OptimME/Lib/MultivariateGaussian/multivariateGaussian.h	/^    inline double eval(const VECTYPE& p) const{$/;"	function	line:22	class:Gaussian	signature:(const VECTYPE& p) const
+multivariateGaussianIntegration	/home/tanguy/Documents/Stage/Projets/OptimME/Lib/MultivariateGaussian/multivariateGaussian.h	/^inline double multivariateGaussianIntegration(const std::vector<VECTYPE>& points, const VecXDynamic& m, const MatXDynamic& sigma){$/;"	function	line:45	signature:(const std::vector<VECTYPE>& points, const VecXDynamic& m, const MatXDynamic& sigma)
+multivariateGaussianPointValue	/home/tanguy/Documents/Stage/Projets/OptimME/Lib/MultivariateGaussian/multivariateGaussian.h	/^inline double multivariateGaussianPointValue(const VECTYPE& pointParam,const VecXDynamic& m, const MatXDynamic& sigma){$/;"	function	line:57	signature:(const VECTYPE& pointParam,const VecXDynamic& m, const MatXDynamic& sigma)
+multivariateGaussianIntegrationPointModif	/home/tanguy/Documents/Stage/Projets/OptimME/Lib/MultivariateGaussian/multivariateGaussian.h	/^inline double multivariateGaussianIntegrationPointModif(const VECTYPE& oldPoint,const VECTYPE& newPoint,const VecXDynamic& m, const MatXDynamic& sigma,double oldValue,int nbpts){$/;"	function	line:67	signature:(const VECTYPE& oldPoint,const VECTYPE& newPoint,const VecXDynamic& m, const MatXDynamic& sigma,double oldValue,int nbpts)

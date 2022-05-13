@@ -1,0 +1,1 @@
+add_library(integrationTests integrationTests.cpp)
