@@ -28,7 +28,8 @@ public:
         // std::cout << "point   "  << p[0] <<  "   "<< p[1] << '\n';
         // std::cout << "invSigma 1 > " << invSigma.access(0,0) << " 2 > " << invSigma.access(0,1) << " 3 > " << invSigma.access(1,0) << " 4 > " << invSigma.access(1,1) << '\n';
         // std::cout << "/* message */" <<  exp(-0.5 * result) << '\n';
-        return ((normFactor * exp(-0.5 * result)) <= 0.6065306597126334236038 ? 0 : 1);
+//        return ((normFactor * exp(-0.5 * result)) <= 0.6065306597126334236038 ? 0 : 1);
+        return ((normFactor * exp(-0.5 * result)) );
     }
 
     VecXDynamic gradient(const VecXDynamic& x) const;
@@ -62,7 +63,7 @@ template <typename VECTYPE>
 inline double multivariateGaussianIntegrationPointModif(const VECTYPE& oldPoint,const VECTYPE& newPoint,const VecXDynamic& m, const MatXDynamic& sigma,double oldValue,int nbpts){
 
   Gaussian g(m, sigma, false);
-
+  std::cout << " sigma " << sigma.access(0,0) << " " << sigma.access(0,1)  << " " << sigma.access(1,0)  << " " << sigma.access(1,1) << " MU " << m[0] << " " << m[1] << std::endl;
   std::function<double(const VECTYPE&)> f = [&g](const VECTYPE& point){ return g.eval(point); };
   return integrationPointVariation(oldPoint,newPoint,f,oldValue,nbpts);
 }

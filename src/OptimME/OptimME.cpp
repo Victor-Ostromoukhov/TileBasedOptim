@@ -162,7 +162,8 @@ template<int dimension>
 double recalculateGaussianValueAllGauss(VecX<dimension> oldPoint,VecX<dimension> newPoint, std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,double tabPtsValGauss[],int nbGauss,int nbpts,std::vector<double>* anal){
   double val = 0.;
   for (int i = 0; i < nbGauss; i++) {
-    val+= pow((recalculateGaussianValue(tabPtsValGauss[i],oldPoint,newPoint,(*sigma)[i],(*shift)[i],nbpts) - (*anal)[i]),2);
+	  double tmp = (recalculateGaussianValue(tabPtsValGauss[i],oldPoint,newPoint,(*sigma)[i],(*shift)[i],nbpts) - (*anal)[i]);
+	  val+= tmp*tmp;
     }
   val /= nbGauss;
   return val;
@@ -239,7 +240,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
     double tabPtsValGauss[gaussianSubSetSize+1];
     double initialSE = mseOfAPointsetOnAllGaussian(&points,&sigma,&shift,&anal,gaussianSubSetSize,tabPtsValGauss);
     // std::cout << initialSE << '\n';
-    newPointHolder<dimension> discTab[nbThrow];
+    newPointHolder<dimension> mseTab[nbThrow];
 
     // =========== Initialisation matrice pour parcours aléatoire des points et des sous-sets d gaussiennes  =========== //
 
@@ -259,17 +260,17 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
           #pragma omp parallel for
           for (int i_pt_in_tile = 0; i_pt_in_tile < nbThrow; i_pt_in_tile++) {
             generator.seed((i_pt_in_tile*1234+5678)+std::chrono::system_clock::now().time_since_epoch().count());
-            discTab[i_pt_in_tile].index = rAM.at(i_pts);
+            mseTab[i_pt_in_tile].index = rAM.at(i_pts);
             for (int currentDim = 1; currentDim <= dimension; currentDim++) {
-                  discTab[i_pt_in_tile].point.coefs[currentDim-1] = points[rAM.at(i_pts)][currentDim-1];
+                  mseTab[i_pt_in_tile].point.coefs[currentDim-1] = points[rAM.at(i_pts)][currentDim-1];
             }
             for (int currentDim = 1; currentDim <= dimension; currentDim++) {
                   double rand = distribution(generator);
-                  v->at(rAM.at(i_pts)).vectorPointSumRand(&(discTab[i_pt_in_tile].point),*(v->at(rAM.at(i_pts)).getPreviousRefPoint()),rand,iter_over_pointset,(v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(currentDim)));
+                  v->at(rAM.at(i_pts)).vectorPointSumRand(&(mseTab[i_pt_in_tile].point),*(v->at(rAM.at(i_pts)).getPreviousRefPoint()),rand,iter_over_pointset,(v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(currentDim)));
             }
-            discTab[i_pt_in_tile].apportOfNewPoint = recalculateGaussianValueAllGauss(points[rAM.at(i_pts)],discTab[i_pt_in_tile].point, &sigma,&shift,tabPtsValGauss,gaussianSubSetSize,nbpts,&anal);
+            mseTab[i_pt_in_tile].apportOfNewPoint = recalculateGaussianValueAllGauss(points[rAM.at(i_pts)],mseTab[i_pt_in_tile].point, &sigma,&shift,tabPtsValGauss,gaussianSubSetSize,nbpts,&anal);
           }
-          newPointHolder<dimension> theChosenOne = *std::min_element(discTab+0,discTab+nbThrow,compareTwoNewPointHolder<dimension>);
+          newPointHolder<dimension> theChosenOne = *std::min_element(mseTab+0,mseTab+nbThrow,compareTwoNewPointHolder<dimension>);
           std::cout << "Voila ce que j'avais " <<  tabPtsValGauss[gaussianSubSetSize] << "Et voilà ce qu'on me propose" << theChosenOne.apportOfNewPoint << '\n';
           if (theChosenOne.apportOfNewPoint < tabPtsValGauss[gaussianSubSetSize]) {
             std::cout <<" Iteration " << iter_over_pointset << " : " << "Initial SE : " << initialSE << ",  current SE : "<< tabPtsValGauss[gaussianSubSetSize] << " becoming " << theChosenOne.apportOfNewPoint << std::endl;

@@ -53,6 +53,7 @@ double integration(const std::vector<VECTYPE>& points, std::function<double(cons
 
 template <typename VECTYPE>
 double integrationPointVariation(const VECTYPE& oldPoint,const VECTYPE& newPoint, std::function<double(const VECTYPE&)> f,double oldValue,int nbpts){
+	std::cout << newPoint[0] << " " << newPoint[1] <<  " -> " << f(newPoint) << std::endl;
   return oldValue - f(oldPoint)/nbpts + f(newPoint)/nbpts;
 }
 
