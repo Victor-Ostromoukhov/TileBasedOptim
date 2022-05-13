@@ -11,6 +11,9 @@
 #include "Lib/MultivariateGaussian/multivariateGaussian.h"
 #include "Lib/MultivariateGaussian/Integration.h"
 #include "Data/Intégrandes/Ellipses/HardEllipses/Ellipses2D_nIntegrands16384_optimSet.cpp"
+#include "Data/Intégrandes/Ellipses/SoftEllipses/SoftEllipses2D_nIntegrands16384_optimSet.cpp"
+#include "Data/Intégrandes/Rectangles/HardRectangles/Rectangles2D_nIntegrands16384_optimSet.cpp"
+#include "Data/Intégrandes/Rectangles/SoftRectangles/SoftRectangles2D_nIntegrands16384_optimSet.cpp"
 #include "CLI11.hpp"
 
 /* ----------- Déclaration des constantes ----------- */
@@ -131,58 +134,100 @@ void exportTiles(std::vector<Tiles<dimension>>* v,std::string outputString){
 /* ----------- Fonctions Calcul MSE ----------- */
 
 template<int dimension>
-void initializeGaussianVectors(std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,std::vector<double>* anal,int offset,t_GaussianStruct2D gaussTab[],int gaussianSubSetSize){
-  for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; ++z) {
+void initializeGaussianVectors(std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,std::vector<double>* anal,int offset,int integrandType,int gaussianSubSetSize){
+  switch (integrandType) {
+    case 1:
+      for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; ++z) {
 
-    for (int i = 0; i < dimension; ++i) {
-        (*shift)[z][i] = gaussTab[z].mu[i];  // Déplacement
-    }
-    for (int j = 0; j < dimension; ++j) {
         for (int i = 0; i < dimension; ++i) {
-            (*sigma)[z](i, j) = gaussTab[z].mxCInv[i + j * dimension]; // Matrice SR
+            (*shift)[z][i] = tab_Ellipses2D[z].mu[i];  // Déplacement
         }
-    }
-    (*anal)[z] = gaussTab[z].integral; // Valeur analytique
+        for (int j = 0; j < dimension; ++j) {
+            for (int i = 0; i < dimension; ++i) {
+                (*sigma)[z](i, j) = tab_Ellipses2D[z].mxCInv[i + j * dimension]; // Matrice SR
+            }
+        }
+        (*anal)[z] = tab_Ellipses2D[z].integral; // Valeur analytique
+      }
+    break;
+    case 2:
+        for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; ++z) {
+
+          for (int i = 0; i < dimension; ++i) {
+              (*shift)[z][i] = tab_SoftEllipses2D[z].mu[i];  // Déplacement
+          }
+          for (int j = 0; j < dimension; ++j) {
+              for (int i = 0; i < dimension; ++i) {
+                  (*sigma)[z](i, j) = tab_SoftEllipses2D[z].mxCInv[i + j * dimension]; // Matrice SR
+              }
+          }
+          (*anal)[z] = tab_SoftEllipses2D[z].integral; // Valeur analytique
+        }
+    break;
+    case 3:
+        for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; ++z) {
+          for (int i = 0; i < dimension; ++i) {
+              (*shift)[z][i] = tab_Rectangles2D[z].mu[i];  // Déplacement
+          }
+          for (int j = 0; j < dimension; ++j) {
+              (*sigma)[z](0, j) = tab_Rectangles2D[z].sigma[j]; // Matrice SR
+          }
+          (*anal)[z] = tab_Rectangles2D[z].integral; // Valeur analytique
+        }
+    break;
+    case 4:
+        for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; ++z) {
+          for (int i = 0; i < dimension; ++i) {
+              (*shift)[z][i] = tab_SoftRectangles2D[z].mu[i];  // Déplacement
+          }
+          for (int j = 0; j < dimension; ++j) {
+              (*sigma)[z](0, j) = tab_SoftRectangles2D[z].sigma[j]; // Matrice SR
+          }
+          (*anal)[z] = tab_SoftRectangles2D[z].integral; // Valeur analytique
+        }
+    break;
+    default:
+      std::cerr << "The chosen integrand type hasn't been implemented yet, so stay tune." << '\n';
+    break;
   }
+
 } // Fulfill the gaussian array with the parameters
 
 template<int dimension>
-double recalculateGaussianValue(double oldVal, VecX<dimension> oldPoint,VecX<dimension> newPoint, MatXDynamic sigma,VecXDynamic shift,int nbpts){
-  return multivariateGaussianIntegrationPointModif(oldPoint,newPoint,shift,sigma,oldVal,nbpts);
+double recalculateGaussianValue(double oldVal, VecX<dimension> oldPoint,VecX<dimension> newPoint, MatXDynamic sigma,VecXDynamic shift,int nbpts,int integrandType){
+  return multivariateGaussianIntegrationPointModif(oldPoint,newPoint,shift,sigma,oldVal,nbpts,integrandType);
 } // Recalculate the value of the integration with a point shift
 
 template<int dimension>
-void changeAllValueGaussTab(VecX<dimension> oldPoint,VecX<dimension> newPoint, std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,double tabPtsValGauss[],int nbGauss,int nbpts){
+void changeAllValueGaussTab(VecX<dimension> oldPoint,VecX<dimension> newPoint, std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,double tabPtsValGauss[],int nbGauss,int nbpts,int integrandType){
   for (int i = 0; i < nbGauss; i++) {
-    tabPtsValGauss[i] = recalculateGaussianValue(tabPtsValGauss[i],oldPoint,newPoint,(*sigma)[i],(*shift)[i],nbpts);
+    tabPtsValGauss[i] = recalculateGaussianValue(tabPtsValGauss[i],oldPoint,newPoint,(*sigma)[i],(*shift)[i],nbpts,integrandType);
     }
 } // Recalculate the value of the integration with a point shift for all gaussian
 
 template<int dimension>
-double recalculateGaussianValueAllGauss(VecX<dimension> oldPoint,VecX<dimension> newPoint, std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,double tabPtsValGauss[],int nbGauss,int nbpts,std::vector<double>* anal){
+double recalculateGaussianValueAllGauss(VecX<dimension> oldPoint,VecX<dimension> newPoint, std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,double tabPtsValGauss[],int nbGauss,int nbpts,std::vector<double>* anal,int integrandType){
   double val = 0.;
   for (int i = 0; i < nbGauss; i++) {
-	  double tmp = (recalculateGaussianValue(tabPtsValGauss[i],oldPoint,newPoint,(*sigma)[i],(*shift)[i],nbpts) - (*anal)[i]);
-
-	  val+= tmp*tmp;
+    val+= pow((recalculateGaussianValue(tabPtsValGauss[i],oldPoint,newPoint,(*sigma)[i],(*shift)[i],nbpts,integrandType) - (*anal)[i]),2);
     }
   val /= nbGauss;
   return val;
 }
 
 template<int dimension>
-double seOfAPointsetOnOneGaussian(std::vector<VecX<dimension>>* points,MatXDynamic sigma,VecXDynamic shift,double anal,int nbGauss,double tabPtsValGauss[],int indice){
+double seOfAPointsetOnOneGaussian(std::vector<VecX<dimension>>* points,MatXDynamic sigma,VecXDynamic shift,double anal,int nbGauss,double tabPtsValGauss[],int indice,int integrandType){
     double val = 0.;
-    tabPtsValGauss[indice] = multivariateGaussianIntegration((*points), shift, sigma);
+    tabPtsValGauss[indice] = multivariateGaussianIntegration((*points), shift, sigma,integrandType);
     val = pow(( anal  -tabPtsValGauss[indice]),2);
     return val;
 }
 
 template<int dimension>
-double mseOfAPointsetOnAllGaussian(std::vector<VecX<dimension>>* points,std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,std::vector<double>* anal,int nbGauss,double tabPtsValGauss[]){
+double mseOfAPointsetOnAllGaussian(std::vector<VecX<dimension>>* points,std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,std::vector<double>* anal,int nbGauss,double tabPtsValGauss[],int integrandType){
   double val = 0.;
   for (int z = 0; z < nbGauss; ++z) {
-    val += seOfAPointsetOnOneGaussian(points,(*sigma)[z],(*shift)[z],(*anal)[z],nbGauss,tabPtsValGauss,z);
+    val += seOfAPointsetOnOneGaussian(points,(*sigma)[z],(*shift)[z],(*anal)[z],nbGauss,tabPtsValGauss,z,integrandType);
   }
   val /=  nbGauss;
   tabPtsValGauss[nbGauss] = val;
@@ -205,7 +250,7 @@ std::vector<int> randomAccessMatriceGenerator(int nbpts){
 
 /* ----------- Fonction Principale ----------- */
 template<int dimension>
-double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString,int niters,int nbThrow,std::string outputString,int gaussianSubSetSize){
+double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString,int niters,int nbThrow,std::string outputString,int gaussianSubSetSize,int integrandType){
 
   std::default_random_engine generator;
   std::uniform_real_distribution<double> distribution(0.0,1.0);
@@ -220,7 +265,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
 
   // =========== Remplissage des variables précédentes  =========== //
 
-  initializeGaussianVectors<dimension>(&sigma,&shift,&anal,0,tab_Ellipses2D,gaussianSubSetSize);
+  initializeGaussianVectors<dimension>(&sigma,&shift,&anal,0,integrandType,gaussianSubSetSize);
 
   // =========== Fin Remplissage des variables précédentes  =========== //
 
@@ -239,7 +284,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
 
     // =========== Calcul de l'erreur d'intégration sur les 1024 gaussiennes pour un pointset  =========== //
     double tabPtsValGauss[gaussianSubSetSize+1];
-    double initialSE = mseOfAPointsetOnAllGaussian(&points,&sigma,&shift,&anal,gaussianSubSetSize,tabPtsValGauss);
+    double initialSE = mseOfAPointsetOnAllGaussian(&points,&sigma,&shift,&anal,gaussianSubSetSize,tabPtsValGauss,integrandType);
     // std::cout << initialSE << '\n';
     newPointHolder<dimension> mseTab[nbThrow];
 
@@ -256,7 +301,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
       if (iter_over_pointset % (( NBGAUSS / gaussianSubSetSize ) - 1) == 0) {
         rAMGaussiennes = randomAccessMatriceGenerator(( NBGAUSS / gaussianSubSetSize ) - 1);
       }
-      initializeGaussianVectors<dimension>(&sigma,&shift,&anal,(iter_over_pointset % (( NBGAUSS / gaussianSubSetSize ) - 1)),tab_Ellipses2D,gaussianSubSetSize);
+      initializeGaussianVectors<dimension>(&sigma,&shift,&anal,(iter_over_pointset % (( NBGAUSS / gaussianSubSetSize ) - 1)),integrandType,gaussianSubSetSize);
       for (int i_pts = 0; i_pts < nbpts; i_pts++) {
           #pragma omp parallel for
           for (int i_pt_in_tile = 0; i_pt_in_tile < nbThrow; i_pt_in_tile++) {
@@ -269,14 +314,14 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
                   double rand = distribution(generator);
                   v->at(rAM.at(i_pts)).vectorPointSumRand(&(mseTab[i_pt_in_tile].point),*(v->at(rAM.at(i_pts)).getPreviousRefPoint()),rand,iter_over_pointset,(v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(currentDim)));
             }
-            mseTab[i_pt_in_tile].apportOfNewPoint = recalculateGaussianValueAllGauss(points[rAM.at(i_pts)],mseTab[i_pt_in_tile].point, &sigma,&shift,tabPtsValGauss,gaussianSubSetSize,nbpts,&anal);
+            mseTab[i_pt_in_tile].apportOfNewPoint = recalculateGaussianValueAllGauss(points[rAM.at(i_pts)],mseTab[i_pt_in_tile].point, &sigma,&shift,tabPtsValGauss,gaussianSubSetSize,nbpts,&anal,integrandType);
           }
           newPointHolder<dimension> theChosenOne = *std::min_element(mseTab+0,mseTab+nbThrow,compareTwoNewPointHolder<dimension>);
-          std::cout << "Voila ce que j'avais " <<  tabPtsValGauss[gaussianSubSetSize] << "Et voilà ce qu'on me propose" << theChosenOne.apportOfNewPoint << '\n';
+          // std::cout << "Voila ce que j'avais " <<  tabPtsValGauss[gaussianSubSetSize] << "Et voilà ce qu'on me propose" << theChosenOne.apportOfNewPoint << '\n';
           if (theChosenOne.apportOfNewPoint < tabPtsValGauss[gaussianSubSetSize]) {
             std::cout <<" Iteration " << iter_over_pointset << " : " << "Initial SE : " << initialSE << ",  current SE : "<< tabPtsValGauss[gaussianSubSetSize] << " becoming " << theChosenOne.apportOfNewPoint << std::endl;
             tabPtsValGauss[gaussianSubSetSize] = theChosenOne.apportOfNewPoint;
-            changeAllValueGaussTab(points[theChosenOne.index],theChosenOne.point, &sigma,&shift, tabPtsValGauss,gaussianSubSetSize,nbpts);
+            changeAllValueGaussTab(points[theChosenOne.index],theChosenOne.point, &sigma,&shift, tabPtsValGauss,gaussianSubSetSize,nbpts,integrandType);
             points[theChosenOne.index][0] = theChosenOne.point[0];
             points[theChosenOne.index][1] = theChosenOne.point[1];
             injectSP(v,&points);
@@ -284,9 +329,10 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
       }
     }
 
-    exportTiles(v,outputString);
-    // exportPoints(&points,outputString);
+    // exportTiles(v,outputString);
+    exportPoints(&points,outputString);
     return tabPtsValGauss[gaussianSubSetSize];
+  // return 0.0;
 }
 
 int main(int argc, char const *argv[]) {
@@ -299,6 +345,7 @@ int main(int argc, char const *argv[]) {
   size_t niters = 1024*1024;
   int gaussianSubSetSize = 1024;
   int nbThrow = 64;
+  int integrandType = 1;
   std::string outputStringMSE ="MSE.dat";
   /* ----------- Fin Initialisation des variables ----------- */
 
@@ -306,13 +353,14 @@ int main(int argc, char const *argv[]) {
 
       CLI::App app { "OptimME" };
 
-      app.add_option("--nbPoints",nbpts,"Number of Points, default: "+nbpts)->required();
+      app.add_option("--nbPoints",nbpts,"Number of Points, default: "+std::to_string(nbpts))->required();
       app.add_option("-t,--nbThreads",nbThreads,"Number of threads used , default: "+std::to_string(nbThreads))->check(CLI::Range(1,omp_get_max_threads()));
       app.add_option("-n,--iterationNumber",niters,"Number of iterations over the pointset, default: "+std::to_string(niters))->check(CLI::PositiveNumber);
       app.add_option("-i,--input",inputString,"Path to input file, default: "+inputString)->check(CLI::ExistingFile)->required();
       app.add_option("-o,--output",outputString,"Path to output file, default: "+outputString);
       app.add_option("-g",gaussianSubSetSize,"Number of gaussian to iterate over in one iteration, default: "+std::to_string(gaussianSubSetSize));
       app.add_option("-m,--writeMSE",outputStringMSE,"If precised, will write the MSE of the pointset by appending it to this file, default: "+outputStringMSE);
+      app.add_option("--integrandType",integrandType,"Type of the integrand to compute MSE : 1|-> HardEllipses, 2|-> SoftEllipses, 3|-> HardRectangles, 4|-> SoftRectangles. Default: "+std::to_string(integrandType));
 
 
       CLI11_PARSE(app, argc, argv)
@@ -327,7 +375,7 @@ int main(int argc, char const *argv[]) {
       // =========== Fin OpenMP Configuration =========== //
 
         std::vector<Tiles<DIM>>* v = importTiles<DIM>(inputString);
-        double val = optimPointME<DIM>(v,nbpts,inputString,niters,nbThrow,outputString,gaussianSubSetSize);
+        double val = optimPointME<DIM>(v,nbpts,inputString,niters,nbThrow,outputString,gaussianSubSetSize,integrandType);
         // =========== Ecriture de l'erreur associée à un pointset  =========== //
         // std::cout << val << '\n';
         if (outputStringMSE.compare("MSE.dat") != 0) {

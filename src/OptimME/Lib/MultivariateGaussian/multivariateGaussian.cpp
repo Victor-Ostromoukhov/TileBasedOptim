@@ -11,7 +11,7 @@
 
 Gaussian::Gaussian(const VecXDynamic& m, const MatXDynamic sigma, bool normalize):mu(m), dim(mu.dim()) {
 
-    invSigma = sigma.inverse();
+    invSigma = sigma;
 
 
     if (normalize) {

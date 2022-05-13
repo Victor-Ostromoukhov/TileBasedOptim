@@ -1,4 +1,4 @@
- #include "../Integration/Integration.h" 
+ #include "../../../../Lib/MultivariateGaussian/Integration.h"
  t_RectanglesStruct2D tab_Rectangles2D[16384] = 
 {{0.29935500650099907694, 0.95209406883231251228, 0.58484351462377937025, 
   0.43703426389615845915, 0.30865146831310485975}, {0.10210505923708855255, 

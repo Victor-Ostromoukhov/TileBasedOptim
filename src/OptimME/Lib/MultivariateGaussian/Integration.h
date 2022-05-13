@@ -60,6 +60,18 @@ struct t_HeaviGauss2D {
 	double mxCInv[2 * 2];
 };
 
+struct t_RectanglesStruct2D{
+  double integral;
+  double mu[2];
+  double sigma[2];
+};
+
+struct t_SoftRectanglesStruct2D{
+  double integral;
+  double mu[2];
+  double sigma[2];
+};
+
 #define N_INTEGRANDS 4096
 
 extern t_Heaviside2D tab_Heaviside2D[16384] ;
