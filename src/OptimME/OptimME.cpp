@@ -163,6 +163,7 @@ double recalculateGaussianValueAllGauss(VecX<dimension> oldPoint,VecX<dimension>
   double val = 0.;
   for (int i = 0; i < nbGauss; i++) {
 	  double tmp = (recalculateGaussianValue(tabPtsValGauss[i],oldPoint,newPoint,(*sigma)[i],(*shift)[i],nbpts) - (*anal)[i]);
+
 	  val+= tmp*tmp;
     }
   val /= nbGauss;
