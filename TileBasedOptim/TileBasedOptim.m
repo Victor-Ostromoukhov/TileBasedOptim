@@ -2102,44 +2102,33 @@ getStratND[nDims_:3,npts_:512] :=
 
 showstdRefMSEandDiscrepancy[] := {showstdRefMSE[], showstdRefDiscrepancy[]}
 
-showstdRefMSE[inlbl_:"Gauss2D_pbnot_nIntegrands4096_kmag100_setno0"] :=
-    Module[ {fontSz=20(*,powfrom,powto,powstep,kPlusMinus,data,ffitpow10,fitpow10,ffitpow15,fitpow15,ffitpow20,fitpow20,ffitpow30,fitpow30,delta,plotLabel,legends,alldata,fnameLabel*)},
-		lbl = inlbl;
+showstdRefMSE[] :=
+    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,fnameLabel,dirMSE},
+		fontSz = 14;
 		kPlusMinus = .5;
     	{powfrom,powto,powstep} = {2,16,1};
 
-		integrandTypeLabel = "Gauss";
 		nDims = 2;
+		integrandTypeLabel = "SoftEllipses";
+		
 		(*Manipulate[*)
 			fnameLabel = integrandTypeLabel ;
 	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
-	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = ";
 			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
-			Switch[nDims
-			,6,
-				data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>fnameLabel<>".dat"]);
-				mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>".dat"]);
-				mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-			    alldata = {mseWN,mseOwen01Pure};
-		        legends = {"WN","Owen"};
-			,_,
+
 				data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>fnameLabel<>".dat"]);
 				mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 				data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>fnameLabel<>".dat"]);
 				mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>".dat"]);
-				mseOwenPure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 				data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
-				mseSobol = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirMSE<>"PMJ02_"<>fnameLabel<>".dat"]);
-				msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				
-			    alldata = {mseWN,mseStrat,mseOwenPure,msePMJ02} ;
-		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "PMJ02"} ] ];
-			];
+				mseSobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>".dat"]);
+				mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+
+			    alldata = {mseWN,mseStrat,mseSobol01,mseOwen01Pure } ;
+		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Sobol", "Owen" } ] ];
 	        
-			p = ListLogLogPlot[ alldata
+			ListLogLogPlot[ alldata
 						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
 						,PlotStyle -> {
 							{Green,AbsoluteThickness[10]},
@@ -2166,19 +2155,18 @@ showstdRefMSE[inlbl_:"Gauss2D_pbnot_nIntegrands4096_kmag100_setno0"] :=
 			            ,Frame->True
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
 		           		,ImageSize -> {1024,1024}
-		            	,PlotRange->{{2^powfrom,2^powto},{Min[First /@ Flatten[(second /@ mseOwenPure)]], Max[First /@ (second /@ mseOwenPure)] (*Min[ First /@ Flatten[ (second /@ #)& /@ ( alldata)] ]*) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,PlotRange->{{2^powfrom,2^powto},{Max[First /@ (second /@ mseWN)], Min[ First /@ (second /@ mseOwen01Pure)] }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,2}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
-		            	,PlotLabel -> Style[ plotLabel<>lbl, Bold, 24] 
-		            ];
+		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
+		            ]
 			(*,Control[{{nDims,2},{2,3,4,6}}]
-			,Control[{{integrandTypeLabel,"Gauss"},{"Heaviside", "Gauss" }}]
+			,Control[{{integrandTypeLabel,"SoftEllipses"},{"Ellipses", "SoftEllipses", "Rectangles", "SoftRectangles" }}]
          ]*)
-         p//Print;
-         Export["p_"<>lbl<>".png",p]
      ] (* showstdRefMSE *)
+
 
 (*
 rotmx = RandomVariate[CircularRealMatrixDistribution[2], 1]
