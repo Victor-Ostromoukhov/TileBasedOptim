@@ -1795,33 +1795,47 @@ subdivBase3SFC3DTiles[tlst_] :=
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-integrandType = 2;
-nintegrands = 4 1024;
+nintegrands = 16 1024;
 nDims = 2;
 
 nPointsets = 2;
+integrandType = 1;
+makeMSEref[1, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+integrandType = 2;
 makeMSEref[1, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
 nPointsets = 64;
+integrandType = 1;
+makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+integrandType = 2;
 makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
 nPointsets = 64;
+integrandType = 1;
+makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+integrandType = 2;
 makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
 nPointsets = 64;
+integrandType = 1;
+makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+integrandType = 2;
 makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
 nPointsets = 32;
+integrandType = 1;
+makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+integrandType = 2;
 makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
 *)
-makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegrandType_:2, innDims_:2, nIntegrands_:1024, dbg_:False] :=
+makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, dbg_:False] :=
     Module[ {},
     	firstDim = 0;
     	(*If[ Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2]];*)
     	nDims = innDims;
     	integrandType = inIntegrandType;
-		integrandTypeLabel = Switch[integrandType,  1,"Heaviside", 2,"Gauss", 3,"Smooth", 4,"Cont", 5,"HeaviBell", 6,"HeaviCont", 7,"HeaviGauss" ];
+		integrandTypeLabel = Switch[integrandType,  1,"Ellipses", 2,"SoftEllipses", 3,"Rectangles", 4,"SoftRectangles" ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#Analytical	#MSE	#NbPtsets	#Nbintegrands\n";
 		fnameLabel = integrandTypeLabel ;
 		nPointsets 	= nTrialsMSE ;
@@ -1989,7 +2003,7 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
 		     		If[dbg, Print[execString -> res] ];
 				,_, Print["makeMSEref ",pointsetType -> pointsetLabel, " not implemented yet"]; Abort[];
 					];
- 				execString = "integrateND_from_file --nintegrands "<>ToString[nIntegrands]<>" -i "<>ptsfname<>" -o "<>msefname<>" --integrandType "<>ToString[integrandType]<>" --nDims "<>ToString[nDims]<>" > /dev/null";
+ 				execString = "new_integrateND_from_file --nintegrands "<>ToString[nIntegrands]<>" -i "<>ptsfname<>" -o "<>msefname<>" --integrandType "<>ToString[integrandType]<>" --nDims "<>ToString[nDims]<>" > /dev/null";
 				res = Run[execPrefix<>execString];
 		     	mse = Last @ (Flatten @ Import[msefname]);
 		     	If[dbg, Print[execString -> res -> mse] ];
