@@ -1798,35 +1798,18 @@ math
 nintegrands = 16 1024;
 nDims = 2;
 
-nPointsets = 2;
-integrandType = 1;
-makeMSEref[1, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
-integrandType = 2;
-makeMSEref[1, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+Do[                                                                                                                                                                                            
+	nPointsets = 1024;                                                                                                                                                                                        
+	makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
+	nPointsets = 1024;                                                                                                                                                                                        
+	makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
+	nPointsets = 1024;                                                                                                                                                                                        
+	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
+,{integrandType,1,4}]
 
-nPointsets = 64;
-integrandType = 1;
-makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
-integrandType = 2;
-makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
 
-nPointsets = 64;
-integrandType = 1;
-makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
-integrandType = 2;
-makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
-
-nPointsets = 64;
-integrandType = 1;
-makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
-integrandType = 2;
-makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
-
-nPointsets = 32;
-integrandType = 1;
-makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
-integrandType = 2;
-makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];
+	nPointsets = 32;                                                                                                                                                                                        
+	makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 
 *)
 makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, dbg_:False] :=
@@ -2111,7 +2094,7 @@ showstdRefMSE[] :=
 		nDims = 2;
 		integrandTypeLabel = "SoftEllipses";
 		
-		(*Manipulate[*)
+		Manipulate[
 			fnameLabel = integrandTypeLabel ;
 	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
 			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
@@ -2120,13 +2103,15 @@ showstdRefMSE[] :=
 				mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 				data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>fnameLabel<>".dat"]);
 				mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
-				mseSobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				(*data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
+				mseSobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>".dat"]);
 				mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				(*data = (Drop[#,1]& @ Import[dirMSE<>"PMJ02_"<>fnameLabel<>".dat"]);
+				msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 
-			    alldata = {mseWN,mseStrat,mseSobol01,mseOwen01Pure } ;
-		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Sobol", "Owen" } ] ];
+			    alldata = {mseWN,mseStrat,mseOwen01Pure} ;
+		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen" } ] ];
 	        
 			ListLogLogPlot[ alldata
 						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
@@ -2162,9 +2147,9 @@ showstdRefMSE[] :=
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]
-			(*,Control[{{nDims,2},{2,3,4,6}}]
+			,Control[{{nDims,2},{2,3,4,6}}]
 			,Control[{{integrandTypeLabel,"SoftEllipses"},{"Ellipses", "SoftEllipses", "Rectangles", "SoftRectangles" }}]
-         ]*)
+         ]
      ] (* showstdRefMSE *)
 
 
