@@ -2093,6 +2093,9 @@ showstdRefMSE[] :=
 		fontSz = 14;
 		kPlusMinus = .5;
     	{powfrom,powto,powstep} = {2,16,1};
+
+		(*nDims = 2;
+		integrandTypeLabel = "Ellipses";*)
 		
 		Manipulate[
 			fnameLabel = integrandTypeLabel ;
@@ -2105,6 +2108,7 @@ showstdRefMSE[] :=
 				mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>".dat"]);
 				mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
 
 				(*data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
 				mseSobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
@@ -2141,7 +2145,7 @@ showstdRefMSE[] :=
 			            ,Frame->True
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
 		           		,ImageSize -> {1024,1024}
-		            	,PlotRange->{{2^powfrom,2^powto},{Max[First /@ (second /@ mseWN)], Min[ First /@ (second /@ mseOwen01Pure)] }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwen01PureRaw), Min @@ (second /@ mseOwen01PureRaw) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,2}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
