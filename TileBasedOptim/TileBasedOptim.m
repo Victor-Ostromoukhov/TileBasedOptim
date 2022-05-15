@@ -1804,16 +1804,12 @@ nDims = 2;
 Do[                                                                                                                                                                                            
 	nPointsets = 256;                                                                                                                                                                                        
 	makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
-	nPointsets = 256;                                                                                                                                                                                        
 	makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
-	nPointsets = 256;                                                                                                                                                                                        
 	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
-,{integrandType,1,3}]
-
+,{integrandType,1,1}]
 
 	nPointsets = 32;                                                                                                                                                                                        
 	makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-
 *)
 makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, dbg_:False] :=
     Module[ {},
