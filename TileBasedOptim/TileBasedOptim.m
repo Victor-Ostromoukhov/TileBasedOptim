@@ -6,6 +6,9 @@ makeStratL2Discrepancy[]
 makeSobolL2Discrepancy[]
 makeOwenL2Discrepancy[]
 
+makeMSEref[]
+showstdRefMSE[]
+
 *)
  
 (****************** globals *******************)
@@ -2148,7 +2151,7 @@ showstdRefMSE[] :=
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]
 			,Control[{{nDims,2},{2,3,4,6}}]
-			,Control[{{integrandTypeLabel,"SoftEllipses"},{"Ellipses", "SoftEllipses", "Rectangles", "SoftRectangles" }}]
+			,Control[{{integrandTypeLabel,"SoftEllipses"},{"Ellipses", "SoftEllipses", "Rectangles"(*, "SoftRectangles"*) }}]
          ]
      ] (* showstdRefMSE *)
 
