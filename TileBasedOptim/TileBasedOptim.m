@@ -1799,13 +1799,13 @@ nintegrands = 16 1024;
 nDims = 2;
 
 Do[                                                                                                                                                                                            
-	nPointsets = 1024;                                                                                                                                                                                        
+	nPointsets = 256;                                                                                                                                                                                        
 	makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
-	nPointsets = 1024;                                                                                                                                                                                        
+	nPointsets = 256;                                                                                                                                                                                        
 	makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
-	nPointsets = 1024;                                                                                                                                                                                        
+	nPointsets = 256;                                                                                                                                                                                        
 	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
-,{integrandType,1,4}]
+,{integrandType,1,3}]
 
 
 	nPointsets = 32;                                                                                                                                                                                        
