@@ -1801,9 +1801,12 @@ math
 nintegrands = 16 1024;
 nDims = 2;
 
-	integrandType = 1;
+Do[
 	nPointsets = 1024;                                                                                                                                                                                        
+	makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
+,{integrandType,2,4}]
 
 	nPointsets = 32;                                                                                                                                                                                        
 	makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
