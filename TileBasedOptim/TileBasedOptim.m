@@ -1801,12 +1801,9 @@ math
 nintegrands = 16 1024;
 nDims = 2;
 
-Do[                                                                                                                                                                                            
-	nPointsets = 256;                                                                                                                                                                                        
-	makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
-	makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
-	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                                
-,{integrandType,1,1}]
+	integrandType = 1;
+	nPointsets = 1024;                                                                                                                                                                                        
+	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 
 	nPointsets = 32;                                                                                                                                                                                        
 	makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
@@ -2149,7 +2146,7 @@ showstdRefMSE[] :=
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]
 			,Control[{{nDims,2},{2,3,4,6}}]
-			,Control[{{integrandTypeLabel,"SoftEllipses"},{"Ellipses", "SoftEllipses", "Rectangles"(*, "SoftRectangles"*) }}]
+			,Control[{{integrandTypeLabel,"Ellipses"},{"Ellipses", "SoftEllipses", "Rectangles", "SoftRectangles" }}]
          ]
      ] (* showstdRefMSE *)
 
