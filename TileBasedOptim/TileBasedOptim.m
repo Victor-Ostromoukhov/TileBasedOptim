@@ -2122,7 +2122,7 @@ showstdRefMSE[] :=
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]
 			,Control[{{nDims,2},{2,3,4,6}}]
-			,Control[{{integrandTypeLabel,"Ellipses"},{"Ellipses", "SoftEllipses", "Rectangles", "SoftRectangles" }}]
+			,Control[{{integrandTypeLabel,"Ellipses"},{"Ellipses", "SoftEllipses", "Rectangles", "Heaviside" }}]
          ]
      ] (* showstdRefMSE *)
 
