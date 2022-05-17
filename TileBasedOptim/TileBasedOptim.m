@@ -2074,14 +2074,16 @@ showstdRefMSE[] :=
 				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>".dat"]);
 				mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 				mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPlus_"<>fnameLabel<>".dat"]);
+				mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
 				(*data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
 				mseSobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 				(*data = (Drop[#,1]& @ Import[dirMSE<>"PMJ02_"<>fnameLabel<>".dat"]);
 				msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 
-			    alldata = {mseWN,mseStrat,mseOwen01Pure} ;
-		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen" } ] ];
+			    alldata = {mseWN,mseStrat,mseOwen01Pure,  mseOwenPlus} ;
+		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32" } ] ];
 	        
 			ListLogLogPlot[ alldata
 						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
@@ -2089,8 +2091,8 @@ showstdRefMSE[] :=
 							{Green,AbsoluteThickness[10]},
 							{Blue,AbsoluteThickness[10]},
 							{Black,AbsoluteThickness[12]},
-							{Cyan,AbsoluteThickness[8]},
 							{Red,AbsoluteThickness[6]},
+							{Cyan,AbsoluteThickness[8]},
 							{Darker@Green,AbsoluteDashing[{10, 5}], AbsoluteThickness[6]},
 							{Yellow,AbsoluteThickness[6]},
 							
@@ -2118,7 +2120,7 @@ showstdRefMSE[] :=
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]
 			,Control[{{nDims,2},{2,3,4,6}}]
-			,Control[{{integrandTypeLabel,"SoftEllipses"},{"SoftEllipses", "Heaviside", "Ellipses" }}]
+			,Control[{{integrandTypeLabel,"SoftEllipses"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles" }}]
          ]
      ] (* showstdRefMSE *)
 
