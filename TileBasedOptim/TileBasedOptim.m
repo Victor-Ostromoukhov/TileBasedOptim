@@ -1774,10 +1774,10 @@ Do[
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-nintegrands = 64 1024;
+nintegrands = 16 1024;
 nDims = 2;
 Do[
-	nPointsets = 1024;                                                                                                                                                                                        
+	nPointsets = 64;                                                                                                                                                                                        
 	makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
