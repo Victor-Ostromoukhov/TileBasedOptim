@@ -1790,7 +1790,7 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
     	(*If[ Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2]];*)
     	nDims = innDims;
     	integrandType = inIntegrandType;
-		integrandTypeLabel = Switch[integrandType,  1,"Ellipses", 2,"SoftEllipses", 3,"Rectangles", 4,"SoftRectangles" ];
+		integrandTypeLabel = Switch[integrandType,  1,"Ellipses", 2,"SoftEllipses", 3,"Rectangles", 4,"Heaviside" ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#Analytical	#MSE	#NbPtsets	#Nbintegrands\n";
 		fnameLabel = integrandTypeLabel ;
 		nPointsets 	= nTrialsMSE ;
