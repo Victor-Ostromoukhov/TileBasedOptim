@@ -2085,8 +2085,8 @@ showstdRefMSE[] :=
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]			
-			,Control[{{consecutiveFlag,False},{True,False}}]
-			,Control[{{integrandTypeLabel,"SoftEllipses"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles", "SoftEllipses_noRot" }}]
+			(*,Control[{{consecutiveFlag,False},{True,False}}]*)
+			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles", "SoftEllipses_noRot" }}]
          ]
      ] (* showstdRefMSE *)
 
