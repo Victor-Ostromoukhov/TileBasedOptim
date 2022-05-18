@@ -851,7 +851,7 @@ fillSamplingPtsBase3SFC2DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
 			];
 			indVect = Mod[#,3]& /@ (m.v);
 			matBuilderIndex = FromDigits[#,3]& @ (Reverse @ indVect);
-			samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) ;
+						samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) (*/ 3^nsubdivs*);
 			If[dbg, Print[i -> {tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},fcode}] ];
 			{tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode}
     	,{ind,Length[tlst]}]
@@ -1763,33 +1763,13 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 16 1024;
 nDims = 2;
-Do[
-	nPointsets = 256;                                                                                                                                                                                        
-	makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[12, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-,{integrandType,5,5}]
-
-
-gitpull
-math
-<<TileBasedOptim/TileBasedOptim.m
-nintegrands = 16 1024;
-nDims = 2;
-nPointsets = 1;
-integrandType = 1
-	makeMSEref[12, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
-	makeMSEref[19, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
-
-gitpull
-math
-<<TileBasedOptim/TileBasedOptim.m
-nintegrands = 16 1024;
-nDims = 2;
-nPointsets = 1;
-integrandType = 5
-	makeMSEref[12, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+Parallelize @ Do[
+	nPointsets = 64;                                                                                                                                                                                        
+	makeMSEref[10, nPointsets, {2,16,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[11, nPointsets, {2,16,,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[12, nPointsets, {2,16,,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[19, nPointsets, {2,16,,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
+,{integrandType,1,5}]
 
 
 *)
@@ -1831,8 +1811,9 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 		{iCounterfrom,iCounterto,iCounterstep} = If[consecutiveFlag, {nPtsfrom,nPtsto,1}, {powfrom, powto, powstep}];
 		Do[	
      		If[pointsetLabel == "SOT" && nDims == 4 && iptsPow == 17, nPointsets = 1 ]; (* Only 1 available *)
-     		nptsTarget = If[consecutiveFlag, iCounter, 2^consecutiveFlag];
-   			npts = If[consecutiveFlag, nptsTarget, getRealNPts[nDims, pointsetLabel, pointsetType] ];
+     		nptsTarget = If[consecutiveFlag, iCounter, 2^iCounter];
+   			(*npts = If[consecutiveFlag, nptsTarget, getRealNPts[nDims, pointsetLabel, pointsetType] ];*)
+   			npts = Round[nptsTarget];
     		resFname = If[consecutiveFlag, pointsetLabel<>"_"<>fnameLabel<>"_consecutive.dat", pointsetLabel<>"_"<>fnameLabel<>".dat"];
 			mseTab = ( (*Parallelize @ *) Table[   				
 				ptsfname = "tmp/pts_"<>ToString[iPointSet]<>pid<>".dat";
@@ -2052,14 +2033,14 @@ showstdRefMSE[] :=
 	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
 			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
 
-				data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>fnameLabel<>".dat"]);
+				data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
 				mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>fnameLabel<>".dat"]);
+				data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
 				mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>".dat"]);
+				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
 				mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 				mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPlus_"<>fnameLabel<>".dat"]);
+				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPlus_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
 				mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
 				(*data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
@@ -2073,11 +2054,11 @@ showstdRefMSE[] :=
 			ListLogLogPlot[ alldata
 						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
 						,PlotStyle -> {
-							{Green,AbsoluteThickness[10]},
-							{Blue,AbsoluteThickness[10]},
-							{Black,AbsoluteThickness[12]},
-							{Red,AbsoluteThickness[6]},
-							{Cyan,AbsoluteThickness[8]},
+							{Green,AbsoluteThickness[2]},
+							{Blue,AbsoluteThickness[2]},
+							{Black,AbsoluteThickness[2]},
+							{Red,AbsoluteThickness[2]},
+							{Cyan,AbsoluteThickness[2]},
 							{Darker@Green,AbsoluteDashing[{10, 5}], AbsoluteThickness[6]},
 							{Yellow,AbsoluteThickness[6]},
 							
