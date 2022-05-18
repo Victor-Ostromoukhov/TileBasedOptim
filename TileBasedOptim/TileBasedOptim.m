@@ -1827,7 +1827,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
      		nptsTarget = If[consecutiveFlag, iCounter, 2^consecutiveFlag];
    			npts = If[consecutiveFlag, nptsTarget, getRealNPts[nDims, pointsetLabel, pointsetType] ];
     		resFname = If[consecutiveFlag, pointsetLabel<>"_"<>fnameLabel<>"_consecutive.dat", pointsetLabel<>"_"<>fnameLabel<>".dat"];
-			mseTab = ( Parallelize @  Table[   				
+			mseTab = ( (*Parallelize @ *) Table[   				
 				ptsfname = "tmp/pts_"<>ToString[iPointSet]<>".dat";
 				msefname = "tmp/mse"<>pid<>".dat";
 				Switch[pointsetLabel					
