@@ -851,7 +851,7 @@ fillSamplingPtsBase3SFC2DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
 			];
 			indVect = Mod[#,3]& /@ (m.v);
 			matBuilderIndex = FromDigits[#,3]& @ (Reverse @ indVect);
-			samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) / 3^nsubdivs;
+			samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) ;
 			If[dbg, Print[i -> {tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},fcode}] ];
 			{tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode}
     	,{ind,Length[tlst]}]
@@ -1778,12 +1778,9 @@ math
 nintegrands = 16 1024;
 nDims = 2;
 nPointsets = 1;
-Parallelize @ Do[
-	makeMSEref[10, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
-	makeMSEref[11, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+integrandType = 1
 	makeMSEref[12, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
 	makeMSEref[19, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
-,{integrandType,1,1}]
 
 gitpull
 math
@@ -2047,8 +2044,8 @@ showstdRefMSE[] :=
 		kPlusMinus = .5;
     	{powfrom,powto,powstep} = {2,16,1};
 
-		(*nDims = 2;
-		integrandTypeLabel = "Ellipses";*)
+		nDims = 2;
+		(*integrandTypeLabel = "Ellipses";*)
 		
 		Manipulate[
 			fnameLabel = integrandTypeLabel ;
@@ -2106,8 +2103,8 @@ showstdRefMSE[] :=
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
-		            ]
-			,Control[{{nDims,2},{2,3,4,6}}]
+		            ]			
+			,Control[{{consecutiveFlag,False},{True,False}}]
 			,Control[{{integrandTypeLabel,"SoftEllipses"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles", "SoftEllipses_noRot" }}]
          ]
      ] (* showstdRefMSE *)
@@ -2280,7 +2277,7 @@ prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
 				exportSelectionBase3SFC2D[fname,seltlst];
 				Print[Length[seltlst] -> " Exporting " -> fname];
 				If[dbg,
-				p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
+					p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
 					Export["optim_figs_2D_MatBuilderOnly/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 				];
@@ -2292,7 +2289,7 @@ exportSelectionBase3SFC2D[fname_, seltlst_] :=
 Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode},
 	newtlst = Flatten /@ Table[
 			{tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = seltlst[[ind]];			
-			{matBuilderIndex,N@samplingPt,N@prevrefPt,N@{prevv1,prevv2} }
+			{matBuilderIndex,samplingPt,N@prevrefPt,N@{prevv1,prevv2} }
 		,{ind,Length[seltlst]}];
 	Export[fname,newtlst];
 ] (* exportSelectionBase3SFC2D *)
