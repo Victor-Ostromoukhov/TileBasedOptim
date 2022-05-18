@@ -1764,7 +1764,7 @@ math
 nintegrands = 16 1024;
 nDims = 2;
 Do[
-	nPointsets = 64;                                                                                                                                                                                        
+	nPointsets = 256;                                                                                                                                                                                        
 	makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[12, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
