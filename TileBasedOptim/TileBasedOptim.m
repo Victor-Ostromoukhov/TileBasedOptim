@@ -1777,9 +1777,12 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 16 1024;
 nDims = 2;
-Do[
-	nPointsets = 2;                                                                                                                                                                                        
+Parallelize @ Do[
+	nPointsets = 1;                                                                                                                                                                                        
 	makeMSEref[10, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+	makeMSEref[11, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+	makeMSEref[12, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+	makeMSEref[19, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
 ,{integrandType,1,1}]
 
 *)
@@ -1975,7 +1978,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 			If[dbg, Print[Sort@mseTab] ];
 			
      		mseMean = Mean @ mseTab;
-     		mseVariance = Variance @ mseTab;
+     		mseVariance = If[nPointsets == 1, 0 , Variance @ mseTab];
      		{mseMin,mseMax} = {Min@mseTab, Max@mseTab};
      		AppendTo[dataMSE,{Round[npts],mseMean,mseVariance,mseMin,mseMax,0,0,nPointsets,nIntegrands}];
 
