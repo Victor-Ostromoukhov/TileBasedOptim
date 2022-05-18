@@ -2029,9 +2029,10 @@ getStrat2D[npts_:256] :=
 getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
 	
 getStratND[nDims_:3,npts_:512] :=
-    Block[ {nstrats,xshift,yshift,ushift,vshift,sshift,tshift},
-    	nstrats = npts^(1/nDims);	(* suppose that npts is already appropriate, passed through getRealNPts[] *)
-    	Switch[nDims
+    Block[ {nstrats,xshift,yshift,ushift,vshift,sshift,tshift,nstratsAsked,res},
+    	nstratsAsked = npts^(1/nDims);	(* suppose that npts is already appropriate, passed through getRealNPts[] *)
+    	nstrats = If[IntegerQ[nstratsAsked], nstratsAsked, Ceiling[nstratsAsked] ];
+    	res = Switch[nDims
     	,1, Flatten[#,1]& @ (Table[
     			xshift = RandomReal[]/nstrats;
    				(ix-1)/nstrats + xshift
@@ -2052,7 +2053,8 @@ getStratND[nDims_:3,npts_:512] :=
     			{xshift,yshift,ushift,vshift,sshift,tshift} = Table[RandomReal[],{6}]/nstrats;
    				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift, (iu-1)/nstrats + ushift, (iv-1)/nstrats + vshift, (is-1)/nstrats + sshift, (it-1)/nstrats + tshift}
     		,{ix,nstrats},{iy,nstrats},{iu,nstrats},{iv,nstrats},{is,nstrats},{it,nstrats}]) //N
-    	]
+    	];
+    	If[nstratsAsked == nstrats, res, RandomSample[res][[;;npts]] ]
     ] (* getStratND *)
 
 
