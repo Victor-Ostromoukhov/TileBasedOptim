@@ -1791,12 +1791,8 @@ math
 nintegrands = 16 1024;
 nDims = 2;
 nPointsets = 1;
-Parallelize @ Do[
-	makeMSEref[10, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
-	makeMSEref[11, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+integrandType = 5
 	makeMSEref[12, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
-	makeMSEref[19, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
-,{integrandType,1,1}]
 
 
 *)
