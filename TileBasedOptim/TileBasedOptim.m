@@ -1777,6 +1777,7 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 16 1024;
 nDims = 2;
+
 Parallelize @ Do[
 	nPointsets = 1;                                                                                                                                                                                        
 	makeMSEref[10, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
@@ -1828,7 +1829,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
    			npts = If[consecutiveFlag, nptsTarget, getRealNPts[nDims, pointsetLabel, pointsetType] ];
     		resFname = If[consecutiveFlag, pointsetLabel<>"_"<>fnameLabel<>"_consecutive.dat", pointsetLabel<>"_"<>fnameLabel<>".dat"];
 			mseTab = ( (*Parallelize @ *) Table[   				
-				ptsfname = "tmp/pts_"<>ToString[iPointSet]<>".dat";
+				ptsfname = "tmp/pts_"<>ToString[iPointSet]<>pid<>".dat";
 				msefname = "tmp/mse"<>pid<>".dat";
 				Switch[pointsetLabel					
 				,"UniformND",
@@ -1926,41 +1927,6 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 				,"Strat", (* something goes wrong in Stratified_3dd *)
 					pts = getStratND[nDims, npts];
 		     		Export[ptsfname,pts]
-				,"OwenPlusTree16bits", execString = "owen --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" -t 16 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-				,"ExtensibleLatticeType0", execString = Switch[nDims
-					,2,"getExtensibleLattice2D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 0 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,3,"getExtensibleLattice3D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 0 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,4,"getExtensibleLattice4D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 0 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,6,"getExtensibleLattice6D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 0 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					];
-					res = Run[execPrefix<>execString];
-		     		If[dbg, Print[execString -> res] ];
-				,"ExtensibleLatticeType1", execString = Switch[nDims
-					,2,"getExtensibleLattice2D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 1 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,3,"getExtensibleLattice3D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 1 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,4,"getExtensibleLattice4D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 1 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,6,"getExtensibleLattice6D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 1 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					];
-					res = Run[execPrefix<>execString];
-		     		If[dbg, Print[execString -> res] ];
-				,"ExtensibleLatticeType2", execString = Switch[nDims
-					,2,"getExtensibleLattice2D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 2 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,3,"getExtensibleLattice3D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 2 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,4,"getExtensibleLattice4D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 2 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,6,"getExtensibleLattice6D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 2 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					];
-					res = Run[execPrefix<>execString];
-		     		If[dbg, Print[execString -> res] ];
-				,"ExtensibleLatticeType3", execString = Switch[nDims
-					,2,"getExtensibleLattice2D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 3 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,3,"getExtensibleLattice3D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 3 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,4,"getExtensibleLattice4D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 3 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					,6,"getExtensibleLattice6D -o "<>ptsfname<>" -n "<>ToString[npts]<>" -l 3 --seed "<>ToString[RandomInteger[{0, 2^31}]]
-					];
-					res = Run[execPrefix<>execString];
-		     		If[dbg, Print[execString -> res] ];
 				,_, Print["makeMSEref ",pointsetType -> pointsetLabel, " not implemented yet"]; Abort[];
 					];
  				execString = "new_integrateND_from_file --nintegrands "<>ToString[nIntegrands]<>" -i "<>ptsfname<>" -o "<>msefname<>" --integrandType "<>ToString[integrandType]<>" --nDims "<>ToString[nDims]<>" > /dev/null";
