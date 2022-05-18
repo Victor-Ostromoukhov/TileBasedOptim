@@ -1783,7 +1783,7 @@ Parallelize @ Do[
 	makeMSEref[11, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
 	makeMSEref[12, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
 	makeMSEref[19, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
-,{integrandType,1,1}]
+,{integrandType,1,5}]
 
 *)
 makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, consecutiveFlag_:False, dbg_:False] :=
