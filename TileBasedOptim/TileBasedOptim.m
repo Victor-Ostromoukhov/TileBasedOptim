@@ -1982,11 +1982,13 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
      		{mseMin,mseMax} = {Min@mseTab, Max@mseTab};
      		AppendTo[dataMSE,{Round[npts],mseMean,mseVariance,mseMin,mseMax,0,0,nPointsets,nIntegrands}];
 
-     		Print["makeMSEref: ",integrandTypeLabel -> pointsetLabel," ",ToString[nDims]<>"D" -> nPointsets ->  Last[ dataMSE[[;;,1;;2]] ] -> dirMSE];
+			If[(consecutiveFlag &&  Mod[iCounter,100] == 99 ) || iCounter == iCounterto,
+     			Print["makeMSEref: ",integrandTypeLabel -> pointsetLabel," ",ToString[nDims]<>"D" -> nPointsets ->  Last[ dataMSE[[;;,1;;2]] ] -> dirMSE];
    				Export[dirMSE<>resFname,header,"TEXT"];
  				Export["tmp/tmpdat"<>pid<>".dat",dataMSE];
  				Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFname];
 				Print[dirMSE<>resFname, " written."];
+			];
 		,{iCounter, iCounterfrom,iCounterto,iCounterstep}]; 
         Run["rm -rf tmp/" ];
    ] (* makeMSEref *)
