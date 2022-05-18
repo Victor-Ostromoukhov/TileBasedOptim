@@ -2048,7 +2048,7 @@ showstdRefMSE[] :=
 				(*data = (Drop[#,1]& @ Import[dirMSE<>"PMJ02_"<>fnameLabel<>".dat"]);
 				msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 
-			    alldata = {mseWN,mseStrat,mseOwen01Pure,  mseOwenPlus} ;
+			    alldata = {mseWN,mseStrat(*,mseOwen01Pure,  mseOwenPlus*)} ;
 		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32" } ] ];
 	        
 			ListLogLogPlot[ alldata
