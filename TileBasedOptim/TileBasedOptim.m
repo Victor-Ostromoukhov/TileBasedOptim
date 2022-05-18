@@ -1764,11 +1764,11 @@ math
 nintegrands = 16 1024;
 nDims = 2;
 Parallelize @ Do[
-	nPointsets = 64;                                                                                                                                                                                        
-	makeMSEref[10, nPointsets, {2,16,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[11, nPointsets, {2,16,,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[12, nPointsets, {2,16,,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[19, nPointsets, {2,16,,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
+	nPointsets = 1024;                                                                                                                                                                                        
+	makeMSEref[10, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[11, nPointsets, {2,16,,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[12, nPointsets, {2,16,,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[19, nPointsets, {2,16,,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 ,{integrandType,1,5}]
 
 
@@ -2021,14 +2021,15 @@ showstdRefMSEandDiscrepancy[] := {showstdRefMSE[], showstdRefDiscrepancy[]}
 
 showstdRefMSE[] :=
     Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,fnameLabel,dirMSE},
+    	consecutiveFlag = False;
 		fontSz = 14;
 		kPlusMinus = .5;
     	{powfrom,powto,powstep} = {2,16,1};
 
 		nDims = 2;
-		(*integrandTypeLabel = "Ellipses";*)
+		integrandTypeLabel = "Heaviside";
 		
-		Manipulate[
+		(*Manipulate[*)
 			fnameLabel = integrandTypeLabel ;
 	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
 			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
@@ -2079,15 +2080,15 @@ showstdRefMSE[] :=
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
 		           		,ImageSize -> {1024,1024}
 		            	,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwen01PureRaw), Min @@ (second /@ mseOwen01PureRaw) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
-		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,2}],None}
+		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]			
 			(*,Control[{{consecutiveFlag,False},{True,False}}]*)
-			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles", "SoftEllipses_noRot" }}]
-         ]
+			(*,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles", "SoftEllipses_noRot" }}]
+         ]*)
      ] (* showstdRefMSE *)
 
 
