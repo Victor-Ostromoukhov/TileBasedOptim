@@ -1783,7 +1783,7 @@ Parallelize @ Do[
 	makeMSEref[11, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
 	makeMSEref[12, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
 	makeMSEref[19, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
-,{integrandType,1,5}]
+,{integrandType,1,1}]
 
 gitpull
 math
