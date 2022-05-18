@@ -1778,12 +1778,12 @@ math
 nintegrands = 16 1024;
 nDims = 2;
 Do[
-	nPointsets = 16 1024;                                                                                                                                                                                        
-	makeMSEref[19, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-,{integrandType,4,4}]
+	nPointsets = 2;                                                                                                                                                                                        
+	makeMSEref[10, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+,{integrandType,1,1}]
 
 *)
-makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, dbg_:False] :=
+makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, consecutiveFlag_:False, dbg_:False] :=
     Module[ {},
     	firstDim = 0;
     	(*If[ Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2]];*)
@@ -1792,7 +1792,7 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
 		integrandTypeLabel = Switch[integrandType,  1,"Ellipses", 2,"SoftEllipses", 3,"Rectangles", 4,"Heaviside", 5,"SoftEllipses_noRot" ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#Analytical	#MSE	#NbPtsets	#Nbintegrands\n";
 		fnameLabel = integrandTypeLabel ;
-		nPointsets 	= nTrialsMSE ;
+		nPointsets 	= innPointsets ;
         {powfrom,powto,powstep} = powParams;
 
 		dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
@@ -1815,12 +1815,15 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
 	    	,_, "unknown" 
 		];
     	If[pointsetLabel == "SOT", {powfrom,powto,powstep} = Switch[nDims,2,{2,17,1},3,{2,16,1},4,{2,17,1}] ];
-		Print[pointsetLabel,{powfrom,powto,powstep} -> " makeMSEref from ",2^powfrom," to ",2^powto];
+		{nPtsfrom,nPtsto} = {2^powfrom, 2^powto};
+		Print[pointsetLabel,{powfrom,powto,powstep} -> " makeMSEref from ",nPtsfrom," to ",nPtsto];
 		dataMSE = {};
+		{iCounterfrom,iCounterto,iCounterstep} = If[consecutiveFlag, {nPtsfrom,nPtsto,1}, {powfrom, powto, powstep}];
 		Do[	
      		If[pointsetLabel == "SOT" && nDims == 4 && iptsPow == 17, nPointsets = 1 ]; (* Only 1 available *)
-   			npts = getRealNPts[nDims, 2^iptsPow, pointsetType];
-    		resFname = pointsetLabel<>"_"<>fnameLabel<>".dat";
+     		nptsTarget = If[consecutiveFlag, iCounter, 2^consecutiveFlag];
+   			npts = If[consecutiveFlag, nptsTarget, getRealNPts[nDims, pointsetLabel, pointsetType] ];
+    		resFname = If[consecutiveFlag, pointsetLabel<>"_"<>fnameLabel<>"_consecutive.dat", pointsetLabel<>"_"<>fnameLabel<>".dat"];
 			mseTab = ( Parallelize @  Table[   				
 				ptsfname = "tmp/pts_"<>ToString[iPointSet]<>".dat";
 				msefname = "tmp/mse"<>pid<>".dat";
@@ -1976,12 +1979,12 @@ makeMSEref[inpointsetTypes_:10, nTrialsMSE_:1024, powParams_:{2,18,1}, inIntegra
      		{mseMin,mseMax} = {Min@mseTab, Max@mseTab};
      		AppendTo[dataMSE,{Round[npts],mseMean,mseVariance,mseMin,mseMax,0,0,nPointsets,nIntegrands}];
 
-     		Print["makeMSEref: ",integrandTypeLabel -> pointsetLabel," ",ToString[nDims]<>"D" -> nTrialsMSE ->  Last[ dataMSE[[;;,1;;2]] ] -> dirMSE];
+     		Print["makeMSEref: ",integrandTypeLabel -> pointsetLabel," ",ToString[nDims]<>"D" -> nPointsets ->  Last[ dataMSE[[;;,1;;2]] ] -> dirMSE];
    				Export[dirMSE<>resFname,header,"TEXT"];
  				Export["tmp/tmpdat"<>pid<>".dat",dataMSE];
  				Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFname];
 				Print[dirMSE<>resFname, " written."];
-		,{iptsPow,powfrom,powto,powstep}];	 (* available from 1K *)
+		,{iCounter, iCounterfrom,iCounterto,iCounterstep}]; 
         Run["rm -rf tmp/" ];
    ] (* makeMSEref *)
 
