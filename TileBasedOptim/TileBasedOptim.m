@@ -1777,14 +1777,27 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 16 1024;
 nDims = 2;
-
+nPointsets = 1;
 Parallelize @ Do[
-	nPointsets = 1;                                                                                                                                                                                        
 	makeMSEref[10, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
 	makeMSEref[11, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
 	makeMSEref[12, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
 	makeMSEref[19, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
 ,{integrandType,1,5}]
+
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+nintegrands = 16 1024;
+nDims = 2;
+nPointsets = 1;
+Parallelize @ Do[
+	makeMSEref[10, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+	makeMSEref[11, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+	makeMSEref[12, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+	makeMSEref[19, nPointsets, {2,12,1}, integrandType, nDims, nintegrands, True];                                                                                                                               
+,{integrandType,1,1}]
+
 
 *)
 makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, consecutiveFlag_:False, dbg_:False] :=
@@ -1956,7 +1969,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 				Print[dirMSE<>resFname, " written."];
 			];
 		,{iCounter, iCounterfrom,iCounterto,iCounterstep}]; 
-        Run["rm -rf tmp/" ];
+        (*Run["rm -rf tmp/" ];*)
    ] (* makeMSEref *)
 
 getCloseestN2D[n_] := Round[Sqrt[n]]^2
