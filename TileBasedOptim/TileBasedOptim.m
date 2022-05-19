@@ -1873,23 +1873,23 @@ showstdRefMSE[] :=
 	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
 			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
 
-				data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-				mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-				mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-				mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirMSE<>"OwenPlus_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-				mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPlus_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
-				(*data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
-				mseSobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
-				(*data = (Drop[#,1]& @ Import[dirMSE<>"PMJ02_"<>fnameLabel<>".dat"]);
-				msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+			(*data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
+			mseSobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+			(*data = (Drop[#,1]& @ Import[dirMSE<>"PMJ02_"<>fnameLabel<>".dat"]);
+			msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 
-			    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus} ;
-		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32" } ] ];
+		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus} ;
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32" } ] ];
 	        
 			ListLogLogPlot[ alldata
 						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
@@ -2044,82 +2044,39 @@ makeDiscrepancyRef[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1},
         (*Run["rm -rf tmp/" ];*)
    ] (* makeDiscrepancyRef *)
 
-getCloseestN2D[n_] := Round[Sqrt[n]]^2
-getCloseestNND[nDims_:2, n_] := Round[n^(1/nDims)]^nDims
-
-getRealNPts[nDims_:2, npts_:16, pointsetType_:10] :=
-    Switch[pointsetType
-    ,11, getCloseestNND[nDims, npts]    (* Strat *)
-    ,15, getCloseestNND[nDims, npts]    (* RegGrid *)
-    ,777,	First @ getOmegaApproxRealNpts[nDims, npts]
-    ,212, getHexGridTorApproxRealNpts[nDims, npts]    (* HexGridTorApproxReal *)
-    ,209, getLDBNRealNpts[nDims, npts]    (* LDBN *)
-    ,_, npts
-    ]
-
-getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
-	
-getStratND[nDims_:3,npts_:512] :=
-    Block[ {nstrats,xshift,yshift,ushift,vshift,sshift,tshift,nstratsAsked,res},
-    	nstratsAsked = npts^(1/nDims);	(* suppose that npts is already appropriate, passed through getRealNPts[] *)
-    	nstrats = If[IntegerQ[nstratsAsked], nstratsAsked, Ceiling[nstratsAsked] ];
-    	res = Switch[nDims
-    	,1, Flatten[#,1]& @ (Table[
-    			xshift = RandomReal[]/nstrats;
-   				(ix-1)/nstrats + xshift
-    		,{ix,nstrats}]) //N
-    	,2, Flatten[#,1]& @ (Table[
-    			{xshift,yshift} = {RandomReal[], RandomReal[]}/nstrats;
-   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift}
-    		,{ix,nstrats},{iy,nstrats}]) //N
-    	,3, Flatten[#,2]& @ (Table[
-    			{xshift,yshift,ushift} = {RandomReal[], RandomReal[], RandomReal[]}/nstrats;
-   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift, (iu-1)/nstrats + ushift}
-    		,{ix,nstrats},{iy,nstrats},{iu,nstrats}]) //N
-    	,4, Flatten[#,3]& @ (Table[
-    			{xshift,yshift,ushift,vshift} = Table[RandomReal[],{4}]/nstrats;
-   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift, (iu-1)/nstrats + ushift, (iv-1)/nstrats + vshift}
-    		,{ix,nstrats},{iy,nstrats},{iu,nstrats},{iv,nstrats}]) //N
-    	,6, Flatten[#,5]& @ (Table[
-    			{xshift,yshift,ushift,vshift,sshift,tshift} = Table[RandomReal[],{6}]/nstrats;
-   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift, (iu-1)/nstrats + ushift, (iv-1)/nstrats + vshift, (is-1)/nstrats + sshift, (it-1)/nstrats + tshift}
-    		,{ix,nstrats},{iy,nstrats},{iu,nstrats},{iv,nstrats},{is,nstrats},{it,nstrats}]) //N
-    	];
-    	If[nstratsAsked == nstrats, res, RandomSample[res][[;;npts]] ]
-    ] (* getStratND *)
-
-showstdRefL2discrepancy[] :=
-    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,fnameLabel,dirL2discrepancy},
+showstdRefDiscrepancy[] :=
+    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,dirDiscrepancy},
     	consecutiveFlag = False;
 		fontSz = 14;
 		kPlusMinus = .5;
     	{powfrom,powto,powstep} = {2,16,1};
 
+    	DiscrepancyType = 1;
+		DiscrepancyTypeLabel = Switch[DiscrepancyType,  1,"L2Discrepancy", 2,"StarDiscrepancy", 3,"GeneralizedL2Discrepancy" ];
+
 		nDims = 2;
-		(*integrandTypeLabel = "Heaviside";*)
 		
-		Manipulate[
-			fnameLabel = integrandTypeLabel ;
-	        plotLabel = "Ref L2discrepancy "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
-			dirL2discrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
+		(*Manipulate[*)
+	        plotLabel = "Ref "<>DiscrepancyTypeLabel<>" "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
+			dirDiscrepancy = "data_Discrepancy/"<>ToString[nDims]<>"D/";
 
-				data = (Drop[#,1]& @ Import[dirL2discrepancy<>"WN_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-				L2discrepancyWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirL2discrepancy<>"Strat_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-				L2discrepancyStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirL2discrepancy<>"OwenPure_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-				L2discrepancyOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-				L2discrepancyOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
-				data = (Drop[#,1]& @ Import[dirL2discrepancy<>"OwenPlus_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-				L2discrepancyOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"WN_"<>DiscrepancyTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			DiscrepancyWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"Strat_"<>DiscrepancyTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			DiscrepancyStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"OwenPure_"<>DiscrepancyTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			DiscrepancyOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			DiscrepancyOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"OwenPlus_"<>DiscrepancyTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			DiscrepancyOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
-				(*data = (Drop[#,1]& @ Import[dirL2discrepancy<>"Sobol_"<>fnameLabel<>".dat"]);
-				L2discrepancySobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
-				(*data = (Drop[#,1]& @ Import[dirL2discrepancy<>"PMJ02_"<>fnameLabel<>".dat"]);
-				L2discrepancyPMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+			(*data = (Drop[#,1]& @ Import[dirDiscrepancy<>"Sobol_"<>fnameLabel<>".dat"]);
+			DiscrepancySobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+			(*data = (Drop[#,1]& @ Import[dirDiscrepancy<>"PMJ02_"<>fnameLabel<>".dat"]);
+			DiscrepancyPMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 
-			    alldata = {L2discrepancyWN, L2discrepancyStrat, L2discrepancyOwen01Pure,  L2discrepancyOwenPlus} ;
-		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32" } ] ];
+		    alldata = {DiscrepancyWN, DiscrepancyStrat, DiscrepancyOwen01Pure,  DiscrepancyOwenPlus} ;
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32" } ] ];
 	        
 			ListLogLogPlot[ alldata
 						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
@@ -2137,9 +2094,9 @@ showstdRefL2discrepancy[] :=
 			            ,RotateLabel -> True
 			            ,PlotMarkers->{{\[FilledCircle],5} }
 			            ,Frame->True
-		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "L2discrepancy", fontSz] }
+		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ DiscrepancyTypeLabel, fontSz] }
 		           		,ImageSize -> {1024,1024}
-		            	,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ L2discrepancyOwen01PureRaw), Min @@ (second /@ L2discrepancyOwen01PureRaw) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ DiscrepancyOwen01PureRaw), Min @@ (second /@ DiscrepancyOwen01PureRaw) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
@@ -2147,9 +2104,9 @@ showstdRefL2discrepancy[] :=
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]			
 			(*,Control[{{consecutiveFlag,False},{True,False}}]*)
-			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles", "SoftEllipses_noRot" }}]
-         ]
-     ] (* showstdRefL2discrepancy *)
+			(*,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles", "SoftEllipses_noRot" }}]
+         ]*)
+     ] (* showstdRefDiscrepancy *)
 
 (* <<<<<<<<<<<<<<<<<<<<<< consecutive L2discrepancy
 
