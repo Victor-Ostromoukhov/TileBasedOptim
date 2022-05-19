@@ -1738,7 +1738,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
      		If[pointsetLabel == "SOT" && nDims == 4 && iptsPow == 17, nPointsets = 1 ]; (* Only 1 available *)
      		nptsTarget = If[consecutiveFlag, iCounter, 2^iCounter];
    			npts = Round[nptsTarget];
-   			If[!consecutiveFlag, npts = getRealNPts[nDims, pointsetLabel, pointsetType] ];
+   			If[!consecutiveFlag, npts = getRealNPts[nDims, npts, pointsetType] ];
     		resFname = If[consecutiveFlag, pointsetLabel<>"_"<>fnameLabel<>"_consecutive.dat", pointsetLabel<>"_"<>fnameLabel<>".dat"];
     		
 			mseTab = ( (*Parallelize @ *) Table[   				
