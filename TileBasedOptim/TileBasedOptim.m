@@ -64,6 +64,7 @@ showTilexycodes = 256;
 showLightGrayTile = 512;
 showFcodeInvNumber = 1024;
 showBasicVectors = 2048;
+showMatBuilderIndex = 4096;
 
 (*------------------------- end of constants -------------------------*)
 
@@ -745,11 +746,13 @@ getBase3SFC2DTilesGL[tlst_,params_:showSFC] :=
     	Do[
 			{tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
 			fcodelen = Length[fcode];
+			samplingPt = samplingPt//3^fcodelen;
 			{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/2);
 			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
     		If[BitAnd[params,showGrayValue] > 0, AppendTo[gl,{GrayLevel[FromDigits[Reverse@fcode,3]/3^fcodelen],Polygon@cont}] ];
     		If[BitAnd[params,showLightGrayTile] > 0, AppendTo[gl,{LightGray,Polygon@cont}] ];
 			AppendTo[gl,Flatten[#,1]& @ {(*Point@(refPt+(norm1+norm2)/20),*)bortedStyle,Line@cont } ];
+			If[BitAnd[params,showMatBuilderIndex] > 0, AppendTo[gl, {Text[Style[matBuilderIndex,Bold,14,Blue],refPt+(v1+v2)/2 ]} ] ];		
 			If[BitAnd[params,showTileType] > 0, AppendTo[gl, {Text[Style[tileType,Bold,14,Blue],refPt+(v1+v2)/2,{1.9,-1}]} ] ];		
 			If[BitAnd[params,showOrdinalNumber] > 0, AppendTo[gl, {Text[Style[FromDigits[fcode,3],Bold,14,Red],refPt+(v1+v2)/2,{-1.9,-1}]} ] ];
 			If[BitAnd[params,showFcodeInvNumber] > 0, AppendTo[gl, {Text[Style[FromDigits[Reverse@fcode,3],Bold,14,Black],refPt+(v1+v2)/2,{1.9,-1}]} ] ];
@@ -2365,7 +2368,7 @@ prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
 				exportSelectionBase3SFC2D[fname,seltlst];
 				Print[Length[seltlst] -> " Exporting " -> fname];
 				If[dbg,
-					p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
+					p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showMatBuilderIndex], PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
 					Export["optim_figs_2D_MatBuilderOnly/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 				];
@@ -2375,10 +2378,10 @@ prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
 
 exportSelectionBase3SFC2D[fname_, seltlst_] :=
 Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode},
-	newtlst = Flatten /@ Table[
+	newtlst = Sort @ (Flatten /@ Table[
 			{tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = seltlst[[ind]];			
 			{matBuilderIndex,samplingPt,N@prevrefPt,N@{prevv1,prevv2} }
-		,{ind,Length[seltlst]}];
+		,{ind,Length[seltlst]}] );
 	Export[fname,newtlst];
 ] (* exportSelectionBase3SFC2D *)
 
