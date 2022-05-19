@@ -1985,6 +1985,8 @@ makeDiscrepancyRef[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1},
      		nptsTarget = If[consecutiveFlag, iCounter, 2^iCounter];
    			(*npts = If[consecutiveFlag, nptsTarget, getRealNPts[nDims, pointsetLabel, pointsetType] ];*)
    			npts = Round[nptsTarget];
+   			If[!consecutiveFlag, npts = getRealNPts[nDims, npts, pointsetType] ];
+
     		resFname = If[consecutiveFlag, pointsetLabel<>"_"<>DiscrepancyTypeLabel<>"_consecutive.dat", pointsetLabel<>"_"<>DiscrepancyTypeLabel<>".dat"];
 			DiscrepancyTab = ( Parallelize @  Table[   				
 				ptsfname = "tmp/pts_"<>ToString[iPointSet]<>pid<>".dat";
