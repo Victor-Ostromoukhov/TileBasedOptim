@@ -1936,13 +1936,14 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 nDims = 2;
-	nPointsets = 16;   
 	DiscrepancyType = 1;                                                                                                                                                                                     
+	nPointsets = 256;   
+	makeDiscrepancyRef[11, nPointsets, {2,16,1/2.}, DiscrepancyType, nDims];                                                                                                                               
+
+	makeDiscrepancyRef[10, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
+	nPointsets = 16;   
 	makeDiscrepancyRef[12, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
 	makeDiscrepancyRef[19, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
-	nPointsets = 256;   
-	makeDiscrepancyRef[11, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
-	makeDiscrepancyRef[10, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
 
 *)
 makeDiscrepancyRef[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inDiscrepancyType_:1, innDims_:2, consecutiveFlag_:False, dbg_:False] :=
