@@ -1935,6 +1935,7 @@ nDims = 2;
 	DiscrepancyType = 1;                                                                                                                                                                                     
 	makeDiscrepancyRef[12, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
 	makeDiscrepancyRef[19, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
+	nPointsets = 256;   
 	makeDiscrepancyRef[11, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
 	makeDiscrepancyRef[10, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
 
