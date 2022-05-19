@@ -1692,12 +1692,12 @@ nintegrands = 16 1024;
 nDims = 2;
 Parallelize @ Do[
 	nPointsets = 1024;                                                                                                                                                                                        
-	makeMSEref[10, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[12, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[19, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 ,{integrandType,1,5}]
 
+	makeMSEref[10, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 
 *)
 makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, consecutiveFlag_:False, dbg_:False] :=
@@ -1737,9 +1737,10 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 		Do[	
      		If[pointsetLabel == "SOT" && nDims == 4 && iptsPow == 17, nPointsets = 1 ]; (* Only 1 available *)
      		nptsTarget = If[consecutiveFlag, iCounter, 2^iCounter];
-   			(*npts = If[consecutiveFlag, nptsTarget, getRealNPts[nDims, pointsetLabel, pointsetType] ];*)
    			npts = Round[nptsTarget];
+   			If[!consecutiveFlag, npts = getRealNPts[nDims, pointsetLabel, pointsetType] ];
     		resFname = If[consecutiveFlag, pointsetLabel<>"_"<>fnameLabel<>"_consecutive.dat", pointsetLabel<>"_"<>fnameLabel<>".dat"];
+    		
 			mseTab = ( (*Parallelize @ *) Table[   				
 				ptsfname = "tmp/pts_"<>ToString[iPointSet]<>pid<>".dat";
 				msefname = "tmp/mse"<>pid<>".dat";
@@ -1880,9 +1881,9 @@ showstdRefMSE[] :=
 			mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
 			mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			(*data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
 			mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-			mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+			mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];*)
 			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPlus_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
 			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
@@ -1892,7 +1893,7 @@ showstdRefMSE[] :=
 			(*data = (Drop[#,1]& @ Import[dirMSE<>"PMJ02_"<>fnameLabel<>".dat"]);
 			msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 
-		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus} ;
+		    alldata = {mseWN, mseStrat, (*mseOwen01Pure,*)  mseOwenPlus} ;
 	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32" } ] ];
 	        
 			ListLogLogPlot[ alldata
@@ -1913,7 +1914,7 @@ showstdRefMSE[] :=
 			            ,Frame->True
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
 		           		,ImageSize -> {1024,1024}
-		            	,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
