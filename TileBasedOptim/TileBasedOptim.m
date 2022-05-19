@@ -2057,8 +2057,8 @@ showstdRefDiscrepancy[] :=
 		nDims = 2;
 		
 		(*Manipulate[*)
-	        plotLabel = "Ref "<>DiscrepancyTypeLabel<>" "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
-			dirDiscrepancy = "data_Discrepancy/"<>ToString[nDims]<>"D/";
+	        plotLabel = "Ref "<>DiscrepancyTypeLabel<>" "<>ToString[nDims]<>"D  "<>DiscrepancyTypeLabel;
+			dirDiscrepancy = "data_"<>DiscrepancyTypeLabel<>"/"<>ToString[nDims]<>"D/";
 
 			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"WN_"<>DiscrepancyTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
 			DiscrepancyWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
@@ -2069,6 +2069,7 @@ showstdRefDiscrepancy[] :=
 			DiscrepancyOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
 			data = (Drop[#,1]& @ Import[dirDiscrepancy<>"OwenPlus_"<>DiscrepancyTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
 			DiscrepancyOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			DiscrepancyOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
 
 			(*data = (Drop[#,1]& @ Import[dirDiscrepancy<>"Sobol_"<>fnameLabel<>".dat"]);
 			DiscrepancySobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
@@ -2096,7 +2097,7 @@ showstdRefDiscrepancy[] :=
 			            ,Frame->True
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ DiscrepancyTypeLabel, fontSz] }
 		           		,ImageSize -> {1024,1024}
-		            	,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ DiscrepancyOwen01PureRaw), Min @@ (second /@ DiscrepancyOwen01PureRaw) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ DiscrepancyOwenPlusRaw), Min @@ (second /@ DiscrepancyOwenPlusRaw) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1

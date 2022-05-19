@@ -10,16 +10,22 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      1080,         39]
-NotebookOptionsPosition[       678,         23]
-NotebookOutlinePosition[      1130,         41]
-CellTagsIndexPosition[      1087,         38]
+NotebookDataLength[      1369,         46]
+NotebookOptionsPosition[       876,         29]
+NotebookOutlinePosition[      1328,         47]
+CellTagsIndexPosition[      1285,         44]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
 Cell[BoxData[
- RowBox[{"showstdRefMSE", "[", "]"}]], "Input",ExpressionUUID->"d48e45ee-ebbc-4e17-a937-8c593da6cb30"]
+ RowBox[{"showstdRefMSE", "[", "]"}]], "Input",ExpressionUUID->"d48e45ee-ebbc-4e17-a937-8c593da6cb30"],
+
+Cell[BoxData[
+ RowBox[{"showstdRefDiscrepancy", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.861929580077197*^9, 
+  3.861929580078865*^9}},ExpressionUUID->"c8603bfc-6f6c-455b-ba84-\
+4c90d27e5060"]
 },
 WindowSize->{2056, 1195},
 WindowMargins->{{-15, Automatic}, {Automatic, 0}},
@@ -40,7 +46,8 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 116, 1, 30, "Input",ExpressionUUID->"d48e45ee-ebbc-4e17-a937-8c593da6cb30"]
+Cell[558, 20, 116, 1, 30, "Input",ExpressionUUID->"d48e45ee-ebbc-4e17-a937-8c593da6cb30"],
+Cell[677, 23, 195, 4, 30, "Input",ExpressionUUID->"c8603bfc-6f6c-455b-ba84-4c90d27e5060"]
 }
 ]
 *)
