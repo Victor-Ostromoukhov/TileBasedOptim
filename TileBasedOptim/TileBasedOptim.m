@@ -1,13 +1,16 @@
 (* TileBasedOptim.m
    2022-04 vo, based on fibo-hilbert.m (version 2002/12/14)
-   
-makeWNL2Discrepancy[]
-makeStratL2Discrepancy[]
-makeSobolL2Discrepancy[]
-makeOwenL2Discrepancy[]
 
 makeMSEref[]
 showstdRefMSE[]
+
+makeDiscrepancyRef[]
+showstdRefDiscrepancy[]
+   
+makeWNL2discrepancy[]
+makeStratL2discrepancy[]
+makeSobolL2discrepancy[]
+makeOwenL2discrepancy[]
 
 prepOptimDataBase3SFCMatBuilderOnly2D[]
 
@@ -212,7 +215,7 @@ tstStarBinary3D[nlevels_:2] :=
 getGeneralizedL2discrepancy[pts_, dbg_:False] :=
     Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-    	prog = "getGeneralizedL2Discrepancy";
+    	prog = "getGeneralizedL2discrepancy";
         Export["tmp/tmp"<>pid<>".dat",N[pts]];
         execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat -d "<>ToString[nDims]<>" > /dev/null";
         returnCode = Run[execPrefix<>execString];
@@ -222,20 +225,31 @@ getGeneralizedL2discrepancy[pts_, dbg_:False] :=
         discrepancy
    ] (* getGeneralizedL2discrepancy *)
 
-getL2discrepancy[pts_, dbg_:False] :=
-    Module[ {execString,nDims = Length[First@pts],prog,returnCode, discrepancy},
+getL2discrepancy[pts_, inptsfname_:"", innDims_:2, dbg_:False] :=
+    Module[ {execString,nDims,ptsfname,prog,returnCode, discrepancy},
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-        prog =  Switch[nDims
-        	,2, "L2Discrepancy_fromfile_2dd"
-        	,3, "L2Discrepancy_fromfile_3dd"
-        	,4, "L2Discrepancy_fromfile_4dd"
+        If[inptsfname == "", (* given : pts *)
+         	nDims = Length[First@pts];
+        	ptsfname = "tmp/tmp"<>pid<>".dat";
+        	Export["tmp/tmp"<>pid<>".dat",N[pts]];      	
+         ,(*ELSE  given : inptsfname & innDims *)
+        	nDims = innDims;
+        	ptsfname = inptsfname;
         ];
-        Export["tmp/tmp"<>pid<>".dat",N[pts]];
-        execString =  prog<>" -i tmp/tmp"<>pid<>".dat -o tmp/res"<>pid<>".dat > /dev/null";
+        prog =  Switch[nDims
+        	,2, "L2discrepancy_fromfile_2dd"
+        	,3, "L2discrepancy_fromfile_3dd"
+        	,4, "L2discrepancy_fromfile_4dd"
+        ];
+        execString =  prog<>" -i "<>ptsfname<>" -o tmp/res"<>pid<>".dat > /dev/null";
         returnCode = Run[execPrefix<>execString];
         If[dbg, Print[execString -> returnCode ] ];
         discrepancy = Import["tmp/res"<>pid<>".dat"][[2,2]];
-        Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
+        If[inptsfname == "",  (* given : pts *)
+        	Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
+        ,(*ELSE  given : inptsfname & innDims *)
+        	Run["rm tmp/res"<>pid<>".dat"];
+        ];
         discrepancy
    ] (* getL2discrepancy *)
 
@@ -265,16 +279,16 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 makeSobolStarDiscrepancy[]
-makeSobolGeneralizedL2Discrepancy[]
+makeSobolGeneralizedL2discrepancy[]
 
 
 
-makeWNL2Discrepancy[]
-makeStratL2Discrepancy[]
+makeWNL2discrepancy[]
+makeStratL2discrepancy[]
 
-makeOwenL2Discrepancy[]
+makeOwenL2discrepancy[]
 
-makeSobolL2Discrepancy[]
+makeSobolL2discrepancy[]
 
 makeWNStarDiscrepancy[]
 makeStratStarDiscrepancy[]
@@ -282,7 +296,7 @@ makeSobolDiscrepancy[]
 *)
 
 
-makeSobolGeneralizedL2Discrepancy[nlevels_:12, nDims_:2,dbg_:False] :=
+makeSobolGeneralizedL2discrepancy[nlevels_:12, nDims_:2,dbg_:False] :=
     Module[ {},
         nptsMax = 2^nlevels;
         dtab = Parallelize @ Table[
@@ -293,12 +307,12 @@ makeSobolGeneralizedL2Discrepancy[nlevels_:12, nDims_:2,dbg_:False] :=
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getGeneralizedL2discrepancy[pts];
-        	Print["Processing makeSobolGeneralizedL2Discrepancy " -> {npts,d}];
+        	Print["Processing makeSobolGeneralizedL2discrepancy " -> {npts,d}];
 			{npts,d} 
         ,{inpts,nptsMax}];
 	    Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
         Print[mf @ dtab]
-    ] (* makeSobolL2Discrepancy *)
+    ] (* makeSobolL2discrepancy *)
 
 makeSobolStarDiscrepancy[nlevels_:12, nDims_:2,dbg_:False] :=
     Module[ {},
@@ -316,97 +330,7 @@ makeSobolStarDiscrepancy[nlevels_:12, nDims_:2,dbg_:False] :=
         ,{inpts,nptsMax}];
 	    Export["data_StarDiscrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
         Print[mf @ dtab]
-    ] (* makeSobolL2Discrepancy *)
-
-(* <<<<<<<<<<<<<<<<<<<<<< L2Discrepancy
-
-gitpull
-math
-<<TileBasedOptim/TileBasedOptim.m
-makeWNL2Discrepancy[]
-makeStratL2Discrepancy[]
-makeSobolL2Discrepancy[]
-makeOwenL2Discrepancy[]
-
-*)
-
-makeSobolL2Discrepancy[nlevels_:14, nDims_:3,dbg_:False] :=
-    Module[ {},
-        dtab = {};
-        nptsMax = 2^nlevels;
-        Do[
-			npts = inpts;
-			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 0 -o tmp/pts"<>pid<>".dat > /dev/null";
-        	returnCode = Run[execPrefix<>execString];
-        	pts = Import["tmp/pts"<>pid<>".dat"];		
-			If[dbg, ipts = Round[ npts pts ];
-				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-        	d = getL2discrepancy[pts];
-        	Print["Processing makeSobolL2Discrepancy " -> {npts,d}];
-			AppendTo[dtab, {npts,d} ];
-	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
-        ,{inpts,nptsMax}];
-        Print[mf @ dtab]
-    ] (* makeSobolL2Discrepancy *)
-
-makeOwenL2Discrepancy[nlevels_:14, nDims_:3,dbg_:False] :=
-    Module[ {},
-		If[ Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2]];
-        dtab = {};
-        nptsMax = 2^nlevels;
-        Do[
-			npts = inpts;
-        	d = Mean @ (Parallelize @ Table[
-				execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 1 --max_tree_depth_32_flag 0 -s "<>ToString[RandomInteger[2^16]]<>" -o tmp/pts"<>pid<>".dat > /dev/null";
-        		returnCode = Run[execPrefix<>execString];
-        		pts = Import["tmp/pts"<>pid<>".dat"];		
-        		getL2discrepancy[pts]
-        	,{64}]);
-        	Print["Processing makeOwenL2Discrepancy " -> {npts,d}];
-			AppendTo[dtab, {npts,d} ];
-	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Owen.dat", dtab]; 
-        ,{inpts,nptsMax}];
-        Print[mf @ dtab]
-    ] (* makeOwenL2Discrepancy *)
-
-makeWNL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:3] :=
-    Module[ {},
-        dtab = {};
-        Do[
-			npts = 2^ilevel;
-			trials = Parallelize @ Table[
-				pts = Table[Table[RandomReal[],{nDims}],{i,npts}];
-				{npts,getL2discrepancy[pts]}
-			,{itrail,ntrials}];
-			AppendTo[dtab, Mean @ trials ];
-        	Print["Processing makeWNL2Discrepancy level ",ilevel -> mf[dtab] ];
-	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/WN.dat", dtab]; 
-        ,{ilevel,nlevels}];
-        Print[mf @ dtab]
-    ]
-
-
-makeStratL2Discrepancy[nlevels_:14, ntrials_:64, nDims_:3] :=
-    Module[ {},
-        dtab = {};
-        Do[
-			npts = getCloseestNND[nDims, 2^ilevel];
-			nstrats = npts^(1/nDims);
-			trials = Parallelize @ Table[
-				Switch[nDims
-				,2, pts = N @ Table[{Mod[i,nstrats], Quotient[i,nstrats]}/nstrats + {RandomReal[],RandomReal[]}/nstrats,{i,0,npts-1}];
-				,3, pts = Flatten[#,2]& @ Table[{ix+RandomReal[],iy+RandomReal[],iz+RandomReal[]}/nstrats,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
-				];
-				{npts,getL2discrepancy[pts]}
-			,{itrail,ntrials}];
-			AppendTo[dtab, Mean @ trials ];
-        	Print["Processing makeStratL2Discrepancy level ",ilevel -> mf[dtab] ];
-	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Strat.dat", dtab]; push
-        ,{ilevel,nlevels}];
-        Print[mf @ dtab]
-    ]
-(*
-*)
+    ] (* makeSobolL2discrepancy *)
 
 
 makeSobolDiscrepancy[nlevels_:14, nDims_:2,dbg_:True] :=
@@ -518,7 +442,7 @@ showStarDisrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SF
             ,PlotLabel -> Style[ plotLabel, Bold, 24]
         ];
         p//Print;
-        Export["GeneralizedL2Discrepancy_Base3SFC2D.pdf",p];
+        Export["GeneralizedL2discrepancy_Base3SFC2D.pdf",p];
         (*P*)
     ] (* showGeneralizedL2discrepancyND *)
  
@@ -565,7 +489,7 @@ showL2discrepancyND[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLabel_:"Base3SFC
             ,PlotLabel -> Style[ plotLabel, Bold, 24]
         ];
         p//Print;
-        Export["L2Discrepancy_Base3SFC2D.pdf",p];
+        Export["L2discrepancy_Base3SFC2D.pdf",p];
         (*p*)
     ] (* showL2discrepancyND *)
 
@@ -613,7 +537,7 @@ showL2discrepancyNDMatBuilderOnly[nDims_:2,thisDiscrepancy_:{},thisDiscrepancyLa
             ,PlotLabel -> Style[ plotLabel, Bold, 24]
         ];
         p//Print;
-        Export["L2Discrepancy_Base3SFC2D_MatBuilderOnly.dat.pdf",p];
+        Export["L2discrepancy_Base3SFC2D_MatBuilderOnly.dat.pdf",p];
         (*p*)
     ] (* showL2discrepancyNDMatBuilderOnly *)
 
@@ -662,7 +586,7 @@ showL2discrepancyNDExperiment2Tanguy[nDims_:2,thisDiscrepancy_:{},thisDiscrepanc
             ,PlotLabel -> Style[ plotLabel, Bold, 24]
         ];
         p//Print;
-        Export["L2Discrepancy_Base3SFC2D_Experiment2Tanguy.dat.pdf",p];
+        Export["L2discrepancy_Base3SFC2D_Experiment2Tanguy.dat.pdf",p];
         (*p*)
     ] (* showL2discrepancyNDExperiment2Tanguy *)
 
@@ -1022,10 +946,10 @@ prepOptimDataBase3SFC2DExperiment2Tanguy[innlevels_:6, dbg_:True] :=
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-makeBase3SFC2DL2Discrepancy[]
+makeBase3SFC2DL2discrepancy[]
 *)
 
-makeBase3SFC2DL2Discrepancy[dbg_:False] :=
+makeBase3SFC2DL2discrepancy[dbg_:False] :=
     Module[ {},
     	nDims = 2;
         dtab = {};
@@ -1039,20 +963,20 @@ makeBase3SFC2DL2Discrepancy[dbg_:False] :=
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getL2discrepancy[pts];
-        	Print["Processing makeBase3SFC2DL2Discrepancy " -> {npts,d}];
+        	Print["Processing makeBase3SFC2DL2discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
 	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab]
-    ] (* makeBase3SFC2DL2Discrepancy *)
+    ] (* makeBase3SFC2DL2discrepancy *)
 
 (*
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-makeBase3SFC2DL2DiscrepancyExperimentTanguy[]
+makeBase3SFC2DL2discrepancyExperimentTanguy[]
 *)
-makeBase3SFC2DL2DiscrepancyExperimentTanguy[dbg_:False] :=
+makeBase3SFC2DL2discrepancyExperimentTanguy[dbg_:False] :=
     Module[ {},
     	nDims = 2;
         dtab = {};
@@ -1066,14 +990,14 @@ makeBase3SFC2DL2DiscrepancyExperimentTanguy[dbg_:False] :=
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getL2discrepancy[pts];
-        	Print["Processing makeBase3SFC2DL2Discrepancy " -> {npts,d}];
+        	Print["Processing makeBase3SFC2DL2discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
 	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D_Experiment2Tanguy.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab]
-    ] (* makeBase3SFC2DL2DiscrepancyExperimentTanguy *)
+    ] (* makeBase3SFC2DL2discrepancyExperimentTanguy *)
 
-makeBase3SFC2DL2DiscrepancyMatBuilderOnly[dbg_:False] :=
+makeBase3SFC2DL2discrepancyMatBuilderOnly[dbg_:False] :=
     Module[ {},
     	nDims = 2;
         dtab = {};
@@ -1087,12 +1011,12 @@ makeBase3SFC2DL2DiscrepancyMatBuilderOnly[dbg_:False] :=
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getL2discrepancy[pts];
-        	Print["Processing makeBase3SFC2DL2Discrepancy " -> {npts,d}];
+        	Print["Processing makeBase3SFC2DL2discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
 	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D_MatBuilderOnly.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab]
-    ] (* makeBase3SFC2DL2DiscrepancyMatBuilderOnly *)
+    ] (* makeBase3SFC2DL2discrepancyMatBuilderOnly *)
 
 
 
@@ -1112,7 +1036,7 @@ showBase3SFC2DOptimImprovement[dbg_:False] :=
 			Export["OptimImprovement.png",p];
     ] (* showBase3SFC2DOptimImprovement *)
 
-makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
+makeBase3SFC2DGeneralizedL2discrepancy[dbg_:False] :=
     Module[ {},
     	nDims = 2;
         dtab = {};
@@ -1126,13 +1050,13 @@ makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getGeneralizedL2discrepancy[pts];
-        	Print["Processing makeBase3SFC2DGeneralizedL2Discrepancy " -> {npts,d}];
+        	Print["Processing makeBase3SFC2DGeneralizedL2discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
 	        Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab];
 		p = showGeneralizedL2discrepancyND[nDims,dtab,"Base3SFC2D",{2,10}] ;
-    ] (* makeBase3SFC2DGeneralizedL2Discrepancy *)
+    ] (* makeBase3SFC2DGeneralizedL2discrepancy *)
 
 makeBase3SFC2DStarDiscrepancy[dbg_:False] :=
     Module[ {},
@@ -1154,10 +1078,10 @@ makeBase3SFC2DStarDiscrepancy[dbg_:False] :=
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab];
 		p = showStarDisrepancyND[nDims,dtab,"Base3SFC2D",{2,10}] ;
-    ] (* makeBase3SFC2DGeneralizedL2Discrepancy *)
+    ] (* makeBase3SFC2DGeneralizedL2discrepancy *)
 
 
-makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
+makeBase3SFC2DGeneralizedL2discrepancy[dbg_:False] :=
     Module[ {},
     	nDims = 2;
         dtab = {};
@@ -1171,13 +1095,13 @@ makeBase3SFC2DGeneralizedL2Discrepancy[dbg_:False] :=
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
         	d = getGeneralizedL2discrepancy[pts];
-        	Print["Processing makeBase3SFC2DGeneralizedL2Discrepancy " -> {npts,d}];
+        	Print["Processing makeBase3SFC2DGeneralizedL2discrepancy " -> {npts,d}];
 			AppendTo[dtab, {npts,d} ];
 	        Export["data_GeneralizedL2discrepancy/"<>ToString[nDims]<>"D/Base3SFC2D.dat", dtab]; 
         ,{iOrdinalAbsolute,2,nptsMax}];
         Print[mf @ dtab];
 		p = showGeneralizedL2discrepancyND[nDims,dtab,"Base3SFC2D",{2,10}] ;
-    ] (* makeBase3SFC2DGeneralizedL2Discrepancy *)
+    ] (* makeBase3SFC2DGeneralizedL2discrepancy *)
 
 (*----------------------------- end of Base3SFC2D --------------------------------*)
 
@@ -1766,9 +1690,9 @@ nDims = 2;
 Parallelize @ Do[
 	nPointsets = 1024;                                                                                                                                                                                        
 	makeMSEref[10, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[11, nPointsets, {2,16,,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[12, nPointsets, {2,16,,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[19, nPointsets, {2,16,,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[11, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[12, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[19, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 ,{integrandType,1,5}]
 
 
@@ -1796,11 +1720,9 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 			(* pointsets, 2D only *) ,200,"HexGrid"  ,201,"Hammersley" ,202,"LarcherPillichshammer" ,203,"NRooks" ,204,"BNOT" ,205,"CMJ" ,206,"BNLDS" 
 									 ,207,"PMJ" ,208,"PMJ02" ,209,"LDBN" ,210,"Penrose" ,211,"Fattal" ,212, "HexGridTorApprox"
 	    	(* pointsets, 3D only *) ,300,"BCC", 301,"FCC", 302,"HCP", 303,"WeairePhelan"
-    		(* 4D Variants of Sobol,OwenPlus,OwenPure *) ,400,"Sobol2356" ,401,"OwenPlus2356" ,402,"OwenPure2356",403,"Sobol2367" ,404,"OwenPlus2367" ,405,"OwenPure2367"
 			(* uniformND *) ,500,"UniformND" ,501,"UniformNDwithoutSobol"
 			(* uniformND *) ,600,"zsampler",601,"morton",602,"morton01"
 			(* pointsets, SobolShiftedKx *) ,701,"SobolShifted1x",702,"SobolShifted2x",703,"SobolShifted3x",704,"SobolShifted4x"
-			(* pointsets, OwenPlusShiftedKx *) ,801,"OwenPlusShifted1x",802,"OwenPlusShifted2x",803,"OwenPlusShifted3x",804,"OwenPlusShifted4x"
 			(* pointsets, OwenShiftedKx *) ,900,"OwenMicroShift",999,"OwenMicroShiftGlobal",901,"OwenShifted1x",902,"OwenShifted2x",903,"OwenShifted3x",904,"OwenShifted4x"
 	    	,_, "unknown" 
 		];
@@ -1840,18 +1762,9 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 				,"OwenPure", execString = "owen --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
    					res = Run[execPrefix<>execString];
 			     	If[dbg, Print[execString -> res] ];
-					,"SobolShifted1x", execString = "owen --start "<>ToString[1*npts]<>" --nDims "<>ToString[nDims]<>" -p 0 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"SobolShifted2x", execString = "owen --start "<>ToString[2*npts]<>" --nDims "<>ToString[nDims]<>" -p 0 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"SobolShifted3x", execString = "owen --start "<>ToString[3*npts]<>" --nDims "<>ToString[nDims]<>" -p 0 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"SobolShifted4x", execString = "owen --start "<>ToString[4*npts]<>" --nDims "<>ToString[nDims]<>" -p 0 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
+				,"OwenPlus", execString = "owen --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
+   					res = Run[execPrefix<>execString];
+			     	If[dbg, Print[execString -> res] ];
 (*>>>>>>>>>>>>>*)   ,"OwenMicroShift", execString = "owen -f "<>ToString[firstDim]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
    						res = Run[execPrefix<>execString];
 			     		If[dbg, Print[execString -> res] ];
@@ -1863,51 +1776,6 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 			     		delta = 1/npts Table[RandomReal[], {nDims}];
 			     		data = Plus[#, delta] & /@ Import[ptsfname];
 			     		Export[ptsfname, data];
-					,"OwenShifted1x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[1*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"OwenShifted2x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[2*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"OwenShifted3x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[3*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"OwenShifted4x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[4*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"OwenPlus", execString = "owen --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"OwenPlusShifted1x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[1*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"OwenPlusShifted2x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[2*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"OwenPlusShifted3x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[3*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-					,"OwenPlusShifted4x", execString = "owen -f "<>ToString[firstDim]<>" --start "<>ToString[4*npts]<>" --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-				,"Sobol2356", execString = "owen --nDims 4 -d data/sobol_init_2356.dat -f 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" --permut 0  > /dev/null";
-					res = Run[execPrefix<>execString];
-		     		If[dbg, Print[execString -> res] ];
-				,"OwenPlus2356", execString = "owen --nDims 4 -d data/sobol_init_2356.dat -f 1 -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-				,"OwenPure2356", execString = "owen --nDims 4 -d data/sobol_init_2356.dat -f 1 -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-				,"Sobol2367", execString = "owen --nDims 4 -d data/sobol_init_2367.dat -f 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" --permut 0  > /dev/null";
-					res = Run[execPrefix<>execString];
-		     		If[dbg, Print[execString -> res] ];
-				,"OwenPlus2367", execString = "owen --nDims 4 -d data/sobol_init_2367.dat -f 1 -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
-				,"OwenPure2367", execString = "owen --nDims 4 -d data/sobol_init_2367.dat -f 1 -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
-   						res = Run[execPrefix<>execString];
-			     		If[dbg, Print[execString -> res] ];
 				,"WN", 
 					pts = getWN[nDims, npts];
 		     		Export[ptsfname,pts];
@@ -1954,35 +1822,10 @@ getRealNPts[nDims_:2, npts_:16, pointsetType_:10] :=
     ,11, getCloseestNND[nDims, npts]    (* Strat *)
     ,15, getCloseestNND[nDims, npts]    (* RegGrid *)
     ,777,	First @ getOmegaApproxRealNpts[nDims, npts]
-    (*,200, getHexGridRealNpts[nDims, npts]*)    (* HexGrid *)
     ,212, getHexGridTorApproxRealNpts[nDims, npts]    (* HexGridTorApproxReal *)
     ,209, getLDBNRealNpts[nDims, npts]    (* LDBN *)
     ,_, npts
     ]
-(*		pointsetLabel = Switch[pointsetType 
-				(* sequence, ND *)   ,1,"Sobol" ,2,"Halton" ,3,"Faure" ,4,"Niederreiter" ,5,"SobolPlusPlus",6,"SobolGlobal",7,"OwenGlobal"
-			(* pointsets, ND *)  ,10,"WN" ,11,"Strat" ,12,"OwenPlus" ,13,"Rank1Lattice" ,14,"DartThrowing"  ,15,"RegGrid" ,16,"SOT" ,17,"SOTPlusLloyd",18,"OwenPureFirstDim2",19,"OwenPure" 
-			(* ExtensibleLattices, ND *),20,"ExtensibleLatticeType0" ,21,"ExtensibleLatticeType1" ,22,"ExtensibleLatticeType2" ,23,"ExtensibleLatticeType3"
-			(* pointsets, 2D only *) ,200,"HexGrid"  ,201,"Hammersley" ,202,"LarcherPillichshammer" ,203,"NRooks" ,204,"BNOT" ,205,"CMJ" ,206,"BNLDS" 
-									 ,207,"PMJ" ,208,"PMJ02" ,209,"LDBN" ,210,"Penrose" ,211,"Fattal" ,212, "HexGridTorApprox"
-	    	(* pointsets, 3D only *) ,300,"BCC", 301,"FCC", 302,"HCP", 303,"WeairePhelan"
-    		(* 4D Variants of Sobol,OwenPlus,OwenPure *) ,400,"Sobol2356" ,401,"OwenPlus2356" ,402,"OwenPure2356",403,"Sobol2367" ,404,"OwenPlus2367" ,405,"OwenPure2367"
-			(* uniformND *) ,500,"UniformND" ,501,"UniformNDwithoutSobol"
-			(* uniformND *) ,600,"zsampler",601,"morton",602,"morton01"
-			(* pointsets, SobolShiftedKx *) ,701,"SobolShifted1x",702,"SobolShifted2x",703,"SobolShifted3x",704,"SobolShifted4x"
-			(* pointsets, OwenPlusShiftedKx *) ,801,"OwenPlusShifted1x",802,"OwenPlusShifted2x",803,"OwenPlusShifted3x",804,"OwenPlusShifted4x"
-			(* pointsets, OwenShiftedKx *) ,900,"OwenMicroShift",999,"OwenMicroShiftGlobal",901,"OwenShifted1x",902,"OwenShifted2x",903,"OwenShifted3x",904,"OwenShifted4x"
-	    	,_, "unknown" 
-		];
-*)
-getStrat2D[npts_:256] :=
-    Block[ {nstrats,xshift,yshift},
-    	nstrats = Sqrt[npts];
-    	Flatten[#,1]& @ Parallelize @ (Table[
-    		{xshift,yshift} = {RandomReal[], RandomReal[]}/nstrats;
-   			{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift}
-    	,{ix,nstrats},{iy,nstrats}]) //N
-    ] (* getStrat2D *)
 
 getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
 	
@@ -2014,10 +1857,6 @@ getStratND[nDims_:3,npts_:512] :=
     	];
     	If[nstratsAsked == nstrats, res, RandomSample[res][[;;npts]] ]
     ] (* getStratND *)
-
-
-
-showstdRefMSEandDiscrepancy[] := {showstdRefMSE[], showstdRefDiscrepancy[]}
 
 showstdRefMSE[] :=
     Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,fnameLabel,dirMSE},
@@ -2060,16 +1899,7 @@ showstdRefMSE[] :=
 							{Black,AbsoluteThickness[2]},
 							{Red,AbsoluteThickness[2]},
 							{Cyan,AbsoluteThickness[2]},
-							{Darker@Green,AbsoluteDashing[{10, 5}], AbsoluteThickness[6]},
-							{Yellow,AbsoluteThickness[6]},
-							
-							{Blue,Dotted,AbsoluteThickness[2]},
-
-							{Blue,Dotted,AbsoluteThickness[5]},
-							{Black,Dotted,AbsoluteThickness[5]},
-							{Red,Dotted,AbsoluteThickness[5]},
-
-							{Red,AbsoluteThickness[10]}
+							{Darker@Green,AbsoluteThickness[2]}
 						}
 						,Joined->True
 		            	,FrameTicks->{{Automatic,None},{Table[2^pow,{pow,powfrom,powto,2}],Table[2^pow,{pow,powfrom,powto,2}]}}
@@ -2092,9 +1922,325 @@ showstdRefMSE[] :=
      ] (* showstdRefMSE *)
 
 
+
+(*----------------------------------------- L2discrepancy *)
 (*
-rotmx = RandomVariate[CircularRealMatrixDistribution[2], 1]
+
+
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+nDims = 2;
+	nPointsets = 16;   
+	DiscrepancyType = 1;                                                                                                                                                                                     
+	makeDiscrepancyRef[12, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
+	makeDiscrepancyRef[19, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
+	makeDiscrepancyRef[11, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
+	makeDiscrepancyRef[10, nPointsets, {2,16,1/4.}, DiscrepancyType, nDims];                                                                                                                               
+
 *)
+makeDiscrepancyRef[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inDiscrepancyType_:1, innDims_:2, consecutiveFlag_:False, dbg_:False] :=
+    Module[ {},
+    	firstDim = 0;
+    	(*If[ Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2]];*)
+    	nDims = innDims;
+    	DiscrepancyType = inDiscrepancyType;
+		DiscrepancyTypeLabel = Switch[DiscrepancyType,  1,"L2Discrepancy", 2,"StarDiscrepancy", 3,"GeneralizedL2Discrepancy" ];
+       	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
+		nPointsets 	= innPointsets ;
+        {powfrom,powto,powstep} = powParams;
+
+		dirDiscrepancy = "data_"<>DiscrepancyTypeLabel<>"/"<>ToString[nDims]<>"D/";
+        If[ !FileExistsQ[dirDiscrepancy], CreateDirectory[dirDiscrepancy] ];
+        If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+		pointsetType = inpointsetTypes;
+		pointsetLabel = Switch[pointsetType 
+			(* sequence, ND *)   ,1,"Sobol" ,2,"Halton" ,3,"Faure" ,4,"Niederreiter" ,5,"SobolPlusPlus",6,"SobolGlobal",7,"OwenGlobal"
+			(* pointsets, ND *)  ,10,"WN" ,11,"Strat" ,12,"OwenPlus" ,13,"Rank1Lattice" ,14,"DartThrowing"  ,15,"RegGrid" ,16,"SOT" ,17,"SOTPlusLloyd",18,"OwenPureFirstDim2",19,"OwenPure" 
+			(* ExtensibleLattices, ND *),20,"ExtensibleLatticeType0" ,21,"ExtensibleLatticeType1" ,22,"ExtensibleLatticeType2" ,23,"ExtensibleLatticeType3"
+			(* pointsets, 2D only *) ,200,"HexGrid"  ,201,"Hammersley" ,202,"LarcherPillichshammer" ,203,"NRooks" ,204,"BNOT" ,205,"CMJ" ,206,"BNLDS" 
+									 ,207,"PMJ" ,208,"PMJ02" ,209,"LDBN" ,210,"Penrose" ,211,"Fattal" ,212, "HexGridTorApprox"
+	    	(* pointsets, 3D only *) ,300,"BCC", 301,"FCC", 302,"HCP", 303,"WeairePhelan"
+    		(* 4D Variants of Sobol,OwenPlus,OwenPure *) ,400,"Sobol2356" ,401,"OwenPlus2356" ,402,"OwenPure2356",403,"Sobol2367" ,404,"OwenPlus2367" ,405,"OwenPure2367"
+			(* uniformND *) ,500,"UniformND" ,501,"UniformNDwithoutSobol"
+			(* uniformND *) ,600,"zsampler",601,"morton",602,"morton01"
+			(* pointsets, SobolShiftedKx *) ,701,"SobolShifted1x",702,"SobolShifted2x",703,"SobolShifted3x",704,"SobolShifted4x"
+			(* pointsets, OwenPlusShiftedKx *) ,801,"OwenPlusShifted1x",802,"OwenPlusShifted2x",803,"OwenPlusShifted3x",804,"OwenPlusShifted4x"
+			(* pointsets, OwenShiftedKx *) ,900,"OwenMicroShift",999,"OwenMicroShiftGlobal",901,"OwenShifted1x",902,"OwenShifted2x",903,"OwenShifted3x",904,"OwenShifted4x"
+	    	,_, "unknown" 
+		];
+    	If[pointsetLabel == "SOT", {powfrom,powto,powstep} = Switch[nDims,2,{2,17,1},3,{2,16,1},4,{2,17,1}] ];
+		{nPtsfrom,nPtsto} = {2^powfrom, 2^powto};
+		Print[pointsetLabel,{powfrom,powto,powstep} -> " makeDiscrepancyRef from ",nPtsfrom," to ",nPtsto];
+		dataDiscrepancy = {};
+		{iCounterfrom,iCounterto,iCounterstep} = If[consecutiveFlag, {nPtsfrom,nPtsto,1}, {powfrom, powto, powstep}];
+		Do[	
+     		If[pointsetLabel == "SOT" && nDims == 4 && iptsPow == 17, nPointsets = 1 ]; (* Only 1 available *)
+     		nptsTarget = If[consecutiveFlag, iCounter, 2^iCounter];
+   			(*npts = If[consecutiveFlag, nptsTarget, getRealNPts[nDims, pointsetLabel, pointsetType] ];*)
+   			npts = Round[nptsTarget];
+    		resFname = If[consecutiveFlag, pointsetLabel<>"_"<>DiscrepancyTypeLabel<>"_consecutive.dat", pointsetLabel<>"_"<>DiscrepancyTypeLabel<>".dat"];
+			DiscrepancyTab = ( (*Parallelize @ *) Table[   				
+				ptsfname = "tmp/pts_"<>ToString[iPointSet]<>pid<>".dat";
+				Discrepancyfname = "tmp/d"<>pid<>".dat";
+				Switch[pointsetLabel					
+				,"UniformND",
+					getUniformND[nDims, npts, ptsfname];
+				,"OwenPureFirstDim2", execString = "owen --firstDim 2 --nDims "<>ToString[nDims]<>" -p 1 -t 32 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   						res = Run[execPrefix<>execString];
+			     		If[dbg, Print[execString -> res] ];
+				,"HexGrid", 
+					pts = makeHexGridPts[npts];
+		     		Export[ptsfname,pts]
+				,"SOT", navailable = Switch[nDims,2,64,3,64,4,16,_,64];
+					ptsfname = "_pointsets_SobolPlusPlus/"<>ToString[nDims]<>"D/SOT/SOT_"<>i2s[npts,8]<>"/SOT_"<>i2s[npts,8]<>"_"<>i2s[Mod[iPointSet,navailable,1],6]<>".dat";
+				,"Rank1Lattice", 
+					dir="_pointsets_SobolPlusPlus/"<>ToString[nDims]<>"D/"<>pointsetLabel<>"/"<>pointsetLabel<>"_"<>i2s[npts,8]<>"/";
+					ptsfname = dir<>pointsetLabel<>"_"<>i2s[npts,8]<>"_"<>i2s[iPointSet,6]<>".dat";
+				,"PMJ02", 
+					ptsfname = "pointsets/"<>ToString[nDims]<>"D/pmj02/pmj02_set"<>i2s[iPointSet-1,5]<>"_"<>i2s[npts,8]<>".dat";
+				,"Sobol", execString = "owen --nDims "<>ToString[nDims]<>" -o "<>ptsfname<>" -n "<>ToString[npts]<>" --permut 0  > /dev/null";
+					res = Run[execPrefix<>execString];
+		     		If[dbg, Print[execString -> res] ];
+				,"OwenPure", execString = "owen --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 0 > /dev/null";
+   					res = Run[execPrefix<>execString];
+			     	If[dbg, Print[execString -> res] ];
+				,"OwenPlus", execString = "owen --nDims "<>ToString[nDims]<>" -p 1 -o "<>ptsfname<>" -n "<>ToString[npts]<>" -s "<>ToString[RandomInteger[2^31]]<>" --max_tree_depth_32_flag 1 > /dev/null";
+   					res = Run[execPrefix<>execString];
+			     	If[dbg, Print[execString -> res] ];
+				,"WN", 
+					pts = getWN[nDims, npts];
+		     		Export[ptsfname,pts];
+				,"Strat", (* something goes wrong in Stratified_3dd *)
+					pts = getStratND[nDims, npts];
+		     		Export[ptsfname,pts]
+				,_, Print["makeDiscrepancyRef ",pointsetType -> pointsetLabel, " not implemented yet"]; Abort[];
+					];
+ 		     	Discrepancy = Switch[DiscrepancyType,  1, getL2discrepancy[pts,ptsfname] ];
+		     	If[dbg, Print[execString -> res -> Discrepancy] ];
+		     	If[!NumberQ[Discrepancy], Abort[] ];
+		     	(*If[ pointsetLabel != "SOT" && pointsetLabel != "Rank1Lattice"  && pointsetLabel != "PMJ02" && FileExistsQ[ptsfname], DeleteFile[ptsfname] ];*)
+		     	If[ FileExistsQ[Discrepancyfname], DeleteFile[Discrepancyfname] ];
+				(*Run["rm -rf "<>ptsfname<>" "<>Discrepancyfname ];*)
+				If[dbg, Print[{pointsetLabel,DiscrepancyTypeLabel}," ",{npts,iPointSet,Discrepancy} ] ];
+     			Discrepancy
+     		,{iPointSet,nPointsets}]);
+
+			If[dbg, Print[Sort@DiscrepancyTab] ];
+			
+     		DiscrepancyMean = Mean @ DiscrepancyTab;
+     		DiscrepancyVariance = If[nPointsets == 1, 0 , Variance @ DiscrepancyTab];
+     		{DiscrepancyMin,DiscrepancyMax} = {Min@DiscrepancyTab, Max@DiscrepancyTab};
+     		AppendTo[dataDiscrepancy,{Round[npts],DiscrepancyMean,DiscrepancyVariance,DiscrepancyMin,DiscrepancyMax,0,0,nPointsets,0}];
+
+			If[!consecutiveFlag || (consecutiveFlag &&  Mod[iCounter,100] == 99 ) || iCounter == iCounterto,
+     			Print["makeDiscrepancyRef: ",DiscrepancyTypeLabel -> pointsetLabel," ",ToString[nDims]<>"D" -> nPointsets ->  Last[ dataDiscrepancy[[;;,1;;2]] ] -> dirDiscrepancy];
+   				Export[dirDiscrepancy<>resFname,header,"TEXT"];
+ 				Export["tmp/tmpdat"<>pid<>".dat",dataDiscrepancy];
+ 				Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirDiscrepancy<>resFname];
+				Print[dirDiscrepancy<>resFname, " written."];
+			];
+		,{iCounter, iCounterfrom,iCounterto,iCounterstep}]; 
+        (*Run["rm -rf tmp/" ];*)
+   ] (* makeDiscrepancyRef *)
+
+getCloseestN2D[n_] := Round[Sqrt[n]]^2
+getCloseestNND[nDims_:2, n_] := Round[n^(1/nDims)]^nDims
+
+getRealNPts[nDims_:2, npts_:16, pointsetType_:10] :=
+    Switch[pointsetType
+    ,11, getCloseestNND[nDims, npts]    (* Strat *)
+    ,15, getCloseestNND[nDims, npts]    (* RegGrid *)
+    ,777,	First @ getOmegaApproxRealNpts[nDims, npts]
+    ,212, getHexGridTorApproxRealNpts[nDims, npts]    (* HexGridTorApproxReal *)
+    ,209, getLDBNRealNpts[nDims, npts]    (* LDBN *)
+    ,_, npts
+    ]
+
+getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
+	
+getStratND[nDims_:3,npts_:512] :=
+    Block[ {nstrats,xshift,yshift,ushift,vshift,sshift,tshift,nstratsAsked,res},
+    	nstratsAsked = npts^(1/nDims);	(* suppose that npts is already appropriate, passed through getRealNPts[] *)
+    	nstrats = If[IntegerQ[nstratsAsked], nstratsAsked, Ceiling[nstratsAsked] ];
+    	res = Switch[nDims
+    	,1, Flatten[#,1]& @ (Table[
+    			xshift = RandomReal[]/nstrats;
+   				(ix-1)/nstrats + xshift
+    		,{ix,nstrats}]) //N
+    	,2, Flatten[#,1]& @ (Table[
+    			{xshift,yshift} = {RandomReal[], RandomReal[]}/nstrats;
+   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift}
+    		,{ix,nstrats},{iy,nstrats}]) //N
+    	,3, Flatten[#,2]& @ (Table[
+    			{xshift,yshift,ushift} = {RandomReal[], RandomReal[], RandomReal[]}/nstrats;
+   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift, (iu-1)/nstrats + ushift}
+    		,{ix,nstrats},{iy,nstrats},{iu,nstrats}]) //N
+    	,4, Flatten[#,3]& @ (Table[
+    			{xshift,yshift,ushift,vshift} = Table[RandomReal[],{4}]/nstrats;
+   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift, (iu-1)/nstrats + ushift, (iv-1)/nstrats + vshift}
+    		,{ix,nstrats},{iy,nstrats},{iu,nstrats},{iv,nstrats}]) //N
+    	,6, Flatten[#,5]& @ (Table[
+    			{xshift,yshift,ushift,vshift,sshift,tshift} = Table[RandomReal[],{6}]/nstrats;
+   				{(ix-1)/nstrats + xshift,(iy-1)/nstrats + yshift, (iu-1)/nstrats + ushift, (iv-1)/nstrats + vshift, (is-1)/nstrats + sshift, (it-1)/nstrats + tshift}
+    		,{ix,nstrats},{iy,nstrats},{iu,nstrats},{iv,nstrats},{is,nstrats},{it,nstrats}]) //N
+    	];
+    	If[nstratsAsked == nstrats, res, RandomSample[res][[;;npts]] ]
+    ] (* getStratND *)
+
+showstdRefL2discrepancy[] :=
+    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,fnameLabel,dirL2discrepancy},
+    	consecutiveFlag = False;
+		fontSz = 14;
+		kPlusMinus = .5;
+    	{powfrom,powto,powstep} = {2,16,1};
+
+		nDims = 2;
+		(*integrandTypeLabel = "Heaviside";*)
+		
+		Manipulate[
+			fnameLabel = integrandTypeLabel ;
+	        plotLabel = "Ref L2discrepancy "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
+			dirL2discrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
+
+				data = (Drop[#,1]& @ Import[dirL2discrepancy<>"WN_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+				L2discrepancyWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				data = (Drop[#,1]& @ Import[dirL2discrepancy<>"Strat_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+				L2discrepancyStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				data = (Drop[#,1]& @ Import[dirL2discrepancy<>"OwenPure_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+				L2discrepancyOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+				L2discrepancyOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+				data = (Drop[#,1]& @ Import[dirL2discrepancy<>"OwenPlus_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+				L2discrepancyOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+
+				(*data = (Drop[#,1]& @ Import[dirL2discrepancy<>"Sobol_"<>fnameLabel<>".dat"]);
+				L2discrepancySobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+				(*data = (Drop[#,1]& @ Import[dirL2discrepancy<>"PMJ02_"<>fnameLabel<>".dat"]);
+				L2discrepancyPMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+
+			    alldata = {L2discrepancyWN, L2discrepancyStrat, L2discrepancyOwen01Pure,  L2discrepancyOwenPlus} ;
+		        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32" } ] ];
+	        
+			ListLogLogPlot[ alldata
+						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
+						,PlotStyle -> {
+							{Green,AbsoluteThickness[2]},
+							{Blue,AbsoluteThickness[2]},
+							{Black,AbsoluteThickness[2]},
+							{Red,AbsoluteThickness[2]},
+							{Cyan,AbsoluteThickness[2]},
+							{Darker@Green,AbsoluteThickness[2]}
+						}
+						,Joined->True
+		            	,FrameTicks->{{Automatic,None},{Table[2^pow,{pow,powfrom,powto,2}],Table[2^pow,{pow,powfrom,powto,2}]}}
+			            ,FrameStyle->Directive[Black,20]
+			            ,RotateLabel -> True
+			            ,PlotMarkers->{{\[FilledCircle],5} }
+			            ,Frame->True
+		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "L2discrepancy", fontSz] }
+		           		,ImageSize -> {1024,1024}
+		            	,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ L2discrepancyOwen01PureRaw), Min @@ (second /@ L2discrepancyOwen01PureRaw) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
+		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
+		            	,AspectRatio->1
+		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
+		            ]			
+			(*,Control[{{consecutiveFlag,False},{True,False}}]*)
+			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles", "SoftEllipses_noRot" }}]
+         ]
+     ] (* showstdRefL2discrepancy *)
+
+(* <<<<<<<<<<<<<<<<<<<<<< consecutive L2discrepancy
+
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+makeWNL2discrepancy[]
+makeStratL2discrepancy[]
+makeSobolL2discrepancy[]
+makeOwenL2discrepancy[]
+
+*)
+
+makeSobolL2discrepancy[nlevels_:14, nDims_:3,dbg_:False] :=
+    Module[ {},
+        dtab = {};
+        nptsMax = 2^nlevels;
+        Do[
+			npts = inpts;
+			execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 0 -o tmp/pts"<>pid<>".dat > /dev/null";
+        	returnCode = Run[execPrefix<>execString];
+        	pts = Import["tmp/pts"<>pid<>".dat"];		
+			If[dbg, ipts = Round[ npts pts ];
+				Print[Graphics[{AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+        	d = getL2discrepancy[pts];
+        	Print["Processing makeSobolL2discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Sobol.dat", dtab]; 
+        ,{inpts,nptsMax}];
+        Print[mf @ dtab]
+    ] (* makeSobolL2discrepancy *)
+
+makeOwenL2discrepancy[nlevels_:14, nDims_:3,dbg_:False] :=
+    Module[ {},
+		If[ Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2]];
+        dtab = {};
+        nptsMax = 2^nlevels;
+        Do[
+			npts = inpts;
+        	d = Mean @ (Parallelize @ Table[
+				execString = "owen -n "<>ToString[npts]<>" --nd "<>ToString[nDims]<>" -p 1 --max_tree_depth_32_flag 0 -s "<>ToString[RandomInteger[2^16]]<>" -o tmp/pts"<>pid<>".dat > /dev/null";
+        		returnCode = Run[execPrefix<>execString];
+        		pts = Import["tmp/pts"<>pid<>".dat"];		
+        		getL2discrepancy[pts]
+        	,{64}]);
+        	Print["Processing makeOwenL2discrepancy " -> {npts,d}];
+			AppendTo[dtab, {npts,d} ];
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Owen.dat", dtab]; 
+        ,{inpts,nptsMax}];
+        Print[mf @ dtab]
+    ] (* makeOwenL2discrepancy *)
+
+makeWNL2discrepancy[nlevels_:14, ntrials_:64, nDims_:3] :=
+    Module[ {},
+        dtab = {};
+        Do[
+			npts = 2^ilevel;
+			trials = Parallelize @ Table[
+				pts = Table[Table[RandomReal[],{nDims}],{i,npts}];
+				{npts,getL2discrepancy[pts]}
+			,{itrail,ntrials}];
+			AppendTo[dtab, Mean @ trials ];
+        	Print["Processing makeWNL2discrepancy level ",ilevel -> mf[dtab] ];
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/WN.dat", dtab]; 
+        ,{ilevel,nlevels}];
+        Print[mf @ dtab]
+    ]
+
+
+makeStratL2discrepancy[nlevels_:14, ntrials_:64, nDims_:3] :=
+    Module[ {},
+        dtab = {};
+        Do[
+			npts = getCloseestNND[nDims, 2^ilevel];
+			nstrats = npts^(1/nDims);
+			trials = Parallelize @ Table[
+				Switch[nDims
+				,2, pts = N @ Table[{Mod[i,nstrats], Quotient[i,nstrats]}/nstrats + {RandomReal[],RandomReal[]}/nstrats,{i,0,npts-1}];
+				,3, pts = Flatten[#,2]& @ Table[{ix+RandomReal[],iy+RandomReal[],iz+RandomReal[]}/nstrats,{ix,0,nstrats-1},{iy,0,nstrats-1},{iz,0,nstrats-1}];
+				];
+				{npts,getL2discrepancy[pts]}
+			,{itrail,ntrials}];
+			AppendTo[dtab, Mean @ trials ];
+        	Print["Processing makeStratL2discrepancy level ",ilevel -> mf[dtab] ];
+	        Export["data_L2discrepancy/"<>ToString[nDims]<>"D/Strat.dat", dtab]; push
+        ,{ilevel,nlevels}];
+        Print[mf @ dtab]
+    ]
+(*
+*)
+
 
 (*------------------------------------------ prepOptimDataBase3Simple2D ---------------------------------------------------*)
 (*
