@@ -1882,6 +1882,7 @@ showstdRefMSE[] :=
 			mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
 			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPlus_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
 			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
 
 			(*data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
 			mseSobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
@@ -1909,7 +1910,7 @@ showstdRefMSE[] :=
 			            ,Frame->True
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
 		           		,ImageSize -> {1024,1024}
-		            	,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwen01PureRaw), Min @@ (second /@ mseOwen01PureRaw) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
