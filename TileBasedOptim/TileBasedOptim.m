@@ -1692,7 +1692,7 @@ nintegrands = 16 1024;
 nDims = 2;
 Parallelize @ Do[
 	nPointsets = 1024;                                                                                                                                                                                        
-	makeMSEref[11, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[12, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[19, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 ,{integrandType,1,5}]
