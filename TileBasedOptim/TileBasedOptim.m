@@ -1922,7 +1922,7 @@ showstdRefMSE[] :=
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]			
 			(*,Control[{{consecutiveFlag,False},{True,False}}]*)
-			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles", "SoftEllipses_noRot" }}]
+			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside"(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
          ]
      ] (* showstdRefMSE *)
 
@@ -2084,6 +2084,8 @@ showstdRefDiscrepancy[] :=
 			DiscrepancySobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 			(*data = (Drop[#,1]& @ Import[dirDiscrepancy<>"PMJ02_"<>fnameLabel<>".dat"]);
 			DiscrepancyPMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+
+			(*limit = Table[npts = 2^i; {npts, k npts^-3 (Log[npts])^},{i,Length[data]}];*)
 
 		    alldata = {DiscrepancyWN, DiscrepancyStrat, DiscrepancyOwen01Pure,  DiscrepancyOwenPlus} ;
 	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32" } ] ];
