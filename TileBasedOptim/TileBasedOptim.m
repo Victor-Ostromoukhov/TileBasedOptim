@@ -778,7 +778,7 @@ fillSamplingPtsBase3SFC2DTiles[tlst_, mxTab_,mxInv_,mxInvH_,mxInvV_] :=
 			];
 			indVect = Mod[#,3]& /@ (m.v);
 			matBuilderIndex = FromDigits[#,3]& @ (Reverse @ indVect);
-						samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) (*/ 3^nsubdivs*);
+						samplingPt = (FromDigits[#,3]& /@ (Mod[#,3]& /@ {mxTab[[1,;;nsubdivs,;;nsubdivs]].indVect, mxTab[[2,;;nsubdivs,;;nsubdivs]].indVect}) ) / 3^nsubdivs;
 			If[dbg, Print[i -> {tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},fcode}] ];
 			{tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode}
     	,{ind,Length[tlst]}]
@@ -2386,7 +2386,7 @@ exportSelectionBase3SFC2D[fname_, seltlst_] :=
 Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode},
 	newtlst = Sort @ (Flatten /@ Table[
 			{tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = seltlst[[ind]];			
-			{matBuilderIndex,samplingPt,N@prevrefPt,N@{prevv1,prevv2} }
+			{matBuilderIndex,N@samplingPt,N@prevrefPt,N@{prevv1,prevv2} }
 		,{ind,Length[seltlst]}] );
 	Export[fname,newtlst];
 ] (* exportSelectionBase3SFC2D *)
