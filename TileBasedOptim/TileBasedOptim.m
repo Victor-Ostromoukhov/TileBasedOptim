@@ -275,6 +275,42 @@ getStarDiscrepancy[pts_, dbg_:False] :=
 getCloseestN2D[n_] := Round[Sqrt[n]]^2
 getCloseestNND[nDims_:2, n_] := Round[n^(1/nDims)]^nDims
 
+getMSE[pts_, inptsfname_:"", innDims_:2, inIntegrandType_:2, dbg_:False] :=
+    Module[ {execString,nDims,ptsfname,prog,returnCode, discrepancy,integrandType,integrandTypeLabel},
+    	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+        If[inptsfname == "", (* given : pts *)
+         	nDims = Length[First@pts];
+        	ptsfname = "tmp/tmp"<>pid<>".dat";
+        	Export["tmp/tmp"<>pid<>".dat",N[pts]];      	
+         ,(*ELSE  given : inptsfname & innDims *)
+        	nDims = innDims;
+        	ptsfname = inptsfname;
+        ];
+    	integrandType = inIntegrandType;
+		integrandTypeLabel = Switch[integrandType,  1,"Ellipses", 2,"SoftEllipses", 3,"Rectangles", 4,"Heaviside", 5,"SoftEllipses_noRot" ];
+     			Print["getMSE: ",integrandTypeLabel -> pointsetLabel," ",ToString[nDims]<>"D" -> nPointsets ->  Last[ dataMSE[[;;,1;;2]] ] -> dirMSE];
+   				Export[dirMSE<>resFname,header,"TEXT"];
+ 				Export["tmp/tmpdat"<>pid<>".dat",dataMSE];
+ 				Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFname];
+				Print[dirMSE<>resFname, " written."];
+
+        prog =  Switch[nDims
+        	,2, "L2discrepancy_fromfile_2dd"
+        	,3, "L2discrepancy_fromfile_3dd"
+        	,4, "L2discrepancy_fromfile_4dd"
+        ];
+        execString =  prog<>" -i "<>ptsfname<>" -o tmp/res"<>pid<>".dat > /dev/null";
+        returnCode = Run[execPrefix<>execString];
+        If[dbg, Print[execString -> returnCode ] ];
+        discrepancy = Import["tmp/res"<>pid<>".dat"][[2,2]];
+        If[inptsfname == "",  (* given : pts *)
+        	Run["rm tmp/tmp"<>pid<>".dat tmp/res"<>pid<>".dat"];
+        ,(*ELSE  given : inptsfname & innDims *)
+        	Run["rm tmp/res"<>pid<>".dat"];
+        ];
+        discrepancy
+   ] (* getMSE *)
+
 (*
 gitpull
 math
@@ -2390,4 +2426,71 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 		,{ind,Length[seltlst]}] );
 	Export[fname,newtlst];
 ] (* exportSelectionBase3SFC2D *)
+
+
+
+
+showstdResMSE[] :=
+    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,fnameLabel,dirMSE},
+    	consecutiveFlag = False;
+		fontSz = 14;
+		kPlusMinus = .5;
+    	{powfrom,powto,powstep} = {2,16,1};
+
+		nDims = 2;
+		(*integrandTypeLabel = "Heaviside";*)
+		
+		Manipulate[
+			fnameLabel = integrandTypeLabel ;
+	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
+			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>fnameLabel<>"/";
+
+			data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPlus_"<>fnameLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+
+			(*data = (Drop[#,1]& @ Import[dirMSE<>"Sobol_"<>fnameLabel<>".dat"]);
+			mseSobol01 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+			(*data = (Drop[#,1]& @ Import[dirMSE<>"PMJ02_"<>fnameLabel<>".dat"]);
+			msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+
+		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus} ;
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32" } ] ];
+	        
+			ListLogLogPlot[ alldata
+						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
+						,PlotStyle -> {
+							{Green,AbsoluteThickness[2]},
+							{Blue,AbsoluteThickness[2]},
+							{Black,AbsoluteThickness[2]},
+							{Red,AbsoluteThickness[2]},
+							{Cyan,AbsoluteThickness[2]},
+							{Darker@Green,AbsoluteThickness[2]}
+						}
+						,Joined->True
+		            	,FrameTicks->{{Automatic,None},{Table[2^pow,{pow,powfrom,powto,2}],Table[2^pow,{pow,powfrom,powto,2}]}}
+			            ,FrameStyle->Directive[Black,20]
+			            ,RotateLabel -> True
+			            ,PlotMarkers->{{\[FilledCircle],5} }
+			            ,Frame->True
+		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
+		           		,ImageSize -> {1024,1024}
+		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
+		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
+		            	,AspectRatio->1
+		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
+		            ]			
+			(*,Control[{{consecutiveFlag,False},{True,False}}]*)
+			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside"(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
+         ]
+     ] (* showstdResMSE *)
 
