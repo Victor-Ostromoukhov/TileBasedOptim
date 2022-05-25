@@ -2579,7 +2579,7 @@ showstdOptimMSE[] :=
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]			
-			,Control[{{optimTypeL2OptimisationLabel,"L2Optimisation"},{"L2Optimisation","MSEOptimisationHardEllipses","MSEOptimisationSoftEllipses",
+			,Control[{{optimTypeL2OptimisationLabel,"MSEOptimisationSoftEllipses"},{"L2Optimisation","MSEOptimisationHardEllipses","MSEOptimisationSoftEllipses",
 				"MSEOptimisationHardRectangles","MSEOptimisationSoftRectangles"} } ]
 			,Control[{{integrandTypeLabel,"SoftEllipses"},{"SoftEllipses", "Heaviside"(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
          ]
