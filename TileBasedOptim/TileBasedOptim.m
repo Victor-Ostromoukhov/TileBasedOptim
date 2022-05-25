@@ -2397,70 +2397,6 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 ] (* exportSelectionBase3SFC2D *)
 
 
-
-
-showstdOptimMSE[] :=
-    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,dirMSE},
-    	consecutiveFlag = False;
-		fontSz = 14;
-		kPlusMinus = .5;
-    	{powfrom,powto,powstep} = {2,16,1};
-
-		nDims = 2;
-		(*integrandTypeLabel = "Heaviside";*)
-		
-		Manipulate[
-	        plotLabel = "Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
-			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/";
-
-			data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>integrandTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-			mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-			data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>integrandTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-			mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>integrandTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-			mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-			mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
-			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPlus_"<>integrandTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
-			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
-
-			mseOptim = Select[Import[dirMSE<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat"], #[[1]] >= 2^powfrom &];
- 
-		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseOptim} ;
-	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", optimTypeL2OptimisationLabel} ] ];
-	        
-			ListLogLogPlot[ alldata
-						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
-						,PlotStyle -> {
-							{Green,AbsoluteThickness[2]},
-							{Blue,AbsoluteThickness[2]},
-							{Black,AbsoluteThickness[2]},
-							{Red,AbsoluteThickness[2]},
-							{Darker@Green,AbsoluteThickness[2]},
-							{Cyan,AbsoluteThickness[2]},
-							{Gray,AbsoluteThickness[2]}
-						}
-						,Joined->True
-		            	,FrameTicks->{{Automatic,None},{Table[2^pow,{pow,powfrom,powto,2}],Table[2^pow,{pow,powfrom,powto,2}]}}
-			            ,FrameStyle->Directive[Black,20]
-			            ,RotateLabel -> True
-			            ,PlotMarkers->{{\[FilledCircle],5} }
-			            ,Frame->True
-		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
-		           		,ImageSize -> {1024,1024}
-		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
-		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
-		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
-		            	,AspectRatio->1
-		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
-		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
-		            ]			
-			,Control[{{optimTypeL2OptimisationLabel,"L2Optimisation"},{"L2Optimisation","MSEOptimisationHardEllipses","MSEOptimisationSoftEllipses",
-				"MSEOptimisationHardRectangles","MSEOptimisationSoftRectangles"} } ]
-			,Control[{{integrandTypeLabel,"SoftEllipses"},{"SoftEllipses", "Heaviside"(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
-         ]
-     ] (* showstdOptimMSE *)
-
 optimTypeL2Optimisation = 1;
 optimTypeMSEOptimisationHardEllipses = 2;
 optimTypeMSEOptimisationSoftEllipses = 3;
@@ -2588,3 +2524,126 @@ makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, innDims_:2, dbg_:Fals
    		Export[dirL2discrepancy<>resFname, L2discrepancytab];
  		Print[dirL2discrepancy<>resFname, " written."];
    ] (* makeOptimL2discrepancy *)
+
+   
+showstdOptimMSE[] :=
+    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,dirMSE},
+    	consecutiveFlag = False;
+		fontSz = 14;
+		kPlusMinus = .5;
+    	{powfrom,powto,powstep} = {2,16,1};
+
+		nDims = 2;
+		(*integrandTypeLabel = "Heaviside";*)
+		
+		Manipulate[
+	        plotLabel = "Optim vs. Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
+			dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/";
+
+			data = (Drop[#,1]& @ Import[dirMSE<>"WN_"<>integrandTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirMSE<>"Strat_"<>integrandTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPure_"<>integrandTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			mseOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirMSE<>"OwenPlus_"<>integrandTypeLabel<>If[consecutiveFlag,"_consecutive",""]<>".dat"]);
+			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+
+			mseOptim = Select[Import[dirMSE<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat"], #[[1]] >= 2^powfrom &];
+ 
+		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseOptim} ;
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", optimTypeL2OptimisationLabel} ] ];
+	        
+			ListLogLogPlot[ alldata
+						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
+						,PlotStyle -> {
+							{Green,AbsoluteThickness[2]},
+							{Blue,AbsoluteThickness[2]},
+							{Black,AbsoluteThickness[2]},
+							{Red,AbsoluteThickness[2]},
+							{Darker@Green,AbsoluteThickness[2]},
+							{Cyan,AbsoluteThickness[2]},
+							{Gray,AbsoluteThickness[2]}
+						}
+						,Joined->True
+		            	,FrameTicks->{{Automatic,None},{Table[2^pow,{pow,powfrom,powto,2}],Table[2^pow,{pow,powfrom,powto,2}]}}
+			            ,FrameStyle->Directive[Black,20]
+			            ,RotateLabel -> True
+			            ,PlotMarkers->{{\[FilledCircle],5} }
+			            ,Frame->True
+		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
+		           		,ImageSize -> {1024,1024}
+		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
+		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
+		            	,AspectRatio->1
+		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
+		            ]			
+			,Control[{{optimTypeL2OptimisationLabel,"L2Optimisation"},{"L2Optimisation","MSEOptimisationHardEllipses","MSEOptimisationSoftEllipses",
+				"MSEOptimisationHardRectangles","MSEOptimisationSoftRectangles"} } ]
+			,Control[{{integrandTypeLabel,"SoftEllipses"},{"SoftEllipses", "Heaviside"(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
+         ]
+     ] (* showstdOptimMSE *)
+
+showstdOptimL2discrepancy[] :=
+    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,dirL2discrepancy},
+    	consecutiveFlag = False;
+		fontSz = 14;
+		kPlusMinus = .5;
+    	{powfrom,powto,powstep} = {2,16,1};
+
+		nDims = 2;
+				
+		Manipulate[
+	        plotLabel = "Optim vs. Ref L2discrepancy "<>ToString[nDims]<>"D";
+			dirL2discrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
+
+			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"WN_L2Discrepancy.dat"]);
+			L2discrepancyWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"Strat_L2Discrepancy.dat"]);
+			L2discrepancyStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"OwenPure_L2Discrepancy.dat"]);
+			L2discrepancyOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			L2discrepancyOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"OwenPlus_L2Discrepancy.dat"]);
+			L2discrepancyOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			L2discrepancyOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+
+			L2discrepancyOptim = Select[Import[dirL2discrepancy<>optimTypeL2OptimisationLabel<>".dat"], #[[1]] >= 2^powfrom &];
+ 
+		    alldata = {L2discrepancyWN, L2discrepancyStrat, L2discrepancyOwen01Pure,  L2discrepancyOwenPlus, L2discrepancyOptim} ;
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", optimTypeL2OptimisationLabel} ] ];
+	        
+			ListLogLogPlot[ alldata
+						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
+						,PlotStyle -> {
+							{Green,AbsoluteThickness[2]},
+							{Blue,AbsoluteThickness[2]},
+							{Black,AbsoluteThickness[2]},
+							{Red,AbsoluteThickness[2]},
+							{Darker@Green,AbsoluteThickness[2]},
+							{Cyan,AbsoluteThickness[2]},
+							{Gray,AbsoluteThickness[2]}
+						}
+						,Joined->True
+		            	,FrameTicks->{{Automatic,None},{Table[2^pow,{pow,powfrom,powto,2}],Table[2^pow,{pow,powfrom,powto,2}]}}
+			            ,FrameStyle->Directive[Black,20]
+			            ,RotateLabel -> True
+			            ,PlotMarkers->{{\[FilledCircle],5} }
+			            ,Frame->True
+		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "L2discrepancy", fontSz] }
+		           		,ImageSize -> {1024,1024}
+		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ L2discrepancyOwenPlusRaw), Min @@ (second /@ L2discrepancyOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
+		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
+		            	,AspectRatio->1
+		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
+		            ]			
+			,Control[{{optimTypeL2OptimisationLabel,"L2Optimisation"},{"L2Optimisation","MSEOptimisationHardEllipses","MSEOptimisationSoftEllipses",
+				"MSEOptimisationHardRectangles","MSEOptimisationSoftRectangles"} } ]
+         ]
+     ] (* showstdOptimL2discrepancy *)
