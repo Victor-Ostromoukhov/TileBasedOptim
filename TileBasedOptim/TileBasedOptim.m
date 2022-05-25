@@ -9,15 +9,12 @@ showstdRefDiscrepancy[]
 
 prepOptimDataBase3SFCMatBuilderOnly2D[]
  
-makeOptimMSE[]
-getMSE[]
+makeOptimMSE[]  ->  getMSE[]
 
-getL2discrepancy[]
+makeOptimL2discrepancy[]  ->  getL2discrepancy[]
  
-makeWNL2discrepancy[]
-makeStratL2discrepancy[]
-makeSobolL2discrepancy[]
-makeOwenL2discrepancy[]
+showstdOptimL2discrepancy[]
+showstdOptimMSE[]
 
 *)
  
