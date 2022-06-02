@@ -1692,12 +1692,12 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 256 1024;
 nDims = 2;
-Do[
+Parallelize @ Do[
 	nPointsets = 1024;                                                                                                                                                                                        
-	makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[12, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[19, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[10, nPointsets, {2,10,1}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[11, nPointsets, {2,10,1}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[12, nPointsets, {2,10,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[19, nPointsets, {2,10,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 ,{integrandType,1,1}]
 
 
