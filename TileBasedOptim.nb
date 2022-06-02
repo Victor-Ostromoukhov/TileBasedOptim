@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     17472,        388]
-NotebookOptionsPosition[     16712,        365]
-NotebookOutlinePosition[     17167,        383]
-CellTagsIndexPosition[     17124,        380]
+NotebookDataLength[      8555,        198]
+NotebookOptionsPosition[      8025,        179]
+NotebookOutlinePosition[      8475,        197]
+CellTagsIndexPosition[      8432,        194]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -21,333 +21,147 @@ Notebook[{
 
 Cell[CellGroupData[{
 Cell[BoxData[
- RowBox[{"showstdOptimMSE", "[", "]"}]], "Input",
- CellChangeTimes->{{3.862454781284136*^9, 3.862454781286276*^9}},
- CellLabel->"In[9]:=",ExpressionUUID->"da7010e6-c5ff-4f33-9bb1-b1a96a88cf8f"],
+ RowBox[{"showstdRefMSE", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.863202289885874*^9, 3.863202289888545*^9}},
+ CellLabel->"In[6]:=",ExpressionUUID->"b66e8a60-b7bf-4424-a702-ca5acd3e877d"],
 
 Cell[BoxData[
  TagBox[
   StyleBox[
-   DynamicModuleBox[{$CellContext`integrandTypeLabel$$ = 
-    "SoftEllipses", $CellContext`optimTypeL2OptimisationLabel$$ = 
-    "MSEOptimisationSoftEllipses", Typeset`show$$ = True, 
-    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
-    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
-    "\"untitled\"", Typeset`specs$$ = {{{
-       Hold[$CellContext`optimTypeL2OptimisationLabel$$], 
-       "MSEOptimisationSoftEllipses"}, {
-      "L2Optimisation", "MSEOptimisationHardEllipses", 
-       "MSEOptimisationSoftEllipses", "MSEOptimisationHardRectangles", 
-       "MSEOptimisationSoftRectangles"}}, {{
-       Hold[$CellContext`integrandTypeLabel$$], "SoftEllipses"}, {
-      "SoftEllipses", "Heaviside"}}}, Typeset`size$$ = {1024., {510., 514.}}, 
+   DynamicModuleBox[{$CellContext`integrandTypeLabel$$ = "SoftEllipses", 
+    Typeset`show$$ = True, Typeset`bookmarkList$$ = {}, 
+    Typeset`bookmarkMode$$ = "Menu", Typeset`animator$$, Typeset`animvar$$ = 
+    1, Typeset`name$$ = "\"untitled\"", Typeset`specs$$ = {{{
+       Hold[$CellContext`integrandTypeLabel$$], "Heaviside"}, {
+      "SoftEllipses", "Heaviside", "Ellipses", "Rectangles", 
+       "SoftEllipses_noRot"}}}, Typeset`size$$ = {1024., {510., 514.}}, 
     Typeset`update$$ = 0, Typeset`initDone$$, Typeset`skipInitDone$$ = True}, 
     
     DynamicBox[Manipulate`ManipulateBoxes[
      1, StandardForm, 
-      "Variables" :> {$CellContext`integrandTypeLabel$$ = 
-        "SoftEllipses", $CellContext`optimTypeL2OptimisationLabel$$ = 
-        "MSEOptimisationSoftEllipses"}, "ControllerVariables" :> {}, 
+      "Variables" :> {$CellContext`integrandTypeLabel$$ = "Heaviside"}, 
+      "ControllerVariables" :> {}, 
       "OtherVariables" :> {
        Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
         Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
         Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
          Typeset`skipInitDone$$}, 
-      "Body" :> ($CellContext`plotLabel$4703 = 
-        "Optim vs. Ref MSE " <> ToString[$CellContext`nDims] <> 
+      "Body" :> ($CellContext`fnameLabel$19965 = \
+$CellContext`integrandTypeLabel$$; $CellContext`plotLabel$19965 = 
+        "Ref MSE " <> ToString[$CellContext`nDims] <> 
          "D   integrandType = " <> $CellContext`integrandTypeLabel$$; \
-$CellContext`dirMSE$4703 = 
+$CellContext`dirMSE$19965 = 
         "data_MSE/" <> ToString[$CellContext`nDims] <> 
-         "D/" <> $CellContext`integrandTypeLabel$$ <> 
-         "/"; $CellContext`data$4703 = (Drop[#, 1]& )[
+         "D/" <> $CellContext`fnameLabel$19965 <> 
+         "/"; $CellContext`data$19965 = (Drop[#, 1]& )[
           
-          Import[$CellContext`dirMSE$4703 <> 
-           "WN_" <> $CellContext`integrandTypeLabel$$ <> 
+          Import[$CellContext`dirMSE$19965 <> 
+           "WN_" <> $CellContext`fnameLabel$19965 <> 
            If[$CellContext`consecutiveFlag, "_consecutive", ""] <> 
            ".dat"]]; $CellContext`mseWN = Table[{
-           Part[$CellContext`data$4703, $CellContext`i, 1], 
+           Part[$CellContext`data$19965, $CellContext`i, 1], 
            Around[
             
-            Part[$CellContext`data$4703, $CellContext`i, 
-             2], $CellContext`kPlusMinus$4703 Sqrt[
+            Part[$CellContext`data$19965, $CellContext`i, 
+             2], $CellContext`kPlusMinus$19965 Sqrt[
               
-              Part[$CellContext`data$4703, $CellContext`i, 
+              Part[$CellContext`data$19965, $CellContext`i, 
                3]]]}, {$CellContext`i, 
-           Length[$CellContext`data$4703]}]; $CellContext`data$4703 = (
+           Length[$CellContext`data$19965]}]; $CellContext`data$19965 = (
          Drop[#, 1]& )[
-          
-          Import[$CellContext`dirMSE$4703 <> 
-           "Strat_" <> $CellContext`integrandTypeLabel$$ <> 
+          Import[$CellContext`dirMSE$19965 <> 
+           "Strat_" <> $CellContext`fnameLabel$19965 <> 
            If[$CellContext`consecutiveFlag, "_consecutive", ""] <> 
            ".dat"]]; $CellContext`mseStrat = Table[{
-           Part[$CellContext`data$4703, $CellContext`i, 1], 
+           Part[$CellContext`data$19965, $CellContext`i, 1], 
            Around[
             
-            Part[$CellContext`data$4703, $CellContext`i, 
-             2], $CellContext`kPlusMinus$4703 Sqrt[
+            Part[$CellContext`data$19965, $CellContext`i, 
+             2], $CellContext`kPlusMinus$19965 Sqrt[
               
-              Part[$CellContext`data$4703, $CellContext`i, 
+              Part[$CellContext`data$19965, $CellContext`i, 
                3]]]}, {$CellContext`i, 
-           Length[$CellContext`data$4703]}]; $CellContext`data$4703 = (
+           Length[$CellContext`data$19965]}]; $CellContext`data$19965 = (
          Drop[#, 1]& )[
           
-          Import[$CellContext`dirMSE$4703 <> 
-           "OwenPure_" <> $CellContext`integrandTypeLabel$$ <> 
+          Import[$CellContext`dirMSE$19965 <> 
+           "OwenPure_" <> $CellContext`fnameLabel$19965 <> 
            If[$CellContext`consecutiveFlag, "_consecutive", ""] <> 
            ".dat"]]; $CellContext`mseOwen01Pure = Table[{
-           Part[$CellContext`data$4703, $CellContext`i, 1], 
+           Part[$CellContext`data$19965, $CellContext`i, 1], 
            Around[
             
-            Part[$CellContext`data$4703, $CellContext`i, 
-             2], $CellContext`kPlusMinus$4703 Sqrt[
+            Part[$CellContext`data$19965, $CellContext`i, 
+             2], $CellContext`kPlusMinus$19965 Sqrt[
               
-              Part[$CellContext`data$4703, $CellContext`i, 
+              Part[$CellContext`data$19965, $CellContext`i, 
                3]]]}, {$CellContext`i, 
-           Length[$CellContext`data$4703]}]; $CellContext`mseOwen01PureRaw = 
+           Length[$CellContext`data$19965]}]; $CellContext`mseOwen01PureRaw = 
         Table[{
-           Part[$CellContext`data$4703, $CellContext`i, 1], 
-           Part[$CellContext`data$4703, $CellContext`i, 2]}, {$CellContext`i, 
-           
-           Length[$CellContext`data$4703]}]; $CellContext`data$4703 = (
+           Part[$CellContext`data$19965, $CellContext`i, 1], 
+           Part[$CellContext`data$19965, $CellContext`i, 2]}, {$CellContext`i, 
+           Length[$CellContext`data$19965]}]; $CellContext`data$19965 = (
          Drop[#, 1]& )[
           
-          Import[$CellContext`dirMSE$4703 <> 
-           "OwenPlus_" <> $CellContext`integrandTypeLabel$$ <> 
+          Import[$CellContext`dirMSE$19965 <> 
+           "OwenPlus_" <> $CellContext`fnameLabel$19965 <> 
            If[$CellContext`consecutiveFlag, "_consecutive", ""] <> 
            ".dat"]]; $CellContext`mseOwenPlus = Table[{
-           Part[$CellContext`data$4703, $CellContext`i, 1], 
+           Part[$CellContext`data$19965, $CellContext`i, 1], 
            Around[
             
-            Part[$CellContext`data$4703, $CellContext`i, 
-             2], $CellContext`kPlusMinus$4703 Sqrt[
+            Part[$CellContext`data$19965, $CellContext`i, 
+             2], $CellContext`kPlusMinus$19965 Sqrt[
               
-              Part[$CellContext`data$4703, $CellContext`i, 
+              Part[$CellContext`data$19965, $CellContext`i, 
                3]]]}, {$CellContext`i, 
-           Length[$CellContext`data$4703]}]; $CellContext`mseOwenPlusRaw = 
+           Length[$CellContext`data$19965]}]; $CellContext`mseOwenPlusRaw = 
         Table[{
-           Part[$CellContext`data$4703, $CellContext`i, 1], 
-           Part[$CellContext`data$4703, $CellContext`i, 2]}, {$CellContext`i, 
+           Part[$CellContext`data$19965, $CellContext`i, 1], 
+           Part[$CellContext`data$19965, $CellContext`i, 2]}, {$CellContext`i, 
            
-           Length[$CellContext`data$4703]}]; $CellContext`mseOptim = Select[
-          
-          Import[$CellContext`dirMSE$4703 <> \
-$CellContext`optimTypeL2OptimisationLabel$$ <> 
-           "_" <> $CellContext`integrandTypeLabel$$ <> ".dat"], Part[#, 1] >= 
-          2^$CellContext`powfrom$4703& ]; $CellContext`alldata$4703 = \
+           Length[$CellContext`data$19965]}]; $CellContext`alldata$19965 = \
 {$CellContext`mseWN, $CellContext`mseStrat, $CellContext`mseOwen01Pure, \
-$CellContext`mseOwenPlus, $CellContext`mseOptim}; $CellContext`legends$4703 = 
-        Join[
+$CellContext`mseOwenPlus}; $CellContext`legends$19965 = Join[
           
           Map[# <> (" dims " <> 
             Switch[$CellContext`nDims, 2, "01", 3, "012", 4, "0123"])& , 
-           
-           Join[{"WN", "Strat", "Owen", 
-             "OwenPlus32", $CellContext`optimTypeL2OptimisationLabel$$}]]]; 
-       ListLogLogPlot[$CellContext`alldata$4703, 
+           Join[{"WN", "Strat", "Owen", "OwenPlus32"}]]]; 
+       ListLogLogPlot[$CellContext`alldata$19965, 
          (PlotLegends -> Placed[#, {0.3, 0.2}]& )[{
-           Map[Style[#, $CellContext`fontSz]& , $CellContext`legends$4703]}], 
-         PlotStyle -> {{Green, 
+           Map[Style[#, $CellContext`fontSz]& , $CellContext`legends$19965]}],
+          PlotStyle -> {{Green, 
             AbsoluteThickness[2]}, {Blue, 
             AbsoluteThickness[2]}, {Black, 
             AbsoluteThickness[2]}, {Red, 
+            AbsoluteThickness[2]}, {Cyan, 
             AbsoluteThickness[2]}, {
             Darker[Green], 
-            AbsoluteThickness[2]}, {Cyan, 
-            AbsoluteThickness[2]}, {Gray, 
             AbsoluteThickness[2]}}, Joined -> True, 
          FrameTicks -> {{Automatic, None}, {
             Table[
-            2^$CellContext`pow, {$CellContext`pow, $CellContext`powfrom$4703, \
-$CellContext`powto$4703, 2}], 
+            2^$CellContext`pow, {$CellContext`pow, \
+$CellContext`powfrom$19965, $CellContext`powto$19965, 2}], 
             Table[
-            2^$CellContext`pow, {$CellContext`pow, $CellContext`powfrom$4703, \
-$CellContext`powto$4703, 2}]}}, FrameStyle -> Directive[Black, 20], 
-         RotateLabel -> True, 
+            2^$CellContext`pow, {$CellContext`pow, \
+$CellContext`powfrom$19965, $CellContext`powto$19965, 2}]}}, FrameStyle -> 
+         Directive[Black, 20], RotateLabel -> True, 
          PlotMarkers -> {{$CellContext`\[FilledCircle], 5}}, Frame -> True, 
          FrameLabel -> {
            Style["Number of Samples", $CellContext`fontSz], 
            Style["MSE", $CellContext`fontSz]}, ImageSize -> {1024, 1024}, 
          GridLines -> {
            Table[
-           2^$CellContext`pow, {$CellContext`pow, $CellContext`powfrom$4703, \
-$CellContext`powto$4703, 1}], None}, GridLinesStyle -> Directive[
+           2^$CellContext`pow, {$CellContext`pow, $CellContext`powfrom$19965, \
+$CellContext`powto$19965, 1}], None}, GridLinesStyle -> Directive[
            Darker[Gray], Dashed], AspectRatio -> 1, InterpolationOrder -> 1, 
          IntervalMarkers -> "Bands", 
          Sequence[PlotTheme -> "Scientific", PlotRange -> All], PlotLabel -> 
-         Style[$CellContext`plotLabel$4703, Bold, 24]]), 
-      "Specifications" :> {{{$CellContext`optimTypeL2OptimisationLabel$$, 
-          "MSEOptimisationSoftEllipses"}, {
-         "L2Optimisation", "MSEOptimisationHardEllipses", 
-          "MSEOptimisationSoftEllipses", "MSEOptimisationHardRectangles", 
-          "MSEOptimisationSoftRectangles"}}, \
-{{$CellContext`integrandTypeLabel$$, "SoftEllipses"}, {
-         "SoftEllipses", "Heaviside"}}}, "Options" :> {}, 
-      "DefaultOptions" :> {}],
-     ImageSizeCache->{1068., {566., 571.}},
-     SingleEvaluation->True],
-    Deinitialization:>None,
-    DynamicModuleValues:>{},
-    SynchronousInitialization->True,
-    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
-    UnsavedVariables:>{Typeset`initDone$$},
-    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
-   Deployed->True,
-   StripOnInput->False],
-  Manipulate`InterpretManipulate[1]]], "Output",
- CellChangeTimes->{3.862454784671422*^9},
- CellLabel->"Out[12]=",ExpressionUUID->"43c97bea-84db-47a2-a008-b7838d793d41"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"showstdOptimL2discrepancy", "[", "]"}]], "Input",
- CellChangeTimes->{{3.86245480534665*^9, 3.8624548307547407`*^9}},
- CellLabel->"In[14]:=",ExpressionUUID->"5329579e-09c4-4877-910f-aa97b8bbf0f7"],
-
-Cell[BoxData[
- TagBox[
-  StyleBox[
-   DynamicModuleBox[{$CellContext`optimTypeL2OptimisationLabel$$ = 
-    "L2Optimisation", Typeset`show$$ = True, Typeset`bookmarkList$$ = {}, 
-    Typeset`bookmarkMode$$ = "Menu", Typeset`animator$$, Typeset`animvar$$ = 
-    1, Typeset`name$$ = "\"untitled\"", Typeset`specs$$ = {{{
-       Hold[$CellContext`optimTypeL2OptimisationLabel$$], "L2Optimisation"}, {
-      "L2Optimisation", "MSEOptimisationHardEllipses", 
-       "MSEOptimisationSoftEllipses", "MSEOptimisationHardRectangles", 
-       "MSEOptimisationSoftRectangles"}}}, Typeset`size$$ = {
-    1024., {510., 514.}}, Typeset`update$$ = 0, Typeset`initDone$$, 
-    Typeset`skipInitDone$$ = True}, 
-    DynamicBox[Manipulate`ManipulateBoxes[
-     1, StandardForm, 
-      "Variables" :> {$CellContext`optimTypeL2OptimisationLabel$$ = 
-        "L2Optimisation"}, "ControllerVariables" :> {}, 
-      "OtherVariables" :> {
-       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
-        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
-        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
-         Typeset`skipInitDone$$}, 
-      "Body" :> ($CellContext`plotLabel$97020 = 
-        "Optim vs. Ref L2discrepancy " <> ToString[$CellContext`nDims] <> 
-         "D"; $CellContext`dirL2discrepancy$97020 = 
-        "data_L2discrepancy/" <> ToString[$CellContext`nDims] <> 
-         "D/"; $CellContext`data$97020 = (Drop[#, 1]& )[
-          
-          Import[$CellContext`dirL2discrepancy$97020 <> 
-           "WN_L2Discrepancy.dat"]]; $CellContext`L2discrepancyWN = Table[{
-           Part[$CellContext`data$97020, $CellContext`i, 1], 
-           Around[
-            
-            Part[$CellContext`data$97020, $CellContext`i, 
-             2], $CellContext`kPlusMinus$97020 Sqrt[
-              
-              Part[$CellContext`data$97020, $CellContext`i, 
-               3]]]}, {$CellContext`i, 
-           Length[$CellContext`data$97020]}]; $CellContext`data$97020 = (
-         Drop[#, 1]& )[
-          
-          Import[$CellContext`dirL2discrepancy$97020 <> 
-           "Strat_L2Discrepancy.dat"]]; $CellContext`L2discrepancyStrat = 
-        Table[{
-           Part[$CellContext`data$97020, $CellContext`i, 1], 
-           Around[
-            
-            Part[$CellContext`data$97020, $CellContext`i, 
-             2], $CellContext`kPlusMinus$97020 Sqrt[
-              
-              Part[$CellContext`data$97020, $CellContext`i, 
-               3]]]}, {$CellContext`i, 
-           Length[$CellContext`data$97020]}]; $CellContext`data$97020 = (
-         Drop[#, 1]& )[
-          
-          Import[$CellContext`dirL2discrepancy$97020 <> 
-           "OwenPure_L2Discrepancy.dat"]]; \
-$CellContext`L2discrepancyOwen01Pure = Table[{
-           Part[$CellContext`data$97020, $CellContext`i, 1], 
-           Around[
-            
-            Part[$CellContext`data$97020, $CellContext`i, 
-             2], $CellContext`kPlusMinus$97020 Sqrt[
-              
-              Part[$CellContext`data$97020, $CellContext`i, 
-               3]]]}, {$CellContext`i, 
-           
-           Length[$CellContext`data$97020]}]; \
-$CellContext`L2discrepancyOwen01PureRaw = Table[{
-           Part[$CellContext`data$97020, $CellContext`i, 1], 
-           Part[$CellContext`data$97020, $CellContext`i, 2]}, {$CellContext`i, 
-           Length[$CellContext`data$97020]}]; $CellContext`data$97020 = (
-         Drop[#, 1]& )[
-          
-          Import[$CellContext`dirL2discrepancy$97020 <> 
-           "OwenPlus_L2Discrepancy.dat"]]; $CellContext`L2discrepancyOwenPlus = 
-        Table[{
-           Part[$CellContext`data$97020, $CellContext`i, 1], 
-           Around[
-            
-            Part[$CellContext`data$97020, $CellContext`i, 
-             2], $CellContext`kPlusMinus$97020 Sqrt[
-              
-              Part[$CellContext`data$97020, $CellContext`i, 
-               3]]]}, {$CellContext`i, 
-           
-           Length[$CellContext`data$97020]}]; \
-$CellContext`L2discrepancyOwenPlusRaw = Table[{
-           Part[$CellContext`data$97020, $CellContext`i, 1], 
-           Part[$CellContext`data$97020, $CellContext`i, 2]}, {$CellContext`i, 
-           Length[$CellContext`data$97020]}]; $CellContext`L2discrepancyOptim = 
-        Select[
-          
-          Import[$CellContext`dirL2discrepancy$97020 <> \
-$CellContext`optimTypeL2OptimisationLabel$$ <> ".dat"], Part[#, 1] >= 
-          2^$CellContext`powfrom$97020& ]; $CellContext`alldata$97020 = \
-{$CellContext`L2discrepancyWN, $CellContext`L2discrepancyStrat, \
-$CellContext`L2discrepancyOwen01Pure, $CellContext`L2discrepancyOwenPlus, \
-$CellContext`L2discrepancyOptim}; $CellContext`legends$97020 = Join[
-          
-          Map[# <> (" dims " <> 
-            Switch[$CellContext`nDims, 2, "01", 3, "012", 4, "0123"])& , 
-           
-           Join[{"WN", "Strat", "Owen", 
-             "OwenPlus32", $CellContext`optimTypeL2OptimisationLabel$$}]]]; 
-       ListLogLogPlot[$CellContext`alldata$97020, 
-         (PlotLegends -> Placed[#, {0.3, 0.2}]& )[{
-           Map[Style[#, $CellContext`fontSz]& , $CellContext`legends$97020]}],
-          PlotStyle -> {{Green, 
-            AbsoluteThickness[2]}, {Blue, 
-            AbsoluteThickness[2]}, {Black, 
-            AbsoluteThickness[2]}, {Red, 
-            AbsoluteThickness[2]}, {
-            Darker[Green], 
-            AbsoluteThickness[2]}, {Cyan, 
-            AbsoluteThickness[2]}, {Gray, 
-            AbsoluteThickness[2]}}, Joined -> True, 
-         FrameTicks -> {{Automatic, None}, {
-            Table[
-            2^$CellContext`pow, {$CellContext`pow, \
-$CellContext`powfrom$97020, $CellContext`powto$97020, 2}], 
-            Table[
-            2^$CellContext`pow, {$CellContext`pow, \
-$CellContext`powfrom$97020, $CellContext`powto$97020, 2}]}}, FrameStyle -> 
-         Directive[Black, 20], RotateLabel -> True, 
-         PlotMarkers -> {{$CellContext`\[FilledCircle], 5}}, Frame -> True, 
-         FrameLabel -> {
-           Style["Number of Samples", $CellContext`fontSz], 
-           Style["L2discrepancy", $CellContext`fontSz]}, 
-         ImageSize -> {1024, 1024}, GridLines -> {
-           Table[
-           2^$CellContext`pow, {$CellContext`pow, $CellContext`powfrom$97020, \
-$CellContext`powto$97020, 1}], None}, GridLinesStyle -> Directive[
-           Darker[Gray], Dashed], AspectRatio -> 1, InterpolationOrder -> 1, 
-         IntervalMarkers -> "Bands", 
-         Sequence[PlotTheme -> "Scientific", PlotRange -> All], PlotLabel -> 
-         Style[$CellContext`plotLabel$97020, Bold, 24]]), 
-      "Specifications" :> {{{$CellContext`optimTypeL2OptimisationLabel$$, 
-          "L2Optimisation"}, {
-         "L2Optimisation", "MSEOptimisationHardEllipses", 
-          "MSEOptimisationSoftEllipses", "MSEOptimisationHardRectangles", 
-          "MSEOptimisationSoftRectangles"}}}, "Options" :> {}, 
-      "DefaultOptions" :> {}],
+         Style[$CellContext`plotLabel$19965, Bold, 24]]), 
+      "Specifications" :> {{{$CellContext`integrandTypeLabel$$, 
+          "Heaviside"}, {
+         "SoftEllipses", "Heaviside", "Ellipses", "Rectangles", 
+          "SoftEllipses_noRot"}}}, "Options" :> {}, "DefaultOptions" :> {}],
      ImageSizeCache->{1068., {553., 559.}},
      SingleEvaluation->True],
     Deinitialization:>None,
@@ -359,12 +173,12 @@ $CellContext`powto$97020, 1}], None}, GridLinesStyle -> Directive[
    Deployed->True,
    StripOnInput->False],
   Manipulate`InterpretManipulate[1]]], "Output",
- CellChangeTimes->{{3.8624548141871843`*^9, 3.862454831647883*^9}},
- CellLabel->"Out[14]=",ExpressionUUID->"0614b879-60e0-44f5-b31f-48301e7b5203"]
+ CellChangeTimes->{3.863202345949012*^9},
+ CellLabel->"Out[6]=",ExpressionUUID->"7314d030-3313-4e6e-983f-b3855e8bf1eb"]
 }, Open  ]]
 },
 WindowSize->{2056, 1195},
-WindowMargins->{{-2214, Automatic}, {Automatic, 91}},
+WindowMargins->{{0, Automatic}, {Automatic, 1}},
 PrintingCopies->1,
 PrintingPageRange->{1, Automatic},
 FrontEndVersion->"13.0 for Mac OS X x86 (64-bit) (February 4, 2022)",
@@ -383,12 +197,8 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 207, 3, 30, "Input",ExpressionUUID->"da7010e6-c5ff-4f33-9bb1-b1a96a88cf8f"],
-Cell[790, 27, 8175, 170, 1156, "Output",ExpressionUUID->"43c97bea-84db-47a2-a008-b7838d793d41"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[9002, 202, 219, 3, 30, "Input",ExpressionUUID->"5329579e-09c4-4877-910f-aa97b8bbf0f7"],
-Cell[9224, 207, 7472, 155, 1154, "Output",ExpressionUUID->"0614b879-60e0-44f5-b31f-48301e7b5203"]
+Cell[580, 22, 205, 3, 30, "Input",ExpressionUUID->"b66e8a60-b7bf-4424-a702-ca5acd3e877d"],
+Cell[788, 27, 7221, 149, 1154, "Output",ExpressionUUID->"7314d030-3313-4e6e-983f-b3855e8bf1eb"]
 }, Open  ]]
 }
 ]
