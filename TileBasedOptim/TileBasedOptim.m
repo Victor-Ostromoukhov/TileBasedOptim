@@ -1690,16 +1690,16 @@ subdivBase3SFC3DTiles[tlst_] :=
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-nintegrands = 16 1024;
+nintegrands = 256 1024;
 nDims = 2;
 Parallelize @ Do[
 	nPointsets = 1024;                                                                                                                                                                                        
+	makeMSEref[10, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[12, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[19, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
-,{integrandType,1,5}]
+,{integrandType,1,1}]
 
-	makeMSEref[10, nPointsets, {2,16,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 
 *)
 makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, consecutiveFlag_:False, dbg_:False] :=
@@ -1708,7 +1708,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
     	(*If[ Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2]];*)
     	nDims = innDims;
     	integrandType = inIntegrandType;
-		integrandTypeLabel = Switch[integrandType,  1,"Ellipses", 2,"SoftEllipses", 3,"Rectangles", 4,"Heaviside", 5,"SoftEllipses_noRot" ];
+		integrandTypeLabel = Switch[integrandType,  1,"Heaviside", 2,"SoftEllipses", 3,"Rectangles", 4,"Ellipses", 5,"SoftEllipses_noRot" ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#Analytical	#MSE	#NbPtsets	#Nbintegrands\n";
 		fnameLabel = integrandTypeLabel ;
 		nPointsets 	= innPointsets ;
@@ -2406,7 +2406,7 @@ math
 Do[
 	makeOptimMSE[ioptimType, 2];
 	makeOptimMSE[ioptimType, 4];
-,{ioptimType,5}]
+,{ioptimType,1}]
 *)
 
 makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, innDims_:2, dbg_:False] :=
@@ -2416,7 +2416,7 @@ makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, innDims_:2,
         nptsMax = 3^6;
         setNo = 1;
     	integrandType = inIntegrandType;
-		integrandTypeLabel = Switch[integrandType,  1,"Ellipses", 2,"SoftEllipses", 3,"Rectangles", 4,"Heaviside", 5,"SoftEllipses_noRot" ];
+		integrandTypeLabel = Switch[integrandType,  1,"Heaviside", 2,"SoftEllipses", 3,"Rectangles", 4,"Ellipses", 5,"SoftEllipses_noRot" ];
 		optimTypeL2OptimisationLabel = Switch[optimType,  1,"L2Optimisation",  2,"MSEOptimisationHardEllipses",  3,"MSEOptimisationSoftEllipses",  4,"MSEOptimisationHardRectangles",  5,"MSEOptimisationSoftRectangles" ];
         
 		dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/";
