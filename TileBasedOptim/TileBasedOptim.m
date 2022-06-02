@@ -1694,10 +1694,10 @@ nintegrands = 256 1024;
 nDims = 2;
 Parallelize @ Do[
 	nPointsets = 1024;                                                                                                                                                                                        
-	makeMSEref[10, nPointsets, {2,10,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[11, nPointsets, {2,10,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[12, nPointsets, {2,10,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[19, nPointsets, {2,10,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[10, nPointsets, {2,14,1}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[11, nPointsets, {2,14,1}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[12, nPointsets, {2,14,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[19, nPointsets, {2,14,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 ,{integrandType,1,1}]
 
 
@@ -1924,7 +1924,7 @@ showstdRefMSE[] :=
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]			
 			(*,Control[{{consecutiveFlag,False},{True,False}}]*)
-			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside"(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
+			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside", "Ellipses", "Rectangles", "SoftEllipses_noRot" }}]
          ]
      ] (* showstdRefMSE *)
 
