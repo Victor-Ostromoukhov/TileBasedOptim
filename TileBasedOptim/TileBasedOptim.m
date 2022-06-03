@@ -1700,6 +1700,16 @@ Parallelize @ Do[
 	makeMSEref[19, nPointsets, {2,14,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 ,{integrandType,1,1}]
 
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+nintegrands = 256 1024;
+nDims = 2;
+Parallelize @ Do[
+	nPointsets = 1024;                                                                                                                                                                                        
+	makeMSEref[19, nPointsets, {8,14,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+,{integrandType,1,1}]
+
 
 *)
 makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, consecutiveFlag_:False, dbg_:False] :=
