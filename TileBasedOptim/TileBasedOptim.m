@@ -1705,10 +1705,8 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 256 1024;
 nDims = 2;
-Parallelize @ Do[
 	nPointsets = 1024;                                                                                                                                                                                        
-	makeMSEref[19, nPointsets, {8,14,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
-,{integrandType,1,1}]
+	makeMSEref[19, nPointsets, {8,14,1/4.}, 1, nDims, nintegrands];                                                                                                                               
 
 
 *)
@@ -1753,7 +1751,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
    			If[!consecutiveFlag, npts = getRealNPts[nDims, npts, pointsetType] ];
     		resFname = If[consecutiveFlag, pointsetLabel<>"_"<>fnameLabel<>"_consecutive.dat", pointsetLabel<>"_"<>fnameLabel<>".dat"];
     		
-			mseTab = ( (*Parallelize @ *) Table[   				
+			mseTab = ( Parallelize @  Table[   				
 				ptsfname = "tmp/pts_"<>ToString[iPointSet]<>pid<>".dat";
 				msefname = "tmp/mse"<>pid<>".dat";
 				Switch[pointsetLabel					
