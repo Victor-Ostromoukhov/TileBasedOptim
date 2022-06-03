@@ -1706,7 +1706,7 @@ math
 nintegrands = 256 1024;
 nDims = 2;
 	nPointsets = 1024;                                                                                                                                                                                        
-	makeMSEref[19, nPointsets, {8,14,1/4.}, 1, nDims, nintegrands];                                                                                                                               
+	makeMSEref[19, nPointsets, {17/2,14,1/4.}, 1, nDims, nintegrands];                                                                                                                               
 
 
 *)
