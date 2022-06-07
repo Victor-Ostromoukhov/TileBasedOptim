@@ -43,3 +43,4 @@ target_link_libraries(${PROJECT_NAME} Tiles)
 
 set(EXECUTABLE_OUTPUT_PATH ./bin)
 
+install(TARGETS new_integrateND_from_file DESTINATION ~/bin)
