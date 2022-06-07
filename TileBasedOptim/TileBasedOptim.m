@@ -7,14 +7,20 @@ showstdRefMSE[]
 makeDiscrepancyRef[]
 showstdRefDiscrepancy[]
 
+makeOptimL2discrepancy[]  ->  getL2discrepancy[]
+showOptimL2discrepancy[]
+
+
+########################################
+showstdOptimL2discrepancy[]
+
+
+showstdOptimMSE[]
 prepOptimDataBase3SFCMatBuilderOnly2D[]
  
 makeOptimMSE[]  ->  getMSE[]
 
-makeOptimL2discrepancy[]  ->  getL2discrepancy[]
- 
-showstdOptimL2discrepancy[]
-showstdOptimMSE[]
+
 
 *)
  
@@ -2403,10 +2409,8 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 
 
 optimTypeL2Optimisation = 1;
-optimTypeMSEOptimisationHardEllipses = 2;
-optimTypeMSEOptimisationSoftEllipses = 3;
-optimTypeMSEOptimisationHardRectangles = 4;
-optimTypeMSEOptimisationSoftRectangles = 5;
+optimTypeMSEOptimisationSoftEllipses = 2;
+optimTypeMSEOptimisationHeaviside = 3;
 (*
 gitpull
 math
@@ -2438,7 +2442,7 @@ makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, innDims_:2,
        			,optimTypeL2Optimisation,
        			"OptimPhase1/L2Optimisation/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Optimise_Tiles2D.dat"
        			,optimTypeMSEOptimisationHardEllipses,
-       			"OptimPhase1/MSEOptimisation/integrandType1HardEllipses/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Optimise_IntegrandType1.dat"
+       			"OptimPhase1/MSEOptimisation/integrandType1HardEllipses/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Opt.dat"
        			,optimTypeMSEOptimisationSoftEllipses,
        			"OptimPhase1/MSEOptimisation/integrandType2SoftEllipses/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Optimise_IntegrandType2.dat"
        			,optimTypeMSEOptimisationHardRectangles,
@@ -2482,42 +2486,35 @@ getMSE[pts_, inptsfname_:"", innDims_:2, inIntegrandType_:2, dbg_:False] :=
    ] (* getMSE *)
 
 
+optimTypeL2Optimisation = 1;
+optimTypeMSEOptimisationSoftEllipses = 2;
+optimTypeMSEOptimisationHeaviside = 3;
 (*
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-Do[
-	makeOptimL2discrepancy[ioptimType];
-,{ioptimType,5}]
+makeOptimL2discrepancy[optimTypeL2Optimisation]
 *)
-
-makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, innDims_:2, dbg_:False] :=
+makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, insetNo_:1, innDims_:2, dbg_:False] :=
     Module[ {},
     	nDims = innDims;
         dtab = {};
-        nptsMax = 3^6;
-        setNo = 1;
-		optimTypeL2OptimisationLabel = Switch[optimType,  1,"L2Optimisation",  2,"MSEOptimisationHardEllipses",  3,"MSEOptimisationSoftEllipses",  4,"MSEOptimisationHardRectangles",  5,"MSEOptimisationSoftRectangles" ];
+        nptsMax = 42; (*3^6;*)
+        setNo = insetNo;
+		optimTypeL2OptimisationLabel = Switch[optimType,  1,"L2Optimisation",  2,"MSEOptimisationSoftEllipses",  3,"MSEOptimisationHeaviside" ];
         
 		dirL2discrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
         If[ !FileExistsQ[dirL2discrepancy], CreateDirectory[dirL2discrepancy] ];
         If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
    	    resFname = optimTypeL2OptimisationLabel<>".dat";
 
-        L2discrepancytab = Parallelize @ Table[
+        L2discrepancytab = (*Parallelize @*) Table[
 			npts = iOrdinalAbsolute;
        		fname = Switch[optimType
        			,optimTypeL2Optimisation,
-       			"OptimPhase1/L2Optimisation/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Optimise_Tiles2D.dat"
-       			,optimTypeMSEOptimisationHardEllipses,
-       			"OptimPhase1/MSEOptimisation/integrandType1HardEllipses/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Optimise_IntegrandType1.dat"
-       			,optimTypeMSEOptimisationSoftEllipses,
-       			"OptimPhase1/MSEOptimisation/integrandType2SoftEllipses/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Optimise_IntegrandType2.dat"
-       			,optimTypeMSEOptimisationHardRectangles,
-       			"OptimPhase1/MSEOptimisation/integrandType3HardRectangles/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Optimise_IntegrandType3.dat"
-       			,optimTypeMSEOptimisationSoftRectangles,
-       			"OptimPhase1/MSEOptimisation/integrandType4SoftRectangles/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Optimise_IntegrandType4.dat"
+       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetition_"<>ToString[setNo]<>"/Output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Opt.dat"
        		];
+       		If[ !FileExistsQ[fname], Print[fname, "does not exist"]; Continue[] ];
 			pts = Import[fname][[;;,2;;3]];
 			If[dbg, ipts = Round[ npts pts ];
 				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
@@ -2529,6 +2526,74 @@ makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, innDims_:2, dbg_:Fals
    		Export[dirL2discrepancy<>resFname, L2discrepancytab];
  		Print[dirL2discrepancy<>resFname, " written."];
    ] (* makeOptimL2discrepancy *)
+
+showOptimL2discrepancy[optimType_:optimTypeL2Optimisation, insetNo_:1, innDims_:2, dbg_:False] :=
+    Module[ {},
+		fontSz = 14;
+		kPlusMinus = .5;
+    	{powfrom,powto,powstep} = {2,16,1};
+
+    	nDims = innDims;
+        dtab = {};
+        nptsMax = 653; (*3^6;*)
+        setNo = insetNo;
+		optimTypeL2OptimisationLabel = Switch[optimType,  1,"L2Optimisation",  2,"MSEOptimisationSoftEllipses",  3,"MSEOptimisationHeaviside" ];
+        
+		dirL2discrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
+   	    resFname = dirL2discrepancy<>optimTypeL2OptimisationLabel<>".dat";
+        If[ !FileExistsQ[resFname], Print[resFname," does not exist."]; Abort[]; ];
+   		L2discrepancyOptim = Import[resFname];
+		(*Print[L2discrepancyOptim//mf];*)
+			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"WN_L2Discrepancy.dat"]);
+			L2discrepancyWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"Strat_L2Discrepancy.dat"]);
+			L2discrepancyStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"OwenPure_L2Discrepancy.dat"]);
+			L2discrepancyOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			L2discrepancyOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"OwenPlus_L2Discrepancy.dat"]);
+			L2discrepancyOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			L2discrepancyOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+
+		    alldata = {L2discrepancyWN, L2discrepancyStrat, L2discrepancyOwen01Pure,  L2discrepancyOwenPlus, L2discrepancyOptim} ;
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", optimTypeL2OptimisationLabel} ] ];
+
+		Manipulate[
+	        plotLabel = "Optim vs. Ref L2discrepancy "<>ToString[nDims]<>"D"; 
+	        
+			ListLogLogPlot[ alldata
+						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
+						,PlotStyle -> {
+							{Green,AbsoluteThickness[2]},
+							{Blue,AbsoluteThickness[2]},
+							{Black,AbsoluteThickness[2]},
+							{Red,AbsoluteThickness[2]},
+							{Darker@Green,AbsoluteThickness[2]},
+							{Cyan,AbsoluteThickness[2]},
+							{Gray,AbsoluteThickness[2]}
+						}
+						,Joined->True
+		            	,FrameTicks->{{Automatic,None},{Table[2^pow,{pow,powfrom,powto,2}],Table[2^pow,{pow,powfrom,powto,2}]}}
+			            ,FrameStyle->Directive[Black,20]
+			            ,RotateLabel -> True
+			            ,PlotMarkers->{{\[FilledCircle],5} }
+			            ,Frame->True
+		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "L2discrepancy", fontSz] }
+		           		,ImageSize -> {1024,1024}
+		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ L2discrepancyOwenPlusRaw), Min @@ (second /@ L2discrepancyOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
+		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
+		            	,AspectRatio->1
+		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
+		            ]			
+			,Control[{{optimTypeL2OptimisationLabel,"L2Optimisation"},{"L2Optimisation", "MSEOptimisationSoftEllipses", "MSEOptimisationHeaviside"} } ]
+         ]
+
+   ] (* showOptimL2discrepancy *)
+optimTypeL2Optimisation = 1;
+optimTypeMSEOptimisationSoftEllipses = 2;
+optimTypeMSEOptimisationHeaviside = 3;
 
    
 showstdOptimMSE[] :=
