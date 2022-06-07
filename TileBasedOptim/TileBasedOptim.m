@@ -2381,11 +2381,10 @@ prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
 			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
 			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
 			tlst = fillSamplingPtsBase3SFC2DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
-			(*Graphics[ {getBase3SFC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
-			(*Parallelize @*) Do[
+			Parallelize @ Do[
 				seltlst = selectBase3SFC2DTilesMatBuilderOnly[tlst, iOrdinalAbsolute ];
 				fname = "optim_input_2D_MatBuilderOnly/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
-				(*exportSelectionBase3SFC2D[fname,seltlst];*)
+				exportSelectionBase3SFC2D[fname,seltlst];
 				Print[Length[seltlst] -> " Exporting " -> fname];
 				If[dbg,
 					p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showMatBuilderIndex+showPrevRect+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
