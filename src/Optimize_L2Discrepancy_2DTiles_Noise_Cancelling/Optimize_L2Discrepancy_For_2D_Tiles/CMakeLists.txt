@@ -9,10 +9,6 @@ include_directories(/usr/local/include)
 # add extra lib directories
 link_directories(/usr/local/opt/libomp/lib /usr/local/lib)
 
-
-
-add_executable(${PROJECT_NAME} OptimTiles2D.cpp)
-
 add_subdirectory(Lib/Tile)
 add_subdirectory(Lib/Tile/Points_2D)
 
@@ -29,8 +25,8 @@ if(APPLE)
         set(OpenMP_omp_LIBRARY "/usr/local/opt/libomp/lib/libomp.dylib" CACHE INTERNAL "OpenMP lib name for Xcode toolchain.")
     endif()
     set(CMAKE_OSX_ARCHITECTURES "x86_64")
-else()
-    SET(CMAKE_CXX_FLAGS "-std=c++11 -O3 -fopenmp")
+#else()
+#    SET(CMAKE_CXX_FLAGS "-std=c++11 -O3 -fopenmp")
 endif()
 
 find_package(OpenMP REQUIRED)
@@ -42,8 +38,6 @@ target_link_libraries(${PROJECT_NAME} Points_2D)
 target_link_libraries(${PROJECT_NAME} Tiles)
 
 set(EXECUTABLE_OUTPUT_PATH ./bin)
-
-    SET(CMAKE_CXX_FLAGS "-std=c++11 -O3 -fopenmp")
 
 add_executable(OptimTiles2D OptimTiles2D.cpp )
 target_link_libraries(OptimTiles2D PRIVATE OpenMP::OpenMP_CXX)
