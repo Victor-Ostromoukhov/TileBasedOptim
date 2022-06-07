@@ -138,79 +138,84 @@ std::vector<Tiles>* importTiles(std::string fileToRead){
 
       // ======= beforeSamplingPoint ======= //
       // === TileType === //
-      pos = line.find("\t");
-      bef += line.substr(0,pos)+"\t";
-      line.erase(0, pos + 1);
+      //pos = line.find("\t");
+      //bef += line.substr(0,pos)+"\t";
+      //line.erase(0, pos + 1);
+      // std::cout << line << '\n';
 
       // === Structural ID === //
       pos = line.find("\t");
       bef += line.substr(0,pos);
       line.erase(0, pos + 1);
+      // std::cout << line << '\n';
 
       // ======= samplingPoint ======= //
       // === x value (first dimension) === //
       pos = line.find("\t");
       val1 = std::stod(line.substr(0,pos));
       line.erase(0, pos + 1);
+      // std::cout << line << '\n';
 
       // === y value (second dimension) === //
       pos = line.find("\t");
       val2 = std::stod(line.substr(0,pos));
       line.erase(0, pos + 1);
+      // std::cout << line << '\n';
 
       // === Point Setting === //
       samplingPoint.set_pos_x(val1);
       samplingPoint.set_pos_y(val2);
-
       // ======= previousRefPoint ======= //
       // === x value (first dimension) === //
       pos = line.find("\t");
       val1 = std::stod(line.substr(0,pos));
       line.erase(0, pos + 1);
+      // std::cout << line << '\n';
 
       // === y value (second dimension) === //
       pos = line.find("\t");
       val2 = std::stod(line.substr(0,pos));
       line.erase(0, pos + 1);
+      // std::cout << line << '\n';
 
       // === Point Setting === //
       previousRefPoint.set_pos_x(val1);
       previousRefPoint.set_pos_y(val2);
-
       // ======= previousv1 ======= //
       // === x value (first dimension) === //
       pos = line.find("\t");
       val1 = std::stod(line.substr(0,pos));
       line.erase(0, pos + 1);
+      // std::cout << line << '\n';
 
       // === y value (second dimension) === //
       pos = line.find("\t");
       val2 = std::stod(line.substr(0,pos));
       line.erase(0, pos + 1);
+      // std::cout << line << '\n';
 
       // === Point Setting === //
       previousv1.set_pos_x(val1);
       previousv1.set_pos_y(val2);
-
       // ======= previousv2 ======= //
       // === x value (first dimension) === //
       pos = line.find("\t");
       val1 = std::stod(line.substr(0,pos));
       line.erase(0, pos + 1);
+      // std::cout << line << '\n';
 
       // === y value (second dimension) === //
       pos = line.find("\t");
       val2 = std::stod(line.substr(0,pos));
       line.erase(0, pos + 1);
+      // std::cout << line << '\n';
 
       // === Point Setting === //
       previousv2.set_pos_x(val1);
       previousv2.set_pos_y(val2);
-
       // ======= afterPreviousv2 ======= //
-      afterPreviousv2 = line.substr(0,std::string::npos);
+      afterPreviousv2 = "";
       line.erase(0, std::string::npos);
-
       // ==================== Push of a Tile in the Vector ==================== //
       vectorOfTiles->push_back(Tiles(bef,samplingPoint,previousRefPoint,previousv1,previousv2,afterPreviousv2));
     }
