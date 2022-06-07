@@ -1,10 +1,10 @@
+project(OptimTiles2D)
+
 cmake_minimum_required(VERSION 3.16.3)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-
-project(OptimTiles2D)
 
 # add extra include directories
 include_directories(/usr/local/include)
