@@ -7,7 +7,9 @@ include_directories(/usr/local/include)
 
 
 # add extra lib directories
-link_directories(/usr/local/opt/libomp/lib /usr/local/lib)
+#link_directories(/usr/local/opt/libomp/lib /usr/local/lib)
+
+add_executable(${PROJECT_NAME} OptimTiles2D.cpp)
 
 add_subdirectory(Lib/Tile)
 add_subdirectory(Lib/Tile/Points_2D)
