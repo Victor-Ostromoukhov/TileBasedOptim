@@ -12,10 +12,6 @@ showOptimL2discrepancy[]
 
 
 ########################################
-showstdOptimL2discrepancy[]
-
-
-showstdOptimMSE[]
 prepOptimDataBase3SFCMatBuilderOnly2D[]
  
 makeOptimMSE[]  ->  getMSE[]
@@ -73,6 +69,7 @@ showLightGrayTile = 512;
 showFcodeInvNumber = 1024;
 showBasicVectors = 2048;
 showMatBuilderIndex = 4096;
+showPrevRect = 8192;
 
 (*------------------------- end of constants -------------------------*)
 
@@ -754,7 +751,7 @@ getBase3SFC2DTilesGL[tlst_,params_:showSFC] :=
     	Do[
 			{tileType,matBuilderIndex,samplingPt,prevrefPt,{prevv1,prevv2},refPt,{v1,v2},{xcode,ycode},fcode} = tlst[[ind]];
 			fcodelen = Length[fcode];
-			samplingPt = samplingPt//3^fcodelen;
+			samplingPt = samplingPt; (*/3^fcodelen;*)
 			{norm1,norm2}={v1/Norm[v1],v2/Norm[v2]}/3^((Length[fcode]+Mod[Length[fcode],2])/2);
 			cont = {refPt,refPt+v1,refPt+v1+v2,refPt+v2,refPt};
     		If[BitAnd[params,showGrayValue] > 0, AppendTo[gl,{GrayLevel[FromDigits[Reverse@fcode,3]/3^fcodelen],Polygon@cont}] ];
@@ -767,6 +764,7 @@ getBase3SFC2DTilesGL[tlst_,params_:showSFC] :=
 			If[BitAnd[params,showTilefcode] > 0, AppendTo[gl, {Text[Style[tab2snosep@fcode,Bold,14,Gray],refPt+(v1+v2)/2,{0,1}]} ] ];
 			If[BitAnd[params,showTilexycodes] > 0, AppendTo[gl, {Text[Style[tab2snosep@xcode,Bold,14,Red],refPt+(v1+v2)/2,{1,1}], Text[Style[tab2snosep@ycode,Bold,14,Blue],refPt+(v1+v2)/2,{-1,1}]} ] ];
 			If[BitAnd[params,showSamplingPt] > 0, AppendTo[gl, {Black,Point@samplingPt,Text[Style[matBuilderIndex (*FromDigits[Reverse@fcode,3]*),Bold,10,Blue], samplingPt,{-1.1,-1.1}]} ] ];
+			If[BitAnd[params,showPrevRect] > 0, AppendTo[gl, {Red, Line@{prevrefPt,prevrefPt+prevv1,prevrefPt+prevv1+prevv2,prevrefPt+prevv2,prevrefPt}} ] ];
     	,{ind,Length[tlst]}];
     	Return[gl]
     ] (* getBase3SFC2DTilesGL *)
@@ -2384,15 +2382,15 @@ prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
 			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
 			tlst = fillSamplingPtsBase3SFC2DTiles[tlst,mxTab,mxInv,mxInvH,mxInvV];
 			(*Graphics[ {getBase3SFC2DTilesGL[tlst,showFcodeInvNumber+showTilefcode]}, PlotLabel-> nsubdivs, ImageSize -> {1024,1024} ]//Print;*)
-			Parallelize @ Do[
+			(*Parallelize @*) Do[
 				seltlst = selectBase3SFC2DTilesMatBuilderOnly[tlst, iOrdinalAbsolute ];
 				fname = "optim_input_2D_MatBuilderOnly/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
-				exportSelectionBase3SFC2D[fname,seltlst];
+				(*exportSelectionBase3SFC2D[fname,seltlst];*)
 				Print[Length[seltlst] -> " Exporting " -> fname];
 				If[dbg,
-					p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showMatBuilderIndex], PlotLabel-> iOrdinalAbsolute ];
+					p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showMatBuilderIndex+showPrevRect+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
-					Export["optim_figs_2D_MatBuilderOnly/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
+					(*Export["optim_figs_2D_MatBuilderOnly/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];*)
 				];
 			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
