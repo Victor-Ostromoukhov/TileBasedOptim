@@ -6,8 +6,17 @@ then
 	exit
 fi
 
-repetition=$1
-nbthreads=$2
+if [ $# -ge 1 ]; then
+  repetition=$1
+else
+  repetition=99
+fi
+
+if [ $# -ge 2 ]; then
+  nbthreads=$2
+else
+  nbthreads=64
+fi
 
 mkdir -p Repetition_${repetition}/Output
 mkdir -p Repetition_${repetition}/Traces
