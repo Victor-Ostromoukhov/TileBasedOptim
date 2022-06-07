@@ -1,2 +1,0 @@
-/usr/bin/ar qc libDirectionnalVector.a  CMakeFiles/DirectionnalVector.dir/DirectionnalVector.cpp.o
-/usr/bin/ranlib libDirectionnalVector.a

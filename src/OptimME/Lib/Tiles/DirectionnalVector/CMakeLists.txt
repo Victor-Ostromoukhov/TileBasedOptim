@@ -1,1 +1,0 @@
-add_library(DirectionnalVector DirectionnalVector.cpp)
