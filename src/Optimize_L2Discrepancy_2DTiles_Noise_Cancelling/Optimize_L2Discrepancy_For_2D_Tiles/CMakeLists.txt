@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.16.3)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
 project(OptimTiles2D)
 
 # add extra include directories
@@ -25,7 +29,7 @@ if(APPLE)
         set(OpenMP_omp_LIBRARY "/usr/local/opt/libomp/lib/libomp.dylib" CACHE INTERNAL "OpenMP lib name for Xcode toolchain.")
     endif()
     set(CMAKE_OSX_ARCHITECTURES "x86_64")
-#else()
+else()
     SET(CMAKE_CXX_FLAGS "-std=c++11 -O3 -fopenmp")
 endif()
 
