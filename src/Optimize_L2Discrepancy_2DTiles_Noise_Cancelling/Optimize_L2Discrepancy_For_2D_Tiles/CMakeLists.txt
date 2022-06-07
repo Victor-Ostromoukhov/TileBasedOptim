@@ -44,5 +44,5 @@ target_link_libraries(${PROJECT_NAME} Tiles)
 set(EXECUTABLE_OUTPUT_PATH ./bin)
 
 add_executable(OptimTiles2D OptimTiles2D.cpp )
-target_link_libraries(OptimTiles2D PRIVATE Integrands OpenMP::OpenMP_CXX)
+target_link_libraries(OptimTiles2D  OpenMP::OpenMP_CXX)
 install(TARGETS OptimTiles2D DESTINATION ~/bin)
