@@ -14,5 +14,5 @@ nthreads=32
 
 for (( level=243; level <= 729; level++ ))
 	do
-		sbatch -n ${nthreads} -J R${repetition}L${level} -o "Repetition_${repetition}/Traces/slurm-%j-${level}.out" runOneRepetitionOneLevel.sh ${repetition} ${nthreads} ${level}
+		sbatch -n ${nthreads} -J R${repetition}L${level} -o "../Repetitions/Repetition_${repetition}/Traces/slurm-%j-${level}.out" runOneRepetitionOneLevel.sh ${repetition} ${nthreads} ${level}
 	done

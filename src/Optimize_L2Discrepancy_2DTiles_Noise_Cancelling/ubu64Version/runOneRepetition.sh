@@ -18,11 +18,11 @@ else
   nbthreads=64
 fi
 
-mkdir -p Repetition_${repetition}/Output
-mkdir -p Repetition_${repetition}/Traces
+mkdir -p ../Repetitions/Repetition_${repetition}/Output
+mkdir -p ../Repetitions/Repetition_${repetition}/Traces
 
 for (( level=10 ; level <= 242 ; level++ ))
 	do
-        echo ~/bin/OptimTiles2D -t ${nbthreads} -n 1024 -i ../Optimize_L2Discrepancy_For_2D_Tiles/Data/Optim_Input/2D_0m2net_set_1_level_${level}.dat -o Repetition_${repetition}/Output/2D_0m2net_set_1_level_${level}_Opt.dat
-        ~/bin/OptimTiles2D -t ${nbthreads} -n 1024 -i ../Optimize_L2Discrepancy_For_2D_Tiles/Data/Optim_Input/2D_0m2net_set_1_level_${level}.dat -o Repetition_${repetition}/Output/2D_0m2net_set_1_level_${level}_Opt.dat | tee Repetition_${repetition}/Traces/Trace_Level_${level}.dat
+        echo ~/bin/OptimTiles2D -t ${nbthreads} -n 1024 -i ../Optimize_L2Discrepancy_For_2D_Tiles/Data/Optim_Input/2D_0m2net_set_1_level_${level}.dat -o ../Repetitions/Repetition_${repetition}/Output/2D_0m2net_set_1_level_${level}_Opt.dat
+        ~/bin/OptimTiles2D -t ${nbthreads} -n 1024 -i ../Optimize_L2Discrepancy_For_2D_Tiles/Data/Optim_Input/2D_0m2net_set_1_level_${level}.dat -o ../Repetitions/Repetition_${repetition}/Output/2D_0m2net_set_1_level_${level}_Opt.dat | tee ../Repetitions/Repetition_${repetition}/Traces/Trace_Level_${level}.dat
 	done
