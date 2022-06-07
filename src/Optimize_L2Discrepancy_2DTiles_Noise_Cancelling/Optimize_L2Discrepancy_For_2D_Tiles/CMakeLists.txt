@@ -26,7 +26,7 @@ if(APPLE)
     endif()
     set(CMAKE_OSX_ARCHITECTURES "x86_64")
 #else()
-#    SET(CMAKE_CXX_FLAGS "-std=c++11 -O3 -fopenmp")
+    SET(CMAKE_CXX_FLAGS "-std=c++11 -O3 -fopenmp")
 endif()
 
 find_package(OpenMP REQUIRED)
