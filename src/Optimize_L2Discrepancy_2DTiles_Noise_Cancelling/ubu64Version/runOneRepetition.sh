@@ -21,7 +21,7 @@ fi
 mkdir -p ../Repetitions/Repetition_${repetition}/Output
 mkdir -p ../Repetitions/Repetition_${repetition}/Traces
 
-for (( level=10 ; level <= 242 ; level++ ))
+for (( level=2 ; level <= 243 ; level++ ))
 	do
         echo ~/bin/OptimTiles2D -t ${nbthreads} -n 1024 -i ../Optimize_L2Discrepancy_For_2D_Tiles/Data/Optim_Input/2D_0m2net_set_1_level_${level}.dat -o ../Repetitions/Repetition_${repetition}/Output/2D_0m2net_set_1_level_${level}_Opt.dat
         ~/bin/OptimTiles2D -t ${nbthreads} -n 1024 -i ../Optimize_L2Discrepancy_For_2D_Tiles/Data/Optim_Input/2D_0m2net_set_1_level_${level}.dat -o ../Repetitions/Repetition_${repetition}/Output/2D_0m2net_set_1_level_${level}_Opt.dat | tee ../Repetitions/Repetition_${repetition}/Traces/Trace_Level_${level}.dat
