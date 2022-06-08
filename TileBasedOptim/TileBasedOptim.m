@@ -2405,7 +2405,7 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 
 getMSE[pts_, inptsfname_:"", innDims_:2, inIntegrandType_:2, dbg_:False] :=
     Module[ {(*execString,nDims,ptsfname,integrandType,nIntegrands,res,mse,msefname*)},
-    	nIntegrands = 16 16 1024;
+    	nIntegrands = 256 1024;
 		msefname = "tmp/mse"<>pid<>".dat";
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
         If[inptsfname == "", (* given : pts *)
