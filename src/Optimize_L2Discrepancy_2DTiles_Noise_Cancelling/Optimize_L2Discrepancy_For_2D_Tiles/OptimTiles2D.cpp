@@ -324,7 +324,8 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
       // ============= Parallel Beginning ================== //
 
 
-      #pragma omp parallel for private(pointSetToOptimize,newPointx,newPointy)
+#pragma omp parallel for private(pointSetToOptimize,newPointx,newPointy)
+//#pragma omp parallel for
         for (int i_pt_in_tile = 0; i_pt_in_tile < nbThrow; i_pt_in_tile++) {
           pointSetToOptimize = extractSP(v);
           generator.seed((i_pt_in_tile*1234+5678)+std::chrono::system_clock::now().time_since_epoch().count());
@@ -345,7 +346,7 @@ void optimTilesParallel(std::vector<Tiles>* v,int nbThrow,size_t niters,size_t w
         double newDisc = sqrt(pow(currentDisc,2) - pow(apportdupointavant,2) + pow(theChosenOne.apportOfNewPoint,2));
 
         if (currentDisc > newDisc ) {
-          std::cout <<" Iteration " << iter_over_pointset << " : " << "Initial discrepancy : " << initialDiscrepency << ",  current discrepancy : "<< currentDisc << " becoming " << newDisc << std::endl;
+          std::cout << i_tile << " Iteration " << iter_over_pointset << " : " << "Initial discrepancy : " << initialDiscrepency << ",  current discrepancy : "<< currentDisc << " becoming " << newDisc << " " << outputString << std::endl;
           currentDisc = newDisc;
           pointSetToOptimize.at(rAM.at(i_tile)).set_pos_x(theChosenOne.point.get_pos_x());
           pointSetToOptimize.at(rAM.at(i_tile)).set_pos_y(theChosenOne.point.get_pos_y());
