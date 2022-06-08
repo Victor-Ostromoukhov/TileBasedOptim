@@ -10,11 +10,11 @@ showstdRefDiscrepancy[]
 makeOptimL2discrepancy[]  ->  getL2discrepancy[]
 showOptimL2discrepancy[]
 
+makeOptimMSE[]  ->  getMSE[]
 
 ########################################
 prepOptimDataBase3SFCMatBuilderOnly2D[]
  
-makeOptimMSE[]  ->  getMSE[]
 
 
 
@@ -2407,7 +2407,7 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 
 getMSE[pts_, inptsfname_:"", innDims_:2, inIntegrandType_:2, dbg_:False] :=
     Module[ {(*execString,nDims,ptsfname,integrandType,nIntegrands,res,mse,msefname*)},
-    	nIntegrands = 16 1024;
+    	nIntegrands = 16 16 1024;
 		msefname = "tmp/mse"<>pid<>".dat";
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
         If[inptsfname == "", (* given : pts *)
@@ -2441,9 +2441,10 @@ math
 
 makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, setFromTo_:{1,4}, innDims_:2, dbg_:False] :=
     Module[ {},
+       	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
         dtab = {};
-        nptsMax = 3^6;
+        ordinalAbsoluteMax = 3^6;
         setNo = 1;
     	integrandType = inIntegrandType;
 		integrandTypeLabel = Switch[integrandType,  1,"Heaviside", 2,"SoftEllipses", 3,"Rectangles", 4,"Ellipses", 5,"SoftEllipses_noRot" ];
@@ -2454,10 +2455,10 @@ makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, setFromTo_:
         If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
    	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat";
    	    {setFrom,setTo} = setFromTo;
-
-        msetab = Parallelize @ Table[
+		datamse = {};
+        Do[
 			npts = iOrdinalAbsolute;
-	        mseTab = (Parallelize @ Table[
+	        mseTab = Table[
 	       		fname = Switch[optimType
 	       			,optimTypeL2Optimisation,
 	       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetitions/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[iOrdinalAbsolute]<>".dat"
@@ -2467,24 +2468,22 @@ makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, setFromTo_:
 					If[dbg, ipts = Round[ npts pts ];
 						Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
 		        	mse = getMSE[pts,"",nDims,integrandType];
-		        	Print[iOrdinalAbsolute, " ", resFname  -> mse];
 					{npts,mse}
 				,(*ELSE*)
+					Print[fname, " does not exist"];
 					Nothing
 	       		]
-        	,{setNo,setFrom,setTo}]);
+        	,{setNo,setFrom,setTo}];
 	 		mseMean = Mean @ mseTab;
-	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ mseTab];
-	 		{mseMin,mseMax} = {Min@mseTab, Max@mseTab};
+		    Print[iOrdinalAbsolute, " ", resFname  -> mseMean];
+	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
+	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
 	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,setTo-setFrom+1,0}];	
 			Export[dirMSE<>resFname,header,"TEXT"];
 			Export["tmp/tmpdat"<>pid<>".dat",datamse];
 			Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFname];
 			Print[dirMSE<>resFname, " written."];
-        ,{iOrdinalAbsolute,2,nptsMax}];
-        Print[mf @ msetab];
-   		Export[dirMSE<>resFname, msetab];
- 		Print[dirMSE<>resFname, " written."];
+        ,{iOrdinalAbsolute,2,ordinalAbsoluteMax}];
    ] (* makeOptimMSE *)
 
 
@@ -2499,7 +2498,7 @@ makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, setFromTo_:{1,4}, inn
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
         dtab = {};
-        nptsMax = 3^6;
+        ordinalAbsoluteMax = 3^6;
 		optimTypeL2OptimisationLabel = Switch[optimType,  1,"L2Optimisation",  2,"MSEOptimisationSoftEllipses",  3,"MSEOptimisationHeaviside" ];
    		dirL2discrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
         If[ !FileExistsQ[dirL2discrepancy], CreateDirectory[dirL2discrepancy] ];
@@ -2527,14 +2526,14 @@ makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, setFromTo_:{1,4}, inn
 	       		]
         	,{setNo,setFrom,setTo}]);
 	 		DiscrepancyMean = Mean @ DiscrepancyTab;
-	 		DiscrepancyVariance = If[Length[DiscrepancyTab] <= 1, 0 , Variance @ DiscrepancyTab];
-	 		{DiscrepancyMin,DiscrepancyMax} = {Min@DiscrepancyTab, Max@DiscrepancyTab};
+	 		DiscrepancyVariance = If[Length[DiscrepancyTab] <= 1, 0 , Variance @ (Last /@ DiscrepancyTab)];
+	 		{DiscrepancyMin,DiscrepancyMax} = {Min@(Last /@ DiscrepancyTab), Max@(Last /@ DiscrepancyTab)};
 	 		AppendTo[dataDiscrepancy,Flatten @ {DiscrepancyMean,DiscrepancyVariance,DiscrepancyMin,DiscrepancyMax,0,0,setTo-setFrom+1,0}];	
 			Export[dirDiscrepancy<>resFname,header,"TEXT"];
 			Export["tmp/tmpdat"<>pid<>".dat",dataDiscrepancy];
 			Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirDiscrepancy<>resFname];
 			Print[dirDiscrepancy<>resFname, " written."];
-	    ,{iOrdinalAbsolute,2,nptsMax}];
+	    ,{iOrdinalAbsolute,2,ordinalAbsoluteMax}];
 		Run["rm tmp/tmpdat"<>pid<>".dat"];
    ] (* makeOptimL2discrepancy *)
 
