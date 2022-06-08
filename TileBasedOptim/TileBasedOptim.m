@@ -2665,7 +2665,7 @@ showstdOptimMSE[] :=
 		            ]			
 			,Control[{{optimTypeL2OptimisationLabel,"L2Optimisation"},{"L2Optimisation","MSEOptimisationHardEllipses","MSEOptimisationSoftEllipses",
 				"MSEOptimisationHardRectangles","MSEOptimisationSoftRectangles"} } ]
-			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside"(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
+			,Control[{{integrandTypeLabel,"SoftEllipses"},{"Heaviside", "SoftEllipses"	(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
          ]
      ] (* showstdOptimMSE *)
 
