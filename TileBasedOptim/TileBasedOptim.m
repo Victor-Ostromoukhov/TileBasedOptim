@@ -2513,16 +2513,19 @@ makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, setFromTo_:{1,4}, inn
 	       			,optimTypeL2Optimisation,
 	       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetitions/Repetition_"<>ToString[setNo]<>"/Output/2D_0m2net_set_1_level_"<>ToString[iOrdinalAbsolute]<>"_Opt.dat"
 	       		];
-	       		If[ !FileExistsQ[fname], Print[fname, "does not exist"]; Continue[] ];
-				pts = Import[fname][[;;,2;;3]];
-				If[dbg, ipts = Round[ npts pts ];
-					Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-	        	L2discrepancy = getL2discrepancy[pts,"",nDims]; 
-	        	Print[iOrdinalAbsolute, " ", resFname  -> L2discrepancy];
-				{npts,L2discrepancy}
+	       		If[FileExistsQ[fname],
+					pts = Import[fname][[;;,2;;3]];
+					If[dbg, ipts = Round[ npts pts ];
+						Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+		        	L2discrepancy = getL2discrepancy[pts,"",nDims]; 
+		        	Print[iOrdinalAbsolute, " ", resFname  -> L2discrepancy];
+					{npts,L2discrepancy}
+				,(*ELSE*)
+					Nothing
+	       		]
         	,{setNo,setFrom,setTo}]);
 	 		DiscrepancyMean = Mean @ DiscrepancyTab;
-	 		DiscrepancyVariance = If[Length[DiscrepancyTab] == 1, 0 , Variance @ DiscrepancyTab];
+	 		DiscrepancyVariance = If[Length[DiscrepancyTab] <= 1, 0 , Variance @ DiscrepancyTab];
 	 		{DiscrepancyMin,DiscrepancyMax} = {Min@DiscrepancyTab, Max@DiscrepancyTab};
 	 		AppendTo[dataDiscrepancy,Flatten @ {DiscrepancyMean,DiscrepancyVariance,DiscrepancyMin,DiscrepancyMax,0,0,setTo-setFrom+1,0}];	
 			Export[dirDiscrepancy<>resFname,header,"TEXT"];
