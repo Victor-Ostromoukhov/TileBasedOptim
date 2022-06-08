@@ -2511,7 +2511,7 @@ makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, setFromTo_:{1,4}, inn
 	        DiscrepancyTab = (Parallelize @ Table[
 	       		fname = Switch[optimType
 	       			,optimTypeL2Optimisation,
-	       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetitions/Repetition_"<>ToString[setNo]<>"/Output/2D_0m2net_set_1_level_"<>ToString[iOrdinalAbsolute]<>"_Opt.dat"
+	       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetitions/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[iOrdinalAbsolute]<>".dat"
 	       		];
 	       		If[FileExistsQ[fname],
 					pts = Import[fname][[;;,2;;3]];
