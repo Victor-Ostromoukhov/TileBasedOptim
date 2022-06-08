@@ -2492,36 +2492,45 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 makeOptimL2discrepancy[optimTypeL2Optimisation]
 *)
-makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, insetNo_:1, innDims_:2, dbg_:False] :=
+makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, setFromTo_:{1,4}, innDims_:2, dbg_:False] :=
     Module[ {},
+       	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
         dtab = {};
-        nptsMax = 42; (*3^6;*)
-        setNo = insetNo;
+        nptsMax = 3^6;
 		optimTypeL2OptimisationLabel = Switch[optimType,  1,"L2Optimisation",  2,"MSEOptimisationSoftEllipses",  3,"MSEOptimisationHeaviside" ];
-        
-		dirL2discrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
+   		dirL2discrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
         If[ !FileExistsQ[dirL2discrepancy], CreateDirectory[dirL2discrepancy] ];
         If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-   	    resFname = optimTypeL2OptimisationLabel<>".dat";
-
-        L2discrepancytab = (*Parallelize @*) Table[
+   	    resFname = optimTypeL2OptimisationLabel<>".dat";	    
+   	    {setFrom,setTo} = setFromTo;
+		dataDiscrepancy = {};
+		dirDiscrepancy = "data_L2Discrepancy/"<>ToString[nDims]<>"D/";
+        Do[
 			npts = iOrdinalAbsolute;
-       		fname = Switch[optimType
-       			,optimTypeL2Optimisation,
-       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetition_"<>ToString[setNo]<>"/Output/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_Opt.dat"
-       		];
-       		If[ !FileExistsQ[fname], Print[fname, "does not exist"]; Continue[] ];
-			pts = Import[fname][[;;,2;;3]];
-			If[dbg, ipts = Round[ npts pts ];
-				Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-        	L2discrepancy = getL2discrepancy[pts,"",nDims]; 
-        	Print[iOrdinalAbsolute, " ", resFname  -> L2discrepancy];
-			{npts,L2discrepancy}
-        ,{iOrdinalAbsolute,2,nptsMax}];
-        Print[mf @ L2discrepancytab];
-   		Export[dirL2discrepancy<>resFname, L2discrepancytab];
- 		Print[dirL2discrepancy<>resFname, " written."];
+	        DiscrepancyTab = (Parallelize @ Table[
+	       		fname = Switch[optimType
+	       			,optimTypeL2Optimisation,
+	       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetitions/Repetition_"<>ToString[setNo]<>"/Output/2D_0m2net_set_1_level_"<>ToString[iOrdinalAbsolute]<>"_Opt.dat"
+	       		];
+	       		If[ !FileExistsQ[fname], Print[fname, "does not exist"]; Continue[] ];
+				pts = Import[fname][[;;,2;;3]];
+				If[dbg, ipts = Round[ npts pts ];
+					Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+	        	L2discrepancy = getL2discrepancy[pts,"",nDims]; 
+	        	Print[iOrdinalAbsolute, " ", resFname  -> L2discrepancy];
+				{npts,L2discrepancy}
+        	,{setNo,setFrom,setTo}]);
+	 		DiscrepancyMean = Mean @ DiscrepancyTab;
+	 		DiscrepancyVariance = If[Length[DiscrepancyTab] == 1, 0 , Variance @ DiscrepancyTab];
+	 		{DiscrepancyMin,DiscrepancyMax} = {Min@DiscrepancyTab, Max@DiscrepancyTab};
+	 		AppendTo[dataDiscrepancy,Flatten @ {DiscrepancyMean,DiscrepancyVariance,DiscrepancyMin,DiscrepancyMax,0,0,setTo-setFrom+1,0}];	
+			Export[dirDiscrepancy<>resFname,header,"TEXT"];
+			Export["tmp/tmpdat"<>pid<>".dat",dataDiscrepancy];
+			Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirDiscrepancy<>resFname];
+			Print[dirDiscrepancy<>resFname, " written."];
+	    ,{iOrdinalAbsolute,2,nptsMax}];
+		Run["rm tmp/tmpdat"<>pid<>".dat"];
    ] (* makeOptimL2discrepancy *)
 
 showOptimL2discrepancy[optimType_:optimTypeL2Optimisation, insetNo_:1, innDims_:2, dbg_:False] :=
@@ -2539,7 +2548,8 @@ showOptimL2discrepancy[optimType_:optimTypeL2Optimisation, insetNo_:1, innDims_:
 		dirL2discrepancy = "data_L2discrepancy/"<>ToString[nDims]<>"D/";
    	    resFname = dirL2discrepancy<>optimTypeL2OptimisationLabel<>".dat";
         If[ !FileExistsQ[resFname], Print[resFname," does not exist."]; Abort[]; ];
-   		L2discrepancyOptim = Import[resFname];
+        data = (Drop[#,1]& @ Import[resFname]);
+   		L2discrepancyOptim = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 		(*Print[L2discrepancyOptim//mf];*)
 			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"WN_L2Discrepancy.dat"]);
 			L2discrepancyWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
