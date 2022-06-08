@@ -2437,7 +2437,7 @@ math
 	makeOptimMSE[1, 2];
 *)
 
-makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, setFromTo_:{1,4}, innDims_:2, dbg_:False] :=
+makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, setFromTo_:{1,5}, innDims_:2, dbg_:False] :=
     Module[ {},
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
@@ -2491,7 +2491,7 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 makeOptimL2discrepancy[optimTypeL2Optimisation]
 *)
-makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, setFromTo_:{1,4}, innDims_:2, dbg_:False] :=
+makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, setFromTo_:{1,5}, innDims_:2, dbg_:False] :=
     Module[ {},
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
