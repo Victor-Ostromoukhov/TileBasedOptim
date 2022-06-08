@@ -11,13 +11,11 @@ makeOptimL2discrepancy[]  ->  getL2discrepancy[]
 showOptimL2discrepancy[]
 
 makeOptimMSE[]  ->  getMSE[]
+showstdOptimMSE[] :
 
 ########################################
 prepOptimDataBase3SFCMatBuilderOnly2D[]
  
-
-
-
 *)
  
 (****************** globals *******************)
@@ -2540,7 +2538,7 @@ makeOptimL2discrepancy[optimType_:optimTypeL2Optimisation, setFromTo_:{1,4}, inn
 showOptimL2discrepancy[optimType_:optimTypeL2Optimisation, insetNo_:1, innDims_:2, dbg_:False] :=
     Module[ {},
 		fontSz = 14;
-		kPlusMinus = .5;
+		kPlusMinus = 1;
     	{powfrom,powto,powstep} = {2,16,1};
 
     	nDims = innDims;
@@ -2611,7 +2609,7 @@ showstdOptimMSE[] :=
     Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,dirMSE},
     	consecutiveFlag = False;
 		fontSz = 14;
-		kPlusMinus = .5;
+		kPlusMinus = 1;
     	{powfrom,powto,powstep} = {2,16,1};
 
 		nDims = 2;
@@ -2632,8 +2630,10 @@ showstdOptimMSE[] :=
 			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
 
-			mseOptim = Select[Import[dirMSE<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat"], #[[1]] >= 2^powfrom &];
- 
+			data = Select[(Drop[#,1]& @ Import[dirMSE<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat"]), #[[1]] >= 2^powfrom &];
+			mseOptim = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			(*mseOptim = Table[{data[[i,1]], data[[i,2]] },{i,Length[data]}];*)
+			 
 		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseOptim} ;
 	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", optimTypeL2OptimisationLabel} ] ];
 	        
@@ -2663,9 +2663,9 @@ showstdOptimMSE[] :=
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]			
-			,Control[{{optimTypeL2OptimisationLabel,"MSEOptimisationSoftEllipses"},{"L2Optimisation","MSEOptimisationHardEllipses","MSEOptimisationSoftEllipses",
+			,Control[{{optimTypeL2OptimisationLabel,"L2Optimisation"},{"L2Optimisation","MSEOptimisationHardEllipses","MSEOptimisationSoftEllipses",
 				"MSEOptimisationHardRectangles","MSEOptimisationSoftRectangles"} } ]
-			,Control[{{integrandTypeLabel,"SoftEllipses"},{"SoftEllipses", "Heaviside"(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
+			,Control[{{integrandTypeLabel,"Heaviside"},{"SoftEllipses", "Heaviside"(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
          ]
      ] (* showstdOptimMSE *)
 
