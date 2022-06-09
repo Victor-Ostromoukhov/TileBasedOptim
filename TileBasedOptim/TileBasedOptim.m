@@ -2606,7 +2606,7 @@ optimTypeMSEOptimisationHeaviside = 3;
 
    
 showstdOptimMSE[] :=
-    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata,dirMSE},
+    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata},
     	consecutiveFlag = False;
 		fontSz = 14;
 		kPlusMinus = 1;
@@ -2667,3 +2667,253 @@ showstdOptimMSE[] :=
 			,Control[{{integrandTypeLabel,"Heaviside"},{"Heaviside", "SoftEllipses"	(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
          ]
      ] (* showstdOptimMSE *)
+     
+(*======================================= prepSoftEllipses2D[] & prepHeavisideND[] =======================================*)
+getHeavisideND[pt_,{mu_,normVector_}] := If[(pt-mu).normVector > 0, 1, 0]
+getMultivariateND[pt_,{mu_,mxCInv_},mulFactor_:1] := Quiet[1./mulFactor Exp[-.5 (pt-mu).mxCInv.(pt-mu)]]
+
+(*
+gitpull
+math
+<<uniformity/uniformity.m
+Do[
+	prepSoftEllipses2D[isetNo]
+,{isetNo,0,1}]
+*)
+prepSoftEllipses2D[inintegrandType_:1, setNo_:1] :=
+    Module[ {},
+        nDims = 2;
+     	maxtime = 10;
+        dir = "integrands/";
+        If[ !FileExistsQ[dir], CreateDirectory[dir] ];
+		{precision,maxRecursion} = {18,10000};
+
+		nsigmas1D = 4; 
+		nmus1D = 128;
+		nIntegrands = nsigmas1D^2 nmus1D^2;
+    	integrandType = inintegrandType;
+		integrandTypeLabel = Switch[integrandType,  1,"Ellipses", 2,"SoftEllipses", 3,"Rectangles", 4,"Heaviside", 5,"SoftRectangles" ];
+        If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
+		suffix = integrandTypeLabel<>"_setNo"<>ToString[setNo];
+		hppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
+		cppsuffix = "t_GaussianStruct2D" ;
+		varName = "tab_SoftEllipses2D" ;
+		nsigmas = nsigmas1D^2;
+        res = Flatten[#,1]& @ (Parallelize @ Table[
+		    {ixsigma,iysigma} = 1+{Quotient[(isigma-1),nsigmas1D],Mod[(isigma-1),nsigmas1D]};	(* 1+ to skip too small sigmas *)
+          	partial = Flatten[#,1]& @ ( Table[
+		       	While[True,
+					rotmx = RandomVariate[CircularRealMatrixDistribution[nDims], 1][[1]];
+					If[integrandTypeLabel == "Ellipses" || integrandTypeLabel == "SoftEllipses",
+						sigma = {(ixsigma+(RandomReal[]))/nsigmas1D,(iysigma+(RandomReal[]))/nsigmas1D} / 2.;
+						mu = {(ixmu-1+(RandomReal[]))/nmus1D,(iymu-1+(RandomReal[]))/nmus1D};
+						sigmamx = sigma IdentityMatrix[nDims];
+		    			mxC =  rotmx.sigmamx;
+	        			mxCInv = Inverse[mxC];
+	        			mxCInv = T[mxCInv] . mxCInv;
+						Off[NIntegrate::slwcon];
+						Off[NIntegrate::eincr];
+						Off[NIntegrate::precw];
+						Off[NIntegrate::maxp];
+						Off[NIntegrate::inumr];
+						Off[General::stop];
+						Off[NIntegrate`SymbolicPiecewiseSubdivision::maxpwc];
+						integral = (NIntegrate[getMultivariateND[Table[x[i],{i,nDims}],{mu,mxCInv}], ## , MaxRecursion->maxRecursion, 
+								PrecisionGoal->precision, WorkingPrecision->precision, AccuracyGoal->precision] & @@ Table[{x[i],0,1},{i,nDims}]) ;
+					];
+					If[integrandTypeLabel == "Rectangles" || integrandTypeLabel == "SoftRectangles",
+						sigma = {(ixsigma+.5)/nsigmas1D,(iysigma+.5)/nsigmas1D} / 2.;
+						mu = {(ixmu-.5)/nmus1D,(iymu-.5)/nmus1D};
+						normVectorTab = ((rotmx.#)& /@ #)& /@ {{{1,0},{-1,0}}, {{0,1},{0,-1}}} ;
+						limits = Table[{mu[[iDim]] + rotmx.(-sigma[[iDim]] UnitVector[nDims,iDim]),mu[[iDim]] + rotmx.(sigma[[iDim]] UnitVector[nDims,iDim])},{iDim,nDims}];
+						Off[NIntegrate::slwcon];
+						Off[NIntegrate::eincr];
+						Off[NIntegrate::precw];
+						Off[NIntegrate::maxp];
+						Off[NIntegrate::inumr];
+						Off[General::stop];
+						Off[NIntegrate`SymbolicPiecewiseSubdivision::maxpwc];
+						integral = (NIntegrate[getMultivariateND[Table[x[i],{i,nDims}],limits,normVectorTab], ## , MaxRecursion->maxRecursion, 
+								PrecisionGoal->precision, WorkingPrecision->precision, AccuracyGoal->precision] & @@ Table[{x[i],0,1},{i,nDims}]) ;
+					];
+					If[integrandTypeLabel == "Heaviside" ,
+						Print["use prepHeavisideND[]"];
+					];
+					Print[suffix -> mf[{{isigma,nsigmas},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{mu,sigma}] -> integral];
+					If[integral < eps, Print["Bad trial " -> suffix -> mf[{{isigma,nsigmas},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{mu,sigma}]  -> integral] ];
+					If[integral > eps, Break[] ];
+	        	];
+				If[integrandTypeLabel == "Ellipses" || integrandTypeLabel == "SoftEllipses", Flatten@{integral,mu,mxCInv}, Flatten@{integral,limits,normVectorTab} ]
+	        ,{ixmu,nmus1D},{iymu,nmus1D}]);
+	        partial
+        ,{isigma,nsigmas}]);
+        res = RandomSample @ res;
+		finalLength = Length[res];
+        resfname = dir<>suffix<>".dat";
+        Print["prepIntegrands2D" -> finalLength -> hppfname];
+		alldata = (Flatten/@res);
+		hppfname = dir<>hppsuffix<>".cpp";		
+		Put[(CForm /@ #) & /@ SetPrecision[alldata,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
+		Print["output into ",hppfname];		
+        Run["echo ' #include \"../Integration/Integration.h\" ' > "<>hppfname ];
+        Run["echo ' "<>cppsuffix<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' >> "<>hppfname ];
+        Run["cat "<> resfname<>" >> "<>hppfname];
+        Run["echo ';' >> "<>hppfname];       
+        DeleteFile[resfname];
+    ] (* prepSoftEllipses2D *)
+
+(*
+gitpull
+math
+<<uniformity/uniformity.m
+prepHeavisideND[2, 0]
+prepHeavisideND[2, 1]
+
+Do[
+	prepHeavisideND[2, isetNo]
+,{isetNo,256}]
+*)
+prepHeavisideND[innDims_:2, setNo_:1] :=
+    Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector},
+    	nIntegrands = 16 16 1024;
+        If[$ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
+        nDims = innDims;
+		suffix = "Heaviside"<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
+     	maxtime = If[nDims <= 10, 10, 3600];
+        dir = "integrands/";
+        If[ !FileExistsQ[dir], CreateDirectory[dir] ];
+		{precision,maxRecursion} = Switch[nDims
+			,1,{20,10000}
+			,2,{18,10000}
+			,3,{18,10000}
+			,4,{18,10000}
+			,5,{14,10000}
+			,6,{11,10000}
+			,_,{10,10000}
+		];
+		batchsz = 64;
+		nbatches = nIntegrands/batchsz;
+        res = {};
+        Do[
+          	res1024 = Parallelize @ (Table[
+          		trial = 0;
+		       	While[True,
+		       		trial++;
+		    		(*muDiscotinuity = Table[.5,{nDims}] + .1 getUniformDirsND[nDims];*)
+		    		muDiscotinuity = Table[.5 - (RandomReal[]-.5)/2,{nDims}];
+					normVector = getUniformDirsND[nDims];
+					Off[NIntegrate::slwcon];
+					Off[NIntegrate::eincr];
+					Off[NIntegrate::precw];
+					Off[NIntegrate::maxp];
+					Off[General::stop];
+					Off[NIntegrate`SymbolicPiecewiseSubdivision::maxpwc];
+					(*integral = (*TimeConstrained[#,maxtime,0] & @*) *)
+					integral = If[nDims == 3,
+						TimeConstrained[ NIntegrate[getHeavisideND[Table[x[i],{i,nDims}],{muDiscotinuity,normVector}], ##, Method->"LocalAdaptive", PrecisionGoal->precision ] & @@ Table[{x[i],0,1},{i,nDims}], maxtime,0]
+					,(*ELSE*)
+						If[nDims < 8,
+							TimeConstrained[ NIntegrate[getHeavisideND[Table[x[i],{i,nDims}],{muDiscotinuity,normVector}], ## , MaxRecursion->maxRecursion, 
+								PrecisionGoal->precision, WorkingPrecision->precision, AccuracyGoal->precision] & @@ Table[{x[i],0,1},{i,nDims} ], maxtime,0]
+						,(*ELSE*)
+							TimeConstrained[ NIntegrate[getHeavisideND[Table[x[i],{i,nDims}],{muDiscotinuity,normVector}], ##] & @@ Table[{x[i],0,1},{i,nDims} ], maxtime,0]
+						]
+					];
+					(*Print["trial = ",trial (*-> {muDiscotinuity,normVector}*) -> integral];*)
+					If[integral > eps, Break[] ];
+	        	];
+				Print[suffix -> ibatch,"/",nbatches -> i,"/",batchsz -> integral];
+		        {integral,muDiscotinuity,normVector}
+	        ,{i,batchsz}]);
+	        res = Join[res, res1024];
+        ,{ibatch,nbatches}];
+		finalLength = Length[res];
+        resfname = dir<>suffix<>".dat";
+        Print["prepHeavisideND" -> finalLength -> resfname];
+        Export[resfname,SetPrecision[(Flatten/@res),22]];
+		alldata = (Flatten/@res);
+		hppfname = dir<>suffix<>".hpp";		
+		Put[(CForm /@ #) & /@ ( (alldata) ), resfname]; (* e^-10 rather than 2.5*^-10 *)  
+		Print["output into ",resfname," and ",hppfname];		
+        Run["echo 't_"<>suffix<>" tab_"<>suffix<>"["<>ToString[finalLength]<>"] = ' > "<>hppfname ];
+        Run["cat "<> resfname<>" >> "<>hppfname];
+        Run["echo ';' >> "<>hppfname];       
+        DeleteFile[resfname];
+    ] (* prepHeavisideND *)
+
+    
+(*
+gitpull
+math
+<<uniformity/uniformity.m
+prepSoftEllipsesND[2, 16 1024, 1024, 10]
+
+prepSoftEllipsesND[2, 16 1024, 1024, 0]
+prepSoftEllipsesND[2, 16 1024, 1024, 1]
+
+prepSoftEllipsesND[2, 16 1024, 1024, 2]
+prepSoftEllipsesND[2, 16 1024, 1024, 3]
+prepSoftEllipsesND[2, 16 1024, 1024, 4]
+prepSoftEllipsesND[2, 16 1024, 1024, 5]
+
+prepSoftEllipsesND[innDims_:2, innIntegrands_:16 1024, inbatchsz_:1024, setno_:0, dbg_:False] :=
+    Module[ {},
+    	smallValue = 1/1000.;
+        If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
+    	nIntegrands = innIntegrands;
+        nDims = innDims;
+		suffix = "SoftEllipses2D_nIntegrands"<>ToString[nIntegrands]<>"_setno"<>ToString[setno];
+		cppsuffix = "t_GaussianStruct2D";
+     	maxtime = If[nDims <= 10, 10, 3600];
+        dir = "integrands/";
+        If[ !FileExistsQ[dir], CreateDirectory[dir] ];
+		{precision,maxRecursion} = {20,10000};
+		batchsz = Min[1024,inbatchsz];
+		nbatches = nIntegrands/batchsz;
+        res = {};
+        fIntegrand := getMultivariateND;
+        Do[
+	        k1k2Tab = smallValue + 1/2. RandomSample @ getStratND[nDims, batchsz];
+          	partial = Parallelize @ (Table[
+		       	While[True,
+					ktab = k1k2Tab[[inbatch]];
+					{mu,mxCInv} = getRandMuAndMxCInvNDEllipses[nDims,ktab];
+					Off[NIntegrate::slwcon];
+					Off[NIntegrate::eincr];
+					Off[NIntegrate::precw];
+					Off[NIntegrate::maxp];
+					Off[General::stop];.
+					Off[NIntegrate`SymbolicPiecewiseSubdivision::maxpwc];
+					integral = (*TimeConstrained[#,maxtime,0] & @*) If[nDims == 3,
+						precision = 17;
+						(NIntegrate[fIntegrand[Table[x[i],{i,nDims}],{mu,mxCInv}], ##, Method->"LocalAdaptive", PrecisionGoal->precision ] & @@ Table[{x[i],0,1},{i,nDims}])
+					,(*ELSE*)
+						If[nDims < 8,
+							(NIntegrate[fIntegrand[Table[x[i],{i,nDims}],{mu,mxCInv}], ## , MaxRecursion->maxRecursion, 
+								PrecisionGoal->precision, WorkingPrecision->precision, AccuracyGoal->precision] & @@ Table[{x[i],0,1},{i,nDims}])
+						,(*ELSE*)
+							(NIntegrate[fIntegrand[Table[x[i],{i,nDims}],{mu,mxCInv}], ##] & @@ Table[{x[i],0,1},{i,nDims}])
+						]
+					];
+					If[integral < eps, Print["Bad trial " -> suffix -> ibatch,"/",nbatches -> inbatch,"/",batchsz -> mf[{mu,mxCInv,ktab}] -> integral] ];
+					If[integral > eps, Break[] ];
+	        	];
+				Print[suffix -> ibatch,"/",nbatches -> inbatch,"/",batchsz -> {mu,mxCInv} -> integral];
+		        {integral,mu,mxCInv}
+	        ,{inbatch,batchsz}]);
+	        res = Join[res, partial];
+			finalLength = Length[res];
+	        resfname = dir<>suffix<>".dat";
+	        Print["prepSoftEllipsesND" -> finalLength -> resfname];
+			alldata = (Flatten/@res);
+			hppfname = dir<>suffix<>".cpp";		
+			Put[(CForm /@ #) & /@ SetPrecision[alldata,precision], resfname]; (* e^-10 rather than 2.5*^-10 *)  
+			Print["output into ",resfname," and ",hppfname];		
+	        Run["echo ' #include \"../Integration/Integration.h\" ' > "<>hppfname ];
+	        Run["echo ' "<>cppsuffix<>" tab_SoftEllipses2D["<>ToString[finalLength]<>"] = ' >> "<>hppfname ];
+	        (*Run["echo ' "<>cppsuffix<>" tab_"<>suffix<>"[16384] = ' >> "<>hppfname ];*)
+	        Run["cat "<> resfname<>" >> "<>hppfname];
+	        Run["echo ';' >> "<>hppfname];       
+        ,{ibatch,nbatches}]
+    ] (* prepSoftEllipsesND *)
+*)
