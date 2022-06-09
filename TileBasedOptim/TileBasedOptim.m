@@ -2718,7 +2718,7 @@ prepSoftEllipses2D[setNo_:1] :=
 						Off[NIntegrate`SymbolicPiecewiseSubdivision::maxpwc];
 						integral = (NIntegrate[getMultivariateND[Table[x[i],{i,nDims}],{mu,mxCInv}], ## , MaxRecursion->maxRecursion, 
 								PrecisionGoal->precision, WorkingPrecision->precision, AccuracyGoal->precision] & @@ Table[{x[i],0,1},{i,nDims}]) ;
-					Print[suffix -> mf[{{isigma,nsigmas},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{mu,sigma}] -> integral];
+					Print[suffix -> mf[{{isigma,nsigmas},{ixmu,nmus1D},{iymu,nmus1D}}] -> mf[{mu,sigma}] -> integral];
 					If[integral < eps, Print["Bad trial " -> suffix -> mf[{{isigma,nsigmas},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{mu,sigma}]  -> integral] ];
 					If[integral > eps, Break[] ];
 	        	];
