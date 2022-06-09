@@ -2675,7 +2675,7 @@ getMultivariateND[pt_,{mu_,mxCInv_},mulFactor_:1] := Quiet[1./mulFactor Exp[-.5 
 (*
 gitpull
 math
-<<uniformity/uniformity.m
+<<TileBasedOptim/TileBasedOptim.m
 Do[
 	prepSoftEllipses2D[isetNo]
 ,{isetNo,0,1}]
@@ -2744,7 +2744,7 @@ prepSoftEllipses2D[setNo_:1] :=
 (*
 gitpull
 math
-<<uniformity/uniformity.m
+<<TileBasedOptim/TileBasedOptim.m
 prepHeavisideND[2, 0]
 prepHeavisideND[2, 1]
 
