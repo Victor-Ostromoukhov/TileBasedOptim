@@ -2676,9 +2676,8 @@ getMultivariateND[pt_,{mu_,mxCInv_},mulFactor_:1] := Quiet[1./mulFactor Exp[-.5 
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-Do[
-	prepSoftEllipses2D[isetNo]
-,{isetNo,0,1}]
+prepSoftEllipses2D[0]
+
 *)
 prepSoftEllipses2D[setNo_:1] :=
     Module[ {},
