@@ -312,6 +312,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
         rAMGaussiennes = randomAccessMatriceGenerator(( NBGAUSS / gaussianSubSetSize ));
       }
       initializeGaussianVectors<dimension>(&sigma,&shift,&anal,rAMGaussiennes.at((iter_over_pointset % (( NBGAUSS / gaussianSubSetSize )))),integrandType,gaussianSubSetSize);
+      double prevMSE = 0;
       for (int i_pts = 0; i_pts < nbpts; i_pts++) {
           #pragma omp parallel for
           for (int i_pt_in_tile = 0; i_pt_in_tile < nbThrow; i_pt_in_tile++) {
@@ -330,12 +331,14 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
           }
           newPointHolder<dimension> theChosenOne = *std::min_element(mseTab+0,mseTab+nbThrow,compareTwoNewPointHolder<dimension>);
           if (theChosenOne.apportOfNewPoint < tabPtsValGauss[gaussianSubSetSize]) {
-            std::cout <<" Iteration " << iter_over_pointset << " : " << "Initial SE : " << initialSE << ",  current SE : "<< tabPtsValGauss[gaussianSubSetSize] << " becoming " << theChosenOne.apportOfNewPoint << std::endl;
+              double delta = abs(theChosenOne.apportOfNewPoint - prevMSE);
+            std::cout << outputString << " Iteration " << iter_over_pointset << " : " << "Initial MSE : " << initialSE << " current : " << theChosenOne.apportOfNewPoint << " delta : "<< delta << std::endl;
             tabPtsValGauss[gaussianSubSetSize] = theChosenOne.apportOfNewPoint;
             changeAllValueGaussTab(points[theChosenOne.index],theChosenOne.point, &sigma,&shift, tabPtsValGauss,gaussianSubSetSize,nbpts,integrandType);
             points[theChosenOne.index][0] = theChosenOne.point[0];
             points[theChosenOne.index][1] = theChosenOne.point[1];
             injectSP(v,&points);
+              prevMSE = theChosenOne.apportOfNewPoint
           }
       }
     }
@@ -354,7 +357,7 @@ int main(int argc, char const *argv[]) {
   std::string inputString ="pts.dat";
   std::string outputString ="OptimizedPts.dat";
   size_t niters = 1024*1024;
-  int gaussianSubSetSize = 1024;
+  int gaussianSubSetSize = 4096;
   int nbThrow = 64;
   int integrandType = 1;
   std::string outputStringMSE ="MSE.dat";
@@ -369,7 +372,7 @@ int main(int argc, char const *argv[]) {
       app.add_option("-n,--iterationNumber",niters,"Number of iterations over the pointset, default: "+std::to_string(niters))->check(CLI::PositiveNumber);
       app.add_option("-i,--input",inputString,"Path to input file, default: "+inputString)->check(CLI::ExistingFile)->required();
       app.add_option("-o,--output",outputString,"Path to output file, default: "+outputString);
-      app.add_option("-g",gaussianSubSetSize,"Number of gaussian to iterate over in one iteration, default: "+std::to_string(gaussianSubSetSize));
+      app.add_option("-g",gaussianSubSetSize,"Number of (gaussian) integrands to iterate over in one iteration, default: "+std::to_string(gaussianSubSetSize));
       app.add_option("-m,--writeMSE",outputStringMSE,"If precised, will write the MSE of the pointset by appending it to this file, default: "+outputStringMSE);
       app.add_option("--integrandType",integrandType,"Type of the integrand to compute MSE : 1|-> HardEllipses, 2|-> SoftEllipses, 3|-> HardRectangles, 4|-> SoftRectangles, 5|-> HeaviSide. Default: "+std::to_string(integrandType));
 
