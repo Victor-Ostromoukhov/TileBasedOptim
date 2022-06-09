@@ -18,8 +18,8 @@ else
   nbthreads=64
 fi
 
-mkdir -p ../Repetitions/Repetition_${repetition}/Output
-mkdir -p ../Repetitions/Repetition_${repetition}/Traces
+mkdir -p ../Repetitions_Heaviside/Repetition_${repetition}/Output
+mkdir -p ../Repetitions_Heaviside/Repetition_${repetition}/Traces
 
 nIterations=1024
 nItegrandsPerIteration=16384
