@@ -13,9 +13,9 @@ showOptimL2discrepancy[]
 makeOptimMSE[]  ->  getMSE[]
 showstdOptimMSE[] :
 
-########################################
-prepOptimDataBase3SFCMatBuilderOnly2D[]
- 
+=========================== prepOptimDataBase3SFCMatBuilderOnly2D[]
+
+=========================== prepSoftEllipses2D[] & prepHeavisideND[]
 *)
  
 (****************** globals *******************)
