@@ -312,7 +312,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
         rAMGaussiennes = randomAccessMatriceGenerator(( NBGAUSS / gaussianSubSetSize ));
       }
       initializeGaussianVectors<dimension>(&sigma,&shift,&anal,rAMGaussiennes.at((iter_over_pointset % (( NBGAUSS / gaussianSubSetSize )))),integrandType,gaussianSubSetSize);
-      double prevMSE = 0;
+      double prevMSE = 0.;
       for (int i_pts = 0; i_pts < nbpts; i_pts++) {
           #pragma omp parallel for
           for (int i_pt_in_tile = 0; i_pt_in_tile < nbThrow; i_pt_in_tile++) {
@@ -332,7 +332,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
           newPointHolder<dimension> theChosenOne = *std::min_element(mseTab+0,mseTab+nbThrow,compareTwoNewPointHolder<dimension>);
           if (theChosenOne.apportOfNewPoint < tabPtsValGauss[gaussianSubSetSize]) {
             double delta = theChosenOne.apportOfNewPoint - prevMSE;
-            std::cout << outputString << " Iteration " << iter_over_pointset << " : " << " MSE : " << initialSE << " -> " << theChosenOne.apportOfNewPoint << " \t delta : "<< delta << std::endl;
+            std::cout << outputString << " Iteration " << iter_over_pointset << " : " << " MSE : " << initialSE << " -> " << theChosenOne.apportOfNewPoint << " \t prevMSE : "<< prevMSE  << " \t delta : "<< delta << std::endl;
             prevMSE = theChosenOne.apportOfNewPoint;
             tabPtsValGauss[gaussianSubSetSize] = theChosenOne.apportOfNewPoint;
             changeAllValueGaussTab(points[theChosenOne.index],theChosenOne.point, &sigma,&shift, tabPtsValGauss,gaussianSubSetSize,nbpts,integrandType);
