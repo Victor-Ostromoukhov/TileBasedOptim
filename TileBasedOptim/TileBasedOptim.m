@@ -2680,7 +2680,7 @@ Do[
 	prepSoftEllipses2D[isetNo]
 ,{isetNo,0,1}]
 *)
-prepSoftEllipses2D[inintegrandType_:1, setNo_:1] :=
+prepSoftEllipses2D[setNo_:1] :=
     Module[ {},
         nDims = 2;
      	maxtime = 10;
@@ -2691,9 +2691,9 @@ prepSoftEllipses2D[inintegrandType_:1, setNo_:1] :=
 		nsigmas1D = 4; 
 		nmus1D = 128;
 		nIntegrands = nsigmas1D^2 nmus1D^2;
-    	integrandType = inintegrandType;
-		integrandTypeLabel = Switch[integrandType,  1,"Ellipses", 2,"SoftEllipses", 3,"Rectangles", 4,"Heaviside", 5,"SoftRectangles" ];
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
+
+		integrandTypeLabel = "SoftEllipses";
 		suffix = integrandTypeLabel<>"_setNo"<>ToString[setNo];
 		hppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
 		cppsuffix = "t_GaussianStruct2D" ;
@@ -2704,7 +2704,6 @@ prepSoftEllipses2D[inintegrandType_:1, setNo_:1] :=
           	partial = Flatten[#,1]& @ ( Table[
 		       	While[True,
 					rotmx = RandomVariate[CircularRealMatrixDistribution[nDims], 1][[1]];
-					If[integrandTypeLabel == "Ellipses" || integrandTypeLabel == "SoftEllipses",
 						sigma = {(ixsigma+(RandomReal[]))/nsigmas1D,(iysigma+(RandomReal[]))/nsigmas1D} / 2.;
 						mu = {(ixmu-1+(RandomReal[]))/nmus1D,(iymu-1+(RandomReal[]))/nmus1D};
 						sigmamx = sigma IdentityMatrix[nDims];
@@ -2720,30 +2719,11 @@ prepSoftEllipses2D[inintegrandType_:1, setNo_:1] :=
 						Off[NIntegrate`SymbolicPiecewiseSubdivision::maxpwc];
 						integral = (NIntegrate[getMultivariateND[Table[x[i],{i,nDims}],{mu,mxCInv}], ## , MaxRecursion->maxRecursion, 
 								PrecisionGoal->precision, WorkingPrecision->precision, AccuracyGoal->precision] & @@ Table[{x[i],0,1},{i,nDims}]) ;
-					];
-					If[integrandTypeLabel == "Rectangles" || integrandTypeLabel == "SoftRectangles",
-						sigma = {(ixsigma+.5)/nsigmas1D,(iysigma+.5)/nsigmas1D} / 2.;
-						mu = {(ixmu-.5)/nmus1D,(iymu-.5)/nmus1D};
-						normVectorTab = ((rotmx.#)& /@ #)& /@ {{{1,0},{-1,0}}, {{0,1},{0,-1}}} ;
-						limits = Table[{mu[[iDim]] + rotmx.(-sigma[[iDim]] UnitVector[nDims,iDim]),mu[[iDim]] + rotmx.(sigma[[iDim]] UnitVector[nDims,iDim])},{iDim,nDims}];
-						Off[NIntegrate::slwcon];
-						Off[NIntegrate::eincr];
-						Off[NIntegrate::precw];
-						Off[NIntegrate::maxp];
-						Off[NIntegrate::inumr];
-						Off[General::stop];
-						Off[NIntegrate`SymbolicPiecewiseSubdivision::maxpwc];
-						integral = (NIntegrate[getMultivariateND[Table[x[i],{i,nDims}],limits,normVectorTab], ## , MaxRecursion->maxRecursion, 
-								PrecisionGoal->precision, WorkingPrecision->precision, AccuracyGoal->precision] & @@ Table[{x[i],0,1},{i,nDims}]) ;
-					];
-					If[integrandTypeLabel == "Heaviside" ,
-						Print["use prepHeavisideND[]"];
-					];
 					Print[suffix -> mf[{{isigma,nsigmas},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{mu,sigma}] -> integral];
 					If[integral < eps, Print["Bad trial " -> suffix -> mf[{{isigma,nsigmas},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{mu,sigma}]  -> integral] ];
 					If[integral > eps, Break[] ];
 	        	];
-				If[integrandTypeLabel == "Ellipses" || integrandTypeLabel == "SoftEllipses", Flatten@{integral,mu,mxCInv}, Flatten@{integral,limits,normVectorTab} ]
+				Flatten@{integral,mu,mxCInv}
 	        ,{ixmu,nmus1D},{iymu,nmus1D}]);
 	        partial
         ,{isigma,nsigmas}]);
@@ -2755,7 +2735,6 @@ prepSoftEllipses2D[inintegrandType_:1, setNo_:1] :=
 		hppfname = dir<>hppsuffix<>".cpp";		
 		Put[(CForm /@ #) & /@ SetPrecision[alldata,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
 		Print["output into ",hppfname];		
-        Run["echo ' #include \"../Integration/Integration.h\" ' > "<>hppfname ];
         Run["echo ' "<>cppsuffix<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' >> "<>hppfname ];
         Run["cat "<> resfname<>" >> "<>hppfname];
         Run["echo ';' >> "<>hppfname];       
