@@ -16,6 +16,12 @@ showstdOptimMSE[] :
 =========================== prepOptimDataBase3SFCMatBuilderOnly2D[]
 
 =========================== prepSoftEllipses2D[] & prepHeavisideND[]
+
+=========================== MatBuilder
+before S22 submission: testCplex and matrixSampler
+suppl  S22 submission: MatBuilder and sampler
+
+
 *)
  
 (****************** globals *******************)
