@@ -2699,9 +2699,9 @@ prepSoftEllipses2D[setNo_:1] :=
 		cppsuffix = "t_GaussianStruct2D" ;
 		varName = "tab_SoftEllipses2D" ;
 		nsigmas = nsigmas1D^2;
-        res = Flatten[#,1]& @ (Parallelize @ Table[
+        res = Flatten[#,1]& @ (Table[
 		    {ixsigma,iysigma} = 1+{Quotient[(isigma-1),nsigmas1D],Mod[(isigma-1),nsigmas1D]};	(* 1+ to skip too small sigmas *)
-          	partial = Flatten[#,1]& @ ( Table[
+          	partial = Flatten[#,1]& @ (Parallelize @  Table[
 		       	While[True,
 					rotmx = RandomVariate[CircularRealMatrixDistribution[nDims], 1][[1]];
 						sigma = {(ixsigma+(RandomReal[]))/nsigmas1D,(iysigma+(RandomReal[]))/nsigmas1D} / 2.;
