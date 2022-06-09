@@ -338,7 +338,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
             points[theChosenOne.index][0] = theChosenOne.point[0];
             points[theChosenOne.index][1] = theChosenOne.point[1];
             injectSP(v,&points);
-              prevMSE = theChosenOne.apportOfNewPoint
+              prevMSE = theChosenOne.apportOfNewPoint;
           }
       }
     }
