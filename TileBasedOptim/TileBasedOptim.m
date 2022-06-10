@@ -2901,3 +2901,16 @@ prepSoftEllipsesND[innDims_:2, innIntegrands_:16 1024, inbatchsz_:1024, setno_:0
         ,{ibatch,nbatches}]
     ] (* prepSoftEllipsesND *)
 *)
+
+
+makeOctavesBaseN[powParams_:{1,6,1/9},base_:3] :=
+    Module[ {},
+        {powfrom,powto,powstep} = powParams;
+        tab = Union @ Table[
+        		n = Round[base^ipow];
+        		(*Print[ipow -> n];*)
+        		n
+        	,{ipow,powfrom,powto,powstep}];
+        Print[tab];
+        Export["tab.dat", {tab}];
+    ]
