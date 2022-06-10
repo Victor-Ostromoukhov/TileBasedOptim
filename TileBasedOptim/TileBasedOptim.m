@@ -28,6 +28,9 @@ suppl  S22 submission: MatBuilder and sampler
 SetDirectory[ToFileName[$HomeDirectory,"TileBasedOptim/"]];
 SetOptions[Graphics, ImageSize -> {1024, Automatic}];
 
+epsilon = 10^-10.;
+eps = 10^-6.;
+
 mf := MatrixForm
 T :=  Transpose
 PI = Pi//N;
@@ -51,6 +54,7 @@ third[x_]:= If[Length[x] > 2, x[[3]], First[x] ] (* like First *)
 fourth[x_]:= If[Length[x] > 3, x[[4]], First[x] ] (* like First *)
 last := Last
 slightlyDarker[color_] := Darker[color,1/5]
+
 
 Print["module TileBasedOptim loaded."];
 
@@ -2760,6 +2764,7 @@ Do[
 prepHeavisideND[innDims_:2, setNo_:1] :=
     Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector,alpha,j},
     	nIntegrands = 1024 1024;
+    	nIntegrands = 16 1024;
         If[$ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
         nDims = innDims;
 		suffix = "Heaviside"<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
@@ -2806,7 +2811,7 @@ prepHeavisideND[innDims_:2, setNo_:1] :=
 							TimeConstrained[ NIntegrate[getHeavisideND[Table[x[i],{i,nDims}],{muDiscotinuity,normVector}], ##] & @@ Table[{x[i],0,1},{i,nDims} ], maxtime,0]
 						]
 					];
-					(*Print["trial = ",trial (*-> {muDiscotinuity,normVector}*) -> integral];*)
+					(*Print["trial = ",trial -> {i,j} -> {muDiscotinuity,normVector} -> integral];*)
 					If[integral > eps, Break[] ];
 	        	];
 				Print[suffix -> ibatch,"/",nbatches -> i,"/",batchsz -> integral];
