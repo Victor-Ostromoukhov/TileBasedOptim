@@ -61,7 +61,7 @@ struct t_SoftRectanglesStruct12D {double integral; double mu[12]; double sigma[1
 
 #define N_INTEGRANDS 262144
 
-#include "../Integrands/Heaviside2D_nIntegrands262144_testSet.cpp"
+#include "../Integrands/Heaviside2D_nIntegrands1048576_testSet.hpp"
 #include "../Integrands/SoftEllipses2D_nIntegrands262144_testSet.cpp"
 
 //extern t_GaussianStruct1D tab_Ellipses1D[16384] ;
