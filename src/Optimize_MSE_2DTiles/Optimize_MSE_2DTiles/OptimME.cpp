@@ -12,7 +12,7 @@
 #include "Lib/MultivariateGaussian/multivariateGaussian.h"
 #include "Lib/MultivariateGaussian/Integration.h"
 
-#include "Data/Integrands/Heaviside/Heaviside2D_nIntegrands1048576_optimSet.hpp"
+#include "Data/Integrands/Heaviside/Heaviside2D_nIntegrands1048576_optimSet.cpp"
 #include "Data/Integrands/Ellipses/SoftEllipses/SoftEllipses2D_nIntegrands262144_optimSet.cpp"
 
 #include "Data/Integrands/Ellipses/HardEllipses/Ellipses2D_nIntegrands16384_optimSet.cpp"
