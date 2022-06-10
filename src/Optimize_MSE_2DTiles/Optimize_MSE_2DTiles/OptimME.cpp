@@ -390,7 +390,7 @@ int main(int argc, char const *argv[]) {
 #define INTEGRAND_TYPE_SOFTELLIPSES 2
 
       if(integrandType == INTEGRAND_TYPE_HEAVISIDE) total_N_integrands = 1048576;
-      if(integrandType == INTEGRAND_TYPE_SOFTELLIPSES) total_N_integrands = 1048576;
+      if(integrandType == INTEGRAND_TYPE_SOFTELLIPSES) total_N_integrands = 262144;
 
       // =========== Fin CLI11 Configuration =========== //
                                           /*****/
