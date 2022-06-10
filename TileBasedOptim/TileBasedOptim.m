@@ -2687,6 +2687,7 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 prepSoftEllipses2D[0]
+prepSoftEllipses2D[1]
 
 *)
 prepSoftEllipses2D[setNo_:1] :=
@@ -2712,7 +2713,7 @@ prepSoftEllipses2D[setNo_:1] :=
 		    {ixsigma,iysigma} = 1+{Quotient[(isigma-1),nsigmas1D],Mod[(isigma-1),nsigmas1D]};	(* 1+ to skip too small sigmas *)
           	partial = Flatten[#,1]& @ (Parallelize @  Table[
 		       	While[True,
-					rotmx = RandomVariate[CircularRealMatrixDistribution[nDims], 1][[1]];
+						rotmx = RandomVariate[CircularRealMatrixDistribution[nDims], 1][[1]];
 						sigma = {(ixsigma+(RandomReal[]))/nsigmas1D,(iysigma+(RandomReal[]))/nsigmas1D} / 2.;
 						mu = {(ixmu-1+(RandomReal[]))/nmus1D,(iymu-1+(RandomReal[]))/nmus1D};
 						sigmamx = sigma IdentityMatrix[nDims];
