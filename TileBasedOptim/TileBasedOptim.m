@@ -2758,8 +2758,8 @@ Do[
 ,{isetNo,256}]
 *)
 prepHeavisideND[innDims_:2, setNo_:1] :=
-    Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector},
-    	nIntegrands = 16 16 1024;
+    Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector,alpha,j},
+    	nIntegrands = 1024 1024;
         If[$ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
         nDims = innDims;
 		suffix = "Heaviside"<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
@@ -2785,7 +2785,10 @@ prepHeavisideND[innDims_:2, setNo_:1] :=
 		       		trial++;
 		    		(*muDiscotinuity = Table[.5,{nDims}] + .1 getUniformDirsND[nDims];*)
 		    		muDiscotinuity = Table[.5 - (RandomReal[]-.5)/2,{nDims}];
-					normVector = getUniformDirsND[nDims];
+					(*normVector = getUniformDirsND[nDims];*)
+		    		j = (ibatch-1)*batchsz + (i-1);
+		    		alpha = 2*PI*(j+RandomReal[])/nIntegrands;
+		    		normVector = {Cos[alpha], Sin[alpha]};
 					Off[NIntegrate::slwcon];
 					Off[NIntegrate::eincr];
 					Off[NIntegrate::precw];
@@ -2814,8 +2817,8 @@ prepHeavisideND[innDims_:2, setNo_:1] :=
 		finalLength = Length[res];
         resfname = dir<>suffix<>".dat";
         Print["prepHeavisideND" -> finalLength -> resfname];
-        Export[resfname,SetPrecision[(Flatten/@res),22]];
-		alldata = (Flatten/@res);
+        (*Export[resfname,SetPrecision[RandomSample @ (Flatten/@res),21]];*)
+		alldata = RandomSample @ (Flatten/@res);
 		hppfname = dir<>suffix<>".hpp";		
 		Put[(CForm /@ #) & /@ ( (alldata) ), resfname]; (* e^-10 rather than 2.5*^-10 *)  
 		Print["output into ",resfname," and ",hppfname];		
@@ -2824,6 +2827,11 @@ prepHeavisideND[innDims_:2, setNo_:1] :=
         Run["echo ';' >> "<>hppfname];       
         DeleteFile[resfname];
     ] (* prepHeavisideND *)
+
+getUniformDirsND[nDims_:6]:= 
+Module[{v0 = Table[1.,{nDims}]/Sqrt[nDims]},
+	RandomVariate[CircularRealMatrixDistribution[nDims]].v0
+] (* getUniformDirsND *)
 
     
 (*
