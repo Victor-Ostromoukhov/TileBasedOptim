@@ -20,7 +20,7 @@
 #include "Data/Integrands/Rectangles/SoftRectangles/SoftRectangles2D_nIntegrands16384_optimSet.cpp"
 #include "CLI11.hpp"
 
-#include "../../../Lib/MultivariateGaussian/Integration.h"
+#include "Lib/MultivariateGaussian/Integration.h"
 
 /* ----------- Déclaration des constantes ----------- */
 
