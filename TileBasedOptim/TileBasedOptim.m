@@ -2762,12 +2762,19 @@ Do[
 ,{isetNo,256}]
 *)
 prepHeavisideND[innDims_:2, setNo_:1] :=
-    Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector,alpha,j},
+    Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector,alpha,j,
+    	integrandTypeLabel,hppsuffix,cppsuffix,varName},
     	nIntegrands = 1024 1024;
     	nIntegrands =  1024;
         If[$ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
         nDims = innDims;
-		suffix = "Heaviside"<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
+
+		integrandTypeLabel = "Heaviside";
+		suffix = integrandTypeLabel<>"_setNo"<>ToString[setNo];
+		hppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
+		cppsuffix = "t_Heaviside"<>ToString[nDims]<>"D" ;
+		varName = "tab_Heaviside"<>ToString[nDims]<>"D" ;
+
      	maxtime = If[nDims <= 10, 10, 3600];
         dir = "integrands/";
         If[ !FileExistsQ[dir], CreateDirectory[dir] ];
@@ -2825,12 +2832,11 @@ prepHeavisideND[innDims_:2, setNo_:1] :=
 		finalLength = Length[res];
         resfname = dir<>suffix<>".dat";
         Print["prepHeavisideND" -> finalLength -> resfname];
-        (*Export[resfname,SetPrecision[RandomSample @ (Flatten/@res),21]];*)
-		alldata = RandomSample @ (Flatten/@res);
-		hppfname = dir<>suffix<>".hpp";		
-		Put[(CForm /@ #) & /@ ( (alldata) ), resfname]; (* e^-10 rather than 2.5*^-10 *)  
-		Print["output into ",resfname," and ",hppfname];		
-        Run["echo 't_"<>suffix<>" tab_"<>suffix<>"["<>ToString[finalLength]<>"] = ' > "<>hppfname ];
+ 		alldata = RandomSample @ (Flatten/@res);
+		hppfname = dir<>hppsuffix<>".hpp";		
+		Put[(CForm /@ #) & /@ SetPrecision[alldata,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
+		Print["output into ",hppfname];		
+        Run["echo ' "<>cppsuffix<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' >> "<>hppfname ];
         Run["cat "<> resfname<>" >> "<>hppfname];
         Run["echo ';' >> "<>hppfname];       
         DeleteFile[resfname];
