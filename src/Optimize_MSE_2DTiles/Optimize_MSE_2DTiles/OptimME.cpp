@@ -11,11 +11,13 @@
 #include "Lib/Tiles/Tiles.hpp"
 #include "Lib/MultivariateGaussian/multivariateGaussian.h"
 #include "Lib/MultivariateGaussian/Integration.h"
-#include "Data/Intégrandes/Ellipses/HardEllipses/Ellipses2D_nIntegrands16384_optimSet.cpp"
+
+#include "Data/Intégrandes/Heaviside/Heaviside2D_nIntegrands1048576_optimSet.hpp"
 #include "Data/Intégrandes/Ellipses/SoftEllipses/SoftEllipses2D_nIntegrands262144_optimSet.cpp"
+
+#include "Data/Intégrandes/Ellipses/HardEllipses/Ellipses2D_nIntegrands16384_optimSet.cpp"
 #include "Data/Intégrandes/Rectangles/HardRectangles/Rectangles2D_nIntegrands16384_optimSet.cpp"
 #include "Data/Intégrandes/Rectangles/SoftRectangles/SoftRectangles2D_nIntegrands16384_optimSet.cpp"
-#include "Data/Intégrandes/Heaviside/Heaviside2D_nIntegrands262144_optimSet.cpp"
 #include "CLI11.hpp"
 
 /* ----------- Déclaration des constantes ----------- */
@@ -24,9 +26,12 @@
   #define DIM 2
 #endif
 
-#ifndef NBGAUSS
-  #define NBGAUSS 262144
-#endif
+//#ifndef NBGAUSS
+//  #define NBGAUSS 262144
+//#endif
+
+int total_N_integrands;
+
 /* ----------- Déclaration des structures et leur "méthodes" ----------- */
 
 template<int dimension>
@@ -309,10 +314,10 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
     double prevMSE = 0.;
     for (int  iter_over_pointset = 0;  iter_over_pointset < niters;  iter_over_pointset++) {
       rAM = randomAccessMatriceGenerator(nbpts);
-      if (iter_over_pointset % ( NBGAUSS / gaussianSubSetSize ) == 0) {
-        rAMGaussiennes = randomAccessMatriceGenerator(( NBGAUSS / gaussianSubSetSize ));
+      if (iter_over_pointset % ( total_N_integrands / gaussianSubSetSize ) == 0) {
+        rAMGaussiennes = randomAccessMatriceGenerator(( total_N_integrands / gaussianSubSetSize ));
       }
-      initializeGaussianVectors<dimension>(&sigma,&shift,&anal,rAMGaussiennes.at((iter_over_pointset % (( NBGAUSS / gaussianSubSetSize )))),integrandType,gaussianSubSetSize);
+      initializeGaussianVectors<dimension>(&sigma,&shift,&anal,rAMGaussiennes.at((iter_over_pointset % (( total_N_integrands / gaussianSubSetSize )))),integrandType,gaussianSubSetSize);
       for (int i_pts = 0; i_pts < nbpts; i_pts++) {
           #pragma omp parallel for
           for (int i_pt_in_tile = 0; i_pt_in_tile < nbThrow; i_pt_in_tile++) {
@@ -378,6 +383,12 @@ int main(int argc, char const *argv[]) {
 
 
       CLI11_PARSE(app, argc, argv)
+
+#define INTEGRAND_TYPE_HEAVISIDE 5
+#define INTEGRAND_TYPE_SOFTELLIPSES 2
+
+      if(integrandType == INTEGRAND_TYPE_HEAVISIDE) total_N_integrands = 1048576;
+      if(integrandType == INTEGRAND_TYPE_SOFTELLIPSES) total_N_integrands = 1048576;
 
       // =========== Fin CLI11 Configuration =========== //
                                           /*****/
