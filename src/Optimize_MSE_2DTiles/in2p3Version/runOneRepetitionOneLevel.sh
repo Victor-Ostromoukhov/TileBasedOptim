@@ -10,9 +10,8 @@ repetition=$1
 nbthreads=$2
 level=$3
 
-mkdir -p ../Repetitions/Repetition_${repetition}/Output
-mkdir -p ../Repetitions/Repetition_${repetition}/Traces
 
-ntrials=1024
+nIterations=1024
+nItegrandsPerIteration=4096
 
-../Optimize_L2Discrepancy_For_2D_Tiles/build/bin/Optimize_L2Discrepancy_For_2D_Tiles -t ${nbthreads} -n ${ntrials} -i ../Optimize_L2Discrepancy_For_2D_Tiles/Data/Optim_Input/2D_0m2net_set_1_level_${level}.dat -o ../Repetitions/Repetition_${repetition}/Output/2D_0m2net_set_1_level_${level}_Opt.dat
+~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i ../Optimize_MSE_2DTiles/Data/Optim_Data_Input/Tiles/2D_0m2net_set_1_level_${level}.dat -o ../Repetitions_Heaviside/Repetition_${repetition}/Output/level_${level}.dat --nbPoints ${level} --integrandType 5 -g $nItegrandsPerIteration > ../Repetitions_Heaviside/Repetition_${repetition}/Traces/Trace_Level_${level}.dat
