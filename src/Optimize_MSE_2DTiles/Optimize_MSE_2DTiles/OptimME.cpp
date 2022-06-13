@@ -320,6 +320,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
         rAMGaussiennes = randomAccessMatriceGenerator(( total_N_integrands / gaussianSubSetSize ));
       }
       initializeGaussianVectors<dimension>(&sigma,&shift,&anal,rAMGaussiennes.at((iter_over_pointset % (( total_N_integrands / gaussianSubSetSize )))),integrandType,gaussianSubSetSize);
+      mseOfAPointsetOnAllGaussian(&points,&sigma,&shift,&anal,gaussianSubSetSize,tabPtsValGauss,integrandType);
       for (int i_pts = 0; i_pts < nbpts; i_pts++) {
           #pragma omp parallel for
           for (int i_pt_in_tile = 0; i_pt_in_tile < nbThrow; i_pt_in_tile++) {
