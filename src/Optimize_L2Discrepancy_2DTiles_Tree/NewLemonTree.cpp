@@ -255,7 +255,7 @@ void NewLemonTree(Node* treeHolder[2],std::vector<PointTernaire>* vectorOfPoints
 
         double discrepancyEnCurrPoint = computel2StarDiscPointContribution(vectorOfPointsNormalized,currentPoint);
 
-        // #pragma omp for
+        #pragma omp for
           for (int currentTryInTile = 0; currentTryInTile < nbThrow; currentTryInTile++) {
             //Je re-remplis le vecteur de points normalisés initialisé vide par le private de omp
             std::vector<point>* vectorOfPointsNormalizedLocal(vectorOfPointsNormalized);
@@ -318,7 +318,7 @@ void NewLemonTree(Node* treeHolder[2],std::vector<PointTernaire>* vectorOfPoints
 int main(int argc, char const *argv[]) {
 
   srand (time(NULL));
-  int nbIterationsPerTile = 1;
+  int nbIterationsPerTile = 64;
   int nbThreads = omp_get_max_threads() == 64 ? 64 : omp_get_max_threads();
   size_t niters = 1024*1024;
   std::string inputString ="pts.dat";
