@@ -21,7 +21,8 @@ fi
 mkdir -p ../Repetitions_SoftEllipses/Repetition_${repetition}/Output
 mkdir -p ../Repetitions_SoftEllipses/Repetition_${repetition}/Traces
 
-nIterations=64
+nIterations=1024
+
 #nItegrandsPerIteration=4096
 #nItegrandsPerIteration=16384
 nItegrandsPerIteration=65536
