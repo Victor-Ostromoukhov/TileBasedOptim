@@ -21,7 +21,7 @@ fi
 mkdir -p ../Repetitions_SoftEllipses/Repetition_${repetition}/Output
 mkdir -p ../Repetitions_SoftEllipses/Repetition_${repetition}/Traces
 
-nIterations=1024
+nIterations=256
 
 #nItegrandsPerIteration=4096
 #nItegrandsPerIteration=16384
@@ -35,5 +35,3 @@ for level in ${lst[@]}
         ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i ../Optimize_MSE_2DTiles/Data/Optim_Data_Input/Tiles/2D_0m2net_set_1_level_${level}.dat -o ../Repetitions_SoftEllipses/Repetition_${repetition}/Output/level_${level}.dat --nbPoints ${level} --integrandType 2 -g $nItegrandsPerIteration | tee ../Repetitions_SoftEllipses/Repetition_${repetition}/Traces/Trace_Level_${level}.dat
 	done
 
-
-#for (( level=1 ; level <= 729 ; level++ ))
