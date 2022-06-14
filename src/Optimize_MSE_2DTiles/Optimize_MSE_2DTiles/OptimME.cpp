@@ -13,7 +13,7 @@
 #include "Lib/MultivariateGaussian/Integration.h"
 
 #include "Data/Integrands/Heaviside/Heaviside2D_nIntegrands1048576_optimSet.hpp"
-#include "Data/Integrands/Ellipses/SoftEllipses/SoftEllipses2D_nIntegrands262144_optimSet.cpp"
+#include "Data/Integrands/Ellipses/SoftEllipses/SoftEllipses2D_nIntegrands524288_optimSet.cpp"
 
 #include "Data/Integrands/Ellipses/HardEllipses/Ellipses2D_nIntegrands16384_optimSet.cpp"
 #include "Data/Integrands/Rectangles/HardRectangles/Rectangles2D_nIntegrands16384_optimSet.cpp"
@@ -391,7 +391,7 @@ int main(int argc, char const *argv[]) {
 #define INTEGRAND_TYPE_SOFTELLIPSES 2
 
       if(integrandType == INTEGRAND_TYPE_HEAVISIDE) total_N_integrands = 1048576;
-      if(integrandType == INTEGRAND_TYPE_SOFTELLIPSES) total_N_integrands = 262144;
+      if(integrandType == INTEGRAND_TYPE_SOFTELLIPSES) total_N_integrands = 524288;
 
       // =========== Fin CLI11 Configuration =========== //
                                           /*****/
