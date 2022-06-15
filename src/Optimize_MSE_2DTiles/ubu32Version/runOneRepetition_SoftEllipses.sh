@@ -37,4 +37,3 @@ for level in ${lst[@]}
 	done
 
 
-#for (( level=1 ; level <= 729 ; level++ ))
