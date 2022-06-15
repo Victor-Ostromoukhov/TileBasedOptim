@@ -2446,6 +2446,9 @@ optimTypeMSEOptimisationHeaviside = 3;
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
+	makeOptimMSE[2, 1,{1,2}];
+	makeOptimMSE[2, 2,{1,2}];
+
 	makeOptimMSE[3, 1];
 	makeOptimMSE[3, 2];
 
@@ -2472,6 +2475,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
    	    {setFrom,setTo} = setFromTo;
 		datamse = {};
 		counters = {3,4,5,6,7,8,9,10,11,13,15,17,19,21,24,27,31,34,39,44,50,56,63,72,81,92,103,117,132,149,168,190,215,243,275,310,350,396,447,505,571,645,729};
+		counters = {3,4,5,6,7,8,9,10,11,13,15,17,19,21,24,27,31,34,39,44,50,56,63,72};
         Do[
 			npts = counters[[iOrdinalAbsolute]];
 	        mseTab = Parallelize @ Table[
@@ -2480,6 +2484,8 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
 	       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetitions/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
 	       			,optimTypeMSEOptimisationHeaviside,
 	       			"src/Optimize_MSE_2DTiles/Repetitions_Heaviside/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
+	       			,optimTypeMSEOptimisationSoftEllipses,
+	       			"src/Optimize_MSE_2DTiles/Repetitions_SoftEllipses/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
 	       		];
 	       		(*Print["Pricessing ",npts," pts "->fname->FileExistsQ[fname]];*)
 	       		If[FileExistsQ[fname],
@@ -2651,8 +2657,8 @@ showstdOptimMSE[] :=
 			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
 
 			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat"]), #[[1]] >= 2^powfrom &];
-			(*mseOptim = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
-			mseOptim = Table[{data[[i,1]], data[[i,2]] },{i,Length[data]}];
+			mseOptim = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			(*mseOptim = Table[{data[[i,1]], data[[i,2]] },{i,Length[data]}];*)
 			 
 		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseOptim} ;
 	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", optimTypeL2OptimisationLabel} ] ];
@@ -2669,7 +2675,7 @@ showstdOptimMSE[] :=
 							{Gray,AbsoluteThickness[2]}
 						}
 						,Joined->True
-		            	,FrameTicks->{{Automatic,None},{Table[2^pow,{pow,powfrom,powto,2}],Table[2^pow,{pow,powfrom,powto,2}]}}
+		            	,FrameTicks->{{Automatic,None},{Table[3^pow,{pow,1,10,1}],Table[2^pow,{pow,powfrom,powto,2}]}}
 			            ,FrameStyle->Directive[Black,20]
 			            ,RotateLabel -> True
 			            ,PlotMarkers->{{\[FilledCircle],5} }
@@ -2677,7 +2683,7 @@ showstdOptimMSE[] :=
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
 		           		,ImageSize -> {1024,1024}
 		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
-		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
+		            	,GridLines->{Table[3^pow,{pow,1,10,1}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
