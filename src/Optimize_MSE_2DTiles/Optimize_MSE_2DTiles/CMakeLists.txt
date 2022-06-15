@@ -37,10 +37,16 @@ endif()
 
 find_package(OpenMP REQUIRED)
 
+set(INTEGRANDS Data/Integrands/Heaviside/Heaviside2D_nIntegrands1048576_optimSet.cpp Data/Integrands/Ellipses/SoftEllipses/SoftEllipses2D_nIntegrands524288_optimSet.cpp)
+
+add_library(Integrands STATIC ${INTEGRANDS} )
+
+set(INTEGRANDS)
+
 set(EXECUTABLE_OUTPUT_PATH ./bin)
 
-add_executable(${PROJECT_NAME} OptimME.cpp)
+add_executable(${PROJECT_NAME} OptimME.cpp ${INTEGRANDS})
 
-target_link_libraries(${PROJECT_NAME}  MatXDynamic integrationTests DirectionnalVector multivariateGaussian OpenMP::OpenMP_CXX)
+target_link_libraries(${PROJECT_NAME} PRIVATE MatXDynamic integrationTests DirectionnalVector multivariateGaussian Integrands OpenMP::OpenMP_CXX)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ~/bin)

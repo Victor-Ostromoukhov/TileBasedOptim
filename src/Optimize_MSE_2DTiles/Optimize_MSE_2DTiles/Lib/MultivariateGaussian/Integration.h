@@ -74,7 +74,9 @@ struct t_SoftRectanglesStruct2D{
 
 #define N_INTEGRANDS 262144
 
-//extern t_Heaviside2D tab_Heaviside2D[262144] ;
+extern t_Heaviside2D tab_Heaviside2D[1048576] ;
+extern t_GaussianStruct2D tab_SoftEllipses2D[524288] ;
+
 extern t_Heaviside3D tab_Heaviside3D[16384] ;
 extern t_Heaviside4D tab_Heaviside4D[16384] ;
 extern t_Heaviside5D tab_Heaviside5D[16384] ;
