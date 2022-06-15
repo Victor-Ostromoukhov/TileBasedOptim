@@ -2415,7 +2415,6 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 
 getMSE[pts_, inptsfname_:"", innDims_:2, inIntegrandType_:2, dbg_:False] :=
     Module[ {(*execString,nDims,ptsfname,integrandType,nIntegrands,res,mse,msefname*)},
-    	nIntegrands = 256 1024;
 		msefname = "tmp/mse"<>pid<>".dat";
     	If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
         If[inptsfname == "", (* given : pts *)
@@ -2427,6 +2426,10 @@ getMSE[pts_, inptsfname_:"", innDims_:2, inIntegrandType_:2, dbg_:False] :=
         	ptsfname = inptsfname;
         ];
     	integrandType = inIntegrandType;
+    	nIntegrands = Switch[inIntegrandType
+    		,1,1024 1024	(* "Heaviside" *)
+   			,2,256 1024		(* "SoftEllipses" *)
+   		];
  		execString = "new_integrateND_from_file --nintegrands "<>ToString[nIntegrands]<>" -i "<>ptsfname<>" -o "<>msefname<>" --integrandType "<>ToString[integrandType]<>" --nDims "<>ToString[nDims]<>" > /dev/null";
 		res = Run[execPrefix<>execString];
      	mse = Last @ (Flatten @ Import[msefname]);
@@ -2443,11 +2446,12 @@ optimTypeMSEOptimisationHeaviside = 3;
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSE[1, 1];
-	makeOptimMSE[1, 2];
+	makeOptimMSE[3, 1];
+	makeOptimMSE[3, 2];
+
 *)
 
-makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, setFromTo_:{1,5}, innDims_:2, dbg_:False] :=
+makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, setFromTo_:{1,16}, innDims_:2, dbg_:False] :=
     Module[ {},
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
@@ -2456,7 +2460,10 @@ makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, setFromTo_:
         setNo = 1;
     	integrandType = inIntegrandType;
 		integrandTypeLabel = Switch[integrandType,  1,"Heaviside", 2,"SoftEllipses", 3,"Rectangles", 4,"Ellipses", 5,"SoftEllipses_noRot" ];
-		optimTypeL2OptimisationLabel = Switch[optimType,  1,"L2Optimisation",  2,"MSEOptimisationHardEllipses",  3,"MSEOptimisationSoftEllipses",  4,"MSEOptimisationHardRectangles",  5,"MSEOptimisationSoftRectangles" ];
+		optimTypeL2OptimisationLabel = Switch[optimType
+			,optimTypeL2Optimisation,"L2Optimisation"
+			,optimTypeMSEOptimisationHeaviside,"MSEOptimisationHeaviside"
+			,optimTypeMSEOptimisationSoftEllipses,"MSEOptimisationSoftEllipses"];
         
 		dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/";
         If[ !FileExistsQ[dirMSE], CreateDirectory[dirMSE] ];
@@ -2464,15 +2471,19 @@ makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, setFromTo_:
    	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat";
    	    {setFrom,setTo} = setFromTo;
 		datamse = {};
+		counters = {3,4,5,6,7,8,9,10,11,13,15,17,19,21,24,27,31,34,39,44,50,56,63,72,81,92,103,117,132,149,168,190,215,243,275,310,350,396,447,505,571,645,729};
         Do[
-			npts = iOrdinalAbsolute;
-	        mseTab = Table[
+			npts = counters[[iOrdinalAbsolute]];
+	        mseTab = Parallelize @ Table[
 	       		fname = Switch[optimType
 	       			,optimTypeL2Optimisation,
-	       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetitions/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[iOrdinalAbsolute]<>".dat"
+	       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetitions/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
+	       			,optimTypeMSEOptimisationHeaviside,
+	       			"src/Optimize_MSE_2DTiles/Repetitions_Heaviside/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
 	       		];
+	       		(*Print["Pricessing ",npts," pts "->fname->FileExistsQ[fname]];*)
 	       		If[FileExistsQ[fname],
-					pts = Import[fname][[;;,2;;3]];
+					pts = Import[fname][[;;,1;;2]];
 					If[dbg, ipts = Round[ npts pts ];
 						Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
 		        	mse = getMSE[pts,"",nDims,integrandType];
@@ -2486,12 +2497,12 @@ makeOptimMSE[optimType_:optimTypeL2Optimisation, inIntegrandType_:2, setFromTo_:
 		    Print[iOrdinalAbsolute, " ", resFname  -> mseMean];
 	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
 	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
-	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,setTo-setFrom+1,0}];	
+	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,Length[mseTab],0}];	
 			Export[dirMSE<>resFname,header,"TEXT"];
 			Export["tmp/tmpdat"<>pid<>".dat",datamse];
 			Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFname];
 			Print[dirMSE<>resFname, " written."];
-        ,{iOrdinalAbsolute,2,ordinalAbsoluteMax}];
+        ,{iOrdinalAbsolute,Length[counters]}];
    ] (* makeOptimMSE *)
 
 
