@@ -18,9 +18,10 @@ showstdOptimMSE[] :
 =========================== prepSoftEllipses2D[] & prepHeavisideND[]
 
 =========================== MatBuilder
+makeMatBuilderMatrices0m2net2D[]
 before S22 submission: testCplex and matrixSampler
 suppl  S22 submission: MatBuilder and sampler
-
+getMatBuiderPtsND[]
 
 *)
  
@@ -1722,6 +1723,7 @@ nDims = 2;
 
 
 *)
+
 makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inIntegrandType_:1, innDims_:2, nIntegrands_:1024, consecutiveFlag_:False, dbg_:False] :=
     Module[ {},
     	firstDim = 0;
@@ -1745,7 +1747,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 			(* pointsets, 2D only *) ,200,"HexGrid"  ,201,"Hammersley" ,202,"LarcherPillichshammer" ,203,"NRooks" ,204,"BNOT" ,205,"CMJ" ,206,"BNLDS" 
 									 ,207,"PMJ" ,208,"PMJ02" ,209,"LDBN" ,210,"Penrose" ,211,"Fattal" ,212, "HexGridTorApprox"
 	    	(* pointsets, 3D only *) ,300,"BCC", 301,"FCC", 302,"HCP", 303,"WeairePhelan"
-			(* uniformND *) ,500,"UniformND" ,501,"UniformNDwithoutSobol"
+			(* uniformND *) ,500,"MatBuider" ,501,"MatBuiderMaxDepth"
 			(* uniformND *) ,600,"zsampler",601,"morton",602,"morton01"
 			(* pointsets, SobolShiftedKx *) ,701,"SobolShifted1x",702,"SobolShifted2x",703,"SobolShifted3x",704,"SobolShifted4x"
 			(* pointsets, OwenShiftedKx *) ,900,"OwenMicroShift",999,"OwenMicroShiftGlobal",901,"OwenShifted1x",902,"OwenShifted2x",903,"OwenShifted3x",904,"OwenShifted4x"
@@ -1802,6 +1804,14 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 			     		delta = 1/npts Table[RandomReal[], {nDims}];
 			     		data = Plus[#, delta] & /@ Import[ptsfname];
 			     		Export[ptsfname, data];
+				,"MatBuider", 
+					pts = getWN[nDims, npts];
+		     		Export[ptsfname,pts];
+				,"MatBuiderMaxDepth", 
+					infname = "MatBuilder_matrices/2D_0m2net_000001.dat";
+				(*	pts = getMatBuiderPtsND[npts, infname,owenFlag_:~True,depth_:19,nDims_:2,base_:3] := (* 3^19=1162261467 *)*)
+
+		     		Export[ptsfname,pts];
 				,"WN", 
 					pts = getWN[nDims, npts];
 		     		Export[ptsfname,pts];
@@ -1855,12 +1865,19 @@ getRealNPts[nDims_:2, npts_:16, pointsetType_:10] :=
 
 getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
 
-getMatBuiderPtsND[nDims_:3,npts_:3^6,base_:3,maxDepth_:20] :=
-    Block[ {execString},
-    	outfname = "tmp/";
-		execString = "sampler -s "<>nDims<>" -o "<>msefname<>" --integrandType "<>ToString[integrandType]<>" --nDims "<>ToString[nDims]<>" > /dev/null";
+getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",owenFlag_:True,depth_:19,nDims_:2,base_:3] := (* 3^19=1162261467 *)
+    Block[ {(*execString,outfname,res*)},
+		If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+    	outfname = "tmp/pts"<>pid<>".dat";
+		(*execString = "sampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
+			<>If[owenFlag," --owen  --depth "<>ToString[depth], " " ]
+			<>" -p "<>ToString[base]<>" --matrixSize "<>ToString[19]<>" --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";*)
+		execString = "matrixSampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
+			<>If[owenFlag," -p  --depth "<>ToString[depth], " " ]
+			<>" -b "<>ToString[base]<>" --size "<>ToString[19]<>" --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
 		res = Run[execPrefix<>execString];
-		mse = Last @ (Flatten @ Import[msefname]);
+		If[res != 0, Print[execString -> res] ];
+		Import[outfname]
     ]
     
 getStratND[nDims_:3,npts_:512] :=
