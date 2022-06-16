@@ -828,7 +828,7 @@ getSamplingPtsBase3SFC2DTiles[tlst_] :=
 makeMatBuilderMatrices0m2net2D[] :=
     Module[ {},
     	If[ !FileExistsQ["MatBuilder_matrices/"], CreateDirectory["MatBuilder_matrices/"] ];
-    	nlevels = 16;
+    	nlevels = 19;
 		Do[
 			execString = "testCplex -i MatBuilder_profiles/2D_0m2net.txt -o MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
         	returnCode = Run[execPrefix<>execString];
@@ -1854,7 +1854,15 @@ getRealNPts[nDims_:2, npts_:16, pointsetType_:10] :=
     ]
 
 getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
-	
+
+getMatBuiderPtsND[nDims_:3,npts_:3^6,base_:3,maxDepth_:20] :=
+    Block[ {execString},
+    	outfname = "tmp/";
+		execString = "sampler -s "<>nDims<>" -o "<>msefname<>" --integrandType "<>ToString[integrandType]<>" --nDims "<>ToString[nDims]<>" > /dev/null";
+		res = Run[execPrefix<>execString];
+		mse = Last @ (Flatten @ Import[msefname]);
+    ]
+    
 getStratND[nDims_:3,npts_:512] :=
     Block[ {nstrats,xshift,yshift,ushift,vshift,sshift,tshift,nstratsAsked,res},
     	nstratsAsked = npts^(1/nDims);	(* suppose that npts is already appropriate, passed through getRealNPts[] *)
@@ -2446,8 +2454,8 @@ optimTypeMSEOptimisationHeaviside = 3;
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSE[2, 1,{1,2}];
-	makeOptimMSE[2, 2,{1,2}];
+	makeOptimMSE[2, 1,{1,20}];
+	makeOptimMSE[2, 2,{1,20}];
 
 	makeOptimMSE[3, 1];
 	makeOptimMSE[3, 2];
@@ -2475,7 +2483,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
    	    {setFrom,setTo} = setFromTo;
 		datamse = {};
 		counters = {3,4,5,6,7,8,9,10,11,13,15,17,19,21,24,27,31,34,39,44,50,56,63,72,81,92,103,117,132,149,168,190,215,243,275,310,350,396,447,505,571,645,729};
-		counters = {3,4,5,6,7,8,9,10,11,13,15,17,19,21,24,27,31,34,39,44,50,56,63,72};
+
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729};
         Do[
 			npts = counters[[iOrdinalAbsolute]];
