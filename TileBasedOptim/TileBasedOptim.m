@@ -1718,11 +1718,12 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 256 1024;
 nDims = 2;
-Do[
-	nPointsets = 64;     
+	nPointsets = 256;     
 	integrandType=1;                                                                                                                                                                                   
-	makeMSEref[501, nPointsets, {1,8,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
-,{integrandType,1,2}]
+	makeMSEref[501, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
+
+	integrandType=2;                                                                                                                                                                                   
+	makeMSEref[501, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
 
 
 
@@ -1879,7 +1880,7 @@ getRealNPts[nDims_:2, npts_:16, pointsetType_:10] :=
 getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
 
 
-getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",owenFlag_:True,depth_:19,nDims_:2,base_:3] := (* 3^19=1162261467 *)
+getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",owenFlag_:True,depth_:18,nDims_:2,base_:3] := (* 3^19=1162261467 *)
     Block[ {(*execString,outfname,res*)},
 		If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
     	outfname = "tmp/pts"<>pid<>".dat";
@@ -1894,6 +1895,23 @@ getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",
 		Import[outfname]
     ]
 
+tstMatBuider[dbg_:True] :=
+    Module[ {},
+    	base = 3;
+    	frame={Blue,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
+    	Do[
+			npts = Round[base^iCounter];
+			vticks = Table[Line[{{0,(i-1)/base^Floor[(iCounter+1)/2]},{1,(i-1)/base^Floor[(iCounter+1)/2]}}],{i,base^Floor[(iCounter+1)/2]}];
+			hticks = Table[Line[{{(i-1)/base^Floor[(iCounter)/2],0},{(i-1)/base^Floor[(iCounter)/2],1}}],{i,base^Floor[(iCounter)/2]}];
+			infname = "MatBuilder_matrices/2D_0m2net_"<>i2s[RandomInteger[{1,16}]]<>".dat";
+			owenFlag = True;
+			depth = 19;
+			pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, base]; (* 3^19=1162261467 *)
+			ipts = Floor[npts pts];
+			Print["Processing MatBuiderMaxDepth @ ", iCounter -> npts -> {infname,owenFlag,depth} -> getTfactor[base,ipts]];
+			If[dbg, Print[Graphics[{frame,Cyan,vticks,hticks,Black,AbsolutePointSize[5],Point/@pts},PlotLabel->getTfactor[base,ipts],ImageSize->3/2{1024,1024}] ] ];
+    	,{iCounter,1,10,1}]	
+]
     
 getStratND[nDims_:3,npts_:512] :=
     Block[ {nstrats,xshift,yshift,ushift,vshift,sshift,tshift,nstratsAsked,res},
@@ -2696,13 +2714,15 @@ showstdOptimMSE[] :=
 			data = (Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"OwenPlus_"<>integrandTypeLabel<>".dat"]);
 			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+			data = (Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"MatBuiderMaxDepth_"<>integrandTypeLabel<>".dat"]);
+			mseMatBuiderMaxDepth = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
 			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat"]), #[[1]] >= 2^powfrom &];
 			mseOptim = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			(*mseOptim = Table[{data[[i,1]], data[[i,2]] },{i,Length[data]}];*)
 			 
-		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseOptim} ;
-	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", optimTypeL2OptimisationLabel} ] ];
+		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseMatBuiderMaxDepth, mseOptim} ;
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", "MatBuiderMaxDepth", optimTypeL2OptimisationLabel} ] ];
 	        
 			ListLogLogPlot[ alldata
 						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
