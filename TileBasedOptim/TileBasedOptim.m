@@ -1718,10 +1718,15 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 256 1024;
 nDims = 2;
+	nPointsets = 16;     
+	integrandType=1;                                                                                                                                                                                   
+	makeMSEref[500, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
+	integrandType=2;                                                                                                                                                                                   
+	makeMSEref[500, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
+
 	nPointsets = 256;     
 	integrandType=1;                                                                                                                                                                                   
 	makeMSEref[501, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
-
 	integrandType=2;                                                                                                                                                                                   
 	makeMSEref[501, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
 
@@ -1813,7 +1818,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 				,"MatBuider", 
 					npts = Round[base^iCounter];
 					infname = "MatBuilder_matrices/2D_0m2net_"<>i2s[RandomInteger[{1,16}]]<>".dat";
-					owenFlag = True;
+					owenFlag = False;
 					depth = Ceiling[Log[base, npts]];
 					(*Print["Processing MatBuider @ ", iCounter -> npts -> {infname,owenFlag,depth}];*)
 					pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, base]; (* 3^19=1162261467 *)
