@@ -1721,8 +1721,7 @@ nDims = 2;
 Do[
 	nPointsets = 64;     
 	integrandType=1;                                                                                                                                                                                   
-	makeMSEref[500, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[501, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[501, nPointsets, {1,8,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
 ,{integrandType,1,2}]
 
 
@@ -1884,12 +1883,12 @@ getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",
     Block[ {(*execString,outfname,res*)},
 		If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
     	outfname = "tmp/pts"<>pid<>".dat";
-		(*execString = "sampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
+		execString = "sampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
 			<>If[owenFlag," --owen  --depth "<>ToString[depth], " " ]
-			<>" -p "<>ToString[base]<>" --matrixSize "<>ToString[19]<>" --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";*)
-		execString = "matrixSampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
+			<>" -p "<>ToString[base]<>" --matrixSize "<>ToString[19]<>" --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
+		(*execString = "matrixSampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
 			<>If[owenFlag," -p  --depth "<>ToString[depth], " " ]
-			<>" -b "<>ToString[base]<>" --size "<>ToString[19]<>" --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
+			<>" -b "<>ToString[base]<>" --size "<>ToString[19]<>" --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";*)
 		res = Run[execPrefix<>execString];
 		If[res != 0, Print[execString -> res] ];
 		Import[outfname]
