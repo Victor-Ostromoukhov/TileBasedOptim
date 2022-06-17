@@ -1698,6 +1698,17 @@ subdivBase3SFC3DTiles[tlst_] :=
 
 (*----------------------------------------- MSE *)
 (*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+nintegrands = 256 1024;
+nDims = 2;
+Do[
+	nPointsets = 16;                                                                                                                                                                                        
+	makeMSEref[11, nPointsets, {2,14,1}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[12, nPointsets, {2,14,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[19, nPointsets, {2,14,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
+,{integrandType,1,2}]
 
 
 gitpull
@@ -1705,13 +1716,13 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 256 1024;
 nDims = 2;
-Parallelize @ Do[
+Do[
 	nPointsets = 1024;                                                                                                                                                                                        
 	makeMSEref[10, nPointsets, {2,14,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {2,14,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[12, nPointsets, {2,14,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[19, nPointsets, {2,14,1/4.}, integrandType, nDims, nintegrands];                                                                                                                               
-,{integrandType,1,1}]
+,{integrandType,1,2}]
 
 gitpull
 math
@@ -2509,8 +2520,8 @@ optimTypeMSEOptimisationHeaviside = 3;
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSE[2, 1,{1,24}];
-	makeOptimMSE[2, 2,{1,24}];
+	makeOptimMSE[2, 1,{1,1}];
+	makeOptimMSE[2, 2,{1,1}];
 
 	makeOptimMSE[3, 1];
 	makeOptimMSE[3, 2];
@@ -2540,6 +2551,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
 		counters = {3,4,5,6,7,8,9,10,11,13,15,17,19,21,24,27,31,34,39,44,50,56,63,72,81,92,103,117,132,149,168,190,215,243,275,310,350,396,447,505,571,645,729};
 
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729};
+		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243};
         Do[
 			npts = counters[[iOrdinalAbsolute]];
 	        mseTab = Parallelize @ Table[
@@ -2549,11 +2561,11 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
 	       			,optimTypeMSEOptimisationHeaviside,
 	       			"src/Optimize_MSE_2DTiles/Repetitions_Heaviside/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
 	       			,optimTypeMSEOptimisationSoftEllipses,
-	       			"src/Optimize_MSE_2DTiles/Repetitions_SoftEllipses/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
+	       			"src/Optimize_MSE_2DTiles/Repetitions_SoftEllipses/Repetition_"<>ToString[setNo]<>"/Output/2D_0m2net_set_1_level_Opt"<>ToString[npts]<>".dat"
 	       		];
 	       		(*Print["Pricessing ",npts," pts "->fname->FileExistsQ[fname]];*)
 	       		If[FileExistsQ[fname],
-					pts = Import[fname][[;;,1;;2]];
+					pts = Import[fname][[;;,2;;3]];
 					If[dbg, ipts = Round[ npts pts ];
 						Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
 		        	mse = getMSE[pts,"",nDims,integrandType];
@@ -2701,7 +2713,7 @@ showstdOptimMSE[] :=
     	consecutiveFlag = False;
 		fontSz = 14;
 		kPlusMinus = 1;
-    	{powfrom,powto,powstep} = {2,16,1};
+    	{powfrom,powto,powstep} = {2,8,1};
 
 		nDims = 2;
 		(*integrandTypeLabel = "Heaviside";*)
@@ -2719,6 +2731,8 @@ showstdOptimMSE[] :=
 			data = (Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"OwenPlus_"<>integrandTypeLabel<>".dat"]);
 			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+			data = (Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"MatBuider_"<>integrandTypeLabel<>".dat"]);
+			mseMatBuider = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			data = (Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"MatBuiderMaxDepth_"<>integrandTypeLabel<>".dat"]);
 			mseMatBuiderMaxDepth = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
@@ -2726,8 +2740,8 @@ showstdOptimMSE[] :=
 			mseOptim = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			(*mseOptim = Table[{data[[i,1]], data[[i,2]] },{i,Length[data]}];*)
 			 
-		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseMatBuiderMaxDepth, mseOptim} ;
-	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", "MatBuiderMaxDepth", optimTypeL2OptimisationLabel} ] ];
+		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseMatBuider, mseMatBuiderMaxDepth, mseOptim} ;
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", "MatBuider", "MatBuiderMaxDepth", optimTypeL2OptimisationLabel} ] ];
 	        
 			ListLogLogPlot[ alldata
 						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
@@ -2735,10 +2749,10 @@ showstdOptimMSE[] :=
 							{Green,AbsoluteThickness[2]},
 							{Blue,AbsoluteThickness[2]},
 							{Black,AbsoluteThickness[2]},
-							{Red,AbsoluteThickness[2]},
+							{Orange,AbsoluteThickness[2]},
 							{Darker@Green,AbsoluteThickness[2]},
 							{Cyan,AbsoluteThickness[2]},
-							{Gray,AbsoluteThickness[2]}
+							{Red,Dashed,AbsoluteThickness[8]}
 						}
 						,Joined->True
 		            	,FrameTicks->{{Automatic,None},{Table[3^pow,{pow,1,10,1}],Table[2^pow,{pow,powfrom,powto,2}]}}
@@ -2749,15 +2763,16 @@ showstdOptimMSE[] :=
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
 		           		,ImageSize -> {1024,1024}
 		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
-		            	,GridLines->{Table[3^pow,{pow,1,10,1}],None}
+		            	,PlotRange->{{3^powfrom,3^powto}, Automatic } (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,GridLines->{Table[3^pow,{pow,1,8,1}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]			
-			,Control[{{optimTypeL2OptimisationLabel,"L2Optimisation"},{"L2Optimisation","MSEOptimisationHeaviside","MSEOptimisationSoftEllipses"
+			,Control[{{optimTypeL2OptimisationLabel,"MSEOptimisationSoftEllipses"},{"L2Optimisation","MSEOptimisationHeaviside","MSEOptimisationSoftEllipses"
 				(*,"MSEOptimisationHardRectangles","MSEOptimisationSoftRectangles","MSEOptimisationHardEllipses"*)} } ]
-			,Control[{{integrandTypeLabel,"Heaviside"},{"Heaviside", "SoftEllipses"	(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
+			,Control[{{integrandTypeLabel,"SoftEllipses"},{"Heaviside", "SoftEllipses"	(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
          ]
      ] (* showstdOptimMSE *)
      
@@ -2779,7 +2794,7 @@ prepSoftEllipses2D[setNo_:1] :=
      	maxtime = 10;
         dir = "integrands/";
         If[ !FileExistsQ[dir], CreateDirectory[dir] ];
-		{precision,maxRecursion} = {18,10000};
+		{precision,maxRecursion} = {20,10000};
 
 		nsigmas1D = 4; 
 		nmus1D = 128;
