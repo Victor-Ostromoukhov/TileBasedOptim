@@ -1718,8 +1718,9 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 256 1024;
 nDims = 2;
-	nPointsets = 1024;                                                                                                                                                                                        
-	makeMSEref[19, nPointsets, {13,14,1/4.}, 1, nDims, nintegrands];                                                                                                                               
+	nPointsets = 64;                                                                                                                                                                                        
+	makeMSEref[500, nPointsets, {1,14,1/4.}, 1, nDims, nintegrands];                                                                                                                               
+	makeMSEref[501, nPointsets, {1,14,1/4.}, 1, nDims, nintegrands];                                                                                                                               
 
 
 *)
@@ -1805,16 +1806,20 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 			     		data = Plus[#, delta] & /@ Import[ptsfname];
 			     		Export[ptsfname, data];
 				,"MatBuider", 
+					base = 3;
+					npts = Round[base^iCounter];
 					infname = "MatBuilder_matrices/2D_0m2net_"<>ToString[RandomInteger[{1,16}]]<>".dat";
 					owenFlag = True;
 					depth = Ceiling[Log[base, npts]];
-					pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, 3] := (* 3^19=1162261467 *)
+					pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, base] := (* 3^19=1162261467 *)
 		     		Export[ptsfname,pts];
 				,"MatBuiderMaxDepth", 
+					base = 3;
+					npts = Round[base^iCounter];
 					infname = "MatBuilder_matrices/2D_0m2net_"<>ToString[RandomInteger[{1,16}]]<>".dat";
 					owenFlag = True;
 					depth = 19;
-					pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, 3] := (* 3^19=1162261467 *)
+					pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, base] := (* 3^19=1162261467 *)
 
 		     		Export[ptsfname,pts];
 				,"WN", 
@@ -2476,8 +2481,8 @@ optimTypeMSEOptimisationHeaviside = 3;
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSE[2, 1,{1,20}];
-	makeOptimMSE[2, 2,{1,20}];
+	makeOptimMSE[2, 1,{1,24}];
+	makeOptimMSE[2, 2,{1,24}];
 
 	makeOptimMSE[3, 1];
 	makeOptimMSE[3, 2];
