@@ -1718,9 +1718,12 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 256 1024;
 nDims = 2;
-	nPointsets = 64;                                                                                                                                                                                        
-	makeMSEref[500, nPointsets, {1,14,1/4.}, 1, nDims, nintegrands];                                                                                                                               
-	makeMSEref[501, nPointsets, {1,14,1/4.}, 1, nDims, nintegrands];                                                                                                                               
+Do[
+	nPointsets = 1024;     
+	integrandType=1;                                                                                                                                                                                   
+	makeMSEref[500, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
+,{integrandType,1,2}]
+
 
 
 *)
@@ -1755,13 +1758,14 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 	    	,_, "unknown" 
 		];
     	If[pointsetLabel == "SOT", {powfrom,powto,powstep} = Switch[nDims,2,{2,17,1},3,{2,16,1},4,{2,17,1}] ];
-		{nPtsfrom,nPtsto} = {2^powfrom, 2^powto};
+    	base = If[pointsetType==500 || pointsetType==501, 3, 2];
+		{nPtsfrom,nPtsto} = {base^powfrom, base^powto};
 		Print[pointsetLabel,{powfrom,powto,powstep} -> " makeMSEref from ",nPtsfrom," to ",nPtsto];
 		dataMSE = {};
 		{iCounterfrom,iCounterto,iCounterstep} = If[consecutiveFlag, {nPtsfrom,nPtsto,1}, {powfrom, powto, powstep}];
 		Do[	
      		If[pointsetLabel == "SOT" && nDims == 4 && iptsPow == 17, nPointsets = 1 ]; (* Only 1 available *)
-     		nptsTarget = If[consecutiveFlag, iCounter, 2^iCounter];
+     		nptsTarget = If[consecutiveFlag, iCounter, base^iCounter];
    			npts = Round[nptsTarget];
    			If[!consecutiveFlag, npts = getRealNPts[nDims, npts, pointsetType] ];
     		resFname = If[consecutiveFlag, pointsetLabel<>"_"<>fnameLabel<>"_consecutive.dat", pointsetLabel<>"_"<>fnameLabel<>".dat"];
@@ -1806,15 +1810,14 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 			     		data = Plus[#, delta] & /@ Import[ptsfname];
 			     		Export[ptsfname, data];
 				,"MatBuider", 
-					base = 3;
 					npts = Round[base^iCounter];
-					infname = "MatBuilder_matrices/2D_0m2net_"<>ToString[RandomInteger[{1,16}]]<>".dat";
+					infname = "MatBuilder_matrices/2D_0m2net_"<>i2s[RandomInteger[{1,16}]]<>".dat";
 					owenFlag = True;
 					depth = Ceiling[Log[base, npts]];
-					pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, base] := (* 3^19=1162261467 *)
+					(*Print["Processing MatBuider @ ", iCounter -> npts -> {infname,owenFlag,depth}];*)
+					pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, base]; (* 3^19=1162261467 *)
 		     		Export[ptsfname,pts];
 				,"MatBuiderMaxDepth", 
-					base = 3;
 					npts = Round[base^iCounter];
 					infname = "MatBuilder_matrices/2D_0m2net_"<>ToString[RandomInteger[{1,16}]]<>".dat";
 					owenFlag = True;
@@ -1875,6 +1878,7 @@ getRealNPts[nDims_:2, npts_:16, pointsetType_:10] :=
 
 getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
 
+
 getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",owenFlag_:True,depth_:19,nDims_:2,base_:3] := (* 3^19=1162261467 *)
     Block[ {(*execString,outfname,res*)},
 		If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
@@ -1889,6 +1893,7 @@ getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",
 		If[res != 0, Print[execString -> res] ];
 		Import[outfname]
     ]
+
     
 getStratND[nDims_:3,npts_:512] :=
     Block[ {nstrats,xshift,yshift,ushift,vshift,sshift,tshift,nstratsAsked,res},
