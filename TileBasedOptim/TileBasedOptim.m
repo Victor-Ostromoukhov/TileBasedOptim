@@ -1819,7 +1819,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 		     		Export[ptsfname,pts];
 				,"MatBuiderMaxDepth", 
 					npts = Round[base^iCounter];
-					infname = "MatBuilder_matrices/2D_0m2net_"<>ToString[RandomInteger[{1,16}]]<>".dat";
+					infname = "MatBuilder_matrices/2D_0m2net_"<>i2s[RandomInteger[{1,16}]]<>".dat";
 					owenFlag = True;
 					depth = 19;
 					pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, base] := (* 3^19=1162261467 *)
