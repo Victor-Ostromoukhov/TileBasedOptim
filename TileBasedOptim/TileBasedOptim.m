@@ -1719,9 +1719,10 @@ math
 nintegrands = 256 1024;
 nDims = 2;
 Do[
-	nPointsets = 1024;     
+	nPointsets = 64;     
 	integrandType=1;                                                                                                                                                                                   
 	makeMSEref[500, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[501, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
 ,{integrandType,1,2}]
 
 
@@ -1860,7 +1861,7 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 				Print[dirMSE<>resFname, " written."];
 			];
 		,{iCounter, iCounterfrom,iCounterto,iCounterstep}]; 
-        (*Run["rm -rf tmp/" ];*)
+        Run["rm -rf tmp/" ];
    ] (* makeMSEref *)
 
 getCloseestN2D[n_] := Round[Sqrt[n]]^2
