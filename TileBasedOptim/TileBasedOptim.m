@@ -1805,11 +1805,16 @@ makeMSEref[inpointsetTypes_:10, innPointsets_:1024, powParams_:{2,18,1}, inInteg
 			     		data = Plus[#, delta] & /@ Import[ptsfname];
 			     		Export[ptsfname, data];
 				,"MatBuider", 
-					pts = getWN[nDims, npts];
+					infname = "MatBuilder_matrices/2D_0m2net_"<>ToString[RandomInteger[{1,16}]]<>".dat";
+					owenFlag = True;
+					depth = Ceiling[Log[base, npts]];
+					pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, 3] := (* 3^19=1162261467 *)
 		     		Export[ptsfname,pts];
 				,"MatBuiderMaxDepth", 
-					infname = "MatBuilder_matrices/2D_0m2net_000001.dat";
-				(*	pts = getMatBuiderPtsND[npts, infname,owenFlag_:~True,depth_:19,nDims_:2,base_:3] := (* 3^19=1162261467 *)*)
+					infname = "MatBuilder_matrices/2D_0m2net_"<>ToString[RandomInteger[{1,16}]]<>".dat";
+					owenFlag = True;
+					depth = 19;
+					pts = getMatBuiderPtsND[npts, infname, owenFlag,depth, 2, 3] := (* 3^19=1162261467 *)
 
 		     		Export[ptsfname,pts];
 				,"WN", 
