@@ -1,0 +1,55 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+DIM	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  #define DIM /;"	macro	line:17	file:
+INTEGRAND_TYPE_HEAVISIDE	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^#define INTEGRAND_TYPE_HEAVISIDE /;"	macro	line:20	file:
+INTEGRAND_TYPE_SOFTELLIPSES	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^#define INTEGRAND_TYPE_SOFTELLIPSES /;"	macro	line:21	file:
+INTEGRAND_TYPE_HARDELLIPSES	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^#define INTEGRAND_TYPE_HARDELLIPSES /;"	macro	line:22	file:
+INTEGRAND_TYPE_SOFTRECTANGLES	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^#define INTEGRAND_TYPE_SOFTRECTANGLES /;"	macro	line:23	file:
+INTEGRAND_TYPE_HARDRECTANGLES	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^#define INTEGRAND_TYPE_HARDRECTANGLES /;"	macro	line:24	file:
+INTEGRAND_TYPE_HEAVISIDE_NUMBER	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^#define INTEGRAND_TYPE_HEAVISIDE_NUMBER /;"	macro	line:26	file:
+INTEGRAND_TYPE_SOFTELLIPSES_NUMBER	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^#define INTEGRAND_TYPE_SOFTELLIPSES_NUMBER /;"	macro	line:27	file:
+INTEGRAND_TYPE_HARDELLIPSES_NUMBER	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^#define INTEGRAND_TYPE_HARDELLIPSES_NUMBER /;"	macro	line:28	file:
+INTEGRAND_TYPE_SOFTRECTANGLES_NUMBER	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^#define INTEGRAND_TYPE_SOFTRECTANGLES_NUMBER /;"	macro	line:29	file:
+INTEGRAND_TYPE_HARDRECTANGLES_NUMBER	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^#define INTEGRAND_TYPE_HARDRECTANGLES_NUMBER /;"	macro	line:30	file:
+total_N_integrands	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^int total_N_integrands;$/;"	variable	line:34
+t_GaussianStruct2D	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^struct t_GaussianStruct2D {$/;"	struct	line:38	file:
+integral	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^    double integral;$/;"	member	line:39	struct:t_GaussianStruct2D	file:
+mu	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^    double mu[2];$/;"	member	line:40	struct:t_GaussianStruct2D	file:
+mxCInv	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^    double mxCInv[2 * 2];$/;"	member	line:41	struct:t_GaussianStruct2D	file:
+t_SoftRectanglesStruct2D	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^struct t_SoftRectanglesStruct2D{$/;"	struct	line:44	file:
+integral	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  double integral;$/;"	member	line:45	struct:t_SoftRectanglesStruct2D	file:
+mu	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  double mu[2];$/;"	member	line:46	struct:t_SoftRectanglesStruct2D	file:
+sigma	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  double sigma[2];$/;"	member	line:47	struct:t_SoftRectanglesStruct2D	file:
+t_Heaviside2D	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^struct t_Heaviside2D {$/;"	struct	line:50	file:
+integral	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  double integral;$/;"	member	line:51	struct:t_Heaviside2D	file:
+muDiscotinuity	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  double muDiscotinuity[2];$/;"	member	line:52	struct:t_Heaviside2D	file:
+normal	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  double normal[2];$/;"	member	line:53	struct:t_Heaviside2D	file:
+t_RectanglesStruct2D	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^struct t_RectanglesStruct2D{$/;"	struct	line:56	file:
+integral	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  double integral;$/;"	member	line:57	struct:t_RectanglesStruct2D	file:
+mu	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  double mu[2];$/;"	member	line:58	struct:t_RectanglesStruct2D	file:
+sigma	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  double sigma[2];$/;"	member	line:59	struct:t_RectanglesStruct2D	file:
+newPointHolder	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^struct newPointHolder {$/;"	struct	line:72	file:
+index	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  int index;$/;"	member	line:73	struct:newPointHolder	file:
+point	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  VecX<dimension> point;$/;"	member	line:74	struct:newPointHolder	file:
+apportOfNewPoint	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^  double apportOfNewPoint;$/;"	member	line:75	struct:newPointHolder	file:
+compareTwoNewPointHolder	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^bool compareTwoNewPointHolder(const newPointHolder<dimension> &a,const newPointHolder<dimension> &b){$/;"	function	line:79	signature:(const newPointHolder<dimension> &a,const newPointHolder<dimension> &b)
+importPoints	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^void importPoints(double pointsTab[][dimension], std::string inputString, int nbpts){$/;"	function	line:89	signature:(double pointsTab[][dimension], std::string inputString, int nbpts)
+extractSP	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^std::vector<VecX<DIM>>* extractSP(std::vector<Tiles<dimension>>* v){$/;"	function	line:114	signature:(std::vector<Tiles<dimension>>* v)
+exportValue	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^void exportValue(int nbpts,double value,std::string outputString){$/;"	function	line:126	signature:(int nbpts,double value,std::string outputString)
+exportPoints	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^void exportPoints(std::vector<VecX<DIM>>* v,std::string outputString){$/;"	function	line:133	signature:(std::vector<VecX<DIM>>* v,std::string outputString)
+injectSP	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^void injectSP(std::vector<Tiles<dimension>>* v,std::vector<VecX<dimension>>* vtoinj){$/;"	function	line:143	signature:(std::vector<Tiles<dimension>>* v,std::vector<VecX<dimension>>* vtoinj)
+exportTiles	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^void exportTiles(std::vector<Tiles<dimension>>* v,std::string outputString){$/;"	function	line:154	signature:(std::vector<Tiles<dimension>>* v,std::string outputString)
+exportTilesNextStep	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^void exportTilesNextStep(std::vector<Tiles<dimension>>* v,std::string outputStringNextStep,std::vector<std::string>* restOfTheDocument){$/;"	function	line:164	signature:(std::vector<Tiles<dimension>>* v,std::string outputStringNextStep,std::vector<std::string>* restOfTheDocument)
+initializeGaussianVectors	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^void initializeGaussianVectors(std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,std::vector<double>* anal,int offset,int integrandType,int gaussianSubSetSize){$/;"	function	line:178	signature:(std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,std::vector<double>* anal,int offset,int integrandType,int gaussianSubSetSize)
+recalculateGaussianValue	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^double recalculateGaussianValue(double oldVal, VecX<dimension> oldPoint,VecX<dimension> newPoint, MatXDynamic sigma,VecXDynamic shift,int nbpts,int integrandType){$/;"	function	line:248	signature:(double oldVal, VecX<dimension> oldPoint,VecX<dimension> newPoint, MatXDynamic sigma,VecXDynamic shift,int nbpts,int integrandType)
+changeAllValueGaussTab	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^void changeAllValueGaussTab(VecX<dimension> oldPoint,VecX<dimension> newPoint, std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,double tabPtsValGauss[],int nbGauss,int nbpts,int integrandType){$/;"	function	line:253	signature:(VecX<dimension> oldPoint,VecX<dimension> newPoint, std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,double tabPtsValGauss[],int nbGauss,int nbpts,int integrandType)
+recalculateGaussianValueAllGauss	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^double recalculateGaussianValueAllGauss(VecX<dimension> oldPoint,VecX<dimension> newPoint, std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,double tabPtsValGauss[],int nbGauss,int nbpts,std::vector<double>* anal,int integrandType){$/;"	function	line:260	signature:(VecX<dimension> oldPoint,VecX<dimension> newPoint, std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,double tabPtsValGauss[],int nbGauss,int nbpts,std::vector<double>* anal,int integrandType)
+seOfAPointsetOnOneGaussian	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^double seOfAPointsetOnOneGaussian(std::vector<VecX<dimension>>* points,MatXDynamic sigma,VecXDynamic shift,double anal,int nbGauss,double tabPtsValGauss[],int indice,int integrandType){$/;"	function	line:270	signature:(std::vector<VecX<dimension>>* points,MatXDynamic sigma,VecXDynamic shift,double anal,int nbGauss,double tabPtsValGauss[],int indice,int integrandType)
+mseOfAPointsetOnAllGaussian	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^double mseOfAPointsetOnAllGaussian(std::vector<VecX<dimension>>* points,std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,std::vector<double>* anal,int nbGauss,double tabPtsValGauss[],int integrandType){$/;"	function	line:278	signature:(std::vector<VecX<dimension>>* points,std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,std::vector<double>* anal,int nbGauss,double tabPtsValGauss[],int integrandType)
+randomAccessMatriceGenerator	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^std::vector<int> randomAccessMatriceGenerator(int nbpts,int limit){$/;"	function	line:291	signature:(int nbpts,int limit)
+optimPointME	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString,int niters,int nbThrow,std::string outputString,int gaussianSubSetSize,int integrandType,int limit,std::string outputStringNextStep, std::vector<std::string>* restOfTheDocument){$/;"	function	line:304	signature:(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString,int niters,int nbThrow,std::string outputString,int gaussianSubSetSize,int integrandType,int limit,std::string outputStringNextStep, std::vector<std::string>* restOfTheDocument)
+main	/home/tanguy/New_Optimize_MSE_2DTiles/Source/OptimME.cpp	/^int main(int argc, char const *argv[]) {$/;"	function	line:393	signature:(int argc, char const *argv[])
