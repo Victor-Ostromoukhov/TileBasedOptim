@@ -1880,7 +1880,7 @@ getRealNPts[nDims_:2, npts_:16, pointsetType_:10] :=
 getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
 
 
-getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",owenFlag_:True,depth_:18,nDims_:2,base_:3] := (* 3^19=1162261467 *)
+getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",owenFlag_:True,depth_:19,nDims_:2,base_:3] := (* 3^19=1162261467 *)
     Block[ {(*execString,outfname,res*)},
 		If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
     	outfname = "tmp/pts"<>pid<>".dat";
