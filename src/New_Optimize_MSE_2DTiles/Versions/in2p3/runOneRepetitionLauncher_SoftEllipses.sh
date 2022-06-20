@@ -21,15 +21,13 @@ lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses
 
 
-echo sbatch -n ${nthreads} -J R${repetition}L${level} -o "../Repetitions_SoftEllipses/Repetition_${repetition}/Traces/slurm-%j-${level}.out" OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads} 2 3 1
-./OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads} 2 3 1
+sbatch -n ${nthreads} -J R${repetition}L${level} -o "../Repetitions_SoftEllipses/Repetition_${repetition}/Traces/slurm-%j-${level}.out" OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads} 2 3 1
 
 for level in $(eval echo {1..$((${lst_length} - 1))})
 do
     from=${lst[$((${level} - 1 ))]}
     to=${lst[$level]}
     limit=$((${lst[$((${level} - 1 ))]} + 1))
-    #echo sbatch -n ${nthreads} -J R${repetition}L${level} -o "../Repetitions_SoftEllipses/Repetition_${repetition}/Traces/slurm-%j-${level}.out" OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads}  $from $to $limit
-   #./OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads}  $from $to $limit
+    sbatch -n ${nthreads} -J R${repetition}L${level} -o "../Repetitions_SoftEllipses/Repetition_${repetition}/Traces/slurm-%j-${level}.out" OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads}  $from $to $limit
 done
 
