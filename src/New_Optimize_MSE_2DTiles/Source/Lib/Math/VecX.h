@@ -7,7 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-
+#include <iomanip>
 template <int N>
 class VecX {
 
@@ -243,7 +243,7 @@ inline double scalar(const VecX<N>& a, const VecX<N>& b){
 template <int N>
 inline std::ostream& operator<<(std::ostream& out, const VecX<N>& v){
     for (int i = 0; i < N-1; ++i){
-        out << v[i] << "\t";
+        out << std::setprecision(20) << v[i] << "\t";
     }
     out << v[N-1];
     return out;
