@@ -14,6 +14,8 @@ makeOptimMSE[]  ->  getMSE[]
 showstdOptimMSE[] :
 
 =========================== prepOptimDataBase3SFCMatBuilderOnly2D[]
+prepOptimDataBase3Seq2DFromMatBuilder[]
+
 
 =========================== prepSoftEllipses2D[] & prepHeavisideND[]
 
