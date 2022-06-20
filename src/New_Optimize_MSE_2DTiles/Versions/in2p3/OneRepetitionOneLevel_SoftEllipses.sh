@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -ne 3 ] ;
+if [ $# -le 4 ] ;
 then
 	echo "Usage : runOneJob <repetition> <nbthreads> <level>"
 	exit
@@ -10,6 +10,7 @@ repetition=$1
 nbthreads=$2
 from=$3
 to=$4
+limit=$5
 
 #nIterations=16
 #nItegrandsPerIteration=262144
@@ -30,10 +31,10 @@ then
     outfname=${OutputDir}2D_0m2net_set_1_level_Opt3.dat
     outputNextStep=${NextIterDir}2D_0m2net_set_1_level_OptNext3.dat
 else
-    infname=${NextIterDir}2D_0m2net_set_1_level_OptNext$from.dat"
-    outfname={OutputDir}2D_0m2net_set_1_level_Opt$to.dat
+    infname=${NextIterDir}2D_0m2net_set_1_level_OptNext$from.dat
+    outfname=${OutputDir}2D_0m2net_set_1_level_Opt$to.dat
     outputNextStep=${NextIterDir}2D_0m2net_set_1_level_OptNext$to.dat
 fi
 
 
-~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i infname -o $outfname --outputNextStep  --nbPoints ${lst[$level]} --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit | tee "${TracesDir}Trace_Level_${level}.dat"
+~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i infname -o $outfname --outputNextStep  --nbPoints ${lst[$level]} --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit > "${TracesDir}Trace_Level_${to}.dat"
