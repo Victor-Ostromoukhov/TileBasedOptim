@@ -16,7 +16,8 @@ limit=$5
 #nItegrandsPerIteration=262144
 
 nIterations=256
-nItegrandsPerIteration=4096
+#nItegrandsPerIteration=4096
+nItegrandsPerIteration=16384
 
 
 InputDir="../../Data/Input/Tiles/"
