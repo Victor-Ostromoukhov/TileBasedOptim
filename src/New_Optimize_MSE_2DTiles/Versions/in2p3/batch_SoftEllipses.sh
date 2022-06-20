@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for (( rep=1 ; rep <= 16 ; rep++ ))
+for (( rep=1 ; rep <= 1 ; rep++ ))
 	do
-        ./runOneRepetition_SoftEllipses.sh $rep 32
+        ./runOneRepetitionLauncher_SoftEllipses.sh $rep 
 	done

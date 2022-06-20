@@ -2521,7 +2521,9 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 	makeOptimMSE[2, 1,{2,2}];
-	makeOptimMSE[2, 2,{2,2}];
+	makeOptimMSE[2, 1,{3,3}];
+
+	makeOptimMSE[2, 2,{4,4}];
 
 	makeOptimMSE[3, 1];
 	makeOptimMSE[3, 2];

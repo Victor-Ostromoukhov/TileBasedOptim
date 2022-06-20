@@ -13,11 +13,8 @@ else
   repetition=99
 fi
 
-if [ $# -ge 2 ]; then
-  nbthreads=$2
-else
-  nbthreads=64
-fi
+nbthreads =32
+
 InputDir="../../Data/Input/Tiles/"
 NextIterDir="../../Data/Input/TilesLimited/"
 OutputDir="../../Data/Output/Limited/SoftEllipses/OutputTiles/Repetition_${repetition}/"
@@ -38,11 +35,8 @@ mkdir -p ${TracesDir}
 
   ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n ${nIterations} -i "${InputDir}2D_0m2net_set_1_level_729.dat" -o "${OutputDir}2D_0m2net_set_1_level_Opt${lst[0]}.dat" --outputNextStep "${NextIterDir}2D_0m2net_set_1_level_OptNext${lst[0]}.dat" --nbPoints ${lst[0]} --integrandType ${integrandType} -g ${nItegrandsPerIteration} -l 1
 
-
-
 for level in $(eval echo {1..$((${lst_length} - 1))})
-  do
-#echo        ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i "${NextIterDir}2D_0m2net_set_1_level_OptNext$((${lst[$((${level} - 1 ))]})).dat" -o "${OutputDir}2D_0m2net_set_1_level_Opt${lst[$level]}.dat" --outputNextStep "${NextIterDir}2D_0m2net_set_1_level_OptNext$((${lst[$((${level} - 1 ))]} + 1)).dat" --nbPoints ${lst[$level]} --integrandType ${integrandType} -g $nItegrandsPerIteration -l $((${lst[$((${level} - 1 ))]} + 1)) | tee ../Repetitions_Heaviside_ubu32/Repetition_${repetition}/Limited/Traces/Trace_Level_${level}.dat
-~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i "${NextIterDir}2D_0m2net_set_1_level_OptNext$((${lst[$((${level} - 1 ))]})).dat" -o "${OutputDir}2D_0m2net_set_1_level_Opt${lst[$level]}.dat" --outputNextStep "${NextIterDir}2D_0m2net_set_1_level_OptNext$((${lst[$((${level}))]})).dat" --nbPoints ${lst[$level]} --integrandType ${integrandType} -g $nItegrandsPerIteration -l $((${lst[$((${level} - 1 ))]} + 1)) | tee "${TracesDir}Trace_Level_${level}.dat"
-	done
+do
+~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i "${NextIterDir}2D_0m2net_set_1_level_OptNext$((${lst[$((${level} - 1 ))]})).dat" -o "${OutputDir}2D_0m2net_set_1_level_Opt${lst[$level]}.dat" --outputNextStep "${NextIterDir}2D_0m2net_set_1_level_OptNext$((${lst[$((${level}))]})).dat" --nbPoints ${lst[$level]} --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $((${lst[$((${level} - 1 ))]} + 1)) | tee "${TracesDir}Trace_Level_${level}.dat"
+done
 
