@@ -18,13 +18,15 @@ limit=$5
 nIterations=256
 nItegrandsPerIteration=4096
 
+
 InputDir="../../Data/Input/Tiles/"
-NextIterDir="../../Data/Input/TilesLimited/"
+NextIterDir="../../Data/Input/TilesLimited/SoftEllipses/OutputTiles/Repetition_${repetition}/"
 OutputDir="../../Data/Output/Limited/SoftEllipses/OutputTiles/Repetition_${repetition}/"
 TracesDir="../../Data/Output/Limited/SoftEllipses/Traces/Repetition_${repetition}/"
-
-#~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i ../Optimize_MSE_2DTiles/Data/Optim_Data_Input/Tiles/2D_0m2net_set_1_level_${level}.dat -o ../Repetitions_SoftEllipses/Repetition_${repetition}/Output/level_${level}.dat --nbPoints ${level} --integrandType 2 -g $nItegrandsPerIteration > ../Repetitions_SoftEllipses/Repetition_${repetition}/Traces/Trace_Level_${level}.dat
-
+mkdir -p ${NextIterDir}
+mkdir -p ${OutputDir}
+mkdir -p ${TracesDir}
+  
  if [ $to -eq 3 ] ;
 then
     infname=${InputDir}2D_0m2net_set_1_level_729.dat
@@ -37,4 +39,4 @@ else
 fi
 
 
-~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i infname -o $outfname --outputNextStep  --nbPoints ${lst[$level]} --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit > "${TracesDir}Trace_Level_${to}.dat"
+echo ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i infname -o $outfname --outputNextStep  --nbPoints ${lst[$level]} --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit > "${TracesDir}Trace_Level_${to}.dat"
