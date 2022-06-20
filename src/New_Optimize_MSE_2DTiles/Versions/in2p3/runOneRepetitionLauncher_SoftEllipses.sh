@@ -21,7 +21,8 @@ lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses
 
 
-sbatch -n ${nthreads} -J R${repetition}L${level} -o "../Repetitions_SoftEllipses/Repetition_${repetition}/Traces/slurm-%j-${level}.out" OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads} 2 3 1
+echo sbatch -n ${nthreads} -J R${repetition}L${level} -o "../Repetitions_SoftEllipses/Repetition_${repetition}/Traces/slurm-%j-${level}.out" OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads} 2 3 1
+./OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads} 2 3 1
 
 for level in $(eval echo {1..$((${lst_length} - 1))})
 do
