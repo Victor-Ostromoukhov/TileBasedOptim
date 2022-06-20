@@ -15,7 +15,7 @@ limit=$5
 #nIterations=16
 #nItegrandsPerIteration=262144
 
-nIterations=256
+nIterations=16
 #nItegrandsPerIteration=4096
 nItegrandsPerIteration=16384
 
@@ -30,7 +30,7 @@ mkdir -p ${TracesDir}
   
  if [ $to -eq 3 ] ;
 then
-    infname=${InputDir}2D_0m2net_set_1_level_729.dat
+    infname=${InputDir}2D_0m2net_set_1_level_3.dat
     outfname=${OutputDir}2D_0m2net_set_1_level_Opt3.dat
     outputNextStep=${NextIterDir}2D_0m2net_set_1_level_OptNext3.dat
 else

@@ -1896,13 +1896,14 @@ getRealNPts[nDims_:2, npts_:16, pointsetType_:10] :=
 getWN[nDims_:3,npts_:512] := Table[Table[RandomReal[],{nDims}] ,{npts}]
 
 
-getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",owenFlag_:True,depth_:19,nDims_:2,base_:3] := (* 3^19=1162261467 *)
-    Block[ {(*execString,outfname,res*)},
+getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",owenFlag_:True,depth_:19,nDims_:2,base_:3,inseed_:0] := (* 3^19=1162261467 *)
+    Block[ {execString,outfname,res,seed},
+    	seed = If[inseed == 0, RandomInteger[2^16], inseed];
 		If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
     	outfname = "tmp/pts"<>pid<>".dat";
 		execString = "sampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
 			<>If[owenFlag," --owen  --depth "<>ToString[depth], " " ]
-			<>" -p "<>ToString[base]<>" --matrixSize "<>ToString[19]<>" --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
+			<>" -p "<>ToString[base]<>" --matrixSize "<>ToString[19]<>" --seed "<>ToString[seed]<>" > /dev/null";
 		(*execString = "matrixSampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
 			<>If[owenFlag," -p  --depth "<>ToString[depth], " " ]
 			<>" -b "<>ToString[base]<>" --size "<>ToString[19]<>" --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";*)
@@ -2308,7 +2309,7 @@ makeStratL2discrepancy[nlevels_:14, ntrials_:64, nDims_:3] :=
 
 
 (*------------------------------------------ prepOptimDataBase3Simple2D ---------------------------------------------------*)
-(*
+
 typeSimpleHSq = 	1;
 typeSimpleVSq = 	2;
 typeSimpleH1Rect = 	3;
@@ -2435,8 +2436,59 @@ Abort[];
 		,{ilevel,nlevels}];
 	] (* prepOptimDataBase3Simple2D *)
 	
-*)
 
+prepOptimDataBase3Seq2DFromMatBuilder[innlevels_:3, dbg_:True] :=
+    Module[ {},
+    	owenFlag = True;
+    	depth = 19;
+    	nDims = 2;
+    	base = 3;
+    	seed = RandomInteger[2^16];
+    	
+    	setNo = 1;
+		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
+    	nlevels = innlevels;
+    	If[ !FileExistsQ["optim_input_2D/"], CreateDirectory["optim_input_2D/"] ];
+    	If[ !FileExistsQ["optim_figs_2D/"], CreateDirectory["optim_figs_2D/"] ];
+    	
+    	mxfname = "MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat";
+		mxTab = readMatBuilderMatrix[mxfname];
+		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
+		tlst = {{typeSimpleHSq,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, 0 } };
+		
+		
+		Do[
+			Do[
+				npts = iOrdinalAbsolute;
+				pts = getMatBuiderPtsND[iOrdinalAbsolute, mxfname, owenFlag, depth, nDims, base, seed ];
+				thislevelpts = pts[[ 3^(ilevel-1)+1 ;; npts ]];
+				Print[ilevel -> npts -> {3^(ilevel-1)+1,3^ilevel} -> mf[pts] -> mf[thislevelpts] ];
+				
+				(*seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ilevel];
+				fname = "optim_input_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+				(*exportSelectionBase3Simple2D[fname,seltlst];*)
+				If[dbg,
+				p = Graphics[ Append[background,#]& @ getBase3Simple2DTilesGL[tlst,showTileType], PlotLabel-> iOrdinalAbsolute ];
+					p//Print;
+					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
+				];*)
+			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
+			(*tlst = subdivBase3Simple2DTiles @ tlst;
+			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
+			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
+			tlst = fillSamplingPtsBase3Simple2DTiles[ilevel,tlst,mxTab,mxInv,mxInvH,mxInvV];
+			Do[
+				seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ilevel];
+				fname = "optim_input_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+				(*exportSelectionBase3Simple2D[fname,seltlst];*)
+				If[dbg,
+				p = Graphics[ Append[background,#]& @ getBase3Simple2DTilesGL[tlst,showTileType], PlotLabel-> iOrdinalAbsolute ];
+					p//Print;
+					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
+				];
+			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];*)
+		,{ilevel,nlevels}];
+	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
 
 (*
 gitpull
@@ -2470,8 +2522,8 @@ prepOptimDataBase3SFCMatBuilderOnly2D[innlevels_:6, dbg_:True] :=
 				Print[Length[seltlst] -> " Exporting " -> fname];
 				If[dbg,
 					p = Graphics[ Append[background,#]& @ getBase3SFC2DTilesGL[seltlst,showLightGrayTile+showMatBuilderIndex+showPrevRect+showSamplingPt], PlotLabel-> iOrdinalAbsolute ];
-					p//Print;
-					(*Export["optim_figs_2D_MatBuilderOnly/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];*)
+					(*p//Print;*)
+					Export["optim_figs_2D_MatBuilderOnly/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 				];
 			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
