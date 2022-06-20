@@ -413,7 +413,7 @@ int main(int argc, char const *argv[]) {
       CLI::App app { "OptimME" };
 
       app.add_option("--nbPoints",nbpts,"Number of Points, default: "+std::to_string(nbpts))->required();
-      app.add_option("-t,--nbThreads",nbThreads,"Number of threads used , default: "+std::to_string(nbThreads))->check(CLI::Range(1,omp_get_max_threads()));
+      app.add_option("-t,--nbThreads",nbThreads,"Number of threads used , default: "+std::to_string(nbThreads));	//->check(CLI::Range(1,omp_get_max_threads()));
       app.add_option("-n,--iterationNumber",niters,"Number of iterations over the pointset, default: "+std::to_string(niters))->check(CLI::PositiveNumber);
       app.add_option("-i,--input",inputString,"Path to input file, default: "+inputString)->check(CLI::ExistingFile)->required();
       app.add_option("-o,--output",outputString,"Path to output file, default: "+outputString);

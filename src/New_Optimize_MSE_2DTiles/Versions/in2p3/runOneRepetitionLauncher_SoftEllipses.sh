@@ -29,7 +29,7 @@ do
     from=${lst[$((${level} - 1 ))]}
     to=${lst[$level]}
     limit=$((${lst[$((${level} - 1 ))]} + 1))
-    echo sbatch -n ${nthreads} -J R${repetition}L${level} -o "../Repetitions_SoftEllipses/Repetition_${repetition}/Traces/slurm-%j-${level}.out" OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads}  $from $to $limit
+    #echo sbatch -n ${nthreads} -J R${repetition}L${level} -o "../Repetitions_SoftEllipses/Repetition_${repetition}/Traces/slurm-%j-${level}.out" OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads}  $from $to $limit
    #./OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads}  $from $to $limit
 done
 

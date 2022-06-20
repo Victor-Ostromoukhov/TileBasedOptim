@@ -39,8 +39,8 @@ else
 fi
 
 
-echo ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep  --nbPoints $to --integrandType 2 -g $nItegrandsPerIteration --limit $limit
-~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep  --nbPoints $to --integrandType 2 -g $nItegrandsPerIteration --limit $limit
+echo ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep $outputNextStep --nbPoints $to --integrandType 2 -g $nItegrandsPerIteration --limit $limit
+~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep $outputNextStep --nbPoints $to --integrandType 2 -g $nItegrandsPerIteration --limit $limit
 
 #echo ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep  --nbPoints $to --integrandType 2 -g $nItegrandsPerIteration --limit $limit > "${TracesDir}Trace_Level_${to}.dat"
 #~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep  --nbPoints $to --integrandType 2 -g $nItegrandsPerIteration --limit $limit > "${TracesDir}Trace_Level_${to}.dat"
