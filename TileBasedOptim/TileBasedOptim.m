@@ -2520,8 +2520,8 @@ optimTypeMSEOptimisationHeaviside = 3;
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSE[2, 1,{1,1}];
-	makeOptimMSE[2, 2,{1,1}];
+	makeOptimMSE[2, 1,{2,2}];
+	makeOptimMSE[2, 2,{2,2}];
 
 	makeOptimMSE[3, 1];
 	makeOptimMSE[3, 2];
@@ -2552,6 +2552,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
 
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729};
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243};
+		counters = {3,9,27,81,243,729};
         Do[
 			npts = counters[[iOrdinalAbsolute]];
 	        mseTab = Parallelize @ Table[
@@ -2561,7 +2562,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
 	       			,optimTypeMSEOptimisationHeaviside,
 	       			"src/Optimize_MSE_2DTiles/Repetitions_Heaviside/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
 	       			,optimTypeMSEOptimisationSoftEllipses,
-	       			"src/Optimize_MSE_2DTiles/Repetitions_SoftEllipses/Repetition_"<>ToString[setNo]<>"/Output/2D_0m2net_set_1_level_Opt"<>ToString[npts]<>".dat"
+	       			"src/Optimize_MSE_2DTiles/Repetitions_SoftEllipses/Repetition_"<>ToString[setNo]<>"/2D_0m2net_set_1_level_Opt"<>ToString[npts]<>".dat"
 	       		];
 	       		(*Print["Pricessing ",npts," pts "->fname->FileExistsQ[fname]];*)
 	       		If[FileExistsQ[fname],
@@ -2736,11 +2737,14 @@ showstdOptimMSE[] :=
 			data = (Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"MatBuiderMaxDepth_"<>integrandTypeLabel<>".dat"]);
 			mseMatBuiderMaxDepth = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
-			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat"]), #[[1]] >= 2^powfrom &];
-			mseOptim = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-			(*mseOptim = Table[{data[[i,1]], data[[i,2]] },{i,Length[data]}];*)
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_1.dat"]), #[[1]] >= 2^powfrom &];
+			mseOptim1 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_2.dat"]), #[[1]] >= 2^powfrom &];
+			mseOptim2 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_3.dat"]), #[[1]] >= 2^powfrom &];
+			mseOptim3 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			 
-		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseMatBuider, mseMatBuiderMaxDepth, mseOptim} ;
+		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseMatBuider, mseMatBuiderMaxDepth, mseOptim1, mseOptim2, mseOptim3} ;
 	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", "MatBuider", "MatBuiderMaxDepth", optimTypeL2OptimisationLabel} ] ];
 	        
 			ListLogLogPlot[ alldata
@@ -2752,7 +2756,9 @@ showstdOptimMSE[] :=
 							{Orange,AbsoluteThickness[2]},
 							{Darker@Green,AbsoluteThickness[2]},
 							{Cyan,AbsoluteThickness[2]},
-							{Red,Dashed,AbsoluteThickness[8]}
+							{Red,Dashed,AbsoluteThickness[2]},
+							{Blue,Dashed,AbsoluteThickness[2]},
+							{Gray,Dashed,AbsoluteThickness[2]}
 						}
 						,Joined->True
 		            	,FrameTicks->{{Automatic,None},{Table[3^pow,{pow,1,10,1}],Table[2^pow,{pow,powfrom,powto,2}]}}
