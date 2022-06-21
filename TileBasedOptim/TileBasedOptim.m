@@ -1738,22 +1738,20 @@ nDims = 2;
 
 	nPointsets = 1;     
 	makeMSEref[1, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	nPointsets = 16;     
+	nPointsets = 256;     
 	makeMSEref[10, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 
 
+nintegrands = 256 1024;
+nDims = 2;
+	integrandType=2;                                                                                                                                                                                   
 	nPointsets = 16;     
-	integrandType=1;                                                                                                                                                                                   
-	makeMSEref[500, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
 	integrandType=2;                                                                                                                                                                                   
-	makeMSEref[500, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
-
-	nPointsets = 256;     
-	integrandType=1;                                                                                                                                                                                   
-	makeMSEref[501, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[500, nPointsets, {1,8,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
+	nPointsets = 16;     
 	integrandType=2;                                                                                                                                                                                   
-	makeMSEref[501, nPointsets, {1,10,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[501, nPointsets, {1,8,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
 
 
 
@@ -2637,8 +2635,8 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
 	       		];
 	       		(*Print["Pricessing ",npts," pts "->fname->FileExistsQ[fname]];*)
 	       		If[FileExistsQ[fname],
-					(*pts = Import[fname][[;;,2;;3]];*)
-					pts = Import[fname][[;;,1;;2]];
+					pts = Import[fname][[;;,2;;3]];
+					(*pts = Import[fname][[;;,1;;2]];*)
 					If[dbg, ipts = Round[ npts pts ];
 						Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
 		        	mse = getMSE[pts,"",nDims,integrandType];
@@ -2786,7 +2784,7 @@ showstdOptimMSE[] :=
     	consecutiveFlag = False;
 		fontSz = 14;
 		kPlusMinus = 1;
-    	{powfrom,powto,powstep} = {2,10,1}; (* powers of 3 *)
+    	{powfrom,powto,powstep} = {2,8,1}; (* powers of 3 *)
 
 		nDims = 2;
 		(*integrandTypeLabel = "Heaviside";*)
@@ -2812,8 +2810,8 @@ showstdOptimMSE[] :=
 			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat"]), #[[1]] >= 2^powfrom &];
 			mseOptim1 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			 
-		    alldata = {mseWN, mseStrat, mseOwen01Pure,  mseOwenPlus, mseMatBuider, mseMatBuiderMaxDepth, mseOptim1} ;
-	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat", "Owen", "OwenPlus32", "MatBuider", "MatBuiderMaxDepth", optimTypeL2OptimisationLabel} ] ];
+		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, mseOptim1} ;
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat",  "OwenPlus32", "MatBuiderMaxDepth", optimTypeL2OptimisationLabel} ] ];
 	        
 			ListLogLogPlot[ alldata
 						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
