@@ -854,7 +854,7 @@ makeMatBuilderMatrices0m2net2D[] :=
 				];
         	,{ilevel,0,nlevels,2}];
 			Export["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];
-		,{i,16}];
+		,{i,64}];
     ] (* makeMatBuilderMatrices0m2net2D *)
 
 
@@ -2426,7 +2426,7 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[6, i, False], {i, 64}]
+Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, False], {i, 64}]
 *)
 prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, dbg_:True] :=
     Module[ {},
