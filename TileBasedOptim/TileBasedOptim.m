@@ -2499,7 +2499,7 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, dbg_:True] :=
 				];
 			,{iOrdinalAbsolute,3^(ioctave-1)+1,3^ioctave}];
 		,{ioctave,noctaves}];
-		fname = "optimSeq_input_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[base^noctaves]<>"_seed_"<>ToString[seed]<>".dat";
+		fname = "optimSeq_input_2D/2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>ToString[base^noctaves]<>"_seed_"<>ToString[seed]<>".dat";
 		Export[fname,Flatten/@(tlst)];
 	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
 
