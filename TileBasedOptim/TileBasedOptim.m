@@ -2422,7 +2422,7 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 
 
 
-prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, dbg_:True] :=
+prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, dbg_:True] :=
     Module[ {},
     	owenFlag = True;
     	depth = 19;
@@ -2430,7 +2430,7 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, dbg_:True] :=
     	base = 3;
     	seed = RandomInteger[2^16];
     	
-    	setNo = 1;
+    	setNo = insetNo;
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
     	frame={Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
     	noctaves = innoctaves;
