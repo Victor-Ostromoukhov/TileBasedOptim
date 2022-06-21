@@ -2430,6 +2430,8 @@ Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, False], {i, 64}]
 *)
 prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, dbg_:True] :=
     Module[ {},
+        If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
+        
     	owenFlag = True;
     	depth = 19;
     	nDims = 2;
