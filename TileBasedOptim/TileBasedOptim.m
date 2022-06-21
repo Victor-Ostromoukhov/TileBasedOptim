@@ -2446,7 +2446,7 @@ Abort[];
 	] (* prepOptimDataBase3Simple2D *)
 	
 
-prepOptimDataBase3Seq2DFromMatBuilder[innlevels_:3, dbg_:True] :=
+prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:3, dbg_:True] :=
     Module[ {},
     	owenFlag = True;
     	depth = 19;
@@ -2456,38 +2456,74 @@ prepOptimDataBase3Seq2DFromMatBuilder[innlevels_:3, dbg_:True] :=
     	
     	setNo = 1;
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
-    	nlevels = innlevels;
+    	frame={Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
+    	noctaves = innoctaves;
     	If[ !FileExistsQ["optim_input_2D/"], CreateDirectory["optim_input_2D/"] ];
     	If[ !FileExistsQ["optim_figs_2D/"], CreateDirectory["optim_figs_2D/"] ];
     	
     	mxfname = "MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat";
 		mxTab = readMatBuilderMatrix[mxfname];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
-		tlst = {{typeSimpleHSq,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, 0 } };
+		tlst = {{typeSimpleHSq,{0,0}, {0,0},{{1,0},{0,1}} } };
 		
 		
 		Do[
+			gl = {};
 			Do[
-				npts = iOrdinalAbsolute;
+				npts = base^ioctave;
 				pts = getMatBuiderPtsND[iOrdinalAbsolute, mxfname, owenFlag, depth, nDims, base, seed ];
-				thislevelpts = pts[[ 3^(ilevel-1)+1 ;; npts ]];
-				Print[ilevel -> npts -> {3^(ilevel-1)+1,3^ilevel} -> mf[pts] -> mf[thislevelpts] ];
+				thislevelpts = pts[[ 3^(ioctave-1)+1 ;; iOrdinalAbsolute ]];
+				(*Print[{ioctave,npts} -> {3^(ioctave-1)+1,3^ioctave} -> mf[pts] -> mf[thislevelpts] ];*)
+				prevoctave = ioctave-1;
+				If[EvenQ[prevoctave],
+					Do[
+						{x,y} = npts thislevelpts[[ipt]];
+						{ix,iy} = Quotient[{x,y}, base^((ioctave+1)/2)];
+						{k1,k2} = If[EvenQ[ix+iy], {base^((ioctave-1)/2),base^((ioctave+1)/2)}, {base^((ioctave+1)/2),base^((ioctave-1)/2)}];
+						{v1,v2} = {{1/k1,0},{0,1/k2}} ;
+						{refx,refy} = Quotient[{x,y}, {k2,k1}] / {k1,k2};
+						
+						{prevv1,prevv2} = {{1,0},{0,1}} / base^((ioctave-1)/2);
+						{prevrefx,prevrefy} = {ix,iy} / base^((ioctave-1)/2);
+						(*Print[ioctave," ================== ",ipt -> {x,y} -> {ix,iy} -> {refx,refy} -> mf@{v1,v2}];*)
+						AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ]
+							,Green,Line[{{prevrefx,prevrefy}, {prevrefx,prevrefy}+prevv1,{prevrefx,prevrefy}+prevv1+prevv2,{prevrefx,prevrefy}+prevv2, {prevrefx,prevrefy}} ]
+							} ];
+					,{ipt,Length[thislevelpts]}]
+				,(*ELSE*)
+					(*Do[
+						{x,y} = npts thislevelpts[[ipt]];
+						{dx,dy} = {base^(ioctave/2),base^(ioctave/2)};
+						{refx,refy} = Quotient[{x,y}, {dx,dy}] / {dx,dy};
+						{v1,v2} = {{1,0},{0,1}} / {dx,dy};
+						
+						{ix,iy} = Quotient[{x,y}, base^((ioctave-1)/2)];
+						{k1,k2} = If[EvenQ[ix+iy], {base^((ioctave-2)/2),base^((ioctave )/2)}, {base^((ioctave )/2),base^((ioctave-2)/2)}];
+						{prevv1,prevv2} = {{1/k1,0},{0,1/k2}} ;
+						{prevrefx,prevrefy} = Quotient[{x,y}, {k2,k1}] / {k2,k1};
+						Print[ioctave," ================== ",ipt -> {x,y}, " | ", {ix,iy} -> {k1,k2} , " | ", {prevrefx,prevrefy} -> mf@{prevv1,prevv2}];
+						AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ]
+							,Green,Line[{{prevrefx,prevrefy}, {prevrefx,prevrefy}+prevv1,{prevrefx,prevrefy}+prevv1+prevv2,{prevrefx,prevrefy}+prevv2, {prevrefx,prevrefy}} ]
+							} ];
+					,{ipt,Length[thislevelpts]}]*)
+				];
 				
-				(*seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ilevel];
-				fname = "optim_input_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+				(*seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ioctave];
+				fname = "optim_input_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";*)
 				(*exportSelectionBase3Simple2D[fname,seltlst];*)
 				If[dbg,
-				p = Graphics[ Append[background,#]& @ getBase3Simple2DTilesGL[tlst,showTileType], PlotLabel-> iOrdinalAbsolute ];
+					(*p = Graphics[ Append[background,#]& @ getBase3Simple2DTilesGL[tlst,showTileType], PlotLabel-> iOrdinalAbsolute ];*)
+					p = Graphics[ {frame,gl,AbsolutePointSize[5],Point/@pts,Table[Text[Style[i-1,14],pts[[i]],{-1,-1}],{i,Length[pts]}]}, PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
-					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
-				];*)
-			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
+					(*Abort[];*)
+				];
+			,{iOrdinalAbsolute,3^(ioctave-1)+1,3^ioctave}];
 			(*tlst = subdivBase3Simple2DTiles @ tlst;
-			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
-			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
-			tlst = fillSamplingPtsBase3Simple2DTiles[ilevel,tlst,mxTab,mxInv,mxInvH,mxInvV];
+			If[EvenQ[ioctave], mxInv = mxInvTab[[ioctave,1]] ];
+			If[OddQ[ioctave],{mxInvH, mxInvV} = mxInvTab[[ioctave]] ];
+			tlst = fillSamplingPtsBase3Simple2DTiles[ioctave,tlst,mxTab,mxInv,mxInvH,mxInvV];
 			Do[
-				seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ilevel];
+				seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ioctave];
 				fname = "optim_input_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 				(*exportSelectionBase3Simple2D[fname,seltlst];*)
 				If[dbg,
@@ -2495,8 +2531,8 @@ prepOptimDataBase3Seq2DFromMatBuilder[innlevels_:3, dbg_:True] :=
 					p//Print;
 					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 				];
-			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];*)
-		,{ilevel,nlevels}];
+			,{iOrdinalAbsolute,3^(ioctave-1)+1,3^ioctave}];*)
+		,{ioctave,noctaves}];
 	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
 
 (*
