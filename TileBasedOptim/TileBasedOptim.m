@@ -2491,7 +2491,7 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:3, dbg_:True] :=
 							} ];
 					,{ipt,Length[thislevelpts]}]
 				,(*ELSE*)
-					(*Do[
+					Do[
 						{x,y} = npts thislevelpts[[ipt]];
 						{dx,dy} = {base^(ioctave/2),base^(ioctave/2)};
 						{refx,refy} = Quotient[{x,y}, {dx,dy}] / {dx,dy};
@@ -2505,7 +2505,7 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:3, dbg_:True] :=
 						AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ]
 							,Green,Line[{{prevrefx,prevrefy}, {prevrefx,prevrefy}+prevv1,{prevrefx,prevrefy}+prevv1+prevv2,{prevrefx,prevrefy}+prevv2, {prevrefx,prevrefy}} ]
 							} ];
-					,{ipt,Length[thislevelpts]}]*)
+					,{ipt,Length[thislevelpts]}]
 				];
 				
 				(*seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ioctave];
