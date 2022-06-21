@@ -1743,6 +1743,9 @@ nDims = 2;
 	makeMSEref[11, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 
 
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
 nintegrands = 256 1024;
 nDims = 2;
 	integrandType=2;                                                                                                                                                                                   
@@ -2468,8 +2471,8 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:3, dbg_:True] :=
 		
 		
 		Do[
-			gl = {};
 			Do[
+			gl = {};
 				npts = base^ioctave;
 				pts = getMatBuiderPtsND[iOrdinalAbsolute, mxfname, owenFlag, depth, nDims, base, seed ];
 				thislevelpts = pts[[ 3^(ioctave-1)+1 ;; iOrdinalAbsolute ]];
@@ -2486,10 +2489,10 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:3, dbg_:True] :=
 						{prevv1,prevv2} = {{1,0},{0,1}} / base^((ioctave-1)/2);
 						{prevrefx,prevrefy} = {ix,iy} / base^((ioctave-1)/2);
 						(*Print[ioctave," ================== ",ipt -> {x,y} -> {ix,iy} -> {refx,refy} -> mf@{v1,v2}];*)
-						AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ]
-							,Green,Line[{{prevrefx,prevrefy}, {prevrefx,prevrefy}+prevv1,{prevrefx,prevrefy}+prevv1+prevv2,{prevrefx,prevrefy}+prevv2, {prevrefx,prevrefy}} ]
-							} ];
-					,{ipt,Length[thislevelpts]}]
+						curRect = {Blue,Dashed,AbsoluteThickness[4],Line[{{prevrefx,prevrefy}, {prevrefx,prevrefy}+prevv1,{prevrefx,prevrefy}+prevv1+prevv2,{prevrefx,prevrefy}+prevv2, {prevrefx,prevrefy}} ]};
+						AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ] } ];
+					,{ipt,Length[thislevelpts]}];
+					AppendTo[gl,curRect];
 				,(*ELSE*)
 					Do[
 						{x,y} = npts thislevelpts[[ipt]];
@@ -2497,15 +2500,15 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:3, dbg_:True] :=
 						{refx,refy} = Quotient[{x,y}, {dx,dy}] / {dx,dy};
 						{v1,v2} = {{1,0},{0,1}} / {dx,dy};
 						
-						{ix,iy} = Quotient[{x,y}, base^((ioctave-1)/2)];
-						{k1,k2} = If[EvenQ[ix+iy], {base^((ioctave-2)/2),base^((ioctave )/2)}, {base^((ioctave )/2),base^((ioctave-2)/2)}];
-						{prevv1,prevv2} = {{1/k1,0},{0,1/k2}} ;
-						{prevrefx,prevrefy} = Quotient[{x,y}, {k2,k1}] / {k2,k1};
-						Print[ioctave," ================== ",ipt -> {x,y}, " | ", {ix,iy} -> {k1,k2} , " | ", {prevrefx,prevrefy} -> mf@{prevv1,prevv2}];
-						AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ]
-							,Green,Line[{{prevrefx,prevrefy}, {prevrefx,prevrefy}+prevv1,{prevrefx,prevrefy}+prevv1+prevv2,{prevrefx,prevrefy}+prevv2, {prevrefx,prevrefy}} ]
-							} ];
-					,{ipt,Length[thislevelpts]}]
+						{ix,iy} = Quotient[{x,y}, base^((ioctave+2)/2)];
+						{k1,k2} = If[EvenQ[ix+iy], {base^((ioctave)/2),base^((ioctave+2)/2)}, {base^((ioctave+2)/2),base^((ioctave)/2)}];
+						{prevv1,prevv2} = 3 {{1/k1,0},{0,1/k2}};
+						{prevrefx,prevrefy} =3  Quotient[{x,y}, {k2,k1}] / {k1,k2};
+						curRect = {Blue,Dashed,AbsoluteThickness[4],Line[{{prevrefx,prevrefy}, {prevrefx,prevrefy}+prevv1,{prevrefx,prevrefy}+prevv1+prevv2,{prevrefx,prevrefy}+prevv2, {prevrefx,prevrefy}} ]};
+						(*Print[ioctave," ================== ",ipt -> {x,y}, " | ", {ix,iy} -> {k1,k2} , " | ", {prevrefx,prevrefy} -> mf@{prevv1,prevv2}];*)
+						AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ] } ];
+					,{ipt,Length[thislevelpts]}];
+					AppendTo[gl,curRect];
 				];
 				
 				(*seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ioctave];
