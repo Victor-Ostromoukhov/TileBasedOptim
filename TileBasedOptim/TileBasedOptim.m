@@ -1916,13 +1916,14 @@ getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",
 		execString = "sampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
 			<>If[owenFlag," --owen  --depth "<>ToString[depth], " " ]
 			<>" -p "<>ToString[base]<>" --matrixSize "<>ToString[19]<>" --seed "<>ToString[seed]<>" > /dev/null";
-		(*execString = "matrixSampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
-			<>If[owenFlag," -p  --depth "<>ToString[depth], " " ]
-			<>" -b "<>ToString[base]<>" --size "<>ToString[19]<>" --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";*)
 		res = Run[execPrefix<>execString];
 		If[res != 0, Print[execString -> res] ];
 		Import[outfname]
     ]
+
+		(*execString = "matrixSampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
+			<>If[owenFlag," -p  --depth "<>ToString[depth], " " ]
+			<>" -b "<>ToString[base]<>" --size "<>ToString[19]<>" --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";*)
 
 tstMatBuider[dbg_:True] :=
     Module[ {},
@@ -2419,37 +2420,9 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 	Export[fname,newtlst];
 ] (* exportSelectionBase3Simple2D *)
 
-prepOptimDataBase3Simple2D[innlevels_:1, dbg_:True] :=
-    Module[ {},
-    	setNo = 1;
-		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
-    	nlevels = innlevels;
-    	If[ !FileExistsQ["optim_input_2D/"], CreateDirectory["optim_input_2D/"] ];
-    	If[ !FileExistsQ["optim_figs_2D/"], CreateDirectory["optim_figs_2D/"] ];
-		mxTab = readMatBuilderMatrix["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat"];
-		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
-		tlst = {{typeSimpleHSq,{0,0}, {0,0},{{1,0},{0,1}}, {0,0},{{1,0},{0,1}}, 0 } };
-		Do[
-			tlst = subdivBase3Simple2DTiles @ tlst;
-			If[EvenQ[ilevel], mxInv = mxInvTab[[ilevel,1]] ];
-			If[OddQ[ilevel],{mxInvH, mxInvV} = mxInvTab[[ilevel]] ];
-Abort[];
-			tlst = fillSamplingPtsBase3Simple2DTiles[ilevel,tlst,mxTab,mxInv,mxInvH,mxInvV];
-			Do[
-				seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ilevel];
-				fname = "optim_input_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
-				(*exportSelectionBase3Simple2D[fname,seltlst];*)
-				If[dbg,
-				p = Graphics[ Append[background,#]& @ getBase3Simple2DTilesGL[tlst,showTileType], PlotLabel-> iOrdinalAbsolute ];
-					p//Print;
-					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
-				];
-			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
-		,{ilevel,nlevels}];
-	] (* prepOptimDataBase3Simple2D *)
-	
 
-prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:3, dbg_:True] :=
+
+prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, dbg_:True] :=
     Module[ {},
     	owenFlag = True;
     	depth = 19;
@@ -2461,18 +2434,20 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:3, dbg_:True] :=
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
     	frame={Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
     	noctaves = innoctaves;
-    	If[ !FileExistsQ["optim_input_2D/"], CreateDirectory["optim_input_2D/"] ];
-    	If[ !FileExistsQ["optim_figs_2D/"], CreateDirectory["optim_figs_2D/"] ];
+    	If[ !FileExistsQ["optimSeq_input_2D/"], CreateDirectory["optimSeq_input_2D/"] ];
+    	If[ !FileExistsQ["optimSeq_figs_2D/"], CreateDirectory["optimSeq_figs_2D/"] ];
     	
     	mxfname = "MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat";
 		mxTab = readMatBuilderMatrix[mxfname];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
-		tlst = {{typeSimpleHSq,{0,0}, {0,0},{{1,0},{0,1}} } };
 		
+		pts0 = getMatBuiderPtsND[1, mxfname, owenFlag, depth, nDims, base, seed ][[1]];
+		tlst = {{0,pts0, {0,0},{{1,0},{0,1}} } };
 		
 		Do[
+			from = If[ioctave == 1, 1, 3^(ioctave-1)+1];
 			Do[
-			gl = {};
+				gl = {};
 				npts = base^ioctave;
 				pts = getMatBuiderPtsND[iOrdinalAbsolute, mxfname, owenFlag, depth, nDims, base, seed ];
 				thislevelpts = pts[[ 3^(ioctave-1)+1 ;; iOrdinalAbsolute ]];
@@ -2510,32 +2485,16 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:3, dbg_:True] :=
 					,{ipt,Length[thislevelpts]}];
 					AppendTo[gl,curRect];
 				];
-				
-				(*seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ioctave];
-				fname = "optim_input_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";*)
-				(*exportSelectionBase3Simple2D[fname,seltlst];*)
+				AppendTo[tlst,{iOrdinalAbsolute-1,pts[[iOrdinalAbsolute]],N@{prevrefx,prevrefy},N@{prevv1,prevv2}}];
 				If[dbg,
-					(*p = Graphics[ Append[background,#]& @ getBase3Simple2DTilesGL[tlst,showTileType], PlotLabel-> iOrdinalAbsolute ];*)
 					p = Graphics[ {frame,gl,AbsolutePointSize[5],Point/@pts,Table[Text[Style[i-1,14],pts[[i]],{-1,-1}],{i,Length[pts]}]}, PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
-					(*Abort[];*)
+					Export["optimSeq_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 				];
 			,{iOrdinalAbsolute,3^(ioctave-1)+1,3^ioctave}];
-			(*tlst = subdivBase3Simple2DTiles @ tlst;
-			If[EvenQ[ioctave], mxInv = mxInvTab[[ioctave,1]] ];
-			If[OddQ[ioctave],{mxInvH, mxInvV} = mxInvTab[[ioctave]] ];
-			tlst = fillSamplingPtsBase3Simple2DTiles[ioctave,tlst,mxTab,mxInv,mxInvH,mxInvV];
-			Do[
-				seltlst = selectBase3Simple2DTiles[tlst, iOrdinalAbsolute/3^ioctave];
-				fname = "optim_input_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
-				(*exportSelectionBase3Simple2D[fname,seltlst];*)
-				If[dbg,
-				p = Graphics[ Append[background,#]& @ getBase3Simple2DTilesGL[tlst,showTileType], PlotLabel-> iOrdinalAbsolute ];
-					p//Print;
-					Export["optim_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
-				];
-			,{iOrdinalAbsolute,3^(ioctave-1)+1,3^ioctave}];*)
 		,{ioctave,noctaves}];
+		fname = "optimSeq_input_2D/2D_0m2net_set_"<>ToString[setNo]<>"_level_"<>ToString[base^noctaves]<>"_seed_"<>ToString[seed]<>".dat";
+		Export[fname,Flatten/@(tlst)];
 	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
 
 (*
