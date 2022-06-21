@@ -1746,12 +1746,9 @@ nDims = 2;
 nintegrands = 256 1024;
 nDims = 2;
 	integrandType=2;                                                                                                                                                                                   
-	nPointsets = 16;     
+	nPointsets = 64;     
 	integrandType=2;                                                                                                                                                                                   
-	makeMSEref[500, nPointsets, {1,8,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
-	nPointsets = 16;     
-	integrandType=2;                                                                                                                                                                                   
-	makeMSEref[501, nPointsets, {1,8,1/3.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[501, nPointsets, {1,8,1/9.}, integrandType, nDims, nintegrands];                                                                                                                               
 
 
 
