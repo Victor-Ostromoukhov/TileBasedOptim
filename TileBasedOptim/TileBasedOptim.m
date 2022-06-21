@@ -1731,10 +1731,11 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 256 1024;
 nDims = 2;
-	nPointsets = 16;     
 	integrandType=2;                                                                                                                                                                                   
-	makeMSEref[1, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
+	nPointsets = 1;     
 	makeMSEref[10, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
+	nPointsets = 16;     
+	makeMSEref[1, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[12, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[19, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
