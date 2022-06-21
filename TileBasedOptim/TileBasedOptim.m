@@ -2586,7 +2586,7 @@ optimTypeMSEOptimisationHeaviside = 3;
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSE[2, 2,{1,1}];
+	makeOptimMSE[2, 2,{3,3}];
 
 
 	makeOptimMSE[2, 1,{3,3}];
@@ -2632,7 +2632,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
 	       			,optimTypeMSEOptimisationHeaviside,
 	       			"src/Optimize_MSE_2DTiles/Repetitions_Heaviside/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
 	       			,optimTypeMSEOptimisationSoftEllipses,
-	       			"src/Optimize_MSE_2DTiles/Repetitions_SoftEllipses/Repetition_"<>ToString[setNo]<>"/2D_0m2net_set_1_level_Opt"<>ToString[npts]<>"_3.dat"
+	       			"src/Optimize_MSE_2DTiles/Repetitions_SoftEllipses/Repetition_"<>ToString[setNo]<>"/2D_0m2net_set_1_level_Opt"<>ToString[npts]<>".dat"
 	       			(*"src/Optimize_MSE_2DTiles/save-Repetitions_SoftEllipses/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"*)
 	       		];
 	       		(*Print["Pricessing ",npts," pts "->fname->FileExistsQ[fname]];*)
