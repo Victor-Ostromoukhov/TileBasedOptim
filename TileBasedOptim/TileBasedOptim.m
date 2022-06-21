@@ -2426,7 +2426,7 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-Do[prepOptimDataBase3Seq2DFromMatBuilder[6, i], {i, 16}]
+Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[6, i, False], {i, 64}]
 *)
 prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, dbg_:True] :=
     Module[ {},
