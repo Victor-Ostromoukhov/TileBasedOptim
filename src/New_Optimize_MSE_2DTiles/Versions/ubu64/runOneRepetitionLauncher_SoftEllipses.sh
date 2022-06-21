@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -ne 1 ] ;
+if [ $# -le 1 ] ;
 then
 	echo " Usage : runJobs <repetition>"
 	exit
@@ -21,13 +21,13 @@ lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses
 
 
-./OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads} 2 3 1
+./OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads} ${fname} 2 3 1
 
 for level in $(eval echo {1..$((${lst_length} - 1))})
 do
     from=${lst[$((${level} - 1 ))]}
     to=${lst[$level]}
     limit=$((${lst[$((${level} - 1 ))]} + 1))
-    OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads} ${fname} $from $to $limit
+    ./OneRepetitionOneLevel_SoftEllipses.sh ${repetition} ${nthreads} ${fname} $from $to $limit
 done
 

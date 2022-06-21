@@ -10,5 +10,5 @@ lst_length=1
 for (( ind=1 ; ind <= lst_length ; ind++ ))
 	do
         fname=${inputFiles[$((${ind}))]}
-        echo ./runOneRepetitionLauncher_SoftEllipses.sh $ind $fname
+       ./runOneRepetitionLauncher_SoftEllipses.sh $ind $fname
 	done
