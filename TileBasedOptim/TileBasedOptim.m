@@ -1733,12 +1733,12 @@ nintegrands = 256 1024;
 nDims = 2;
 	integrandType=2;                                                                                                                                                                                   
 	nPointsets = 1;     
-	makeMSEref[10, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	nPointsets = 16;     
 	makeMSEref[1, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
+	nPointsets = 16;     
+	makeMSEref[10, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[12, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
-	makeMSEref[19, nPointsets, {1,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[12, nPointsets, {1,16,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
+	makeMSEref[19, nPointsets, {1,16,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
 
 
 	nPointsets = 16;     
