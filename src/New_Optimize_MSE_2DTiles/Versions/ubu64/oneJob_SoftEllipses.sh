@@ -10,12 +10,11 @@ ind=$1
 nbthreads=$2
 fname=$3
 
-#nIterations=16
-#nItegrandsPerIteration=262144
+nIterations=64
 
-nIterations=16
 #nItegrandsPerIteration=4096
 nItegrandsPerIteration=16384
+#nItegrandsPerIteration=262144
 
 
 InputDir="../../Data/Input/Tiles/"
