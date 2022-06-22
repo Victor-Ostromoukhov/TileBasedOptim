@@ -9,6 +9,6 @@ lst_length=1
 
 for (( ind=1 ; ind <= lst_length ; ind++ ))
 	do
-        fname=${inputFiles[$((${ind}))]}
+        fname=${inputFiles[$((${ind} - 1))]}
        ./launcher_SoftEllipses.sh $ind $fname
 	done
