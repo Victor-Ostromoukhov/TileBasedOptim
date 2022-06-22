@@ -22,9 +22,9 @@ nItegrandsPerIteration=16384
 
 
 InputDir="../../Data/Input/Tiles/"
-NextIterDir="../../Data/Input/TilesLimited/SoftEllipses/OutputTiles/Repetition_${repetition}/"
-OutputDir="../../Data/Output/Limited/SoftEllipses/OutputTiles/Repetition_${repetition}/"
-TracesDir="../../Data/Output/Limited/SoftEllipses/Traces/Repetition_${repetition}/"
+NextIterDir="../../Data/Output/"
+OutputDir="../../Data/Output/"
+TracesDir="../../Data/Traces"
 mkdir -p ${NextIterDir}
 mkdir -p ${OutputDir}
 mkdir -p ${TracesDir}
