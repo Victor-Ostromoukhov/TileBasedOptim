@@ -2428,7 +2428,7 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[6, i, False], {i, 64}]
 *)
-prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, dbg_:True] :=
+prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:6, insetNo_: 1, dbg_:True] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         
@@ -2503,6 +2503,7 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, dbg_:True] :=
 		,{ioctave,noctaves}];
 		fname = "optimSeq_input_2D/2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>ToString[base^noctaves]<>"_seed_"<>ToString[seed]<>".dat";
 		Export[fname,Flatten/@(tlst)];
+		Print["Writing ",fname," done."];
 	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
 
 (*
