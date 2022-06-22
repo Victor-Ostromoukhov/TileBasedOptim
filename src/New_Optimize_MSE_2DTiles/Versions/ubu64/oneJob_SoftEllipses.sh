@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -le 3 ] ;
+if [ $# -le 2 ] ;
 then
 	echo "Usage : runOneJob <repetition> <nbthreads> <level>"
 	exit
