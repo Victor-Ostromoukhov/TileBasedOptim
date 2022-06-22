@@ -2587,19 +2587,11 @@ optimTypeMSEOptimisationHeaviside = 3;
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSE[2, 2,{3,3}];
-
-
-	makeOptimMSE[2, 1,{3,3}];
-
-	makeOptimMSE[2, 2,{4,4}];
-
-	makeOptimMSE[3, 1];
-	makeOptimMSE[3, 2];
+	makeOptimMSE[2, 2,{1,1}];
 
 *)
 
-makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, setFromTo_:{1,16}, innDims_:2, dbg_:False] :=
+makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, setFromTo_:{1,1}, innDims_:2, dbg_:False] :=
     Module[ {},
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
@@ -2624,22 +2616,20 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729};
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243};
 		counters = {3,9,27,81,243,729};
+		
+		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/";
+		files = FileNames["*.dat",{resDir}];
         Do[
 			npts = counters[[iOrdinalAbsolute]];
-	        mseTab = Parallelize @ Table[
+	        mseTab = (*Parallelize @*) Table[
+	        	setNo = isetNo;
 	       		fname = Switch[optimType
-	       			,optimTypeL2Optimisation,
-	       			"src/Optimize_L2Discrepancy_2DTiles_Noise_Cancelling/Repetitions/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
-	       			,optimTypeMSEOptimisationHeaviside,
-	       			"src/Optimize_MSE_2DTiles/Repetitions_Heaviside/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"
 	       			,optimTypeMSEOptimisationSoftEllipses,
-	       			"src/Optimize_MSE_2DTiles/Repetitions_SoftEllipses/Repetition_"<>ToString[setNo]<>"/2D_0m2net_set_1_level_Opt"<>ToString[npts]<>".dat"
-	       			(*"src/Optimize_MSE_2DTiles/save-Repetitions_SoftEllipses/Repetition_"<>ToString[setNo]<>"/Output/level_"<>ToString[npts]<>".dat"*)
+	       			files[[setNo]]
 	       		];
 	       		(*Print["Pricessing ",npts," pts "->fname->FileExistsQ[fname]];*)
 	       		If[FileExistsQ[fname],
-					pts = Import[fname][[;;,2;;3]];
-					(*pts = Import[fname][[;;,1;;2]];*)
+					pts = Import[fname][[;;npts, 2;;3]];
 					If[dbg, ipts = Round[ npts pts ];
 						Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
 		        	mse = getMSE[pts,"",nDims,integrandType];
@@ -2648,7 +2638,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
 					Print[fname, " does not exist"];
 					Nothing
 	       		]
-        	,{setNo,setFrom,setTo}];
+        	,{isetNo,setFrom,setTo}];
 	 		mseMean = Mean @ mseTab;
 		    Print[iOrdinalAbsolute, " ", resFname  -> mseMean];
 	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
