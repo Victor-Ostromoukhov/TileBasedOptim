@@ -27,6 +27,6 @@ do
     from=${lst[$((${level} - 1 ))]}
     to=${lst[$level]}
     limit=$((${lst[$((${level} - 1 ))]} + 1))
-    echo ./oneJob_SoftEllipses.sh ${repetition} ${nthreads} ${fname} $from $to $limit
+    ./oneJob_SoftEllipses.sh ${repetition} ${nthreads} ${fname} $from $to $limit
 done
 

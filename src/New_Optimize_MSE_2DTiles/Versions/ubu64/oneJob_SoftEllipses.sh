@@ -32,12 +32,12 @@ mkdir -p ${TracesDir}
 if [ $to -eq 3 ] ;
 then
     infname=${InputDir}${fname}
-    outfname=${OutputDir}${fname}.dat
-    outputNextStep=${NextIterDir}${fname}.dat
+    outfname=${OutputDir}${fname}
+    outputNextStep=${NextIterDir}${fname}
 else
-    infname=${NextIterDir}${fname}.dat
-    outfname=${OutputDir}${fname}.dat
-    outputNextStep=${NextIterDir}${fname}.dat
+    infname=${NextIterDir}${fname}
+    outfname=${OutputDir}${fname}
+    outputNextStep=${NextIterDir}${fname}
 fi
 
 ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep $outputNextStep --nbPoints $to --integrandType 2 -g $nItegrandsPerIteration --limit $limit
