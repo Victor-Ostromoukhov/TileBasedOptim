@@ -2861,6 +2861,64 @@ prepSoftEllipses2D[setNo_:1] :=
         If[ !FileExistsQ[dir], CreateDirectory[dir] ];
 		{precision,maxRecursion} = {20,10000};
 
+		nbatches = 16; 
+		nmus1D = 128;
+		nIntegrands = nbatches nmus1D^2;
+        If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
+
+		integrandTypeLabel = "SoftEllipses";
+		suffix = integrandTypeLabel<>"_setNo"<>ToString[setNo];
+		hppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
+		cppsuffix = "t_GaussianStruct2D" ;
+		varName = "tab_SoftEllipses2D" ;
+        res = Flatten[#,1]& @ (Table[
+          	partial = RandomSample @ (Flatten[#,1]& @ (Parallelize @  Table[
+		       	While[True,
+						rotmx = RandomVariate[CircularRealMatrixDistribution[nDims], 1][[1]];
+						sigma = {RandomReal[{.1, 1}],RandomReal[{.1, 1}]} / 2.;
+						mu = {(ixmu-1+(RandomReal[]))/nmus1D,(iymu-1+(RandomReal[]))/nmus1D};
+						sigmamx = sigma IdentityMatrix[nDims];
+		    			mxC =  rotmx.sigmamx;
+	        			mxCInv = Inverse[mxC];
+	        			mxCInv = T[mxCInv] . mxCInv;
+						Off[NIntegrate::slwcon];
+						Off[NIntegrate::eincr];
+						Off[NIntegrate::precw];
+						Off[NIntegrate::maxp];
+						Off[NIntegrate::inumr];
+						Off[General::stop];
+						Off[NIntegrate`SymbolicPiecewiseSubdivision::maxpwc];
+						integral = (NIntegrate[getMultivariateND[Table[x[i],{i,nDims}],{mu,mxCInv}], ## , MaxRecursion->maxRecursion, 
+								PrecisionGoal->precision, WorkingPrecision->precision, AccuracyGoal->precision] & @@ Table[{x[i],0,1},{i,nDims}]) ;
+					Print[suffix -> mf[{{ibatch,nbatches},{ixmu,nmus1D},{iymu,nmus1D}}] -> mf[{mu,sigma}] -> integral];
+					If[integral < eps, Print["Bad trial " -> suffix -> mf[{{ibatch,nbatches},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{mu,sigma}]  -> integral] ];
+					If[integral > eps, Break[] ];
+	        	];
+				Flatten@{integral,mu,mxCInv}
+	        ,{ixmu,nmus1D},{iymu,nmus1D}]) );
+	        partial
+        ,{ibatch,nbatches}]);
+		finalLength = Length[res];
+        resfname = dir<>suffix<>".dat";
+        Print["prepIntegrands2D" -> finalLength -> hppfname];
+		alldata = (Flatten/@res);
+		hppfname = dir<>hppsuffix<>".cpp";		
+		Put[(CForm /@ #) & /@ SetPrecision[alldata,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
+		Print["output into ",hppfname];		
+        Run["echo ' "<>cppsuffix<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' >> "<>hppfname ];
+        Run["cat "<> resfname<>" >> "<>hppfname];
+        Run["echo ';' >> "<>hppfname];       
+        DeleteFile[resfname];
+    ] (* prepSoftEllipses2D *)
+
+(*prepSoftEllipses2D[setNo_:1] :=
+    Module[ {},
+        nDims = 2;
+     	maxtime = 10;
+        dir = "integrands/";
+        If[ !FileExistsQ[dir], CreateDirectory[dir] ];
+		{precision,maxRecursion} = {20,10000};
+
 		nsigmas1D = 4; 
 		nmus1D = 128;
 		nIntegrands = nsigmas1D^2 nmus1D^2;
@@ -2913,7 +2971,7 @@ prepSoftEllipses2D[setNo_:1] :=
         Run["echo ';' >> "<>hppfname];       
         DeleteFile[resfname];
     ] (* prepSoftEllipses2D *)
-
+*)
 (*
 gitpull
 math
