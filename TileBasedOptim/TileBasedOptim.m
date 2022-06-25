@@ -2426,9 +2426,9 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, False], {i, 64}]
+Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[10, i, False], {i, 64}]
 *)
-prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:6, insetNo_: 1, dbg_:True] :=
+prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:10, insetNo_: 1, dbg_:True] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         
@@ -2496,7 +2496,7 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:6, insetNo_: 1, dbg_:True] :=
 				];
 			,{iOrdinalAbsolute,iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo}];
 		,{ioctave,noctaves}];
-		fname = "Tiles_Seq/2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>ToString[base^noctaves]<>"_seed_"<>ToString[seed]<>".dat";
+		fname = "Tiles_Seq/2D_0m2net_set_"<>i2s[setNo]<>"_uptoOctave_"<>ToString[noctaves]<>"_seed_"<>ToString[seed]<>".dat";
 		Export[fname,Flatten/@(tlst)];
 		Print["Writing ",fname," done."];
 	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
