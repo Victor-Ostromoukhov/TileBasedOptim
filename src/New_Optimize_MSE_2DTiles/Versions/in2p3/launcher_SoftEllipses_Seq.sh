@@ -14,5 +14,5 @@ nItegrandsPerIteration=4096
 
 nthreads=32
 
-sbatch -n ${nthreads} -J R${ind} -o "../../Traces/slurm-%j-${fname}.out" oneJob_SoftEllipses.sh ${ind} ${nthreads} ${fname}
+sbatch -n ${nthreads} -J R${ind} -o "../../Traces/slurm-%j-${fname}.out" oneJob_SoftEllipses_Seq.sh ${ind} ${nthreads} ${fname}
     
