@@ -4,8 +4,6 @@
 inputFiles=(`ls ../../Data/Input/Tiles_Seq/`)
 
 lst_length=${#inputFiles[@]}
-#lst_length=1
-
 
 for (( ind=1 ; ind <= lst_length ; ind++ ))
 	do
