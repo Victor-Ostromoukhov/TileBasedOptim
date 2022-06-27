@@ -2936,17 +2936,24 @@ prepSoftEllipses2D[setNo_:1] :=
         If[ !FileExistsQ[dir], CreateDirectory[dir] ];
 		{precision,maxRecursion} = {20,10000};
 
-		nbatches = 16; 
-		nmus1D = 128;
+		nbatches = 4; 
+		nmus1D = 256;
+		
+		nbatches = 2; 
+		nmus1D = 8;
 		nIntegrands = nbatches nmus1D^2;
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
 
 		integrandTypeLabel = "SoftEllipses";
 		suffix = integrandTypeLabel<>"_setNo"<>ToString[setNo];
-		hppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
-		cppsuffix = "t_GaussianStruct2D" ;
+		cppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
+        resfname = dir<>suffix<>".dat";
+		cppfname = dir<>cppsuffix<>".cpp";		
+        Print["prepSoftEllipses2D" -> cppfname];
+		cpptype = "t_GaussianStruct2D" ;
 		varName = "tab_SoftEllipses2D" ;
-        res = Flatten[#,1]& @ (Table[
+        res = {};
+        Do[
           	partial = RandomSample @ (Flatten[#,1]& @ (Parallelize @  Table[
 		       	While[True,
 						rotmx = RandomVariate[CircularRealMatrixDistribution[nDims], 1][[1]];
@@ -2971,18 +2978,15 @@ prepSoftEllipses2D[setNo_:1] :=
 	        	];
 				Flatten@{integral,mu,mxCInv}
 	        ,{ixmu,nmus1D},{iymu,nmus1D}]) );
-	        partial
-        ,{ibatch,nbatches}]);
-		finalLength = Length[res];
-        resfname = dir<>suffix<>".dat";
-        Print["prepIntegrands2D" -> finalLength -> hppfname];
-		alldata = (Flatten/@res);
-		hppfname = dir<>hppsuffix<>".cpp";		
-		Put[(CForm /@ #) & /@ SetPrecision[alldata,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
-		Print["output into ",hppfname];		
-        Run["echo ' "<>cppsuffix<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' >> "<>hppfname ];
-        Run["cat "<> resfname<>" >> "<>hppfname];
-        Run["echo ';' >> "<>hppfname];       
+	        AppendTo[res,partial];
+			finalLength = Length[res];
+			alldata = (Flatten/@res);
+			Put[(CForm /@ #) & /@ SetPrecision[alldata,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
+			Print["output into ",cppfname];		
+	        Run["echo ' "<>cpptype<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' > "<>cppfname ];
+	        Run["cat "<> resfname<>" >> "<>cppfname];
+	        Run["echo ';' >> "<>cppfname];       
+	    ,{ibatch,nbatches}];
         DeleteFile[resfname];
     ] (* prepSoftEllipses2D *)
 
