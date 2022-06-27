@@ -2943,10 +2943,9 @@ prepSoftEllipses2D[setNo_:1] :=
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
 
 		integrandTypeLabel = "SoftEllipses";
-		suffix = integrandTypeLabel<>"_setNo"<>ToString[setNo];
-		cppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[q];
+		suffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
         resfname = dir<>suffix<>".dat";
-		cppfname = dir<>cppsuffix<>".cpp";		
+		cppfname = dir<>suffix<>".cpp";		
         Print["prepSoftEllipses2D" -> cppfname];
 		cpptype = "t_GaussianStruct2D" ;
 		varName = "tab_SoftEllipses2D" ;
