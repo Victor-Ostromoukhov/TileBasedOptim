@@ -301,7 +301,7 @@ std::vector<int> randomAccessMatriceGenerator(int nbpts,int limit){
 
 /* ----------- Fonction Principale ----------- */
 template<int dimension>
-double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString,int niters,int nbThrow,std::string outputString,int gaussianSubSetSize,int integrandType,int limit,std::string outputStringNextStep, std::vector<std::string>* restOfTheDocument){
+double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString,int niters,int nbThrow,std::string outputString,int gaussianSubSetSize,int integrandType,int limit,std::string outputStringNextStep, std::vector<std::string>* restOfTheDocument,int intervalToWrite){
 
   std::default_random_engine generator;
   std::uniform_real_distribution<double> distribution(0.0,1.0);
@@ -379,6 +379,12 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
             injectSP(v,&points);
           }
       }
+
+
+      if (iter_over_pointset % intervalToWrite == 0 ) {
+         exportTiles(v,outputString);   
+      }
+
     }
 
     exportTiles(v,outputString);
@@ -405,7 +411,7 @@ int main(int argc, char const *argv[]) {
   std::string outputStringMSE ="MSE.dat";
   int limit = 1;
   std::vector<std::string>* restOfTheDocument = new std::vector<std::string>;
-
+  int intervalToWrite = 10;
   /* ----------- Fin Initialisation des variables ----------- */
 
   // =========== Début CLI11 Configuration =========== //
@@ -422,7 +428,7 @@ int main(int argc, char const *argv[]) {
       app.add_option("--integrandType",integrandType,"Type of the integrand to compute MSE : 1|-> HeaviSide, 2|-> SoftEllipses, 3|-> HardEllipses, 4|-> SoftRectangles, 5|-> HardRectangles. Default: "+std::to_string(integrandType));
       app.add_option("-l,--limit",limit,"The limit number behind which we don't modify the points. If left by default, will take every point. Default: "+std::to_string(limit));
       app.add_option("--outputNextStep",outputStringNextStep,"Path to output file fot next step, i.e. with all the 729 points. If left by default, it will not write it. default: "+outputStringNextStep);
-
+      app.add_option("--writingInterval",intervalToWrite,"Defines at which interval should the pointset be written. Default: "+std::to_string(intervalToWrite));
       CLI11_PARSE(app, argc, argv)
 
 // Initialisation du nombre d'integrandes en fonction du type d'integrande choisi
@@ -458,7 +464,7 @@ int main(int argc, char const *argv[]) {
       // =========== Fin OpenMP Configuration =========== //
 
         std::vector<Tiles<DIM>>* v = importTiles<DIM>(inputString,nbpts,restOfTheDocument);
-        double val = optimPointME<DIM>(v,nbpts,inputString,niters,nbThrow,outputString,gaussianSubSetSize,integrandType,limit-1,outputStringNextStep,restOfTheDocument);
+        double val = optimPointME<DIM>(v,nbpts,inputString,niters,nbThrow,outputString,gaussianSubSetSize,integrandType,limit-1,outputStringNextStep,restOfTheDocument,intervalToWrite);
         // =========== Ecriture de l'erreur associée à un pointset  =========== //
         // std::cout << val << '\n';
         if (outputStringMSE.compare("MSE.dat") != 0) {
