@@ -2939,14 +2939,12 @@ prepSoftEllipses2D[setNo_:1] :=
 		nbatches = 4; 
 		nmus1D = 256;
 		
-		nbatches = 2; 
-		nmus1D = 8;
 		nIntegrands = nbatches nmus1D^2;
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
 
 		integrandTypeLabel = "SoftEllipses";
 		suffix = integrandTypeLabel<>"_setNo"<>ToString[setNo];
-		cppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
+		cppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[q];
         resfname = dir<>suffix<>".dat";
 		cppfname = dir<>cppsuffix<>".cpp";		
         Print["prepSoftEllipses2D" -> cppfname];
@@ -2979,8 +2977,8 @@ prepSoftEllipses2D[setNo_:1] :=
 				Flatten@{integral,mu,mxCInv}
 	        ,{ixmu,nmus1D},{iymu,nmus1D}]) );
 	        AppendTo[res,partial];
-			finalLength = Length[res];
 			alldata = (Flatten/@res);
+			finalLength = Length[alldata];
 			Put[(CForm /@ #) & /@ SetPrecision[alldata,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
 			Print["output into ",cppfname];		
 	        Run["echo ' "<>cpptype<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' > "<>cppfname ];
