@@ -2944,6 +2944,9 @@ prepSoftEllipses2D[setNo_:1] :=
 
 		nbatches = 4; 
 		nmus1D = 256;
+
+		nbatches = 2; 
+		nmus1D = 2;
 		
 		nIntegrands = nbatches nmus1D^2;
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
@@ -2981,10 +2984,9 @@ prepSoftEllipses2D[setNo_:1] :=
 	        	];
 				Flatten@{integral,mu,mxCInv}
 	        ,{ixmu,nmus1D},{iymu,nmus1D}]) );
-	        AppendTo[res,partial];
-			alldata = (Flatten/@res);
-			finalLength = Length[alldata];
-			Put[(CForm /@ #) & /@ SetPrecision[alldata,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
+	        res = Join[res,partial];
+			finalLength = Length[res];
+			Put[(CForm /@ #) & /@ SetPrecision[res,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
 			Print["output into ",cppfname];		
 	        Run["echo ' "<>cpptype<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' > "<>cppfname ];
 	        Run["cat "<> resfname<>" >> "<>cppfname];
