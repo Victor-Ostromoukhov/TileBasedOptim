@@ -2503,7 +2503,7 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:10, insetNo_: 1, prevFlag_: Fa
 			,{iOrdinalAbsolute,iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo}];
 		,{ioctave,noctaves}];
 		fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_uptoOctave_"<>ToString[noctaves]<>"_seed_"<>ToString[seed]<>".dat";
-		Export[fname,Flatten/@(tlst)];
+		If[!dbg, Export[fname,Flatten/@(tlst)] ];
 		Print["Writing ",fname," done."];
 	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
 
