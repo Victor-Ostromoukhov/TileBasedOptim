@@ -2442,7 +2442,8 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:10, insetNo_: 1, dbg_:True] :=
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
     	frame={Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
     	noctaves = innoctaves;
-    	If[ !FileExistsQ["Tiles_Seq/"], CreateDirectory["Tiles_Seq/"] ];
+    	tilesDir = If[prevFlag, "Tiles_Seq_PrevLevel/", "Tiles_Seq_CurLevel/" ];
+    	If[ !FileExistsQ[tilesDir], CreateDirectory[tilesDir] ];
     	If[ !FileExistsQ["Tiles_Seq_Figs/"], CreateDirectory["Tiles_Seq_Figs/"] ];
     	
     	mxfname = "MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat";
