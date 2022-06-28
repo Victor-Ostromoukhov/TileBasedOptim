@@ -2936,6 +2936,7 @@ prepSoftEllipses2D[1]
 *)
 prepSoftEllipses2D[setNo_:1] :=
     Module[ {},
+        If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
         nDims = 2;
      	maxtime = 10;
         dir = "integrands/";
@@ -2944,12 +2945,6 @@ prepSoftEllipses2D[setNo_:1] :=
 
 		nbatches = 4; 
 		nmus1D = 256;
-
-		nbatches = 2; 
-		nmus1D = 2;
-		
-		nIntegrands = nbatches nmus1D^2;
-        If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
 
 		integrandTypeLabel = "SoftEllipses";
 		suffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
