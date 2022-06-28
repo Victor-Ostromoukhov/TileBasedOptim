@@ -2443,8 +2443,9 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:10, insetNo_: 1, prevFlag_: Fa
     	frame={Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
     	noctaves = innoctaves;
     	tilesDir = If[prevFlag, "Tiles_Seq_PrevLevel/", "Tiles_Seq_CurLevel/" ];
+   		tilesDirFigs = If[prevFlag, "Tiles_Seq_PrevLevel_Figs/", "Tiles_Seq_CurLevel_Figs/" ];
     	If[ !FileExistsQ[tilesDir], CreateDirectory[tilesDir] ];
-    	If[ !FileExistsQ["Tiles_Seq_Figs/"], CreateDirectory["Tiles_Seq_Figs/"] ];
+    	If[ !FileExistsQ[tilesDirFigs], CreateDirectory[tilesDirFigs] ];
     	
     	mxfname = "MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat";
 		mxTab = readMatBuilderMatrix[mxfname];
@@ -2497,11 +2498,11 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:10, insetNo_: 1, prevFlag_: Fa
 				If[dbg,
 					p = Graphics[ {frame,gl,AbsolutePointSize[5],Point/@pts[[;;iOrdinalAbsolute]],Table[Text[Style[i-1,14],pts[[i]],{-1,-1}],{i,iOrdinalAbsolute}]}, PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
-					Export["Tiles_Seq_Figs/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
+					Export[tilesDirFigs<>"2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 				];
 			,{iOrdinalAbsolute,iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo}];
 		,{ioctave,noctaves}];
-		fname = "Tiles_Seq/2D_0m2net_set_"<>i2s[setNo]<>"_uptoOctave_"<>ToString[noctaves]<>"_seed_"<>ToString[seed]<>".dat";
+		fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_uptoOctave_"<>ToString[noctaves]<>"_seed_"<>ToString[seed]<>".dat";
 		Export[fname,Flatten/@(tlst)];
 		Print["Writing ",fname," done."];
 	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
