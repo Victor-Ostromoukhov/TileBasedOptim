@@ -2428,7 +2428,7 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[10, i, False], {i, 64}]
 *)
-prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:10, insetNo_: 1, dbg_:True] :=
+prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:10, insetNo_: 1, prevFlag_: False, dbg_:True] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         
@@ -2489,7 +2489,11 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:10, insetNo_: 1, dbg_:True] :=
 						AppendTo[gl,curRect];
 					];
 				];
-				AppendTo[tlst,{iOrdinalAbsolute-1,{x,y},N@{prevrefx,prevrefy},N@{prevv1,prevv2}}];
+				If[prevFlag, 
+					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y},N@{prevrefx,prevrefy},N@{prevv1,prevv2}}];
+				,(*ELSE*)
+					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y},N@{refx,refy},N@{v1,v2}}];
+				];
 				If[dbg,
 					p = Graphics[ {frame,gl,AbsolutePointSize[5],Point/@pts[[;;iOrdinalAbsolute]],Table[Text[Style[i-1,14],pts[[i]],{-1,-1}],{i,iOrdinalAbsolute}]}, PlotLabel-> iOrdinalAbsolute ];
 					p//Print;
