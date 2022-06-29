@@ -1,4 +1,4 @@
- #include "../Integration/Integration.h" 
+q #include "../Integration/Integration.h"
  t_SoftRectanglesStruct2D tab_SoftRectangles2D[16384] = 
 {{0.032295877701924302651, 0.42140110117424633973, 0.025393379223426659763, 
   0.41138226103546943202, 0.017591844252704481183}, {0.44778147640867017066, 
