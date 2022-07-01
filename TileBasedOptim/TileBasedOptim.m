@@ -2708,7 +2708,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 	       			,optimTypeMSEOptimisationSoftEllipses,
 	       			files[[setNo]]
 	       		];
-	       		Print["Pricessing ",npts," pts "->fname ];
+	       		(*Print["Pricessing ",npts," pts "->fname ];*)
 	       		If[FileExistsQ[fname],
 	       			data = Import[fname];
 	       			If[Length[data] >= npts,
@@ -2725,8 +2725,8 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 	       		]
         	,{isetNo,setFrom,setTo}];
 	 		mseMean = Mean @ mseTab;
-		    Print[iOrdinalAbsolute, " ", resFname  -> mseMean];
 	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
+		    Print[iOrdinalAbsolute, " ", resFname  -> {mseMean,mseVariance}];
 	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
 	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,Length[mseTab],0}];	
 			Export[dirMSE<>resFname,header,"TEXT"];
