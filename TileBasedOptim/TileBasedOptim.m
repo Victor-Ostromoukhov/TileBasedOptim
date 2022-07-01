@@ -2669,7 +2669,7 @@ optimTypeMSEOptimisationHeaviside = 3;
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSE[2, 2,{1,1}];
+	makeOptimMSE[]
 
 *)
 
@@ -2678,7 +2678,6 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
         dtab = {};
-        ordinalAbsoluteMax = 3^8;
         setNo = 1;
     	integrandType = inIntegrandType;
 		integrandTypeLabel = Switch[integrandType,  1,"Heaviside", 2,"SoftEllipses", 3,"Rectangles", 4,"Ellipses", 5,"SoftEllipses_noRot" ];
@@ -2697,6 +2696,8 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 
 		counters = {3,9,27,81,243,729};
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729};
+		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561,9463,13647,19683,28388,40942,59049};
+		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561};
 		
 		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/";
 		files = FileNames["*.dat",{resDir}];
@@ -2726,7 +2727,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
         	,{isetNo,setFrom,setTo}];
 	 		mseMean = Mean @ mseTab;
 	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
-		    Print[iOrdinalAbsolute, " ", resFname  -> {mseMean,mseVariance}];
+		    Print[iOrdinalAbsolute, " ", resFname  -> {mseMean,mseVariance} -> Length[mseTab] ];
 	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
 	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,Length[mseTab],0}];	
 			Export[dirMSE<>resFname,header,"TEXT"];
