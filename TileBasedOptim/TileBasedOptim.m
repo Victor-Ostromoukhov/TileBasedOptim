@@ -2727,8 +2727,8 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
         	,{isetNo,setFrom,setTo}];
 	 		mseMean = Mean @ mseTab;
 	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
-		    Print[iOrdinalAbsolute, " ", resFname  -> {mseMean,mseVariance} -> Length[mseTab] ];
 	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
+		    Print[iOrdinalAbsolute, " ", resFname  -> mf[{{mseMean,mseVariance},{mseMin,mseMax}}] -> Length[mseTab] ];
 	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,Length[mseTab],0}];	
 			Export[dirMSE<>resFname,header,"TEXT"];
 			Export["tmp/tmpdat"<>pid<>".dat",datamse];
