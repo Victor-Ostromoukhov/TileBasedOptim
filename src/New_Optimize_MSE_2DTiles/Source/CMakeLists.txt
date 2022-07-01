@@ -34,7 +34,7 @@ endif()
 
 find_package(OpenMP REQUIRED)
 
-set(INTEGRANDS Lib/Integrands/Heaviside/Heaviside2D_nIntegrands1048576_optimSet.cpp Lib/Integrands/Ellipses/SoftEllipses/SoftEllipses2D_nIntegrands524288_optimSet.cpp Lib/Integrands/Ellipses/HardEllipses/Ellipses2D_nIntegrands16384_optimSet.cpp Lib/Integrands/Rectangles/HardRectangles/Rectangles2D_nIntegrands16384_optimSet.cpp Lib/Integrands/Rectangles/SoftRectangles/SoftRectangles2D_nIntegrands16384_optimSet.cpp )
+set(INTEGRANDS Lib/Integrands/Heaviside/Heaviside2D_nIntegrands1048576_optimSet.cpp Lib/Integrands/Ellipses/SoftEllipses/SoftEllipses2D_3x256x256_optimSet.cpp Lib/Integrands/Ellipses/HardEllipses/Ellipses2D_nIntegrands16384_optimSet.cpp Lib/Integrands/Rectangles/HardRectangles/Rectangles2D_nIntegrands16384_optimSet.cpp Lib/Integrands/Rectangles/SoftRectangles/SoftRectangles2D_nIntegrands16384_optimSet.cpp )
 
 add_library(Integrands STATIC ${INTEGRANDS} )
 
