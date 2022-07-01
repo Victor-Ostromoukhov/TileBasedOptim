@@ -62,9 +62,6 @@ struct t_RectanglesStruct2D{
 // Déclaration des tableaux d'intégrandes
 extern t_Heaviside2D tab_Heaviside2D[INTEGRAND_TYPE_HEAVISIDE_NUMBER];
 extern t_GaussianStruct2D tab_SoftEllipses2D[INTEGRAND_TYPE_SOFTELLIPSES_NUMBER];
-extern t_GaussianStruct2D tab_Ellipses2D[INTEGRAND_TYPE_HARDELLIPSES_NUMBER];
-extern t_SoftRectanglesStruct2D tab_SoftRectangles2D[INTEGRAND_TYPE_SOFTRECTANGLES_NUMBER];
-extern t_RectanglesStruct2D tab_Rectangles2D[INTEGRAND_TYPE_HARDRECTANGLES_NUMBER];
 
 /* ----------- Déclaration des structures et leur "méthodes" ----------- */
 
@@ -200,42 +197,6 @@ void initializeGaussianVectors(std::vector<MatXDynamic>* sigma,std::vector<VecXD
               }
           }
           (*anal)[z-(offset*gaussianSubSetSize)] = tab_SoftEllipses2D[z].integral; // Valeur analytique
-        }
-    break;
-    case 3: // HardEllipses
-
-      for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; z++) {
-        for (int i = 0; i < dimension; ++i) {
-            (*shift)[z][i] = tab_Ellipses2D[z].mu[i];  // Déplacement
-        }
-        for (int j = 0; j < dimension; ++j) {
-            for (int i = 0; i < dimension; ++i) {
-                (*sigma)[z](i, j) = tab_Ellipses2D[z].mxCInv[i + j * dimension]; // Matrice SR
-            }
-        }
-        (*anal)[z] = tab_Ellipses2D[z].integral; // Valeur analytique
-      }
-    break;
-    case 4: // SoftRectangles
-        for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; z++) {
-          for (int i = 0; i < dimension; ++i) {
-              (*shift)[z][i] = tab_SoftRectangles2D[z].mu[i];  // Déplacement
-          }
-          for (int j = 0; j < dimension; ++j) {
-              (*sigma)[z](0, j) = tab_SoftRectangles2D[z].sigma[j]; // Matrice SR
-          }
-          (*anal)[z] = tab_SoftRectangles2D[z].integral; // Valeur analytique
-        }
-    break;
-    case 5: // HardRectangles
-        for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; z++) {
-          for (int i = 0; i < dimension; ++i) {
-              (*shift)[z][i] = tab_Rectangles2D[z].mu[i];  // Déplacement
-          }
-          for (int j = 0; j < dimension; ++j) {
-              (*sigma)[z](0, j) = tab_Rectangles2D[z].sigma[j]; // Matrice SR
-          }
-          (*anal)[z] = tab_Rectangles2D[z].integral; // Valeur analytique
         }
     break;
     default:
