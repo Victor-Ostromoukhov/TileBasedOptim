@@ -2429,7 +2429,6 @@ math
 
 Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, False, False], {i, 256}]
 
-Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, True, False], {i, 256}]
 *)
 prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:8, insetNo_: 1, prevFlag_: False, dbg_:True] :=
     Module[ {},
@@ -2653,8 +2652,8 @@ getMSE[pts_, inptsfname_:"", innDims_:2, inIntegrandType_:2, dbg_:False] :=
         ];
     	integrandType = inIntegrandType;
     	nIntegrands = Switch[inIntegrandType
-    		,1,1024 1024	(* "Heaviside" *)
-   			,2,256 1024		(* "SoftEllipses" *)
+    		,1,512 1024	(* "Heaviside" *)
+   			,2,256 1024	/2	(* "SoftEllipses" *)
    		];
  		execString = "new_integrateND_from_file --nintegrands "<>ToString[nIntegrands]<>" -i "<>ptsfname<>" -o "<>msefname<>" --integrandType "<>ToString[integrandType]<>" --nDims "<>ToString[nDims]<>" > /dev/null";
 		res = Run[execPrefix<>execString];
@@ -2676,7 +2675,7 @@ math
 
 *)
 
-makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,64}, innDims_:2, dbg_:False] :=
+makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,1}, innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -2704,6 +2703,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561,9463,13647,19683,28388,40942,59049};
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561};
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549};
+		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505};
 		
 		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/";
 		files = FileNames["*.dat",{resDir}];
@@ -2746,7 +2746,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 			Print[dirMSE<>resFname, " written."];
 			mseTab
         ,{iOrdinalAbsolute,Length[counters]}];
-        Do[
+        (*Do[
 	        thebest = Intersection @@ bestCandidates[[ibest;;]];
 	        If[Length[thebest] > 0, Break[] ];
         ,{ibest,Length[bestCandidates]}];
@@ -2762,7 +2762,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 			Export["tmp/tmpdat"<>pid<>".dat",datamse];
 			Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFnameBest];
 			Print[dirMSE<>resFnameBest, " written."];
-        ,{iOrdinalAbsolute,Length[counters]}];
+        ,{iOrdinalAbsolute,Length[counters]}];*)
          
    ] (* makeOptimMSE *)
 
@@ -2917,7 +2917,7 @@ showstdOptimMSE[] :=
 
 			(*data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Mean.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
 			mseOptimMean = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
-			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Best.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Mean.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
 			mseOptimBest = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			 
 		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, mseOptimBest} ;

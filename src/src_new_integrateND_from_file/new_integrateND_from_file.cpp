@@ -175,7 +175,7 @@ int main(int argc, char **argv) {
     int integrandType = 1;
     unsigned int nDims=2, firstDim = 0;
 	uint32_t seed = 13374269;
-	int nintegrands = 1024*1024;
+	int nintegrands = 2*64*1024;
 
 	CLI::App app { "integrate2D_from_file" };
 	app.add_option("-n,--nDims", nDims, "number of dimensions default: " + std::to_string(nDims) );

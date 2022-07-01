@@ -18,15 +18,6 @@ struct t_Heaviside4D {double integral; double muDiscotinuity[4]; double normal[4
 struct t_Heaviside5D {double integral; double muDiscotinuity[5]; double normal[5]; };
 struct t_Heaviside6D {double integral; double muDiscotinuity[6]; double normal[6]; };
 
-struct t_Gauss1D {double integral; double mu[1] ; double mxCInv[1 * 1] ; };
-struct t_Gauss2D {double integral; double mu[2] ; double mxCInv[2 * 2] ; };
-struct t_Gauss3D {double integral; double mu[3] ; double mxCInv[3 * 3] ; };
-struct t_Gauss4D {double integral; double mu[4] ; double mxCInv[4 * 4] ; };
-struct t_Gauss5D {double integral; double mu[5] ; double mxCInv[5 * 5] ; };
-struct t_Gauss6D {double integral; double mu[6] ; double mxCInv[6 * 6] ; };
-struct t_Gauss8D {double integral; double mu[8] ; double mxCInv[8 * 8] ; };
-struct t_Gauss10D {double integral; double mu[10] ; double mxCInv[10 * 10] ; };
-struct t_Gauss12D {double integral; double mu[12] ; double mxCInv[12 * 12] ; };
 
 struct t_GaussianStruct1D {double integral; double mu[1] ; double mxCInv[1 * 1] ; };
 struct t_GaussianStruct2D {double integral; double mu[2] ; double mxCInv[2 * 2] ; };
@@ -38,51 +29,9 @@ struct t_GaussianStruct8D {double integral; double mu[8] ; double mxCInv[8 * 8] 
 struct t_GaussianStruct10D {double integral; double mu[10] ; double mxCInv[10 * 10] ; };
 struct t_GaussianStruct12D {double integral; double mu[12] ; double mxCInv[12 * 12] ; };
 
-struct t_RectanglesStruct2D {double integral; double muleft[2],muright[2],mubottom[2],mutop[2]; double vleft[2],vright[2],vbottom[2],vtop[2]; };
-//struct t_RectanglesStruct2D {double integral; double mu[2]; double sigma[2]; };
-struct t_RectanglesStruct3D {double integral; double mu[3]; double sigma[3]; };
-struct t_RectanglesStruct4D {double integral; double mu[4]; double sigma[4]; };
-struct t_RectanglesStruct5D {double integral; double mu[5]; double sigma[5]; };
-struct t_RectanglesStruct6D {double integral; double mu[6]; double sigma[6]; };
-struct t_RectanglesStruct7D {double integral; double mu[7]; double sigma[7]; };
-struct t_RectanglesStruct8D {double integral; double mu[8]; double sigma[8]; };
-struct t_RectanglesStruct10D {double integral; double mu[10]; double sigma[10]; };
-struct t_RectanglesStruct12D {double integral; double mu[12]; double sigma[12]; };
-
-struct t_SoftRectanglesStruct2D {double integral; double mu[2]; double sigma[2]; };
-struct t_SoftRectanglesStruct3D {double integral; double mu[3]; double sigma[3]; };
-struct t_SoftRectanglesStruct4D {double integral; double mu[4]; double sigma[4]; };
-struct t_SoftRectanglesStruct5D {double integral; double mu[5]; double sigma[5]; };
-struct t_SoftRectanglesStruct6D {double integral; double mu[6]; double sigma[6]; };
-struct t_SoftRectanglesStruct7D {double integral; double mu[7]; double sigma[7]; };
-struct t_SoftRectanglesStruct8D {double integral; double mu[8]; double sigma[8]; };
-struct t_SoftRectanglesStruct10D {double integral; double mu[10]; double sigma[10]; };
-struct t_SoftRectanglesStruct12D {double integral; double mu[12]; double sigma[12]; };
-
-#define N_INTEGRANDS 262144
-
 #include "../Integrands/Heaviside2D_nIntegrands524288_testSet.hpp"
-#include "../Integrands/SoftEllipses2D_testSet_4x4x128x128_testSet.hpp"
-
-//extern t_GaussianStruct1D tab_Ellipses1D[16384] ;
-extern t_GaussianStruct2D tab_Ellipses2D[16384] ;
-//extern t_GaussianStruct3D tab_Ellipses3D[16384] ;
-//extern t_GaussianStruct4D tab_Ellipses4D[16384] ;
-//extern t_GaussianStruct5D tab_Ellipses5D[16384] ;
-//extern t_GaussianStruct6D tab_Ellipses6D[16384] ;
-//extern t_GaussianStruct8D tab_Ellipses8D[16384] ;
-//extern t_GaussianStruct10D tab_Ellipses10D[16384] ;
-//extern t_GaussianStruct12D tab_Ellipses12D[16384] ;
-
-//extern t_GaussianStruct1D tab_SoftEllipses1D[16384] ;
-extern t_GaussianStruct2D tab_SoftEllipses2D[262144] ;
-//extern t_GaussianStruct3D tab_SoftEllipses3D[16384] ;
-//extern t_GaussianStruct4D tab_SoftEllipses4D[16384] ;
-//extern t_GaussianStruct5D tab_SoftEllipses5D[16384] ;
-//extern t_GaussianStruct6D tab_SoftEllipses6D[16384] ;
-//extern t_GaussianStruct8D tab_SoftEllipses8D[16384] ;
-//extern t_GaussianStruct10D tab_SoftEllipses10D[16384] ;
-//extern t_GaussianStruct12D tab_SoftEllipses12D[16384] ;
+//#include "../Integrands/SoftEllipses2D_testSet_4x4x128x128_testSet.hpp"
+#include "../Integrands/SoftEllipses2D_2x256x256_optimSet.hpp"
 
 //extern t_Heaviside2D tab_Heaviside2D[262144] ;
 extern t_Heaviside3D tab_Heaviside3D[16384] ;
@@ -155,7 +104,6 @@ inline double calculate_mse(const std::vector<Vec>& points,
     }
 
     double mse_accumulator = 0.;
-    int k_nintegrands = N_INTEGRANDS / nintegrands;
     int nDims = points[0].dim();
     // integration over 1K integrands over 16K
 //#pragma omp parallel for schedule(dynamic) reduction(+:mse_accumulator)
@@ -165,11 +113,7 @@ inline double calculate_mse(const std::vector<Vec>& points,
         int integrand_index;
 		double *muleft,*muright,*mubottom,*mutop,*vleft,*vright,*vbottom,*vtop;
 
-		integrand_index = iintegrands*k_nintegrands + floor(k_nintegrands * rng.sample_double());// drand48());
-        if(nintegrands == 1)
-        	integrand_index = 1;
-        else
-            integrand_index = iintegrands*k_nintegrands + floor(k_nintegrands * rng.sample_double());// drand48());
+		integrand_index = iintegrands;
         double accumulator = 0.;
         switch (integrandType) {
 		case 1 : // HeavisideND
