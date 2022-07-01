@@ -23,6 +23,7 @@ mkdir -p ${TracesDir}
  
     infname=${InputDir}${fname}
     outfname=${OutputDir}${fname}
+echo cp ${infname} ${outfname}
 cp ${infname} ${outfname}
 
 #the rest of counters...
