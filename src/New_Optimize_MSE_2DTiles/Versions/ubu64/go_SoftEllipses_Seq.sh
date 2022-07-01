@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-inputFiles=(`ls ../../Data/Input/Tiles/`)
+inputFiles=(`ls ../../Data/Input/Tiles_Seq/`)
 
 lst_length=${#inputFiles[@]}
 #lst_length=1
