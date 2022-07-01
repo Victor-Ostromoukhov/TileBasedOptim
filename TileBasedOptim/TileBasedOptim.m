@@ -3100,7 +3100,6 @@ prepHeavisideND[innDims_:2, setNo_:1] :=
     Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector,alpha,j,
     	integrandTypeLabel,hppsuffix,cppsuffix,varName},
     	nIntegrands = 512 1024;
-    	nIntegrands =  1024;
         If[$ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
         nDims = innDims;
 
