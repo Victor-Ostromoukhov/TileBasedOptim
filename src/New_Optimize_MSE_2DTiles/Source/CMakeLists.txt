@@ -34,7 +34,7 @@ endif()
 
 find_package(OpenMP REQUIRED)
 
-set(INTEGRANDS Lib/Integrands/Heaviside/Heaviside2D_nIntegrands1048576_optimSet.cpp Lib/Integrands/Ellipses/SoftEllipses/SoftEllipses2D_2x256x256_optimSet.cpp )
+set(INTEGRANDS Lib/Integrands/Heaviside2D_nIntegrands524288_optimSet.cpp Lib/Integrands/SoftEllipses2D_2x256x256_optimSet.cpp )
 
 add_library(Integrands STATIC ${INTEGRANDS} )
 
