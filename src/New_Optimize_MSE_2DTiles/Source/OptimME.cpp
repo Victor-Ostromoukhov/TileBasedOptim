@@ -381,7 +381,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
       }
 
 
-      if (iter_over_pointset % intervalToWrite == 0 ) {
+      if (iter_over_pointset % intervalToWrite == (intervalToWrite-1) ) {
          exportTiles(v,outputString);   
       }
 
