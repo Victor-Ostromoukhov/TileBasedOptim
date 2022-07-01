@@ -19,15 +19,9 @@
 
 #define INTEGRAND_TYPE_HEAVISIDE 1
 #define INTEGRAND_TYPE_SOFTELLIPSES 2
-#define INTEGRAND_TYPE_HARDELLIPSES 3
-#define INTEGRAND_TYPE_SOFTRECTANGLES 4
-#define INTEGRAND_TYPE_HARDRECTANGLES 5
 
-#define INTEGRAND_TYPE_HEAVISIDE_NUMBER 1048576
-#define INTEGRAND_TYPE_SOFTELLIPSES_NUMBER 524288
-#define INTEGRAND_TYPE_HARDELLIPSES_NUMBER 16384
-#define INTEGRAND_TYPE_SOFTRECTANGLES_NUMBER 16384
-#define INTEGRAND_TYPE_HARDRECTANGLES_NUMBER 16384
+#define INTEGRAND_TYPE_HEAVISIDE_NUMBER 524288
+#define INTEGRAND_TYPE_SOFTELLIPSES_NUMBER 131072
 
 // Declaration des variables globales
 
@@ -41,30 +35,16 @@ struct t_GaussianStruct2D {
     double mxCInv[2 * 2];
 };
 
-struct t_SoftRectanglesStruct2D{
-  double integral;
-  double mu[2];
-  double sigma[2];
-};
-
 struct t_Heaviside2D {
   double integral;
   double muDiscotinuity[2];
   double normal[2];
 };
 
-struct t_RectanglesStruct2D{
-  double integral;
-  double mu[2];
-  double sigma[2];
-};
 
 // Déclaration des tableaux d'intégrandes
 extern t_Heaviside2D tab_Heaviside2D[INTEGRAND_TYPE_HEAVISIDE_NUMBER];
 extern t_GaussianStruct2D tab_SoftEllipses2D[INTEGRAND_TYPE_SOFTELLIPSES_NUMBER];
-extern t_GaussianStruct2D tab_Ellipses2D[INTEGRAND_TYPE_HARDELLIPSES_NUMBER];
-extern t_SoftRectanglesStruct2D tab_SoftRectangles2D[INTEGRAND_TYPE_SOFTRECTANGLES_NUMBER];
-extern t_RectanglesStruct2D tab_Rectangles2D[INTEGRAND_TYPE_HARDRECTANGLES_NUMBER];
 
 /* ----------- Déclaration des structures et leur "méthodes" ----------- */
 
@@ -202,42 +182,6 @@ void initializeGaussianVectors(std::vector<MatXDynamic>* sigma,std::vector<VecXD
           (*anal)[z-(offset*gaussianSubSetSize)] = tab_SoftEllipses2D[z].integral; // Valeur analytique
         }
     break;
-    case 3: // HardEllipses
-
-      for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; z++) {
-        for (int i = 0; i < dimension; ++i) {
-            (*shift)[z][i] = tab_Ellipses2D[z].mu[i];  // Déplacement
-        }
-        for (int j = 0; j < dimension; ++j) {
-            for (int i = 0; i < dimension; ++i) {
-                (*sigma)[z](i, j) = tab_Ellipses2D[z].mxCInv[i + j * dimension]; // Matrice SR
-            }
-        }
-        (*anal)[z] = tab_Ellipses2D[z].integral; // Valeur analytique
-      }
-    break;
-    case 4: // SoftRectangles
-        for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; z++) {
-          for (int i = 0; i < dimension; ++i) {
-              (*shift)[z][i] = tab_SoftRectangles2D[z].mu[i];  // Déplacement
-          }
-          for (int j = 0; j < dimension; ++j) {
-              (*sigma)[z](0, j) = tab_SoftRectangles2D[z].sigma[j]; // Matrice SR
-          }
-          (*anal)[z] = tab_SoftRectangles2D[z].integral; // Valeur analytique
-        }
-    break;
-    case 5: // HardRectangles
-        for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; z++) {
-          for (int i = 0; i < dimension; ++i) {
-              (*shift)[z][i] = tab_Rectangles2D[z].mu[i];  // Déplacement
-          }
-          for (int j = 0; j < dimension; ++j) {
-              (*sigma)[z](0, j) = tab_Rectangles2D[z].sigma[j]; // Matrice SR
-          }
-          (*anal)[z] = tab_Rectangles2D[z].integral; // Valeur analytique
-        }
-    break;
     default:
       std::cerr << "The chosen integrand type hasn't been implemented yet, so stay tuned." << '\n';
     break;
@@ -301,7 +245,7 @@ std::vector<int> randomAccessMatriceGenerator(int nbpts,int limit){
 
 /* ----------- Fonction Principale ----------- */
 template<int dimension>
-double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString,int niters,int nbThrow,std::string outputString,int gaussianSubSetSize,int integrandType,int limit,std::string outputStringNextStep, std::vector<std::string>* restOfTheDocument){
+double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString,int niters,int nbThrow,std::string outputString,int gaussianSubSetSize,int integrandType,int limit,std::string outputStringNextStep, std::vector<std::string>* restOfTheDocument,int intervalToWrite){
 
   std::default_random_engine generator;
   std::uniform_real_distribution<double> distribution(0.0,1.0);
@@ -369,8 +313,9 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
           }
           newPointHolder<dimension> theChosenOne = *std::min_element(mseTab+0,mseTab+nbThrow,compareTwoNewPointHolder<dimension>);
           if (theChosenOne.apportOfNewPoint < tabPtsValGauss[gaussianSubSetSize]) {
-            double delta = fabs(theChosenOne.apportOfNewPoint - prevMSE);
-            std::cout << outputString << " iter=" << iter_over_pointset << " npts=" << nbpts << " MSE : " << initialSE << " -> " << theChosenOne.apportOfNewPoint << " \t delta : "<< delta << std::endl;
+//              double delta = fabs(theChosenOne.apportOfNewPoint - prevMSE);
+            double gain = initialSE / (theChosenOne.apportOfNewPoint);
+            std::cout << outputString << " iter=" << iter_over_pointset << " npts=" << nbpts << " MSE : " << initialSE << " -> " << theChosenOne.apportOfNewPoint << " \t gain : "<< gain << "\t| " << log(gain)/log(nbpts) << std::endl;
             prevMSE = theChosenOne.apportOfNewPoint;
             tabPtsValGauss[gaussianSubSetSize] = theChosenOne.apportOfNewPoint;
             changeAllValueGaussTab(points[theChosenOne.index],theChosenOne.point, &sigma,&shift, tabPtsValGauss,gaussianSubSetSize,nbpts,integrandType);
@@ -379,6 +324,12 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
             injectSP(v,&points);
           }
       }
+
+
+      if (iter_over_pointset % intervalToWrite == (intervalToWrite-1) ) {
+         exportTiles(v,outputString);   
+      }
+
     }
 
     exportTiles(v,outputString);
@@ -405,7 +356,7 @@ int main(int argc, char const *argv[]) {
   std::string outputStringMSE ="MSE.dat";
   int limit = 1;
   std::vector<std::string>* restOfTheDocument = new std::vector<std::string>;
-
+  int intervalToWrite = 10;
   /* ----------- Fin Initialisation des variables ----------- */
 
   // =========== Début CLI11 Configuration =========== //
@@ -419,10 +370,10 @@ int main(int argc, char const *argv[]) {
       app.add_option("-o,--output",outputString,"Path to output file, default: "+outputString);
       app.add_option("-g",gaussianSubSetSize,"Number of (gaussian) integrands to iterate over in one iteration, default: "+std::to_string(gaussianSubSetSize));
       app.add_option("-m,--writeMSE",outputStringMSE,"If precised, will write the MSE of the pointset by appending it to this file, default: "+outputStringMSE);
-      app.add_option("--integrandType",integrandType,"Type of the integrand to compute MSE : 1|-> HeaviSide, 2|-> SoftEllipses, 3|-> HardEllipses, 4|-> SoftRectangles, 5|-> HardRectangles. Default: "+std::to_string(integrandType));
+      app.add_option("--integrandType",integrandType,"Type of the integrand to compute MSE : 1 -> HeaviSide, 2 -> SoftEllipses Default: "+std::to_string(integrandType));
       app.add_option("-l,--limit",limit,"The limit number behind which we don't modify the points. If left by default, will take every point. Default: "+std::to_string(limit));
       app.add_option("--outputNextStep",outputStringNextStep,"Path to output file fot next step, i.e. with all the 729 points. If left by default, it will not write it. default: "+outputStringNextStep);
-
+      app.add_option("--writingInterval",intervalToWrite,"Defines at which interval should the pointset be written. Default: "+std::to_string(intervalToWrite));
       CLI11_PARSE(app, argc, argv)
 
 // Initialisation du nombre d'integrandes en fonction du type d'integrande choisi
@@ -433,15 +384,6 @@ int main(int argc, char const *argv[]) {
           break;
         case INTEGRAND_TYPE_SOFTELLIPSES:
           total_N_integrands = INTEGRAND_TYPE_SOFTELLIPSES_NUMBER;
-          break;
-        case INTEGRAND_TYPE_HARDELLIPSES:
-          total_N_integrands = INTEGRAND_TYPE_HARDELLIPSES_NUMBER;
-          break;
-        case INTEGRAND_TYPE_SOFTRECTANGLES:
-          total_N_integrands = INTEGRAND_TYPE_SOFTRECTANGLES_NUMBER;
-          break;
-        case INTEGRAND_TYPE_HARDRECTANGLES:
-          total_N_integrands = INTEGRAND_TYPE_HARDRECTANGLES_NUMBER;
           break;
         default:
         std::cerr << "L'integrande specifiee n'est pas disponible." << '\n';
@@ -458,7 +400,7 @@ int main(int argc, char const *argv[]) {
       // =========== Fin OpenMP Configuration =========== //
 
         std::vector<Tiles<DIM>>* v = importTiles<DIM>(inputString,nbpts,restOfTheDocument);
-        double val = optimPointME<DIM>(v,nbpts,inputString,niters,nbThrow,outputString,gaussianSubSetSize,integrandType,limit-1,outputStringNextStep,restOfTheDocument);
+        double val = optimPointME<DIM>(v,nbpts,inputString,niters,nbThrow,outputString,gaussianSubSetSize,integrandType,limit-1,outputStringNextStep,restOfTheDocument,intervalToWrite);
         // =========== Ecriture de l'erreur associée à un pointset  =========== //
         // std::cout << val << '\n';
         if (outputStringMSE.compare("MSE.dat") != 0) {
