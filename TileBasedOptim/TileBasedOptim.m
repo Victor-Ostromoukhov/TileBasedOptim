@@ -2673,7 +2673,7 @@ math
 
 *)
 
-makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,256}, innDims_:2, dbg_:False] :=
+makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,64}, innDims_:2, dbg_:False] :=
     Module[ {},
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
