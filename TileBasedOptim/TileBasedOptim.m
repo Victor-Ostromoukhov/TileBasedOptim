@@ -2700,7 +2700,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729};
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561,9463,13647,19683,28388,40942,59049};
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561};
-		counters = {3,4,6,9,13,19,27};
+		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549};
 		
 		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/";
 		files = FileNames["*.dat",{resDir}];
