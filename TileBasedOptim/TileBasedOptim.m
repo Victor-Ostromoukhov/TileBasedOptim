@@ -2673,7 +2673,7 @@ math
 
 *)
 
-makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, setFromTo_:{1,1}, innDims_:2, dbg_:False] :=
+makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,256}, innDims_:2, dbg_:False] :=
     Module[ {},
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
@@ -2702,19 +2702,23 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationHeaviside, inIntegrandType_:2, s
 		files = FileNames["*.dat",{resDir}];
         Do[
 			npts = counters[[iOrdinalAbsolute]];
-	        mseTab = (*Parallelize @*) Table[
+	        mseTab = Parallelize @ Table[
 	        	setNo = isetNo;
 	       		fname = Switch[optimType
 	       			,optimTypeMSEOptimisationSoftEllipses,
 	       			files[[setNo]]
 	       		];
-	       		(*Print["Pricessing ",npts," pts "->fname->FileExistsQ[fname]];*)
+	       		Print["Pricessing ",npts," pts "->fname ];
 	       		If[FileExistsQ[fname],
-					pts = Import[fname][[;;npts, 2;;3]];
-					If[dbg, ipts = Round[ npts pts ];
-						Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
-		        	mse = getMSE[pts,"",nDims,integrandType];
-					{npts,mse}
+	       			data = Import[fname];
+	       			If[Length[data] >= npts,
+						pts = data[[;;npts, 2;;3]];
+						If[dbg, ipts = Round[ npts pts ];Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+		    	    	mse = getMSE[pts,"",nDims,integrandType];
+						{npts,mse}
+	       			,(*ELSE*)
+	       				Nothing
+	       			]
 				,(*ELSE*)
 					Print[fname, " does not exist"];
 					Nothing
