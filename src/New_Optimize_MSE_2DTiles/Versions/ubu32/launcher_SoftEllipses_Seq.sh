@@ -9,7 +9,7 @@ fi
 ind=$1
 fname=$2
 
-nIterations=16
+nIterations=64
 nItegrandsPerIteration=65536
 
 nthreads=32
