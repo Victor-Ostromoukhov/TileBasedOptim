@@ -2429,7 +2429,8 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 
-Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, False, False], {i, 256}]
+Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, False, False], {i, 64}]
+Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, True, False], {i, 64}]
 
 *)
 prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:8, insetNo_: 1, prevFlag_: False, dbg_:True] :=
@@ -2679,7 +2680,12 @@ math
 
 doubleCheck[] :=
     Module[ {},
-        data = Import["src/New_Optimize_MSE_2DTiles/Data/Input/Tiles_Seq/2D_0m2net_set_000001_uptoOctave_10_seed_18615.dat"][[;;,2;;3]];
+    	nDims = 2;
+    	integrandType = 2;
+        npts = 81;
+        pts = Import["src/New_Optimize_MSE_2DTiles/Data/Input/Tiles_Seq_PrevLevel/2D_0m2net_set_000001_uptoOctave_8_seed_36827.dat"][[;;npts,2;;3]];
+        mse = getMSE[pts,"",nDims,integrandType];
+        Print[npts -> mse];
     ]
 
 data = 
