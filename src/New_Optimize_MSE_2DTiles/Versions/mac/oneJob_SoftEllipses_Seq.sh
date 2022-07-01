@@ -17,7 +17,7 @@ nItegrandsPerIteration=16384
 #nItegrandsPerIteration=262144
 
 
-InputDir="../../Data/Input/Tiles_Seq/"
+InputDir="../../Data/Input/Tiles_Seq_PrevLevel/"
 NextIterDir="../../Data/Output/"
 OutputDir="../../Data/Output/"
 TracesDir="../../Data/Traces"
