@@ -2678,7 +2678,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
         dtab = {};
-        ordinalAbsoluteMax = 3^6;
+        ordinalAbsoluteMax = 3^8;
         setNo = 1;
     	integrandType = inIntegrandType;
 		integrandTypeLabel = Switch[integrandType,  1,"Heaviside", 2,"SoftEllipses", 3,"Rectangles", 4,"Ellipses", 5,"SoftEllipses_noRot" ];
