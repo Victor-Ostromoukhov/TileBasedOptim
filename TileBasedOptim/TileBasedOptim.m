@@ -2426,9 +2426,12 @@ Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refP
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[10, i, False, False], {i, 64}]
+
+Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, False, False], {i, 256}]
+
+Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, True, False], {i, 256}]
 *)
-prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:10, insetNo_: 1, prevFlag_: False, dbg_:True] :=
+prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:8, insetNo_: 1, prevFlag_: False, dbg_:True] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         
