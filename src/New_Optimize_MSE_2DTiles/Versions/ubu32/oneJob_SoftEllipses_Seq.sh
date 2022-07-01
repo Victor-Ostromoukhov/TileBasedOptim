@@ -10,10 +10,10 @@ ind=$1
 nbthreads=$2
 fname=$3
 
-nIterations=64
+nIterations=8
 
 #nItegrandsPerIteration=4096
-nItegrandsPerIteration=16384
+nItegrandsPerIteration=65536
 #nItegrandsPerIteration=262144
 
 
