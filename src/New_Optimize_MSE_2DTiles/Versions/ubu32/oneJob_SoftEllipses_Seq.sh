@@ -10,11 +10,8 @@ ind=$1
 nbthreads=$2
 fname=$3
 
-nIterations=8
-
-#nItegrandsPerIteration=4096
+nIterations=16
 nItegrandsPerIteration=65536
-#nItegrandsPerIteration=262144
 
 
 InputDir="../../Data/Input/Tiles_Seq_PrevLevel/"
