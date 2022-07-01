@@ -2495,9 +2495,9 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:8, insetNo_: 1, prevFlag_: Fal
 					];
 				];
 				If[prevFlag, 
-					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y},N@{prevrefx,prevrefy},N@{prevv1,prevv2}}];
+					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y}/npts,N@{prevrefx,prevrefy},N@{prevv1,prevv2}}];
 				,(*ELSE*)
-					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y},N@{refx,refy},N@{v1,v2}}];
+					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y}/npts,N@{refx,refy},N@{v1,v2}}];
 				];
 				If[dbg,
 					p = Graphics[ {frame,gl,AbsolutePointSize[5],Point/@pts[[;;iOrdinalAbsolute]],Table[Text[Style[i-1,14],pts[[i]],{-1,-1}],{i,iOrdinalAbsolute}]}, PlotLabel-> iOrdinalAbsolute ];
@@ -2677,6 +2677,12 @@ math
 
 *)
 
+doubleCheck[] :=
+    Module[ {},
+        data = Import["src/New_Optimize_MSE_2DTiles/Data/Input/Tiles_Seq/2D_0m2net_set_000001_uptoOctave_10_seed_18615.dat"][[;;,2;;3]];
+    ]
+
+data = 
 makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,1}, innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
