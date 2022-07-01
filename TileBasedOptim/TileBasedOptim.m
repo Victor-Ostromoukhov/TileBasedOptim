@@ -2675,6 +2675,7 @@ math
 
 makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,64}, innDims_:2, dbg_:False] :=
     Module[ {},
+        If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
         dtab = {};
@@ -2689,7 +2690,8 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 		dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/";
         If[ !FileExistsQ[dirMSE], CreateDirectory[dirMSE] ];
         If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-   	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>".dat";
+   	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Mean.dat";
+   	    resFnameBest = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Best.dat";
    	    {setFrom,setTo} = setFromTo;
 		datamse = {};
 		counters = {3,4,5,6,7,8,9,10,11,13,15,17,19,21,24,27,31,34,39,44,50,56,63,72,81,92,103,117,132,149,168,190,215,243,275,310,350,396,447,505,571,645,729};
@@ -2698,10 +2700,12 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729};
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561,9463,13647,19683,28388,40942,59049};
 		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561};
+		counters = {3,4,6,9,13,19,27};
 		
 		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/";
 		files = FileNames["*.dat",{resDir}];
-        Do[
+		bestCandidates = {};
+        mseTabAll = Table[
 			npts = counters[[iOrdinalAbsolute]];
 	        mseTab = Parallelize @ Table[
 	        	setNo = isetNo;
@@ -2729,12 +2733,34 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
 	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
 		    Print[iOrdinalAbsolute, " ", resFname  -> mf[{{mseMean,mseVariance},{mseMin,mseMax}}] -> Length[mseTab] ];
+		    indLst = Flatten[Position[mseTab, #] & /@ Sort[mseTab][[;; 10]]];
+			AppendTo[bestCandidates, indLst];
+			
 	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,Length[mseTab],0}];	
 			Export[dirMSE<>resFname,header,"TEXT"];
 			Export["tmp/tmpdat"<>pid<>".dat",datamse];
 			Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFname];
 			Print[dirMSE<>resFname, " written."];
+			mseTab
         ,{iOrdinalAbsolute,Length[counters]}];
+        Do[
+	        thebest = Intersection @@ bestCandidates[[ibest;;]];
+	        If[Length[thebest] > 0, Break[] ];
+        ,{ibest,Length[bestCandidates]}];
+		datamse = {};
+        Do[
+        	mseTab = mseTabAll[[iOrdinalAbsolute , thebest]];
+	 		mseMean = Mean @ mseTab;
+	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
+	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
+		    Print[iOrdinalAbsolute, " ", resFnameBest  -> mf[{{mseMean,mseVariance},{mseMin,mseMax}}] -> Length[mseTab] ];
+	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,Length[mseTab],0}];	
+			Export[dirMSE<>resFname,header,"TEXT"];
+			Export["tmp/tmpdat"<>pid<>".dat",datamse];
+			Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFnameBest];
+			Print[dirMSE<>resFnameBest, " written."];
+        ,{iOrdinalAbsolute,Length[counters]}];
+         
    ] (* makeOptimMSE *)
 
 
