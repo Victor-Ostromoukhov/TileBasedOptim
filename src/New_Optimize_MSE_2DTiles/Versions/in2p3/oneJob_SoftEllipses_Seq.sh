@@ -19,7 +19,7 @@ mkdir -p ${TracesDir}
  
 infname=${InputDir}${fname}
 outfname=${OutputDir}${fname}
-echo cp ${infname} ${outfname}
+echo cp ${infname} ${outfname} > ${TracesDir}/t_${fname}.txt
 cp ${infname} ${outfname}
 
 #the rest of counters...
@@ -37,7 +37,7 @@ do
     limit=$((${lst[$((${level} - 1 ))]} + 1))
     infname=${OutputDir}${fname}
     outfname=${OutputDir}${fname}
-    ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep $outfname --nbPoints $to --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit
+    ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep $outfname --nbPoints $to --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit >> ${TracesDir}/t_${fname}.txt
 done
 
 
