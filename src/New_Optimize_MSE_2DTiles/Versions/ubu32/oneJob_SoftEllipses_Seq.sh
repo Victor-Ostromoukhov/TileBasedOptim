@@ -1,28 +1,24 @@
 #!/bin/bash
 
-if [ $# -le 2 ] ;
-then
-	echo "Usage : runOneJob <repetition> <nbthreads> <level>"
-	exit
-fi
 
 ind=$1
 nbthreads=$2
 fname=$3
+suffix=$4
 
 nIterations=64
 nItegrandsPerIteration=65536
 
 
-InputDir="../../Data/Input/Tiles_Seq_PrevLevel/"
-OutputDir="../../Data/Output/"
-TracesDir="../../Data/Traces"
+InputDir="../../Data/Input/Tiles_Seq_${suffix}/"
+OutputDir="../../Data/Output/Tiles_Seq_${suffix}/"
+TracesDir="../../Data/Traces/Tiles_Seq_${suffix}/"
 mkdir -p ${NextIterDir}
 mkdir -p ${OutputDir}
 mkdir -p ${TracesDir}
  
-    infname=${InputDir}${fname}
-    outfname=${OutputDir}${fname}
+infname=${InputDir}${fname}
+outfname=${OutputDir}${fname}
 echo cp ${infname} ${outfname}
 cp ${infname} ${outfname}
 

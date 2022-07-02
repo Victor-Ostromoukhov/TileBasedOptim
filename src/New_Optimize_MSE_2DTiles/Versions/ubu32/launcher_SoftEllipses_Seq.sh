@@ -8,8 +8,9 @@ fi
 
 ind=$1
 fname=$2
+suffix=$3
 
 nthreads=32
 
-./oneJob_SoftEllipses_Seq.sh ${ind} ${nthreads} ${fname}
+./oneJob_SoftEllipses_Seq.sh ${ind} ${nthreads} ${fname} ${suffix}
     

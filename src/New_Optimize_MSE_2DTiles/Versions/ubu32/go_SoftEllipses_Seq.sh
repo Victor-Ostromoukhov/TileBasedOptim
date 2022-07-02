@@ -1,8 +1,14 @@
 #!/bin/bash
 
+if [ $# -le 2 ] ;
+then
+    echo "Usage : go_SoftEllipses_Seq <suffix>            PrevLevel or CurLevel "
+    exit
+fi
 
-inputFiles=(`ls ../../Data/Input/Tiles_Seq_PrevLevel/`)
-#inputFiles=(`ls ../../Data/Input/Tiles_Seq/`)
+suffix=$1
+
+inputFiles=(`ls ../../Data/Input/Tiles_Seq_${suffix}/`)
 
 lst_length=${#inputFiles[@]}
 #lst_length=1
@@ -11,5 +17,5 @@ lst_length=${#inputFiles[@]}
 for (( ind=1 ; ind <= lst_length ; ind++ ))
 	do
         fname=${inputFiles[$((${ind} - 1))]}
-       ./launcher_SoftEllipses_Seq.sh $ind $fname
+       ./launcher_SoftEllipses_Seq.sh $ind ${fname} ${suffix}
 	done
