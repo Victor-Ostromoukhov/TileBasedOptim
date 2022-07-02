@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -le 2 ] ;
+if [ $# -le 1 ] ;
 then
     echo "Usage : go_SoftEllipses_Seq <suffix>            PrevLevel or CurLevel "
     exit
