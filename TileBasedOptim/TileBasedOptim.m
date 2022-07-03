@@ -2549,11 +2549,12 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] 
 		mxTab = readMatBuilderMatrix[mxfname];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
 		
-		pts0 = getMatBuiderPtsND[1, mxfname, owenFlag, depth, nDims, base, seed ][[1]];
+		targetList = makeOctavesBaseN[{0,noctaves,1/9},3];
 		
 		pts = getMatBuiderPtsND[base^noctaves, mxfname, owenFlag, depth, nDims, base, seed ];
 		{iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo} = {1,base^noctaves};
 		Do[
+			iOrdinalAbsolute = targetList[[ilst]];
 			tlst = Parallelize @ Table[
 				ioctave = 1 + Floor @ Log[base,iOrdinalAbsolute];
 				gl = {};
@@ -2604,7 +2605,7 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] 
 			];
 			fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 			If[!dbg, Export[fname,Flatten/@(tlst)]; Print["Writing ",fname," done."] ];
-		,{iOrdinalAbsolute,iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo}];
+		,{ilst,Length[targetList]}];
 	] (* prepOptimDataPointsets *)
 
 selectBase3SFC2DTilesMatBuilderOnly[tlst_,intensityInt_] := Select[tlst, second[#] < intensityInt & ]
@@ -3284,7 +3285,7 @@ prepSoftEllipsesND[innDims_:2, innIntegrands_:16 1024, inbatchsz_:1024, setno_:0
 *)
 
 
-makeOctavesBaseN[powParams_:{1,8,1/2},base_:3] :=
+makeOctavesBaseN[powParams_:{0,8,1/9},base_:3] :=
     Module[ {},
         {powfrom,powto,powstep} = powParams;
         tab = Union @ Table[
@@ -3294,4 +3295,5 @@ makeOctavesBaseN[powParams_:{1,8,1/2},base_:3] :=
         	,{ipow,powfrom,powto,powstep}];
         Print[tab];
         Export["tab.dat", {tab}];
+        tab
     ]
