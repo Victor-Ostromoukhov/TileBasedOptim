@@ -12,7 +12,7 @@ fname=$2
 nIterations=16
 nItegrandsPerIteration=65536
 
-nthreads=8
+nthreads=10
 
 ./oneJob_SoftEllipses_Seq.sh ${ind} ${nthreads} ${fname}
     

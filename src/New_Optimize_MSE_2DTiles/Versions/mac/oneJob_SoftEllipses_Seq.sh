@@ -10,7 +10,7 @@ ind=$1
 nbthreads=$2
 fname=$3
 
-nIterations=8
+nIterations=64
 
 #nItegrandsPerIteration=4096
 nItegrandsPerIteration=16384
@@ -35,11 +35,10 @@ limit=1
 
 ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep $outputNextStep --nbPoints $to --integrandType 2 -g $nItegrandsPerIteration --limit $limit
 
-# counters...
-#lst=(1 3 4 5 6 7 8 9 10 11 13 15 17 19 21 24 27 31 34 39 44 50 56 63 72 81 92 103 117 132 149 168 190 215 243 275 310 350 396 447 505 571 645 729)
-#lst=(1 3    4    6    9    13    19    27    39    56    81    117    168    243    350    505    729)
-#lst=(1 3    9    27    81    243    729   2187   6561)
-lst=(1  3    5    9    16    27    47    81    140    243    421    729    1263    2187    3788    6561)
+#the rest of counters...
+#lst=(3 4 5 6 7 8 9 10 11 13 15 17 19 21 24 27 31 34 39 44 50 56 63 72 81 92 103 117 132 149 168 190 215 243 275 310 350 396 447 505 571 645 729)
+#lst=(3    4    6    9    13    19    27    39    56    81    117    168    243    350    505    729   1051    1516    2187    3154    4549    6561)
+lst=(1 3    9    27    81    243    729   2187   6561)
 
 lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses
