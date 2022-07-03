@@ -13,9 +13,9 @@ showOptimL2discrepancy[]
 makeOptimMSE[]  ->  getMSE[]
 showstdOptimMSE[] :
 
-=========================== prepOptimDataBase3SFCMatBuilderOnly2D[]
-prepOptimDataBase3Seq2DFromMatBuilder[]
-
+=========================== prep Optim Data
+prepOptimDataSequences[]
+prepOptimDataPointsets[]
 
 =========================== prepSoftEllipses2D[] & prepHeavisideND[]
 
@@ -2429,11 +2429,11 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 
-Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, False, False], {i, 64}]
-Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, True, False], {i, 64}]
+Parallelize @ Do[prepOptimDataSequences[8, i, False, False], {i, 64}]
+Parallelize @ Do[prepOptimDataSequences[8, i, True, False], {i, 64}]
 
 *)
-prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:True] :=
+prepOptimDataSequences[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:True] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         
@@ -2449,9 +2449,9 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, prevFlag_: Tru
     	noctaves = innoctaves;
     	tilesDir = If[prevFlag, "Tiles_Seq_PrevLevel/", "Tiles_Seq_CurLevel/" ];
    		tilesDirFigs = If[prevFlag, "Tiles_Seq_PrevLevel_Figs/", "Tiles_Seq_CurLevel_Figs/" ];
-    	If[ !FileExistsQ[tilesDir], CreateDirectory[tilesDir] ];
-    	If[ !FileExistsQ[tilesDirFigs], CreateDirectory[tilesDirFigs] ];
-    	
+    	If[ !FileExistsQ[tilesDir] && !dbg, CreateDirectory[tilesDir] ];
+    	If[ !FileExistsQ[tilesDirFigs] && dbg, CreateDirectory[tilesDirFigs] ];
+   	
     	mxfname = "MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat";
 		mxTab = readMatBuilderMatrix[mxfname];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
@@ -2514,10 +2514,19 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, prevFlag_: Tru
 		,{ioctave,noctaves}];
 		fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_uptoOctave_"<>ToString[noctaves]<>"_seed_"<>ToString[seed]<>".dat";
 		If[!dbg, Export[fname,Flatten/@(tlst)]; Print["Writing ",fname," done."] ];
-		
-	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
+	] (* prepOptimDataSequences *)
 
-(*prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:6, insetNo_: 1, dbg_:True] :=
+
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+
+Parallelize @ Do[prepOptimDataPointsets[8, i, False, False], {i, 64}]
+Parallelize @ Do[prepOptimDataPointsets[8, i, True, False], {i, 64}]
+
+*)
+prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: False, dbg_:True] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         
@@ -2529,80 +2538,76 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, prevFlag_: Tru
     	
     	setNo = insetNo;
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
-    	frame={Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
+    	frame={AbsoluteThickness[3],Green,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
     	noctaves = innoctaves;
-    	If[ !FileExistsQ["optimSeq_input_2D/"], CreateDirectory["optimSeq_input_2D/"] ];
-    	If[ !FileExistsQ["optimSeq_figs_2D/"], CreateDirectory["optimSeq_figs_2D/"] ];
+    	tilesDir = If[prevFlag, "Tiles_Pointsets_PrevLevel/SetNo_"<>i2s[setNo]<>"/", "Tiles_Pointsets_CurLevel/SetNo_"<>i2s[setNo]<>"/" ];
+   		tilesDirFigs = If[prevFlag, "Tiles_Seq_PrevLevel_Figs/SetNo_"<>i2s[setNo]<>"/", "Tiles_Seq_CurLevel_Figs/SetNo_"<>i2s[setNo]<>"/" ];
+    	If[ !FileExistsQ[tilesDir] && !dbg, CreateDirectory[tilesDir] ];
+    	If[ !FileExistsQ[tilesDirFigs] && dbg, CreateDirectory[tilesDirFigs] ];
     	
     	mxfname = "MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat";
 		mxTab = readMatBuilderMatrix[mxfname];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
 		
 		pts0 = getMatBuiderPtsND[1, mxfname, owenFlag, depth, nDims, base, seed ][[1]];
-		tlst = {{0,pts0, {0,0},{{1,0},{0,1}} } };
 		
-		counts = {1,3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561};
+		pts = getMatBuiderPtsND[base^noctaves, mxfname, owenFlag, depth, nDims, base, seed ];
+		{iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo} = {1,base^noctaves};
 		Do[
-			from = If[ioctave == 1, 1, 3^(ioctave-1)+1];
+			tlst = {};
 			Do[
+				ioctave = 1 + Floor @ Log[base,iOrdinalAbsolute];
 				gl = {};
 				npts = base^ioctave;
-				pts = getMatBuiderPtsND[iOrdinalAbsolute, mxfname, owenFlag, depth, nDims, base, seed ];
-				thislevelpts = pts[[ 3^(ioctave-1)+1 ;; iOrdinalAbsolute ]];
-				(*Print[{ioctave,npts} -> {3^(ioctave-1)+1,3^ioctave} -> mf[pts] -> mf[thislevelpts] ];*)
 				prevoctave = ioctave-1;
+				{x,y} = npts pts[[iOrdinalAbsolute]];
 				If[EvenQ[prevoctave],
-					Do[
-						{x,y} = npts thislevelpts[[ipt]];
-						{ix,iy} = Quotient[{x,y}, base^((ioctave+1)/2)];
-						{k1,k2} = If[EvenQ[ix+iy], {base^((ioctave-1)/2),base^((ioctave+1)/2)}, {base^((ioctave+1)/2),base^((ioctave-1)/2)}];
-						{v1,v2} = {{1/k1,0},{0,1/k2}} ;
-						{refx,refy} = Quotient[{x,y}, {k2,k1}] / {k1,k2};
-						
-						{prevv1,prevv2} = {{1,0},{0,1}} / base^((ioctave-1)/2);
-						{prevrefx,prevrefy} = {ix,iy} / base^((ioctave-1)/2);
-						(*Print[ioctave," ================== ",ipt -> {x,y} -> {ix,iy} -> {refx,refy} -> mf@{v1,v2}];*)
+					{ix,iy} = Quotient[{x,y}, base^((ioctave+1)/2)];
+					{k1,k2} = If[EvenQ[ix+iy], {base^((ioctave-1)/2),base^((ioctave+1)/2)}, {base^((ioctave+1)/2),base^((ioctave-1)/2)}];
+					{v1,v2} = {{1/k1,0},{0,1/k2}} ;
+					{refx,refy} = Quotient[{x,y}, {k2,k1}] / {k1,k2};
+					
+					{prevv1,prevv2} = {{1,0},{0,1}} / base^((ioctave-1)/2);
+					{prevrefx,prevrefy} = {ix,iy} / base^((ioctave-1)/2);
+					If[dbg && iWithinSet == iOrdinalAbsolute,
 						curRect = {Blue,Dashed,AbsoluteThickness[4],Line[{{prevrefx,prevrefy}, {prevrefx,prevrefy}+prevv1,{prevrefx,prevrefy}+prevv1+prevv2,{prevrefx,prevrefy}+prevv2, {prevrefx,prevrefy}} ]};
 						AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ] } ];
-					,{ipt,Length[thislevelpts]}];
-					AppendTo[gl,curRect];
+						AppendTo[gl,curRect];
+					];
 				,(*ELSE*)
-					Do[
-						{x,y} = npts thislevelpts[[ipt]];
-						{dx,dy} = {base^(ioctave/2),base^(ioctave/2)};
-						{refx,refy} = Quotient[{x,y}, {dx,dy}] / {dx,dy};
-						{v1,v2} = {{1,0},{0,1}} / {dx,dy};
-						
-						{ix,iy} = Quotient[{x,y}, base^((ioctave+2)/2)];
-						{k1,k2} = If[EvenQ[ix+iy], {base^((ioctave)/2),base^((ioctave+2)/2)}, {base^((ioctave+2)/2),base^((ioctave)/2)}];
-						{prevv1,prevv2} = 3 {{1/k1,0},{0,1/k2}};
-						{prevrefx,prevrefy} =3  Quotient[{x,y}, {k2,k1}] / {k1,k2};
+					{dx,dy} = {base^(ioctave/2),base^(ioctave/2)};
+					{refx,refy} = Quotient[{x,y}, {dx,dy}] / {dx,dy};
+					{v1,v2} = {{1,0},{0,1}} / {dx,dy};
+					
+					{ix,iy} = Quotient[{x,y}, base^((ioctave+2)/2)];
+					{k1,k2} = If[EvenQ[ix+iy], {base^((ioctave)/2),base^((ioctave+2)/2)}, {base^((ioctave+2)/2),base^((ioctave)/2)}];
+					{prevv1,prevv2} = 3 {{1/k1,0},{0,1/k2}};
+					{prevrefx,prevrefy} =3  Quotient[{x,y}, {k2,k1}] / {k1,k2};
+					If[dbg && iWithinSet == iOrdinalAbsolute,
 						curRect = {Blue,Dashed,AbsoluteThickness[4],Line[{{prevrefx,prevrefy}, {prevrefx,prevrefy}+prevv1,{prevrefx,prevrefy}+prevv1+prevv2,{prevrefx,prevrefy}+prevv2, {prevrefx,prevrefy}} ]};
-						(*Print[ioctave," ================== ",ipt -> {x,y}, " | ", {ix,iy} -> {k1,k2} , " | ", {prevrefx,prevrefy} -> mf@{prevv1,prevv2}];*)
 						AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ] } ];
-					,{ipt,Length[thislevelpts]}];
-					AppendTo[gl,curRect];
+						AppendTo[gl,curRect];
+					];
 				];
-				AppendTo[tlst,{iOrdinalAbsolute-1,pts[[iOrdinalAbsolute]],N@{prevrefx,prevrefy},N@{prevv1,prevv2}}];
-				If[dbg,
-					p = Graphics[ {frame,gl,AbsolutePointSize[5],Point/@pts,Table[Text[Style[i-1,14],pts[[i]],{-1,-1}],{i,Length[pts]}]}, PlotLabel-> iOrdinalAbsolute ];
-					p//Print;
-					Export["optimSeq_figs_2D/2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
+				If[prevFlag, 
+					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y}/npts,N@{prevrefx,prevrefy},N@{prevv1,prevv2}}];
+				,(*ELSE*)
+					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y}/npts,N@{refx,refy},N@{v1,v2}}];
 				];
-			,{iOrdinalAbsolute,3^(ioctave-1)+1,3^ioctave}];
-		,{ioctave,noctaves}];
-		fname = "Tiles_Seq/2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>ToString[base^noctaves]<>"_seed_"<>ToString[seed]<>".dat";
-		Export[fname,Flatten/@(tlst)];
-		Print["Writing ",fname," done."];
-	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
-*)
-(*
-gitpull
-math
-<<TileBasedOptim/TileBasedOptim.m
-prepOptimDataBase3PointSets2DFromMatBuilder[6]
-*)
-
+				Print[{iOrdinalAbsolute,iWithinSet} -> Length[tlst]];
+			,{iWithinSet,1,iOrdinalAbsolute}];
+			If[dbg,
+				ngrid = base^Floor[ioctave/2]; ngridstep = 1/ngrid;
+				octaveGrid={Cyan,Table[Line[{{i ngridstep,0},{i ngridstep,1}}],{i,0,ngrid}],Table[Line[{{0,i ngridstep},{1,i ngridstep}}],{i,0,ngrid}]};
+				p = Graphics[ {frame,octaveGrid,gl,AbsolutePointSize[5],Point/@pts[[;;iOrdinalAbsolute]],
+					Table[Text[Style[i-1,14],pts[[i]],{-1,-1}],{i,iOrdinalAbsolute}]}, PlotLabel-> {{ioctave,Floor[ioctave/2]}->iOrdinalAbsolute} ];
+				p//Print;
+				Export[tilesDirFigs<>"2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
+			];
+			fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_seed_"<>ToString[seed]<>".dat";
+			If[!dbg, Export[fname,Flatten/@(tlst)]; Print["Writing ",fname," done."] ];
+		,{iOrdinalAbsolute,iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo}];
+	] (* prepOptimDataPointsets *)
 
 selectBase3SFC2DTilesMatBuilderOnly[tlst_,intensityInt_] := Select[tlst, second[#] < intensityInt & ]
 
