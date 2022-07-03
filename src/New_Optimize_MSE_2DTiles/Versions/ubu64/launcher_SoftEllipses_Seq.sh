@@ -8,11 +8,9 @@ fi
 
 ind=$1
 fname=$2
-
-nIterations=16
-nItegrandsPerIteration=65536
+suffix=$3
 
 nthreads=64
 
-./oneJob_SoftEllipses_Seq.sh ${ind} ${nthreads} ${fname}
+./oneJob_SoftEllipses_Seq.sh ${ind} ${nthreads} ${fname} ${suffix}
     
