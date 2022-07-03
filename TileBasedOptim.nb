@@ -10,29 +10,22 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      1443,         50]
-NotebookOptionsPosition[       999,         33]
-NotebookOutlinePosition[      1492,         52]
-CellTagsIndexPosition[      1449,         49]
+NotebookDataLength[      1210,         43]
+NotebookOptionsPosition[       760,         26]
+NotebookOutlinePosition[      1260,         45]
+CellTagsIndexPosition[      1217,         42]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
 Cell[BoxData[
- RowBox[{
-  RowBox[{"Parallelize", "@", 
-   RowBox[{"Do", "[", 
-    RowBox[{
-     RowBox[{"prepOptimDataBase3Seq2DFromMatBuilder", "[", 
-      RowBox[{"8", ",", "i", ",", "False", ",", "False"}], "]"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"i", ",", "64"}], "}"}]}], "]"}]}], "\n"}]], "Input",
- CellChangeTimes->{{3.865688391223938*^9, 
-  3.8656883912275333`*^9}},ExpressionUUID->"931080f6-64bc-403e-8ef9-\
-d369b04a70bf"]
+ RowBox[{"prepOptimDataPointsets", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.865868253990794*^9, 
+  3.8658682548161383`*^9}},ExpressionUUID->"d379befa-7920-4272-aa93-\
+2fcaaa4f7e66"]
 },
 WindowSize->{1839, 1152},
-WindowMargins->{{Automatic, 77}, {Automatic, 0}},
+WindowMargins->{{Automatic, -2302}, {Automatic, -1325}},
 PrintingCopies->1,
 PrintingPageRange->{1, Automatic},
 TaggingRules-><|"TryRealOnly" -> False|>,
@@ -51,7 +44,7 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 437, 11, 52, "Input",ExpressionUUID->"931080f6-64bc-403e-8ef9-d369b04a70bf"]
+Cell[558, 20, 198, 4, 30, "Input",ExpressionUUID->"d379befa-7920-4272-aa93-2fcaaa4f7e66"]
 }
 ]
 *)

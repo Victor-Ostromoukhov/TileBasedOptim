@@ -2522,8 +2522,8 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 
-Parallelize @ Do[prepOptimDataPointsets[8, i, False, False], {i, 64}]
-Parallelize @ Do[prepOptimDataPointsets[8, i, True, False], {i, 64}]
+Do[prepOptimDataPointsets[8, i, False, False], {i, 64}]
+Do[prepOptimDataPointsets[8, i, True, False], {i, 64}]
 
 *)
 prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] :=
@@ -2553,8 +2553,8 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] 
 		
 		pts = getMatBuiderPtsND[base^noctaves, mxfname, owenFlag, depth, nDims, base, seed ];
 		{iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo} = {1,base^noctaves};
-		tlst = Table[
-			Do[
+		Do[
+			tlst = Parallelize @ Table[
 				ioctave = 1 + Floor @ Log[base,iOrdinalAbsolute];
 				gl = {};
 				npts = base^ioctave;
@@ -2589,9 +2589,9 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] 
 					];
 				];
 				If[prevFlag, 
-					{iOrdinalAbsolute-1,{x,y}/npts,N@{prevrefx,prevrefy},N@{prevv1,prevv2}}
+					{iWithinSet-1,{x,y}/npts,N@{prevrefx,prevrefy},N@{prevv1,prevv2}}
 				,(*ELSE*)
-					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y}/npts,N@{refx,refy},N@{v1,v2}}]
+					{iWithinSet-1,{x,y}/npts,N@{refx,refy},N@{v1,v2}}
 				]
 			,{iWithinSet,1,iOrdinalAbsolute}];
 			If[dbg,
