@@ -2603,7 +2603,7 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] 
 				p//Print;
 				Export[tilesDirFigs<>"2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 			];
-			fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
+			fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".dat";
 			If[!dbg, Export[fname,Flatten/@(tlst)]; Print["Writing ",fname," done."] ];
 		,{ilst,Length[targetList]}];
 	] (* prepOptimDataPointsets *)
