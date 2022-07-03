@@ -2526,7 +2526,7 @@ Parallelize @ Do[prepOptimDataPointsets[8, i, False, False], {i, 64}]
 Parallelize @ Do[prepOptimDataPointsets[8, i, True, False], {i, 64}]
 
 *)
-prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: False, dbg_:True] :=
+prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         
@@ -2540,8 +2540,8 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: False, dbg_:True] 
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
     	frame={AbsoluteThickness[3],Green,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
     	noctaves = innoctaves;
-    	tilesDir = If[prevFlag, "Tiles_Pointsets_PrevLevel/SetNo_"<>i2s[setNo]<>"/", "Tiles_Pointsets_CurLevel/SetNo_"<>i2s[setNo]<>"/" ];
-   		tilesDirFigs = If[prevFlag, "Tiles_Seq_PrevLevel_Figs/SetNo_"<>i2s[setNo]<>"/", "Tiles_Seq_CurLevel_Figs/SetNo_"<>i2s[setNo]<>"/" ];
+    	tilesDir = If[prevFlag, "Tiles_Pointsets_PrevLevel/SetNo_"<>i2s[setNo]<>"_seed_"<>ToString[seed]<>"/", "Tiles_Pointsets_CurLevel/SetNo_"<>i2s[setNo]<>"_seed_"<>ToString[seed]<>"/" ];
+   		tilesDirFigs = If[prevFlag, "Tiles_Pointsets_PrevLevel_Figs/SetNo_"<>i2s[setNo]<>"_seed_"<>ToString[seed]<>"/", "Tiles_Pointsets_CurLevel_Figs/SetNo_"<>i2s[setNo]<>"_seed_"<>ToString[seed]<>"/" ];
     	If[ !FileExistsQ[tilesDir] && !dbg, CreateDirectory[tilesDir] ];
     	If[ !FileExistsQ[tilesDirFigs] && dbg, CreateDirectory[tilesDirFigs] ];
     	
@@ -2553,14 +2553,13 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: False, dbg_:True] 
 		
 		pts = getMatBuiderPtsND[base^noctaves, mxfname, owenFlag, depth, nDims, base, seed ];
 		{iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo} = {1,base^noctaves};
-		Do[
-			tlst = {};
+		tlst = Table[
 			Do[
 				ioctave = 1 + Floor @ Log[base,iOrdinalAbsolute];
 				gl = {};
 				npts = base^ioctave;
 				prevoctave = ioctave-1;
-				{x,y} = npts pts[[iOrdinalAbsolute]];
+				{x,y} = npts pts[[iWithinSet]];
 				If[EvenQ[prevoctave],
 					{ix,iy} = Quotient[{x,y}, base^((ioctave+1)/2)];
 					{k1,k2} = If[EvenQ[ix+iy], {base^((ioctave-1)/2),base^((ioctave+1)/2)}, {base^((ioctave+1)/2),base^((ioctave-1)/2)}];
@@ -2590,11 +2589,10 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: False, dbg_:True] 
 					];
 				];
 				If[prevFlag, 
-					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y}/npts,N@{prevrefx,prevrefy},N@{prevv1,prevv2}}];
+					{iOrdinalAbsolute-1,{x,y}/npts,N@{prevrefx,prevrefy},N@{prevv1,prevv2}}
 				,(*ELSE*)
-					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y}/npts,N@{refx,refy},N@{v1,v2}}];
-				];
-				Print[{iOrdinalAbsolute,iWithinSet} -> Length[tlst]];
+					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y}/npts,N@{refx,refy},N@{v1,v2}}]
+				]
 			,{iWithinSet,1,iOrdinalAbsolute}];
 			If[dbg,
 				ngrid = base^Floor[ioctave/2]; ngridstep = 1/ngrid;
@@ -2604,7 +2602,7 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: False, dbg_:True] 
 				p//Print;
 				Export[tilesDirFigs<>"2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 			];
-			fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>"_seed_"<>ToString[seed]<>".dat";
+			fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>ToString[iOrdinalAbsolute]<>".dat";
 			If[!dbg, Export[fname,Flatten/@(tlst)]; Print["Writing ",fname," done."] ];
 		,{iOrdinalAbsolute,iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo}];
 	] (* prepOptimDataPointsets *)
