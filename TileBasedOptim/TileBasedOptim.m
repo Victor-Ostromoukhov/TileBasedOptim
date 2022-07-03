@@ -2433,7 +2433,7 @@ Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, False, False], {i, 
 Parallelize @ Do[prepOptimDataBase3Seq2DFromMatBuilder[8, i, True, False], {i, 64}]
 
 *)
-prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:8, insetNo_: 1, prevFlag_: False, dbg_:True] :=
+prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:True] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         
@@ -2445,7 +2445,7 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:8, insetNo_: 1, prevFlag_: Fal
     	
     	setNo = insetNo;
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
-    	frame={Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
+    	frame={AbsoluteThickness[3],Green,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
     	noctaves = innoctaves;
     	tilesDir = If[prevFlag, "Tiles_Seq_PrevLevel/", "Tiles_Seq_CurLevel/" ];
    		tilesDirFigs = If[prevFlag, "Tiles_Seq_PrevLevel_Figs/", "Tiles_Seq_CurLevel_Figs/" ];
@@ -2462,6 +2462,10 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:8, insetNo_: 1, prevFlag_: Fal
 		pts = getMatBuiderPtsND[base^noctaves, mxfname, owenFlag, depth, nDims, base, seed ];
 		Do[
 			{iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo} = {base^(ioctave-1)+1,base^ioctave};
+			If[dbg,
+				ngrid = base^Floor[ioctave/2]; ngridstep = 1/ngrid;
+				octaveGrid={Cyan,Table[Line[{{i ngridstep,0},{i ngridstep,1}}],{i,0,ngrid}],Table[Line[{{0,i ngridstep},{1,i ngridstep}}],{i,0,ngrid}]};
+			];
 			Do[
 				gl = {};
 				npts = base^ioctave;
@@ -2501,15 +2505,16 @@ prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:8, insetNo_: 1, prevFlag_: Fal
 					AppendTo[tlst,{iOrdinalAbsolute-1,{x,y}/npts,N@{refx,refy},N@{v1,v2}}];
 				];
 				If[dbg,
-					p = Graphics[ {frame,gl,AbsolutePointSize[5],Point/@pts[[;;iOrdinalAbsolute]],Table[Text[Style[i-1,14],pts[[i]],{-1,-1}],{i,iOrdinalAbsolute}]}, PlotLabel-> iOrdinalAbsolute ];
+					p = Graphics[ {frame,octaveGrid,gl,AbsolutePointSize[5],Point/@pts[[;;iOrdinalAbsolute]],
+						Table[Text[Style[i-1,14],pts[[i]],{-1,-1}],{i,iOrdinalAbsolute}]}, PlotLabel-> {ioctave,iOrdinalAbsolute} ];
 					p//Print;
 					Export[tilesDirFigs<>"2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
 				];
 			,{iOrdinalAbsolute,iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo}];
 		,{ioctave,noctaves}];
 		fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_uptoOctave_"<>ToString[noctaves]<>"_seed_"<>ToString[seed]<>".dat";
-		If[!dbg, Export[fname,Flatten/@(tlst)] ];
-		Print["Writing ",fname," done."];
+		If[!dbg, Export[fname,Flatten/@(tlst)]; Print["Writing ",fname," done."] ];
+		
 	] (* prepOptimDataBase3Seq2DFromMatBuilder *)
 
 (*prepOptimDataBase3Seq2DFromMatBuilder[innoctaves_:6, insetNo_: 1, dbg_:True] :=
