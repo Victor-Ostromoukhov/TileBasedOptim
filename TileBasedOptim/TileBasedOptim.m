@@ -2784,8 +2784,6 @@ makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegra
 		datamse = {};
 
 		counters = makeOctavesBaseN[{1, 6, 1/9}];
-		counters = {3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 21, 24, 27, 31, 34, 39, 44, 50, 56, 63, 72, 81, 92, 103, 117, 132, 149, 168, 190, 215, 243, 275, 310, 350, 396, 447, 505, 571, 645, 729};
-		counters = {3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 21, 24, 27, 31, 34, 39, 44, 50, 56, 63, 72, 81, 92, 103, 117, 132, 149, 168, 190, 215, 243, 275, 310};
    	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>".dat";
    	    
 		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/Tiles_"<>suffix<>"/";
