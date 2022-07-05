@@ -2763,7 +2763,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
         ,{iOrdinalAbsolute,Length[counters]}];
    ] (* makeOptimMSE *)
 
-makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,64}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
+makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,48}, suffix_:"Pointsets_CurLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -2784,6 +2784,7 @@ makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegra
 		datamse = {};
 
 		counters = makeOctavesBaseN[{1, 6, 1/9}];
+		counters =  {3,4,5,6,7,8,9,10,11,13,15,17,19,21,24,27,31,34,39,44,50,56,63,72,81,92,103,117,132};
    	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>".dat";
    	    
 		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/Tiles_"<>suffix<>"/";
@@ -3039,7 +3040,6 @@ optimTypeMSEOptimisationHeaviside = 3;
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
 		            ]	;		
 			Export["p_MSE.pdf",p];
-			Export["p_MSE.png",p];
 			p//Print;
 			
  
