@@ -11,6 +11,7 @@ makeOptimL2discrepancy[]  ->  getL2discrepancy[]
 showOptimL2discrepancy[]
 
 makeOptimMSE[]  ->  getMSE[]
+makeOptimMSEPointSets[]
 showstdOptimMSE[] :
 
 =========================== prep Optim Data
@@ -2697,8 +2698,7 @@ doubleCheck[] :=
         Print[npts -> mse];
     ]
 
-data = 
-makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,1}, innDims_:2, dbg_:False] :=
+makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,64}, suffix_:"Seq_CurLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -2715,22 +2715,17 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 		dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/";
         If[ !FileExistsQ[dirMSE], CreateDirectory[dirMSE] ];
         If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-   	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Mean.dat";
-   	    resFnameBest = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Best.dat";
    	    {setFrom,setTo} = setFromTo;
 		datamse = {};
-		counters = {3,4,5,6,7,8,9,10,11,13,15,17,19,21,24,27,31,34,39,44,50,56,63,72,81,92,103,117,132,149,168,190,215,243,275,310,350,396,447,505,571,645,729};
 
-		counters = {3,9,27,81,243,729};
-		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729};
-		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561,9463,13647,19683,28388,40942,59049};
-		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549,6561};
-		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505,729,1051,1516,2187,3154,4549};
-		counters = {3,4,6,9,13,19,27,39,56,81,117,168,243,350,505};
+		counters = makeOctavesBaseN[{1, 6, 1}];
+   	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>".dat";
+   	    
+		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/Tiles_"<>suffix<>"/";
 		
-		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/";
 		files = FileNames["*.dat",{resDir}];
 		bestCandidates = {};
+		
         mseTabAll = Table[
 			npts = counters[[iOrdinalAbsolute]];
 	        mseTab = Parallelize @ Table[
@@ -2758,10 +2753,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 	 		mseMean = Mean @ mseTab;
 	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
 	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
-		    Print[iOrdinalAbsolute, " ", resFname  -> mf[{{mseMean,mseVariance},{mseMin,mseMax}}] -> Length[mseTab] ];
-		    indLst = Flatten[Position[mseTab, #] & /@ Sort[mseTab][[;; 10]]];
-			AppendTo[bestCandidates, indLst];
-			
+		    Print[iOrdinalAbsolute, " ", resFname  -> mf[{{mseMean,mseVariance},{mseMin,mseMax}}] -> Length[mseTab] ];			
 	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,Length[mseTab],0}];	
 			Export[dirMSE<>resFname,header,"TEXT"];
 			Export["tmp/tmpdat"<>pid<>".dat",datamse];
@@ -2769,6 +2761,73 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 			Print[dirMSE<>resFname, " written."];
 			mseTab
         ,{iOrdinalAbsolute,Length[counters]}];
+   ] (* makeOptimMSE *)
+
+makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,64}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
+    Module[ {},
+        If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
+       	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
+    	nDims = innDims;
+        dtab = {};
+        setNo = 1;
+    	integrandType = inIntegrandType;
+		integrandTypeLabel = Switch[integrandType,  1,"Heaviside", 2,"SoftEllipses", 3,"Rectangles", 4,"Ellipses", 5,"SoftEllipses_noRot" ];
+		optimTypeL2OptimisationLabel = Switch[optimType
+			,optimTypeL2Optimisation,"L2Optimisation"
+			,optimTypeMSEOptimisationHeaviside,"MSEOptimisationHeaviside"
+			,optimTypeMSEOptimisationSoftEllipses,"MSEOptimisationSoftEllipses"];
+        
+		dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/";
+        If[ !FileExistsQ[dirMSE], CreateDirectory[dirMSE] ];
+        If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+   	    {setFrom,setTo} = setFromTo;
+		datamse = {};
+
+		counters = makeOctavesBaseN[{1, 6, 1/9}];
+		counters = {3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 21, 24, 27, 31, 34, 39, 44, 50, 56, 63, 72, 81, 92, 103, 117, 132, 149, 168, 190, 215, 243, 275, 310, 350, 396, 447, 505, 571, 645, 729};
+		counters = {3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 21, 24, 27, 31, 34, 39, 44, 50, 56, 63, 72, 81, 92, 103, 117, 132, 149, 168, 190, 215, 243, 275, 310};
+   	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>".dat";
+   	    
+		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/Tiles_"<>suffix<>"/";
+
+		
+		dirs = FileNames["SetNo*",{resDir}];
+		
+        mseTabAll = Table[
+			npts = counters[[iOrdinalAbsolute]];
+	        mseTab = (*Parallelize @*) Table[
+	        	setNo = isetNo;
+				dir = dirs[[setNo]];
+				fname = FileNames["*"<>i2s[npts]<>".dat",{dir}];
+
+	       		If[ fname =!= {},
+	       			data = Import[fname[[1]] ];
+	       			If[Length[data] >= npts,
+						pts = data[[;;npts, 2;;3]];
+						If[dbg, ipts = Round[ npts pts ];Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+		    	    	mse = getMSE[pts,"",nDims,integrandType];
+		       			Print["Processing ",npts," pts "->fname[[1]] -> mse];
+						{npts,mse}
+	       			,(*ELSE*)
+	       				Nothing
+	       			]
+				,(*ELSE*)
+					Nothing
+	       		]
+        	,{isetNo,setFrom,setTo}];
+	 		mseMean = Mean @ mseTab;
+	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
+	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
+		    Print[iOrdinalAbsolute, " ", resFname  -> mf[{{mseMean,mseVariance},{mseMin,mseMax}}] -> Length[mseTab] ];			
+	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,Length[mseTab],0}];	
+			Export[dirMSE<>resFname,header,"TEXT"];
+			Export["tmp/tmpdat"<>pid<>".dat",datamse];
+			Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFname];
+			Print[dirMSE<>resFname, " written."];
+			mseTab
+        ,{iOrdinalAbsolute,Length[counters]}];
+   ] (* makeOptimMSE *)
+
         (*Do[
 	        thebest = Intersection @@ bestCandidates[[ibest;;]];
 	        If[Length[thebest] > 0, Break[] ];
@@ -2787,8 +2846,6 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 			Print[dirMSE<>resFnameBest, " written."];
         ,{iOrdinalAbsolute,Length[counters]}];*)
          
-   ] (* makeOptimMSE *)
-
 
 (*
 gitpull
@@ -2909,8 +2966,89 @@ optimTypeL2Optimisation = 1;
 optimTypeMSEOptimisationSoftEllipses = 2;
 optimTypeMSEOptimisationHeaviside = 3;
 
-   
-showstdOptimMSE[] :=
+ 
+ showstdOptimMSE[] :=
+    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata},
+    	consecutiveFlag = False;
+		fontSz = 14;
+		kPlusMinus = 1;
+    	{powfrom,powto,powstep} = {2,6,1}; (* powers of 3 *)
+
+		nDims = 2;
+		(*integrandTypeLabel = "Heaviside";*)
+		
+		optimTypeL2OptimisationLabel = "MSEOptimisationSoftEllipses";
+		integrandTypeLabel = "SoftEllipses";
+		
+	        plotLabel = "Optim vs. Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
+
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"WN_"<>integrandTypeLabel<>".dat"]),  3^(powfrom-1)  <= #[[1]] <= 3^(powto+1) &];
+			mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"Strat_"<>integrandTypeLabel<>".dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"OwenPlus_"<>integrandTypeLabel<>".dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
+
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"MatBuiderMaxDepth_"<>integrandTypeLabel<>".dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			mseMatBuiderMaxDepth = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+
+
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Seq_PrevLevel.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			mseOptimSeq = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			(*data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Seq_CurLevel.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			mseOptim2 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Seq_PrevLevel_step12octave.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			mseOptimSeqstep12 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			(*data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Seq_CurLevel_step12octave.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			mseOptim4 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Pointsets_PrevLevel.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			mseOptimPointsets = Table[{data[[i,1]], data[[i,2]] },{i,Length[data]}];
+			 
+		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, mseOptimSeq, mseOptimSeqstep12, mseOptimPointsets} ;
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat",  "OwenPlus32", "MatBuiderMaxDepth",
+	        	"MB++ Seq", "MB++ Seq 1/2 octave","MB++ Pointsets"} ] ];
+	        
+	        
+			p = ListLogLogPlot[ alldata
+						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
+						,PlotStyle -> {
+							{Green,AbsoluteThickness[2]},
+							{Blue,AbsoluteThickness[2]},
+							{Black,AbsoluteThickness[2]},
+							{Orange,AbsoluteThickness[4]},
+							{Darker@Green,AbsoluteThickness[2], Dashed},
+							{Red,Dashed,AbsoluteThickness[3], Dashed},
+							{Blue,Dashed,AbsoluteThickness[3]},
+							{Cyan,AbsoluteThickness[3], Dashed},
+							{Gray,Dashed,AbsoluteThickness[3], Dashed}
+						}
+						,Joined->True
+		            	,FrameTicks->{{Automatic,None},{Table[3^pow,{pow,1,10,1}],Table[2^pow,{pow,powfrom,powto,2}]}}
+			            ,FrameStyle->Directive[Black,20]
+			            ,RotateLabel -> True
+			            ,PlotMarkers->{{\[FilledCircle],5} }
+			            ,Frame->True
+		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
+		           		,ImageSize -> 2 {1024,1024}
+		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,PlotRange->{{3^powfrom,3^powto}, Automatic } (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
+		            	,GridLines->{Table[3^pow,{pow,1,8,1}],None}
+		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
+		            	,AspectRatio->1
+		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
+		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
+		            ]	;		
+			Export["p_MSE.pdf",p];
+			Export["p_MSE.png",p];
+			p//Print;
+			
+ 
+     ] (* showstdOptimMSE *)
+     
+     
+(*(*showstdOptimMSE[] :=
     Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata},
     	consecutiveFlag = False;
 		fontSz = 14;
@@ -2938,12 +3076,11 @@ showstdOptimMSE[] :=
 			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"MatBuiderMaxDepth_"<>integrandTypeLabel<>".dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
 			mseMatBuiderMaxDepth = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
-			(*data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Mean.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
-			mseOptimMean = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
-			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Mean.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
-			mseOptimBest = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Seq_CurLevel.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			mseOptim1 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			 
-		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, mseOptimBest} ;
+		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, mseOptim1} ;
 	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat",  "OwenPlus32", "MatBuiderMaxDepth"} ] ];
 	        
 	        
@@ -2981,7 +3118,7 @@ showstdOptimMSE[] :=
 			,Control[{{integrandTypeLabel,"SoftEllipses"},{"Heaviside", "SoftEllipses"	(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
          ]
      ] (* showstdOptimMSE *)
-     
+     *)*)
 (*======================================= prepSoftEllipses2D[] & prepHeavisideND[] =======================================*)
 getHeavisideND[pt_,{mu_,normVector_}] := If[(pt-mu).normVector > 0, 1, 0]
 getMultivariateND[pt_,{mu_,mxCInv_},mulFactor_:1] := Quiet[1./mulFactor Exp[-.5 (pt-mu).mxCInv.(pt-mu)]]
