@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [ $# -lt 1 ] ;
-then
-    echo "Usage : go_SoftEllipses_Seq <suffix>            PrevLevel or CurLevel "
-    exit
-fi
+#if [ $# -lt 1 ] ;
+#then
+#    echo "Usage : go_SoftEllipses_Seq <suffix>            PrevLevel or CurLevel "
+#    exit
+#fi
 
-suffix=$1
+suffix="PrevLevel"
 
 inputFiles=(`ls ../../Data/Input/Tiles_Seq_${suffix}/`)
 

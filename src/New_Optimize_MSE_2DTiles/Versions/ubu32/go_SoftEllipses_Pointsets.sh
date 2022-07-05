@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [ $# -lt 1 ] ;
-then
-    echo "Usage : go_SoftEllipses_Pointsets <suffix>            PrevLevel or CurLevel "
-    exit
-fi
+#if [ $# -lt 1 ] ;
+#then
+#    echo "Usage : go_SoftEllipses_Seq <suffix>            PrevLevel or CurLevel "
+#    exit
+#fi
 
-suffix=$1
+suffix="PrevLevel"
 
 inputDirs=(`ls ../../Data/Input/Tiles_Pointsets_${suffix}/`)
 
