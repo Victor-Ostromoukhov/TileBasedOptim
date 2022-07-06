@@ -3421,7 +3421,7 @@ prepSoftEllipsesND[innDims_:2, innIntegrands_:16 1024, inbatchsz_:1024, setno_:0
 *)
 
 
-makeOctavesBaseN[powParams_:{0,8,1/9},base_:3] :=
+makeOctavesBaseN[powParams_:{0,10,1},base_:3] :=
     Module[ {},
         {powfrom,powto,powstep} = powParams;
         tab = Union @ Table[

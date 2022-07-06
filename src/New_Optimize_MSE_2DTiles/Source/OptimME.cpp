@@ -356,7 +356,7 @@ int main(int argc, char const *argv[]) {
   std::string outputStringMSE ="MSE.dat";
   int limit = 1;
   std::vector<std::string>* restOfTheDocument = new std::vector<std::string>;
-  int intervalToWrite = 25;
+  int intervalToWrite = 10;
   /* ----------- Fin Initialisation des variables ----------- */
 
   // =========== Début CLI11 Configuration =========== //
