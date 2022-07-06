@@ -3138,8 +3138,9 @@ prepSoftEllipses2D[setNo_:1] :=
         If[ !FileExistsQ[dir], CreateDirectory[dir] ];
 		{precision,maxRecursion} = {20,10000};
 
-		nbatches = 4; 
+		nbatches = 8; 
 		nmus1D = 256;
+		(* Nintegrands = nbatches*nmus1D*nmus1D = 256K == 524288 *)
 
 		integrandTypeLabel = "SoftEllipses";
 		suffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
