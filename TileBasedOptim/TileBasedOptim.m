@@ -2430,8 +2430,7 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 
-Parallelize @ Do[prepOptimDataSequences[8, i, False, False], {i, 64}]
-Parallelize @ Do[prepOptimDataSequences[8, i, True, False], {i, 64}]
+Parallelize @ Do[prepOptimDataSequences[10, i, True, False], {i, 64}]
 
 *)
 prepOptimDataSequences[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:True] :=
@@ -2523,8 +2522,7 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 
-Do[prepOptimDataPointsets[8, i, False, False], {i, 64}]
-Do[prepOptimDataPointsets[8, i, True, False], {i, 64}]
+Do[prepOptimDataPointsets[10, i, True, False], {i, 64}]
 
 *)
 prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] :=
@@ -2550,7 +2548,7 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] 
 		mxTab = readMatBuilderMatrix[mxfname];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
 		
-		targetList = makeOctavesBaseN[{1,noctaves,1/9},3];
+		targetList = makeOctavesBaseN[{1,noctaves,1},3];
 		
 		pts = getMatBuiderPtsND[base^noctaves, mxfname, owenFlag, depth, nDims, base, seed ];
 		{iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo} = {1,base^noctaves};
