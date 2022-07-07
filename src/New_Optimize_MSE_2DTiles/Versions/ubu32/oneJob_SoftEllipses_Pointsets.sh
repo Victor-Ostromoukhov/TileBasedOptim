@@ -6,7 +6,7 @@ nbthreads=$2
 dir=$3
 suffix=$4
 
-nIterations=128
+nIterations=64
 nItegrandsPerIteration=65536
 
 InputDir="../../Data/Input/Tiles_Pointsets_${suffix}/${dir}/"

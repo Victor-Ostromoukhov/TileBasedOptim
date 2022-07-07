@@ -6,7 +6,7 @@ nbthreads=$2
 fname=$3
 suffix=$4
 
-nIterations=128
+nIterations=64
 nItegrandsPerIteration=65536
 
 
