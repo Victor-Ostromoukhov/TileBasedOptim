@@ -3136,7 +3136,7 @@ prepSoftEllipses2D[setNo_:1] :=
         If[ !FileExistsQ[dir], CreateDirectory[dir] ];
 		{precision,maxRecursion} = {20,10000};
 
-		nbatches = 8; 
+		nbatches = 9; 
 		nmus1D = 256;
 		(* Nintegrands = nbatches*nmus1D*nmus1D = 256K == 524288 *)
 
@@ -3259,7 +3259,7 @@ Do[
 prepHeavisideND[innDims_:2, setNo_:1] :=
     Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector,alpha,j,
     	integrandTypeLabel,hppsuffix,cppsuffix,varName},
-    	nIntegrands = 512 1024;
+    	nIntegrands = 9 256 256;
         If[$ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
         nDims = innDims;
 
