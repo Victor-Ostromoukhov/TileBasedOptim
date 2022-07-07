@@ -6,7 +6,7 @@ nbthreads=$2
 dir=$3
 suffix=$4
 
-nIterations=64
+nIterations=128
 nItegrandsPerIteration=65536
 
 InputDir="../../Data/Input/Tiles_Pointsets_${suffix}/${dir}/"
@@ -29,9 +29,9 @@ integrandType=2 # SoftEllipses
 
 for (( ind=0 ; ind < lst_length ; ind++ ))
 do
-    npts=${lst[$((${ind}))]}
-    infname=${InputDir}${inputFiles[$((${ind}))]}
-    outfname=${OutputDir}${inputFiles[$((${ind}))]}
+    npts=${lst[$((${ind}+1))]}
+    infname=${InputDir}${inputFiles[$((${ind}+1))]}
+    outfname=${OutputDir}${inputFiles[$((${ind}+1))]}
     ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration
 done
 

@@ -2696,7 +2696,7 @@ doubleCheck[] :=
         Print[npts -> mse];
     ]
 
-makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,64}, suffix_:"Seq_CurLevel", innDims_:2, dbg_:False] :=
+makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,1}, suffix_:"Seq_PrevLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -2761,7 +2761,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
         ,{iOrdinalAbsolute,Length[counters]}];
    ] (* makeOptimMSE *)
 
-makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,48}, suffix_:"Pointsets_CurLevel", innDims_:2, dbg_:False] :=
+makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,1}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -2781,8 +2781,7 @@ makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegra
    	    {setFrom,setTo} = setFromTo;
 		datamse = {};
 
-		counters = makeOctavesBaseN[{1, 6, 1/9}];
-		counters =  {3,4,5,6,7,8,9,10,11,13,15,17,19,21,24,27,31,34,39,44,50,56,63,72,81,92,103,117,132};
+		counters = makeOctavesBaseN[{1, 5, 1}];
    	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>".dat";
    	    
 		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/Tiles_"<>suffix<>"/";
@@ -2795,15 +2794,16 @@ makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegra
 	        mseTab = (*Parallelize @*) Table[
 	        	setNo = isetNo;
 				dir = dirs[[setNo]];
-				fname = FileNames["*"<>i2s[npts]<>".dat",{dir}];
-
-	       		If[ fname =!= {},
-	       			data = Import[fname[[1]] ];
+				fnames = FileNames["*"<>i2s[npts]<>".dat",{dir}];
+	       		If[ fnames =!= {},
+	       			data = Import[fnames[[1]] ];
+{fnames[[1]] -> Length[data]}//Print;
+Abort[];
 	       			If[Length[data] >= npts,
 						pts = data[[;;npts, 2;;3]];
 						If[dbg, ipts = Round[ npts pts ];Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
 		    	    	mse = getMSE[pts,"",nDims,integrandType];
-		       			Print["Processing ",npts," pts "->fname[[1]] -> mse];
+		       			Print["Processing ",npts," pts "->fnames[[1]] -> mse];
 						{npts,mse}
 	       			,(*ELSE*)
 	       				Nothing
