@@ -855,7 +855,7 @@ makeMatBuilderMatrices0m2net2D[] :=
 				];
         	,{ilevel,0,nlevels,2}];
 			Export["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];
-		,{i,64}];
+		,{i,256}];
     ] (* makeMatBuilderMatrices0m2net2D *)
 
 
@@ -2430,7 +2430,7 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 
-Parallelize @ Do[prepOptimDataSequences[10, i, True, False], {i, 64}]
+Parallelize @ Do[prepOptimDataSequences[10, i, True, False], {i, 65,256}]
 
 *)
 prepOptimDataSequences[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:True] :=
@@ -2967,7 +2967,7 @@ optimTypeMSEOptimisationHeaviside = 3;
     Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata},
     	consecutiveFlag = False;
 		fontSz = 14;
-		kPlusMinus = 1;
+		kPlusMinus = 1/2.;
     	{powfrom,powto,powstep} = {2,7,1}; (* powers of 3 *)
 
 		nDims = 2;
@@ -2978,17 +2978,17 @@ optimTypeMSEOptimisationHeaviside = 3;
 		
 	        plotLabel = "Optim vs. Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
 
-			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"WN_"<>integrandTypeLabel<>".dat"]),  3^(powfrom-1)  <= #[[1]] <= 3^(powto+1) &];
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"WN_"<>integrandTypeLabel<>".dat"]),   #[[1]] <= 3^(powto+1) &];
 			mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"Strat_"<>integrandTypeLabel<>".dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
-			mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"Strat_"<>integrandTypeLabel<>".dat"]), #[[1]] <= 3^(powto+1) &];
+			mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data],8}];
 
-			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"OwenPlus_"<>integrandTypeLabel<>".dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
-			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"OwenPlus_"<>integrandTypeLabel<>".dat"]),  #[[1]] <= 3^(powto+1) &];
+			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data],8}];
 			mseOwenPlusRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
 
-			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"MatBuiderMaxDepth_"<>integrandTypeLabel<>".dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
-			mseMatBuiderMaxDepth = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"MatBuiderMaxDepth_"<>integrandTypeLabel<>".dat"]), #[[1]] <= 3^(powto+1) &];
+			mseMatBuiderMaxDepth = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data],9}];
 
 
 			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Seq_PrevLevel.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
@@ -3005,7 +3005,7 @@ optimTypeMSEOptimisationHeaviside = 3;
 
 			 
 		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, mseOptimSeq, mseOptimPointsets} ;
-	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat",  "OwenPlus32", "MatBuiderMaxDepth",
+	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat",  "OwenMaxDepth", "MatBuiderMaxDepth",
 	        	"MB++ Seq", "MB++ Pointsets"} ] ];
 	        
 	        
