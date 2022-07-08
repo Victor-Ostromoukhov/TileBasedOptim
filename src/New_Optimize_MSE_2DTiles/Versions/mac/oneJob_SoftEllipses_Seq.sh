@@ -37,7 +37,8 @@ do
     limit=$((${lst[$((${level} - 1 ))]} + 1))
     infname=${OutputDir}${fname}
     outfname=${OutputDir}${fname}
-    ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep $outfname --nbPoints $to --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit
+    echo ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep $outfname --nbPoints $to --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit
+    ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --outputNextStep $outfname --nbPoints $to --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit | tee ${TracesDir}/t_${fname}.txt
 done
 
 

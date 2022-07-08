@@ -349,8 +349,8 @@ int main(int argc, char const *argv[]) {
   std::string inputString ="pts.dat";
   std::string outputString ="OptimizedPts.dat";
   std::string outputStringNextStep ="OptimizedPts_next_step.dat";
-  size_t niters = 1024*1024;
-  int gaussianSubSetSize = 4096;
+  size_t niters = 64;
+  int gaussianSubSetSize = INTEGRAND_TYPE_SOFTELLIPSES_NUMBER;
   int nbThrow = 64;
   int integrandType = 1;
   std::string outputStringMSE ="MSE.dat";
