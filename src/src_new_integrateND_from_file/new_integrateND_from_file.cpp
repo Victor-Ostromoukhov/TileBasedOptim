@@ -175,7 +175,7 @@ int main(int argc, char **argv) {
     int integrandType = 1;
     unsigned int nDims=2, firstDim = 0;
 	uint32_t seed = 13374269;
-	int nintegrands = 256*1024;
+	int nintegrands = 9*256*256;
 
 	CLI::App app { "integrate2D_from_file" };
 	app.add_option("-n,--nDims", nDims, "number of dimensions default: " + std::to_string(nDims) );
@@ -189,6 +189,7 @@ int main(int argc, char **argv) {
 	app.add_option("-d,--dbg", dbg_flag, "dbg_flag, default: " + std::to_string(dbg_flag) );
 	CLI11_PARSE(app, argc, argv)
 
+    if(integrandType == 2) nintegrands = 4*256*256;
 	vector<type_pointND> points;
     std::ifstream in(input_filename);
 	int npts_read = read_points_from_file(nDims, in, points);

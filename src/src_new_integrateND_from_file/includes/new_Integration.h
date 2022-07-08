@@ -29,9 +29,8 @@ struct t_GaussianStruct8D {double integral; double mu[8] ; double mxCInv[8 * 8] 
 struct t_GaussianStruct10D {double integral; double mu[10] ; double mxCInv[10 * 10] ; };
 struct t_GaussianStruct12D {double integral; double mu[12] ; double mxCInv[12 * 12] ; };
 
-#include "../Integrands/Heaviside2D_nIntegrands524288_testSet.hpp"
+#include "../Integrands/Heaviside2D_nIntegrands589824_testSet.hpp"
 #include "../Integrands/SoftEllipses2D_testSet_4x4x128x128_testSet.hpp"
-//#include "../Integrands/SoftEllipses2D_2x256x256_optimSet.hpp"
 
 //extern t_Heaviside2D tab_Heaviside2D[262144] ;
 extern t_Heaviside3D tab_Heaviside3D[16384] ;

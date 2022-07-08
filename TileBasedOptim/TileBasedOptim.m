@@ -2522,7 +2522,7 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 
-Do[prepOptimDataPointsets[10, i, True, False], {i, 64}]
+Do[prepOptimDataPointsets[10, i, True, False], {i, 65,256}]
 
 *)
 prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] :=
