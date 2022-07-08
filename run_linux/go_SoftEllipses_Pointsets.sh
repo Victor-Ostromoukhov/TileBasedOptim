@@ -18,7 +18,7 @@ lst_length=${#inputDirs[@]}
 #lst_length=1
 
 
-for (( ind=1 ; ind <= lst_length ; ind++ ))
+for (( ind=set_from ; ind <= set_to ; ind++ ))
 	do
         dir=${inputDirs[$((${ind} - 1))]}
        ./launcher_SoftEllipses_Pointsets.sh $ind ${dir} ${suffix}  ${nthreads}
