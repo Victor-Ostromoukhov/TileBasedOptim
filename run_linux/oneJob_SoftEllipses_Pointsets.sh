@@ -10,8 +10,8 @@ nIterations=128
 nItegrandsPerIteration=65536
 
 InputDir="../Tiles_Pointsets_${suffix}/${dir}/"
-OutputDir="../Output/Tiles_Pointsets_${suffix}/"
-TracesDir="../Traces/Tiles_Pointsets_${suffix}/"
+OutputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
+TracesDir="../Traces/Tiles_Pointsets_${suffix}/${dir}/"
 mkdir -p ${OutputDir}
 mkdir -p ${TracesDir}
  
