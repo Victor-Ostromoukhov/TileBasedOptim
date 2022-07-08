@@ -2716,7 +2716,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
    	    {setFrom,setTo} = setFromTo;
 		datamse = {};
 
-		counters = makeOctavesBaseN[{1, 6, 1}];
+		counters = makeOctavesBaseN[{1, 7, 1}];
    	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>".dat";
    	    
 		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/Tiles_"<>suffix<>"/";
@@ -2761,7 +2761,7 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
         ,{iOrdinalAbsolute,Length[counters]}];
    ] (* makeOptimMSE *)
 
-makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,1}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
+makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,2}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -2781,7 +2781,7 @@ makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegra
    	    {setFrom,setTo} = setFromTo;
 		datamse = {};
 
-		counters = makeOctavesBaseN[{1, 5, 1}];
+		counters = makeOctavesBaseN[{1, 6, 1}];
    	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>".dat";
    	    
 		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/Tiles_"<>suffix<>"/";
@@ -2797,8 +2797,7 @@ makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegra
 				fnames = FileNames["*"<>i2s[npts]<>".dat",{dir}];
 	       		If[ fnames =!= {},
 	       			data = Import[fnames[[1]] ];
-{fnames[[1]] -> Length[data]}//Print;
-Abort[];
+					{fnames[[1]] -> Length[data]}//Print;
 	       			If[Length[data] >= npts,
 						pts = data[[;;npts, 2;;3]];
 						If[dbg, ipts = Round[ npts pts ];Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
@@ -2969,7 +2968,7 @@ optimTypeMSEOptimisationHeaviside = 3;
     	consecutiveFlag = False;
 		fontSz = 14;
 		kPlusMinus = 1;
-    	{powfrom,powto,powstep} = {2,6,1}; (* powers of 3 *)
+    	{powfrom,powto,powstep} = {2,7,1}; (* powers of 3 *)
 
 		nDims = 2;
 		(*integrandTypeLabel = "Heaviside";*)
@@ -2996,16 +2995,18 @@ optimTypeMSEOptimisationHeaviside = 3;
 			mseOptimSeq = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			(*data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Seq_CurLevel.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
 			mseOptim2 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
-			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Seq_PrevLevel_step12octave.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
-			mseOptimSeqstep12 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			(*data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Seq_PrevLevel_step12octave.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
+			mseOptimSeqstep12 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 			(*data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Seq_CurLevel_step12octave.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
 			mseOptim4 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];*)
 			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_Pointsets_PrevLevel.dat"]), 3^powfrom  <= #[[1]] <= 3^powto &];
-			mseOptimPointsets = Table[{data[[i,1]], data[[i,2]] },{i,Length[data]}];
+			(*mseOptimPointsets = Table[{data[[i,1]], data[[i,2]] },{i,Length[data]}];*)
+			mseOptimPointsets = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+
 			 
-		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, mseOptimSeq, mseOptimSeqstep12, mseOptimPointsets} ;
+		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, mseOptimSeq, mseOptimPointsets} ;
 	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat",  "OwenPlus32", "MatBuiderMaxDepth",
-	        	"MB++ Seq", "MB++ Seq 1/2 octave","MB++ Pointsets"} ] ];
+	        	"MB++ Seq", "MB++ Pointsets"} ] ];
 	        
 	        
 			p = ListLogLogPlot[ alldata
@@ -3015,9 +3016,9 @@ optimTypeMSEOptimisationHeaviside = 3;
 							{Blue,AbsoluteThickness[2]},
 							{Black,AbsoluteThickness[2]},
 							{Orange,AbsoluteThickness[4]},
-							{Darker@Green,AbsoluteThickness[2], Dashed},
 							{Red,Dashed,AbsoluteThickness[3], Dashed},
 							{Blue,Dashed,AbsoluteThickness[3]},
+							{Darker@Green,AbsoluteThickness[2], Dashed},
 							{Cyan,AbsoluteThickness[3], Dashed},
 							{Gray,Dashed,AbsoluteThickness[3], Dashed}
 						}

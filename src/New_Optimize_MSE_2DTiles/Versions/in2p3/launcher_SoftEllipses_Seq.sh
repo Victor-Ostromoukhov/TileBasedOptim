@@ -14,5 +14,5 @@ nthreads=32
 
 
 #echo "Starting Job" > ../../Data/Traces/trace-${fname}.txt
-sbatch -n ${nthreads} -J S${ind} -o "../../Data/Traces/slurm-%j-${fname}.out" oneJob_SoftEllipses_Seq.sh ${ind} ${nthreads} ${fname} ${suffix}
+sbatch -n ${nthreads} -J S${ind} -o "slurm-%j-${fname}.out" oneJob_SoftEllipses_Seq.sh ${ind} ${nthreads} ${fname} ${suffix}
     
