@@ -305,16 +305,16 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
             for (int currentDim = 1; currentDim <= dimension; currentDim++) {
                   mseTab[i_pt_in_tile].point[currentDim-1] = points[rAM.at(i_pts)][currentDim-1];
             }
-                  double rand = distribution(generator);
-             (mseTab[i_pt_in_tile].point)[0] = (*(v->at(rAM.at(i_pts)).getPreviousRefPoint()))[0] +  ( ( ( (double)(i_pt_in_tile/8) * v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(1)[0] ) ) / 8.0 ) +   rand * ( (v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(1)[0] / 8.0) + ( ( ( (double)(i_pt_in_tile/8) *v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(2)[0]) ) / 8.0 ) + rand * ( (v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(2)[0]) / 8.0));
-                        rand = distribution(generator);
-             (mseTab[i_pt_in_tile].point)[1] = (*(v->at(rAM.at(i_pts)).getPreviousRefPoint()))[1] +  ( ( ( (double)(i_pt_in_tile/8) * v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(1)[1] ) ) / 8.0 ) +    rand * ( (v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(1)[1] / 8.0) + ( ( ( (double)(i_pt_in_tile/8) *v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(2)[1]) ) / 8.0 ) + rand * ( (v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(2)[1]) / 8.0));
-          mseTab[i_pt_in_tile].apportOfNewPoint = recalculateGaussianValueAllGauss(points[rAM.at(i_pts)],mseTab[i_pt_in_tile].point, &sigma,&shift,tabPtsValGauss,gaussianSubSetSize,nbpts,&anal,integrandType);
+            double rand = distribution(generator);
+            (mseTab[i_pt_in_tile].point)[0] = (*(v->at(rAM.at(i_pts)).getPreviousRefPoint()))[0] +  ( ( ( (double)(i_pt_in_tile/8) * v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(1)[0] ) ) / 8.0 ) +   rand * ( (v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(1)[0] / 8.0) + ( ( ( (double)(i_pt_in_tile/8) *v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(2)[0]) ) / 8.0 ) + rand * ( (v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(2)[0]) / 8.0));
+            rand = distribution(generator);
+            (mseTab[i_pt_in_tile].point)[1] = (*(v->at(rAM.at(i_pts)).getPreviousRefPoint()))[1] +  ( ( ( (double)(i_pt_in_tile/8) * v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(1)[1] ) ) / 8.0 ) +    rand * ( (v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(1)[1] / 8.0) + ( ( ( (double)(i_pt_in_tile/8) *v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(2)[1]) ) / 8.0 ) + rand * ( (v->at(rAM.at(i_pts)).getPreviousDirectionnalVector(2)[1]) / 8.0));
+            mseTab[i_pt_in_tile].apportOfNewPoint = recalculateGaussianValueAllGauss(points[rAM.at(i_pts)],mseTab[i_pt_in_tile].point, &sigma,&shift,tabPtsValGauss,gaussianSubSetSize,nbpts,&anal,integrandType);
           }
           newPointHolder<dimension> theChosenOne = *std::min_element(mseTab+0,mseTab+nbThrow,compareTwoNewPointHolder<dimension>);
           if (theChosenOne.apportOfNewPoint < tabPtsValGauss[gaussianSubSetSize]) {
             double gain = initialSE / (theChosenOne.apportOfNewPoint);
-            std::cout << outputString << "  " << rAMGaussiennes << " | " << i_pts << "/" << (nbpts-limit) << " \t iter=" << iter_over_pointset << " npts=" << nbpts << " MSE : " << initialSE << " -> " << theChosenOne.apportOfNewPoint << " \t gain : "<< gain << "\t| " << log(gain)/log(nbpts) << std::endl;
+            std::cout << outputString << "  " << theChosenOne.index << " | " << i_pts << "/" << (nbpts-limit) << " \t iter=" << iter_over_pointset << " npts=" << nbpts << " MSE : " << initialSE << " -> " << theChosenOne.apportOfNewPoint << " \t gain : "<< gain << "\t| " << log(gain)/log(nbpts) << std::endl;
             prevMSE = theChosenOne.apportOfNewPoint;
             tabPtsValGauss[gaussianSubSetSize] = theChosenOne.apportOfNewPoint;
             changeAllValueGaussTab(points[theChosenOne.index],theChosenOne.point, &sigma,&shift, tabPtsValGauss,gaussianSubSetSize,nbpts,integrandType);
