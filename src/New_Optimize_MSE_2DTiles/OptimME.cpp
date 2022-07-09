@@ -295,7 +295,8 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
         rAMGaussiennes = randomAccessMatriceGenerator(( total_N_integrands / gaussianSubSetSize ),0);
       }
 
-      initializeGaussianVectors<dimension>(&sigma,&shift,&anal,rAMGaussiennes.at((iter_over_pointset % (( total_N_integrands / gaussianSubSetSize )))),integrandType,gaussianSubSetSize);
+      int ind = rAMGaussiennes.at((iter_over_pointset % (( total_N_integrands / gaussianSubSetSize ))));
+      initializeGaussianVectors<dimension>(&sigma,&shift,&anal,ind,integrandType,gaussianSubSetSize);
       mseOfAPointsetOnAllGaussian(&points,&sigma,&shift,&anal,gaussianSubSetSize,tabPtsValGauss,integrandType);
       for (int i_pts = 0; i_pts < nbpts-limit; i_pts++) {
           #pragma omp parallel for
@@ -314,7 +315,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
           newPointHolder<dimension> theChosenOne = *std::min_element(mseTab+0,mseTab+nbThrow,compareTwoNewPointHolder<dimension>);
           if (theChosenOne.apportOfNewPoint < tabPtsValGauss[gaussianSubSetSize]) {
             double gain = initialSE / (theChosenOne.apportOfNewPoint);
-            std::cout << outputString << "  " << theChosenOne.index << " | " << i_pts << "/" << (nbpts-limit) << " \t iter=" << iter_over_pointset << " npts=" << nbpts << " MSE : " << initialSE << " -> " << theChosenOne.apportOfNewPoint << " \t gain : "<< gain << "\t| " << log(gain)/log(nbpts) << std::endl;
+            std::cout << outputString << "  " << ind << " | " << i_pts << "/" << (nbpts-limit) << " \t iter=" << iter_over_pointset << " npts=" << nbpts << " MSE : " << initialSE << " -> " << theChosenOne.apportOfNewPoint << " \t gain : "<< gain << "\t| " << log(gain)/log(nbpts) << std::endl;
             prevMSE = theChosenOne.apportOfNewPoint;
             tabPtsValGauss[gaussianSubSetSize] = theChosenOne.apportOfNewPoint;
             changeAllValueGaussTab(points[theChosenOne.index],theChosenOne.point, &sigma,&shift, tabPtsValGauss,gaussianSubSetSize,nbpts,integrandType);
