@@ -158,6 +158,7 @@ template<int dimension>
 void initializeGaussianVectors(std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,std::vector<double>* anal,int offset,int integrandType,int gaussianSubSetSize){
   switch (integrandType) {
     case 1: // HeaviSide
+#pragma omp parallel for
       for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; z++) {
         for (int i = 0; i < dimension; ++i) {
             (*shift)[z-(offset*gaussianSubSetSize)][i] = tab_Heaviside2D[z].muDiscotinuity[i];  // Déplacement
@@ -169,6 +170,7 @@ void initializeGaussianVectors(std::vector<MatXDynamic>* sigma,std::vector<VecXD
       }
     break;
     case 2: // SoftEllipses
+#pragma omp parallel for
         for (int z = 0 + offset*gaussianSubSetSize ; z < (offset + 1)*gaussianSubSetSize; z++) {
 
           for (int i = 0; i < dimension; ++i) {
@@ -221,6 +223,7 @@ double seOfAPointsetOnOneGaussian(std::vector<VecX<dimension>>* points,MatXDynam
 template<int dimension>
 double mseOfAPointsetOnAllGaussian(std::vector<VecX<dimension>>* points,std::vector<MatXDynamic>* sigma,std::vector<VecXDynamic>* shift,std::vector<double>* anal,int nbGauss,double tabPtsValGauss[],int integrandType){
   double val = 0.;
+#pragma omp parallel for reduction(+:val)
   for (int z = 0; z < nbGauss; ++z) {
     val += seOfAPointsetOnOneGaussian(points,(*sigma)[z],(*shift)[z],(*anal)[z],nbGauss,tabPtsValGauss,z,integrandType);
   }
