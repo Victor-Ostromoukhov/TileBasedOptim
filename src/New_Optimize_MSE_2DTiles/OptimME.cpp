@@ -144,6 +144,7 @@ template<int dimension>
 void exportTilesNextStep(std::vector<Tiles<dimension>>* v,std::string outputStringNextStep,std::vector<std::string>* restOfTheDocument){
   std::ofstream o;
   o.open(outputStringNextStep);
+  std::out << "Exporting into " << outputStringNextStep << endl;
   for (typename std::vector<Tiles<dimension>>::iterator it = v->begin();it != v->end();  it++) {
     o << (*it);
   }
@@ -331,15 +332,17 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
 
 
       if (iter_over_pointset % intervalToWrite == (intervalToWrite-1) ) {
-         exportTiles(v,outputString);   
+//         exportTiles(v,outputString);
+    	  exportTilesNextStep(v,outputString,restOfTheDocument);
       }
 
     }
 
-    exportTiles(v,outputString);
-    if (outputStringNextStep.compare("OptimizedPts_next_step.dat") != 0) {
-      exportTilesNextStep(v,outputStringNextStep,restOfTheDocument);
-    }
+//    exportTiles(v,outputString);
+ 	  exportTilesNextStep(v,outputString,restOfTheDocument);
+//    if (outputStringNextStep.compare("OptimizedPts_next_step.dat") != 0) {
+//      exportTilesNextStep(v,outputStringNextStep,restOfTheDocument);
+//    }
     //exportPoints(&points,outputString);
     return tabPtsValGauss[gaussianSubSetSize];
   // return 0.0;
@@ -360,7 +363,7 @@ int main(int argc, char const *argv[]) {
   std::string outputStringMSE ="MSE.dat";
   int limit = 1;
   std::vector<std::string>* restOfTheDocument = new std::vector<std::string>;
-  int intervalToWrite = 10;
+  int intervalToWrite = 100;
   /* ----------- Fin Initialisation des variables ----------- */
 
   // =========== Début CLI11 Configuration =========== //
