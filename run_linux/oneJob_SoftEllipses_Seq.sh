@@ -1,16 +1,17 @@
 #!/bin/bash
-
+suffix="PrevLevel"
 
 ind=$1
 nbthreads=$2
 fname=$3
-suffix=$4
+continueFlag=$4
 
-nIterations=128
-nItegrandsPerIteration=65536
-
-
-InputDir="../Tiles_Seq_${suffix}/"
+if [ continueFlag ] ;
+then
+    InputDir="../Output/Tiles_Seq_${suffix}/"
+else
+    InputDir="../Tiles_Seq_${suffix}/"
+fi
 OutputDir="../Output/Tiles_Seq_${suffix}/"
 TracesDir="../Traces/Tiles_Seq_${suffix}/"
 mkdir -p ${OutputDir}
@@ -24,6 +25,9 @@ cp ${infname} ${outfname}
 # counters...
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
 lst=(1 3    9    27    81    243    729   2187   6561)
+
+nIterations=128
+nItegrandsPerIteration=65536
 
 lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses

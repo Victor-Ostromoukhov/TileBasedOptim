@@ -2971,12 +2971,12 @@ optimTypeMSEOptimisationSoftEllipses = 2;
 optimTypeMSEOptimisationHeaviside = 3;
 
  
- showstdOptimMSE[] :=
+ showstdOptimMSE[octaves_:{1,8,1}] :=
     Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata},
     	consecutiveFlag = False;
 		fontSz = 14;
 		kPlusMinus = 1/2.;
-    	{powfrom,powto,powstep} = {2,7,1}; (* powers of 3 *)
+    	{powfrom,powto,powstep} = octaves; (* powers of 3 *)
 
 		nDims = 2;
 		(*integrandTypeLabel = "Heaviside";*)

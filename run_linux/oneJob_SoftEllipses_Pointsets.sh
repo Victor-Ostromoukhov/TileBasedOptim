@@ -1,15 +1,18 @@
 #!/bin/bash
-
+suffix="PrevLevel"
 
 ind=$1
 nbthreads=$2
 dir=$3
-suffix=$4
+continueFlag=$4
 
-nIterations=128
-nItegrandsPerIteration=65536
+if [ continueFlag ] ;
+then
+    InputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
+else
+    InputDir="../Tiles_Pointsets_${suffix}/${dir}/"
+fi
 
-InputDir="../Tiles_Pointsets_${suffix}/${dir}/"
 OutputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
 TracesDir="../Traces/Tiles_Pointsets_${suffix}/${dir}/"
 mkdir -p ${OutputDir}
@@ -19,8 +22,10 @@ mkdir -p ${TracesDir}
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
 lst=(1 3    9    27    81    243    729)
 
-inputFiles=(`ls ${InputDir}`)
+nIterations=128
+nItegrandsPerIteration=65536
 
+inputFiles=(`ls ${InputDir}`)
 lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses
 

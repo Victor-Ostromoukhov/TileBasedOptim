@@ -8,8 +8,8 @@ fi
 
 ind=$1
 dir=$2
-suffix=$3
+continueFlag=$3
 nthreads=$4
 
-./oneJob_SoftEllipses_Pointsets.sh ${ind} ${nthreads} ${dir} ${suffix}
+./oneJob_SoftEllipses_Pointsets.sh ${ind} ${nthreads} ${dir} ${continueFlag}
     
