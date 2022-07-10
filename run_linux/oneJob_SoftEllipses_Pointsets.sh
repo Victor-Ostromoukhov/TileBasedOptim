@@ -12,11 +12,12 @@ fi
 
 echo $continueFlag
 
-if [ $continueFlag = "false" ]; then
+if [ $continueFlag ]; then
     InputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
-    echo $continueFlag
+    echo true
 else
     InputDir="../Tiles_Pointsets_${suffix}/${dir}/"
+    echo false
 fi
 OutputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
 TracesDir="../Traces/Tiles_Pointsets_${suffix}/${dir}/"
@@ -25,6 +26,7 @@ mkdir -p ${TracesDir}
 
 echo InputDir=$InputDir
 echo OutputDir=$OutputDir
+
 # counters...
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
 #lst=(1 3    9    27    81    243    729)
@@ -48,8 +50,6 @@ do
         nIterations=$((${nIterations} * 2 ))
         echo ========= ${nIterations}
     fi
-    echo $infname
-    echo $outfname
     echo ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration
     echo ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration  >> ${TracesDir}/t_${fname}.txt
     ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration  >> ${TracesDir}/t_${fname}.txt
