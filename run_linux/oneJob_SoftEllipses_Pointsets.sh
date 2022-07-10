@@ -6,7 +6,7 @@ nbthreads=$2
 dir=$3
 continueFlag=$4
 
-echo $continueFlag
+echo continueFlag=$continueFlag
 
 if [ $continueFlag = false ]; then
     InputDir="../Tiles_Pointsets_${suffix}/${dir}/"
