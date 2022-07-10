@@ -17,6 +17,8 @@ TracesDir="../Traces/Tiles_Pointsets_${suffix}/${dir}/"
 mkdir -p ${OutputDir}
 mkdir -p ${TracesDir}
 
+echo InputDir=$InputDir
+echo OutputDir=$OutputDir
 # counters...
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
 #lst=(1 3    9    27    81    243    729)
