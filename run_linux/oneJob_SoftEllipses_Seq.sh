@@ -37,17 +37,16 @@ integrandType=2 # SoftEllipses
 
 for level in $(eval echo {1..$((${lst_length} - 1))})
 do
-    if [ ${level} -gt 729 ] ;
-    then
-        nIterations=$((${nIterations} * 2 ))
-    fi
-    from=${lst[$((${level} - 1 ))]}
-    to=${lst[$level]}
+    npts=${lst[$level]}
     limit=$((${lst[$((${level} - 1 ))]} + 1))
     infname=${OutputDir}${fname}
     outfname=${OutputDir}${fname}
-    echo ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --nbPoints $to --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit
-    ~/bin/Optimize_MSE_2DTiles -t ${nbthreads} -n $nIterations -i $infname -o $outfname --nbPoints $to --integrandType ${integrandType} -g $nItegrandsPerIteration --limit $limit >> ${TracesDir}/t_${fname}.txt
+    if [ ${npts} -gt 729 ] ;
+    then
+        nIterations=$((${nIterations} * 2 ))
+    fi
+    echo ~/bin/Optimize_MSE_2DTiles --nbPoints $npts --limit $limit -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration
+        ~/bin/Optimize_MSE_2DTiles --nbPoints $npts --limit $limit -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration >> ${TracesDir}/t_${fname}.txt
 done
 
 
