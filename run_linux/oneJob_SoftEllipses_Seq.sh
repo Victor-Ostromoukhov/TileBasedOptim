@@ -36,7 +36,7 @@ integrandType=2 # SoftEllipses
 echo Processing ${lst}
 for level in $(eval echo {1..$((${lst_length} - 1))})
 do
-    if [ level -gt 729 ] ;
+    if [ ${level} -gt 729 ] ;
     then
         nIterations=$((${nIterations} * 2 ))
     fi

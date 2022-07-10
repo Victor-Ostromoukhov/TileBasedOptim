@@ -31,7 +31,7 @@ integrandType=2 # SoftEllipses
 
 for (( ind=0 ; ind < lst_length ; ind++ ))
 do
-    if [ level -gt 729 ] ;
+    if [ ${level} -gt 729 ] ;
     then
         nIterations=$((${nIterations} * 2 ))
     fi
