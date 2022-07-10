@@ -29,7 +29,7 @@ then
     cp ${infname} ${outfname}
 fi
 
-nIterations=64
+nIterations=128
 nItegrandsPerIteration=65536
 
 lst_length=${#lst[@]}
