@@ -9,13 +9,12 @@ nbthreads=$2
 fname=$3
 continueFlag=$4
 
-if [ $continueFlag ] ;
-then
-    InputDir="../Output/Tiles_Seq_${suffix}/"
-    lst=(729   2187   6561)
-else
+if [ $continueFlag = false ]; then
     InputDir="../Tiles_Seq_${suffix}/"
     lst=(1 3    9    27    81    243    729   2187   6561)
+else
+    InputDir="../Output/Tiles_Seq_${suffix}/"
+    lst=(729   2187   6561)
 fi
 OutputDir="../Output/Tiles_Seq_${suffix}/"
 TracesDir="../Traces/Tiles_Seq_${suffix}/"
