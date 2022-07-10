@@ -36,7 +36,8 @@ do
     fname=${inputFiles[$((${ind}))]}
     infname=${InputDir}${fname}
     outfname=${OutputDir}${fname}
-    if [ ${npts} -gt 729 ] then
+    if [ ${npts} -gt 729 ]
+    then
         nIterations=$((${nIterations} * 2 ))
         echo ========= ${nIterations}
     fi
