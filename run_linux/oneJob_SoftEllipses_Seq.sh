@@ -29,6 +29,7 @@ fi
 
 echo InputDir=$InputDir
 echo OutputDir=$OutputDir
+echo TracesDir=$TracesDir
 
 nIterations=128
 nItegrandsPerIteration=65536
