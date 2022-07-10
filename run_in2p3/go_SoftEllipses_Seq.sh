@@ -16,6 +16,8 @@ else
     continueFlag=false
 fi
 
+echo continueFlag=$continueFlag
+
 inputFiles=(`ls ../Tiles_Seq_${suffix}/`)
 
 lst_length=${#inputFiles[@]}

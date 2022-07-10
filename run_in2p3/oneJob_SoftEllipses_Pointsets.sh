@@ -6,16 +6,23 @@ nbthreads=$2
 dir=$3
 continueFlag=$4
 
-if [ $continueFlag ] ;
-then
-    InputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
-else
+echo continueFlag=$continueFlag
+
+if [ $continueFlag = false ]; then
     InputDir="../Tiles_Pointsets_${suffix}/${dir}/"
+    echo false
+else
+    InputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
+    echo true
 fi
 OutputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
 TracesDir="../Traces/Tiles_Pointsets_${suffix}/${dir}/"
 mkdir -p ${OutputDir}
 mkdir -p ${TracesDir}
+
+echo InputDir=$InputDir
+echo OutputDir=$OutputDir
+echo TracesDir=$TracesDir
 
 # counters...
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
@@ -29,7 +36,7 @@ inputFiles=(`ls ${InputDir}`)
 lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses
 
-for (( ind=0 ; ind < lst_length ; ind++ ))
+for (( ind=0 ; ind < lst_length-1 ; ind++ ))
 do
     npts=${lst[$((${ind}+1))]}
     fname=${inputFiles[$((${ind}))]}
@@ -38,10 +45,10 @@ do
     if [ ${npts} -gt 729 ] ;
     then
         nIterations=$((${nIterations} * 2 ))
+        echo ========= ${nIterations}
     fi
+    echo trace ===== $TracesDir/t_${fname}.txt
+    echo ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration
     echo ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration  >> ${TracesDir}/t_${fname}.txt
     ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration  >> ${TracesDir}/t_${fname}.txt
 done
-
-
-
