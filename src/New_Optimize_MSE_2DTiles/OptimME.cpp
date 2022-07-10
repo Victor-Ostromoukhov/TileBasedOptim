@@ -354,7 +354,7 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
 int main(int argc, char const *argv[]) {
 
   /* ----------- Début Initialisation des variables ----------- */
-  int nbpts = 2;
+	  int nbpts = 2;
   int nbThreads = omp_get_max_threads() >= 64 ? 64 : omp_get_max_threads();
   std::string inputString ="pts.dat";
   std::string outputString ="OptimizedPts.dat";
