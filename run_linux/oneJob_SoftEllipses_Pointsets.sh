@@ -39,12 +39,8 @@ do
     if [ ${npts} -gt 729 ] ;
     then
         nIterations=$((${nIterations} * 2 ))
+        echo ========= ${nIterations}
     fi
-echo ${npts}
-echo ${fname}
-echo ${infname}
-echo ${outfname}
-echo ${nIterations}
     echo ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration  >> ${TracesDir}/t_${fname}.txt
     echo ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration  >> ${TracesDir}/t_${fname}.txt
 done
