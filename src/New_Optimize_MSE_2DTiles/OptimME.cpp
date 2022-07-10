@@ -338,12 +338,15 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
 
     }
 
-    exportTiles(v,outputString);
+//    exportTiles(v,outputString);
 // 	  exportTilesNextStep(v,outputString,restOfTheDocument);
 //    if (outputStringNextStep.compare("OptimizedPts_next_step.dat") != 0) {
 //      exportTilesNextStep(v,outputStringNextStep,restOfTheDocument);
 //    }
     //exportPoints(&points,outputString);
+
+    exportTilesNextStep(v,outputString,restOfTheDocument);
+
     return tabPtsValGauss[gaussianSubSetSize];
   // return 0.0;
 }
