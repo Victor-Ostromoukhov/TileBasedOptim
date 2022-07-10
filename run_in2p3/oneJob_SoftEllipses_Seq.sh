@@ -34,7 +34,7 @@ echo InputDir=$InputDir
 echo OutputDir=$OutputDir
 echo TracesDir=$TracesDir
 
-nIterations=64
+nIterations=128
 nItegrandsPerIteration=65536
 
 lst_length=${#lst[@]}
@@ -46,7 +46,7 @@ do
     limit=$((${lst[$((${level} - 1 ))]} + 1))
     infname=${OutputDir}${fname}
     outfname=${OutputDir}${fname}
-    if [ ${npts} -gt 243 ]; then
+    if [ ${npts} -gt 729 ]; then
         nIterations=$((${nIterations} * 2 ))
     fi
     echo trace into ${TracesDir}/t_${fname}.txt
