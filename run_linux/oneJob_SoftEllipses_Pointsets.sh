@@ -4,7 +4,11 @@ suffix="PrevLevel"
 ind=$1
 nbthreads=$2
 dir=$3
-continueFlag=$4
+if [ $# -ge 4 ]; then
+     continueFlag=$4
+else
+    continueFlag=false
+fi
 
 if [ $continueFlag ] ;
 then
