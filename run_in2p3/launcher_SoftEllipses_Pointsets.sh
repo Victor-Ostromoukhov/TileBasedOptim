@@ -8,8 +8,8 @@ fi
 
 ind=$1
 dir=$2
-suffix=$3
+continueFlag=$3
 nthreads=$4
 
-sbatch -n ${nthreads} -J P${ind} -o "slurm-%j-${fname}.out" ./oneJob_SoftEllipses_Pointsets.sh ${ind} ${nthreads} ${dir} ${suffix}
+sbatch -n ${nthreads} -J P${ind} -o "slurm-%j-${fname}.out" ./oneJob_SoftEllipses_Pointsets.sh ${ind} ${nthreads} ${dir} ${continueFlag}
     
