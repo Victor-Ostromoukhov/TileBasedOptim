@@ -30,9 +30,10 @@ integrandType=2 # SoftEllipses
 
 for (( ind=0 ; ind < lst_length ; ind++ ))
 do
+    fname=${inputFiles[$((${ind}))]}
     npts=${lst[$((${ind}+1))]}
-    infname=${InputDir}${inputFiles[$((${ind}))]}
-    outfname=${OutputDir}${inputFiles[$((${ind}))]}
+    infname=${InputDir}${fname}
+    outfname=${OutputDir}${fname}
     echo ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration   >> ${TracesDir}/t_${fname}.txt
     ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration  >> ${TracesDir}/t_${fname}.txt
 done
