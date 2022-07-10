@@ -41,8 +41,7 @@ do
     limit=$((${lst[$((${level} - 1 ))]} + 1))
     infname=${OutputDir}${fname}
     outfname=${OutputDir}${fname}
-    if [ ${npts} -gt 729 ] ;
-    then
+    if [ ${npts} -gt 729 ]; then
         nIterations=$((${nIterations} * 2 ))
     fi
     echo ~/bin/Optimize_MSE_2DTiles --nbPoints $npts --limit $limit -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration >> ${TracesDir}/t_${fname}.txt

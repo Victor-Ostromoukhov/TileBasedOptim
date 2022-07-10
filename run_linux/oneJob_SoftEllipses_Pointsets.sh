@@ -35,7 +35,7 @@ inputFiles=(`ls ${InputDir}`)
 lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses
 
-for (( ind=6 ; ind < lst_length-1 ; ind++ ))
+for (( ind=0 ; ind < lst_length-1 ; ind++ ))
 do
     npts=${lst[$((${ind}+1))]}
     fname=${inputFiles[$((${ind}))]}
