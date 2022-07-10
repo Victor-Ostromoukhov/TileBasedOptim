@@ -134,7 +134,7 @@ template<int dimension>
 void exportTiles(std::vector<Tiles<dimension>>* v,std::string outputString){
   std::ofstream o;
   o.open(outputString);
-  std::cout << "exportTiles: Exporting into " << outputStringNextStep << std::endl;
+  std::cout << "exportTiles: Exporting into " << outputString << std::endl;
   for (typename std::vector<Tiles<dimension>>::iterator it = v->begin();it != v->end();  it++) {
     o << (*it);
   }
