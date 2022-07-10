@@ -13,11 +13,11 @@ fi
 echo $continueFlag
 
 if [ $continueFlag = false ]; then
-    InputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
-    echo true
-else
     InputDir="../Tiles_Pointsets_${suffix}/${dir}/"
     echo false
+else
+    InputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
+    echo true
 fi
 OutputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
 TracesDir="../Traces/Tiles_Pointsets_${suffix}/${dir}/"
