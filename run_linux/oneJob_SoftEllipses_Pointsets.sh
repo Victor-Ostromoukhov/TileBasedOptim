@@ -14,6 +14,7 @@ echo $continueFlag
 
 if [ $continueFlag ]; then
     InputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
+    echo $continueFlag
 else
     InputDir="../Tiles_Pointsets_${suffix}/${dir}/"
 fi
