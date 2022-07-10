@@ -22,11 +22,13 @@ mkdir -p ${OutputDir}
 mkdir -p ${TracesDir}
 infname=${InputDir}${fname}
 outfname=${OutputDir}${fname}
-if [ ! $continueFlag ] ;
-then
+if [ $continueFlag = false ]; then
     echo cp ${infname} ${outfname}
     cp ${infname} ${outfname}
 fi
+
+echo InputDir=$InputDir
+echo OutputDir=$OutputDir
 
 nIterations=128
 nItegrandsPerIteration=65536
