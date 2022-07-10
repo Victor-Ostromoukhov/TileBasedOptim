@@ -134,6 +134,7 @@ template<int dimension>
 void exportTiles(std::vector<Tiles<dimension>>* v,std::string outputString){
   std::ofstream o;
   o.open(outputString);
+  std::cout << "exportTiles: Exporting into " << outputStringNextStep << std::endl;
   for (typename std::vector<Tiles<dimension>>::iterator it = v->begin();it != v->end();  it++) {
     o << (*it);
   }
@@ -144,7 +145,7 @@ template<int dimension>
 void exportTilesNextStep(std::vector<Tiles<dimension>>* v,std::string outputStringNextStep,std::vector<std::string>* restOfTheDocument){
   std::ofstream o;
   o.open(outputStringNextStep);
-  std::cout << "Exporting into " << outputStringNextStep << std::endl;
+  std::cout << "exportTilesNextStep: Exporting into " << outputStringNextStep << std::endl;
   for (typename std::vector<Tiles<dimension>>::iterator it = v->begin();it != v->end();  it++) {
     o << (*it);
   }
@@ -331,15 +332,14 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
       }
 
 
-      if (iter_over_pointset % intervalToWrite == (intervalToWrite-1) ) {
+//      if (iter_over_pointset % intervalToWrite == (intervalToWrite-1) ) {
 //         exportTiles(v,outputString);
-    	  exportTilesNextStep(v,outputString,restOfTheDocument);
-      }
+//      }
 
     }
 
-//    exportTiles(v,outputString);
- 	  exportTilesNextStep(v,outputString,restOfTheDocument);
+    exportTiles(v,outputString);
+// 	  exportTilesNextStep(v,outputString,restOfTheDocument);
 //    if (outputStringNextStep.compare("OptimizedPts_next_step.dat") != 0) {
 //      exportTilesNextStep(v,outputStringNextStep,restOfTheDocument);
 //    }
