@@ -20,8 +20,7 @@ mkdir -p ${TracesDir}
 # counters...
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
 #lst=(1 3    9    27    81    243    729)
-#lst=(1 3    9    27    81    243    729   2187   6561)
-lst=(729   2187   6561)
+lst=(1 3    9    27    81    243    729   2187   6561)
 
 nIterations=128
 nItegrandsPerIteration=65536
@@ -30,7 +29,7 @@ inputFiles=(`ls ${InputDir}`)
 lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses
 
-for (( ind=0 ; ind < lst_length-1 ; ind++ ))
+for (( ind=6 ; ind < lst_length-1 ; ind++ ))
 do
     npts=${lst[$((${ind}+1))]}
     fname=${inputFiles[$((${ind}))]}
