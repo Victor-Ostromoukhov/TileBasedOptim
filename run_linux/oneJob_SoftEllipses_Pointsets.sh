@@ -12,7 +12,7 @@ fi
 
 echo $continueFlag
 
-if [ $continueFlag ]; then
+if [ $continueFlag = false ]; then
     InputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
     echo true
 else
