@@ -332,9 +332,9 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
       }
 
 
-//      if (iter_over_pointset % intervalToWrite == (intervalToWrite-1) ) {
-//         exportTiles(v,outputString);
-//      }
+      if (iter_over_pointset % intervalToWrite == (intervalToWrite-1) ) {
+    	  exportTilesNextStep(v,outputString,restOfTheDocument);
+      }
 
     }
 
@@ -366,7 +366,7 @@ int main(int argc, char const *argv[]) {
   std::string outputStringMSE ="MSE.dat";
   int limit = 1;
   std::vector<std::string>* restOfTheDocument = new std::vector<std::string>;
-  int intervalToWrite = 100;
+  int intervalToWrite = 100000;
   /* ----------- Fin Initialisation des variables ----------- */
 
   // =========== Début CLI11 Configuration =========== //
