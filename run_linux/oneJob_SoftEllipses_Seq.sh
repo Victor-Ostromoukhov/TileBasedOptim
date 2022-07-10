@@ -11,10 +11,10 @@ continueFlag=$4
 
 echo continueFlag=$continueFlag
 
-lst=(1 3    9    27    81    243    729   2187   6561)
 
 if [ $continueFlag = false ]; then
     InputDir="../Tiles_Seq_${suffix}/"
+    lst=(1 27    81    243    729   2187   6561)
 else
     InputDir="../Output/Tiles_Seq_${suffix}/"
     lst=(729   2187   6561)
