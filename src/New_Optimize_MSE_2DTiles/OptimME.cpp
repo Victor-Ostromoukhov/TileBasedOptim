@@ -318,7 +318,8 @@ double optimPointME(std::vector<Tiles<DIM>>* v,int nbpts,std::string inputString
           newPointHolder<dimension> theChosenOne = *std::min_element(mseTab+0,mseTab+nbThrow,compareTwoNewPointHolder<dimension>);
           if (theChosenOne.apportOfNewPoint < tabPtsValGauss[gaussianSubSetSize]) {
             double gain = initialSE / (theChosenOne.apportOfNewPoint);
-            std::cout << outputString << "  " << ind << " | " << i_pts << "/" << (nbpts-limit) << " \t iter=" << iter_over_pointset << " npts=" << nbpts << " MSE : " << initialSE << " -> " << theChosenOne.apportOfNewPoint << " \t gain : "<< gain << "\t| " << log(gain)/log(nbpts) << std::endl;
+            std::cout << outputString << "  " << ind << " | ipt=" << i_pts << "/" << (nbpts-limit) << " \t iter=" << iter_over_pointset << "/" << niters
+            		<< " npts=" << nbpts << " MSE : " << initialSE << " -> " << theChosenOne.apportOfNewPoint << " \t gain : "<< gain << "\t| " << log(gain)/log(nbpts) << std::endl;
             prevMSE = theChosenOne.apportOfNewPoint;
             tabPtsValGauss[gaussianSubSetSize] = theChosenOne.apportOfNewPoint;
             changeAllValueGaussTab(points[theChosenOne.index],theChosenOne.point, &sigma,&shift, tabPtsValGauss,gaussianSubSetSize,nbpts,integrandType);
