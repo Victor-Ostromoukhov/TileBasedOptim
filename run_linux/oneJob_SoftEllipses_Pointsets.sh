@@ -10,8 +10,9 @@ else
     continueFlag=false
 fi
 
-if [ $continueFlag ] ;
-then
+echo $continueFlag
+
+if [ $continueFlag ]; then
     InputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
 else
     InputDir="../Tiles_Pointsets_${suffix}/${dir}/"
