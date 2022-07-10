@@ -6,18 +6,17 @@ nbthreads=$2
 dir=$3
 continueFlag=$4
 
-if [ continueFlag ] ;
+if [ $continueFlag ] ;
 then
     InputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
 else
     InputDir="../Tiles_Pointsets_${suffix}/${dir}/"
 fi
-
 OutputDir="../Output/Tiles_Pointsets_${suffix}/${dir}/"
 TracesDir="../Traces/Tiles_Pointsets_${suffix}/${dir}/"
 mkdir -p ${OutputDir}
 mkdir -p ${TracesDir}
- 
+
 # counters...
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
 lst=(1 3    9    27    81    243    729)
