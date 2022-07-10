@@ -30,7 +30,7 @@ inputFiles=(`ls ${InputDir}`)
 lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses
 
-echo ${lst_length}
+echo lst_length = ${lst_length}
 for (( ind=0 ; ind < lst_length ; ind++ ))
 do
     npts=${lst[$((${ind}+1))]}
