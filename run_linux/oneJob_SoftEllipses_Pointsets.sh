@@ -30,18 +30,16 @@ inputFiles=(`ls ${InputDir}`)
 lst_length=${#lst[@]}
 integrandType=2 # SoftEllipses
 
-echo $1
-echo $2
-echo $3
-echo $4
-echo lst_length = ${lst_length}
-
 for (( ind=0 ; ind < lst_length ; ind++ ))
 do
     npts=${lst[$((${ind}+1))]}
     fname=${inputFiles[$((${ind}))]}
     infname=${InputDir}${fname}
     outfname=${OutputDir}${fname}
+echo ${npts}
+echo ${fname}
+echo ${infname}
+echo ${outfname}
     if [ ${npts} -gt 729 ] ;
     then
         nIterations=$((${nIterations} * 2 ))
