@@ -24,7 +24,8 @@ cp ${infname} ${outfname}
 
 # counters...
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
-lst=(1 3    9    27    81    243    729   2187   6561)
+#lst=(1 3    9    27    81    243    729   2187   6561)
+lst=(729   2187   6561)
 
 nIterations=128
 nItegrandsPerIteration=65536
