@@ -10,7 +10,7 @@ showstdRefDiscrepancy[]
 makeOptimL2discrepancy[]  ->  getL2discrepancy[]
 showOptimL2discrepancy[]
 
-makeOptimMSE[]  ->  getMSE[]
+makeOptimMSESeq[]  ->  getMSE[]
 makeOptimMSEPointSets[]
 showstdOptimMSE[] :
 
@@ -2696,7 +2696,7 @@ doubleCheck[] :=
         Print[npts -> mse];
     ]
 
-makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,1}, suffix_:"Seq_PrevLevel", innDims_:2, dbg_:False] :=
+makeOptimMSESeq[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,1}, octaves_:{1,8,1}, suffix_:"Seq_PrevLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -2713,15 +2713,20 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 		dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/";
         If[ !FileExistsQ[dirMSE], CreateDirectory[dirMSE] ];
         If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-   	    {setFrom,setTo} = setFromTo;
 		datamse = {};
 
-		counters = makeOctavesBaseN[{1, 7, 1}];
+		{octaveFrom,octaveTo,octaveStep} = octaves;
+		counters = makeOctavesBaseN[{octaveFrom,octaveTo,octaveStep}];
    	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>".dat";
    	    
-		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/Tiles_"<>suffix<>"/";
-		
-		files = FileNames["*.dat",{resDir}];
+		dataDir = "Output/Tiles_"<>suffix<>"/";		
+		files = FileNames["*.dat",{dataDir}];
+		If[setFromTo != {1,1},
+   	    	{setFrom,setTo} = setFromTo;
+   	    ,(*ELSE*)
+  	    	{setFrom,setTo} = {1,Length[files]};
+		];
+
 		bestCandidates = {};
 		
         mseTabAll = Table[
@@ -2759,9 +2764,9 @@ makeOptimMSE[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2
 			Print[dirMSE<>resFname, " written."];
 			mseTab
         ,{iOrdinalAbsolute,Length[counters]}];
-   ] (* makeOptimMSE *)
+   ] (* makeOptimMSESeq *)
 
-makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,2}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
+makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,1}, octaves_:{1,6,1}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -2778,16 +2783,19 @@ makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegra
 		dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/";
         If[ !FileExistsQ[dirMSE], CreateDirectory[dirMSE] ];
         If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
-   	    {setFrom,setTo} = setFromTo;
 		datamse = {};
 
-		counters = makeOctavesBaseN[{1, 6, 1}];
+		{octaveFrom,octaveTo,octaveStep} = octaves;
+		counters = makeOctavesBaseN[{octaveFrom,octaveTo,octaveStep}];
    	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>".dat";
    	    
-		resDir = "src/New_Optimize_MSE_2DTiles/Data/Output/Tiles_"<>suffix<>"/";
-
-		
-		dirs = FileNames["SetNo*",{resDir}];
+		dataDir = "Output/Tiles_"<>suffix<>"/";		
+		dirs = FileNames["SetNo*",{dataDir}];
+		If[setFromTo != {1,1},
+   	    	{setFrom,setTo} = setFromTo;
+   	    ,(*ELSE*)
+  	    	{setFrom,setTo} = {1,Length[dirs]};
+		];
 		
         mseTabAll = Table[
 			npts = counters[[iOrdinalAbsolute]];
