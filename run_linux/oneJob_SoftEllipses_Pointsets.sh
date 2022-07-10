@@ -30,8 +30,8 @@ integrandType=2 # SoftEllipses
 
 for (( ind=0 ; ind < lst_length ; ind++ ))
 do
-    fname=${inputFiles[$((${ind}))]}
     npts=${lst[$((${ind}+1))]}
+    fname=${inputFiles[$((${ind}))]}
     infname=${InputDir}${fname}
     outfname=${OutputDir}${fname}
     if [ ${npts} -gt 729 ] ;
