@@ -23,6 +23,7 @@ mkdir -p ${TracesDir}
 echo InputDir=$InputDir
 echo OutputDir=$OutputDir
 echo TracesDir=$TracesDir
+echo $TracesDir/t_${fname}.txt
 
 # counters...
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
