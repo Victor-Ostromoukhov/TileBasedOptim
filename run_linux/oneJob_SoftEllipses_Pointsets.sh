@@ -23,7 +23,6 @@ mkdir -p ${TracesDir}
 echo InputDir=$InputDir
 echo OutputDir=$OutputDir
 echo TracesDir=$TracesDir
-echo $TracesDir/t_${fname}.txt
 
 # counters...
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
@@ -48,6 +47,7 @@ do
         nIterations=$((${nIterations} * 2 ))
         echo ========= ${nIterations}
     fi
+    echo trace ===== $TracesDir/t_${fname}.txt
     echo ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration
     echo ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration  >> ${TracesDir}/t_${fname}.txt
     ~/bin/Optimize_MSE_2DTiles --nbPoints ${npts} -t ${nbthreads} -n $nIterations -i $infname -o $outfname --integrandType ${integrandType} -g $nItegrandsPerIteration  >> ${TracesDir}/t_${fname}.txt
