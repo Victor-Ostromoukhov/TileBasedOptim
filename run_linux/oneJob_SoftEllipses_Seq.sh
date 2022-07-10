@@ -1,4 +1,7 @@
 #!/bin/bash
+# counters...
+#lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
+
 suffix="PrevLevel"
 
 ind=$1
@@ -9,8 +12,10 @@ continueFlag=$4
 if [ continueFlag ] ;
 then
     InputDir="../Output/Tiles_Seq_${suffix}/"
+    lst=(729   2187   6561)
 else
     InputDir="../Tiles_Seq_${suffix}/"
+    lst=(1 3    9    27    81    243    729   2187   6561)
 fi
 OutputDir="../Output/Tiles_Seq_${suffix}/"
 TracesDir="../Traces/Tiles_Seq_${suffix}/"
@@ -22,12 +27,7 @@ outfname=${OutputDir}${fname}
 echo cp ${infname} ${outfname}
 cp ${infname} ${outfname}
 
-# counters...
-#lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
-#lst=(1 3    9    27    81    243    729   2187   6561)
-lst=(729   2187   6561)
-
-nIterations=128
+nIterations=64
 nItegrandsPerIteration=65536
 
 lst_length=${#lst[@]}
@@ -35,6 +35,10 @@ integrandType=2 # SoftEllipses
 
 for level in $(eval echo {1..$((${lst_length} - 1))})
 do
+    if [ level -gt 729 ] ;
+    then
+        nIterations=$((${nIterations} * 2 ))
+    fi
     from=${lst[$((${level} - 1 ))]}
     to=${lst[$level]}
     limit=$((${lst[$((${level} - 1 ))]} + 1))
