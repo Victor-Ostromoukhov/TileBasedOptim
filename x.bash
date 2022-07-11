@@ -14,6 +14,7 @@ else
     nproc=1
 fi
 
+mkdir -p tmp
 cp TileBasedOptim/TileBasedOptim.m tmp/proc
 echo " " >> tmp/proc
 echo "prepSoftEllipses2D[9,9]" >> tmp/proc
