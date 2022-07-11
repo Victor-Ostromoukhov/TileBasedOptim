@@ -3136,7 +3136,7 @@ prepSoftEllipses2D[0]
 prepSoftEllipses2D[1]
 
 *)
-prepSoftEllipses2D[setNo_:1] :=
+prepSoftEllipses2D[setNo_:1, innbatches_:9] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
         nDims = 2;
@@ -3145,7 +3145,7 @@ prepSoftEllipses2D[setNo_:1] :=
         If[ !FileExistsQ[dir], CreateDirectory[dir] ];
 		{precision,maxRecursion} = {20,10000};
 
-		nbatches = 9; 
+		nbatches = innbatches; 
 		nmus1D = 256;
 		(* Nintegrands = nbatches*nmus1D*nmus1D = 256K == 524288 *)
 
