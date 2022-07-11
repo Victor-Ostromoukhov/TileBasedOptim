@@ -1,0 +1,7 @@
+#Generic-proj-LDS
+#Beware that there are no spaces at the end of the lines
+b=3
+s=2
+m=19
+net 0 1
+optimize p g 1024 0 1

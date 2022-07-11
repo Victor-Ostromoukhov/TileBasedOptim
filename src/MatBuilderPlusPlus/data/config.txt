@@ -1,0 +1,12 @@
+#Optimizer Parameters
+noctave=6
+owen_permut_flag=true
+depth=19
+seed=1532
+dbg_flag=false
+output_fname=outf.MatBuilder_matrice
+input_matrices=../../data/MatBuilder_matrices/2D_0m2net_000001.dat
+nbPtsToOptimize=729
+thread=8
+nIter=3
+output_points=/home/tanguy/Documents/MatBuilderPlusPlus/data/output_points.dat
