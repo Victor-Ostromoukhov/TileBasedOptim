@@ -3,7 +3,7 @@
 if [ `uname` = "Darwin" ]; then
     mexec="/Applications/Mathematica.app/Contents/MacOS/MathKernel "
 else
-    mexec="/usr/local/bin/math"
+    mexec="/home/ostrom/bin/math"
 fi
 
 
