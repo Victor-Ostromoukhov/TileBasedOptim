@@ -1,10 +1,21 @@
 #!/bin/bash
 
-nthreads=8
+if [ `uname` = "Darwin" ]; then
+    mexec="/Applications/Mathematica.app/Contents/MacOS/MathKernel "
+else
+    mexec="/usr/local/bin/math"
+fi
 
-for (( level=500; level<=729; level++ )) do
-        echo ~/bin/OptimTiles2D -t ${nthreads} -i optim_data/2D_0m2net_set_1_level_${level}.dat -o optim_output/2D_0m2net_set_1_level_${level}.dat -n 1024
-        ~/bin/OptimTiles2D -t ${nthreads} -i optim_data/2D_0m2net_set_1_level_${level}.dat -o optim_output/2D_0m2net_set_1_level_${level}.dat -n 1024 >> traces/tr_${level}.txt
-done
 
+if [ -n "$1" ]
+then
+    nproc=$1
+else
+    nproc=1
+fi
 
+cp TileBasedOptim/TileBasedOptim.m tmp/proc
+echo " " >> tmp/proc
+echo "prepSoftEllipses2D[9]" >> tmp/proc
+chmod 700 tmp/proc
+$mexec < tmp/proc > tmp/trace_prepSoftEllipses2D.txt &
