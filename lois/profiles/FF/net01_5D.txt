@@ -1,0 +1,13 @@
+m=10
+s=5
+b=3
+net 0 1
+weak -1 net 1 2
+weak -1 net 2 3
+weak -1 net 3 4
+weak 1 net u3 1 2
+weak 1 net u2 2 3
+weak 1 net u2 3 4
+net 2
+net 3
+net 4

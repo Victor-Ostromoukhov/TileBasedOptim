@@ -1,0 +1,8 @@
+s = 2
+m = 19
+p = 3
+net 0
+net 1
+net t2 0 1
+weak -1 net t1 0 1
+weak -1 net t0 0 1

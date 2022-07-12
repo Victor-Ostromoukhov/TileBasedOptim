@@ -26,6 +26,9 @@ before S22 submission: testCplex and matrixSampler
 suppl  S22 submission: MatBuilder and sampler
 getMatBuiderPtsND[]
 
+=========================== lois MCQMC July 2022
+loismakeMatBuilderMatrices[]
+
 *)
  
 (****************** globals *******************)
@@ -3440,3 +3443,37 @@ makeOctavesBaseN[powParams_:{0,10,1},base_:3] :=
         Export["tab.dat", {tab}];
         tab
     ]
+    
+    
+(*=========================== lois MCQMC July 2022 *)
+ 
+loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:16] :=
+    Module[ {},
+    	If[ !FileExistsQ["lois/MatBuilder_matrices/"], CreateDirectory["lois/MatBuilder_matrices/"] ];
+    	nlevels = 19;
+		fname = "lois/profiles/tvalue/"<>basename<>".txt";
+		Do[
+			execString = "testCplex -i "<>fname<>" -o lois/MatBuilder_matrices/2D_0m2net_"<>i2s[itrial]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
+        	returnCode = Run[execPrefix<>execString];
+        	Print[execString -> returnCode];
+(*			mxTab = readMatBuilderMatrix["MatBuilder_matrices/"<>basename<>"_"<>i2s[i]<>".dat"];
+			Print[mf /@ mxTab];
+			mxInvTab = {};
+        	Do[
+				If[ilevel != 0,
+					mxInv = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2, ;; ilevel]], mxTab[[2, ;; ilevel/2, ;; ilevel]]];
+					Print[ilevel -> mf[mxInv] ];
+					AppendTo[mxInvTab,mxInv];
+        		];
+				If[ilevel != nlevels, 
+					mxInvH = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2, ;; ilevel + 1]], mxTab[[2, ;; ilevel/2 + 1, ;; ilevel + 1]]] ;
+					mxInvV = Inverse[#,Modulus->3]& @ Join[mxTab[[1, ;; ilevel/2 + 1, ;; ilevel + 1]], mxTab[[2, ;; ilevel/2, ;; ilevel + 1]]] ;
+					Print[ilevel+1 -> mf[mxInvH] -> mf[mxInvV] ] ;
+					AppendTo[mxInvTab,mxInvH];
+					AppendTo[mxInvTab,mxInvV];
+				];
+        	,{ilevel,0,nlevels,2}];
+			Export["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];*)
+		,{itrial,ntrials}];
+    ] (* loismakeMatBuilderMatrices *)
+

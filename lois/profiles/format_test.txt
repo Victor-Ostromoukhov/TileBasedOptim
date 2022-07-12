@@ -1,0 +1,8 @@
+s=4
+b=3
+m=16
+net 0 1
+net 2 3
+weak net 0 1 2
+weak net 1 2 3
+from 8 stratified 0 1 2 3

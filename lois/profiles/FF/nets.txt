@@ -1,0 +1,25 @@
+s = 6
+m = 8
+p = 3
+net 0
+net 1
+net 2
+net 3
+net 4
+net 5
+net t0 0 1
+net t1 1 2
+weak -1 net t0 1 2
+net t2 2 3
+weak -1 net t1 2 3
+weak -1 net t0 2 3
+net t3 3 4
+weak -1 net t0 3 4
+weak -1 net t1 3 4
+weak -1 net t2 3 4
+net t4 4 5
+weak -1 net t0 4 5
+weak -1 net t1 4 5
+weak -1 net t2 4 5
+weak -1 net t3 4 5
+

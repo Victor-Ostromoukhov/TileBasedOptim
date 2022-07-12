@@ -1,0 +1,8 @@
+m=10
+s=5
+b=3
+net 0
+net 1
+net 2
+net 3
+net 4

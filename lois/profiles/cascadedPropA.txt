@@ -1,0 +1,9 @@
+b=3
+s=5
+m=10
+net 0 1
+net 1 2
+net 2 3
+net 3 4
+propA 0 1 2 3 4
+propAprime 0 1 2 3 4

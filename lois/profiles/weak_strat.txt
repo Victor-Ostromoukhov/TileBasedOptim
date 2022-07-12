@@ -1,0 +1,7 @@
+b=3
+s=4
+m=10
+net 0 1
+net 1 2
+net 2 3
+weak 1 stratified 0 1 2 3
