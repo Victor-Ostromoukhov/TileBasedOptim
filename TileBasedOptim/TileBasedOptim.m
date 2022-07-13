@@ -3520,7 +3520,7 @@ loismakeL2discrepancy[basename_:"net_t0", octaves_:{1,8,1}, setFromTo_:{1,16}, i
         If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
         Do[
 			npts = base^pow;
-	        DiscrepancyTab = ((*Parallelize @*) Table[
+	        DiscrepancyTab = (Parallelize @ Table[
 	       			mxfname = "lois/MatBuilder_matrices/"<>basename<>"_"<>i2s[setNo]<>".dat";
 	       			If[!FileExistsQ[mxfname], Print[mxfname," does not exist."]; Abort[]  ];
 	       			depth = 19;
