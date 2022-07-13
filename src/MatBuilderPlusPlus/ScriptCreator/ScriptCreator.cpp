@@ -7,7 +7,7 @@
 #include <cmath>
 #include <cstring>
 #include <random>
-#include <omp.h>
+//#include <omp.h>
 #include <chrono>
 #include <iomanip>
 #include <stdlib.h>
