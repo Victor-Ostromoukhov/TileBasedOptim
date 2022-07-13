@@ -1922,6 +1922,7 @@ getMatBuiderPtsND[npts_:3^2,infname_:"MatBuilder_matrices/2D_0m2net_000001.dat",
 		execString = "sampler --nDims "<>ToString[nDims]<>" -o "<>outfname<>" -n "<>ToString[npts]<>" -i "<>infname
 			<>If[owenFlag," --owen  --depth "<>ToString[depth], " " ]
 			<>" -p "<>ToString[base]<>" --matrixSize "<>ToString[19]<>" --seed "<>ToString[seed]<>" > /dev/null";
+		Print[execString];
 		res = Run[execPrefix<>execString];
 		If[res != 0, Print[execString -> res] ];
 		Import[outfname]
@@ -3490,3 +3491,53 @@ loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:16] :=
 		,{itrial,ntrials}];
     ] (* loismakeMatBuilderMatrices *)
 
+
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+loismakeL2discrepancy["net_t0"]
+loismakeL2discrepancy["net_t1"]
+loismakeL2discrepancy["net_t2"]
+loismakeL2discrepancy["net_t3"]
+loismakeL2discrepancy["net_t4"]
+*)
+
+loismakeL2discrepancy[basename_:"net_t0", octaves_:{1,8,1}, setFromTo_:{1,16}, innDims_:2, dbg_:False] :=
+    Module[ {},
+       	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
+    	nDims = innDims;
+    	base = 3;
+		owenFlag = True;
+        dtab = {};
+        ordinalAbsoluteMax = 3^10;
+   	    resFname = basename<>".dat";	    
+   	    {setFrom,setTo} = setFromTo;
+   	    {powfrom,powto,powstep} = octaves; (* powers of 3 *)
+		dataDiscrepancy = {};
+		dirDiscrepancy = "data_L2Discrepancy/"<>ToString[nDims]<>"D/";
+        If[ !FileExistsQ[dirDiscrepancy], CreateDirectory[dirDiscrepancy] ];
+        If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+        Do[
+			npts = base^pow;
+	        DiscrepancyTab = ((*Parallelize @*) Table[
+	       			mxfname = "lois/MatBuilder_matrices/"<>basename<>"_"<>i2s[setNo]<>".dat";
+	       			If[!FileExistsQ[mxfname], Print[mxfname," does not exist."]; Abort[]  ];
+	       			depth = 19;
+	       			seed = RandomInteger[2^16];
+	       			pts = getMatBuiderPtsND[base^pow, mxfname, owenFlag, depth, nDims, base, seed ];
+		        	L2discrepancy = getL2discrepancy[pts,"",nDims]; 
+		        	Print[iOrdinalAbsolute, " ", resFname  -> L2discrepancy];
+					{npts,L2discrepancy}
+        	,{setNo,setFrom,setTo}]);
+	 		DiscrepancyMean = Mean @ DiscrepancyTab;
+	 		DiscrepancyVariance = If[Length[DiscrepancyTab] <= 1, 0 , Variance @ (Last /@ DiscrepancyTab)];
+	 		{DiscrepancyMin,DiscrepancyMax} = {Min@(Last /@ DiscrepancyTab), Max@(Last /@ DiscrepancyTab)};
+	 		AppendTo[dataDiscrepancy,Flatten @ {DiscrepancyMean,DiscrepancyVariance,DiscrepancyMin,DiscrepancyMax,0,0,setTo-setFrom+1,0}];	
+			Export[dirDiscrepancy<>resFname,header,"TEXT"];
+			Export["tmp/tmpdat"<>pid<>".dat",dataDiscrepancy];
+			Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirDiscrepancy<>resFname];
+			Print[dirDiscrepancy<>resFname, " written."];
+	    ,{pow,powfrom,powto,powstep}];
+		Run["rm tmp/tmpdat"<>pid<>".dat"];
+   ] (* loismakeL2discrepancy *)
