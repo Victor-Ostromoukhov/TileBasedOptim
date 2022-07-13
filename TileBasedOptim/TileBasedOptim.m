@@ -3450,7 +3450,14 @@ makeOctavesBaseN[powParams_:{0,10,1},base_:3] :=
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-loismakeMatBuilderMatrices[]
+loismakeMatBuilderMatrices["net_t0"]
+loismakeMatBuilderMatrices["net_t1"]
+loismakeMatBuilderMatrices["net_t2"]
+loismakeMatBuilderMatrices["net_t3"]
+loismakeMatBuilderMatrices["net_t4"]
+loismakeMatBuilderMatrices["net4D_t1_no_t0"]
+loismakeMatBuilderMatrices["net4D_t1_t0"]
+loismakeMatBuilderMatrices["nets"]
 *)
 
 loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:16] :=
@@ -3458,8 +3465,8 @@ loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:16] :=
     	If[ !FileExistsQ["lois/MatBuilder_matrices/"], CreateDirectory["lois/MatBuilder_matrices/"] ];
     	nlevels = 19;
 		fname = "lois/profiles/tvalue/"<>basename<>".txt";
-		Do[
-			execString = "matbuilder -i "<>fname<>" -o lois/MatBuilder_matrices/2D_0m2net_"<>i2s[itrial]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
+		Parallelize @ Do[
+			execString = "matbuilder -i "<>fname<>" -o lois/MatBuilder_matrices/"<>basename<>"_"<>i2s[itrial]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
         	returnCode = Run[execPrefix<>execString];
         	Print[execString -> returnCode];
 (*			mxTab = readMatBuilderMatrix["MatBuilder_matrices/"<>basename<>"_"<>i2s[i]<>".dat"];
