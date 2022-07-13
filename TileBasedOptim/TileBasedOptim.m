@@ -3462,7 +3462,7 @@ loismakeMatBuilderMatrices["net4D_t1_t0"]
 loismakeMatBuilderMatrices["nets"]
 *)
 
-loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:64] :=
+loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:256] :=
     Module[ {},
     	If[ !FileExistsQ["lois/MatBuilder_matrices/"], CreateDirectory["lois/MatBuilder_matrices/"] ];
     	nlevels = 19;
@@ -3489,7 +3489,7 @@ loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:64] :=
 				];
         	,{ilevel,0,nlevels,2}];
 			Export["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];*)
-		,{itrial,ntrials}];
+		,{itrial,65,ntrials}];
     ] (* loismakeMatBuilderMatrices *)
 
 
