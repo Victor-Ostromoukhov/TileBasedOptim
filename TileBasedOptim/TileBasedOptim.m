@@ -3459,7 +3459,7 @@ loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:16] :=
     	nlevels = 19;
 		fname = "lois/profiles/tvalue/"<>basename<>".txt";
 		Do[
-			execString = "MatBuilder -i "<>fname<>" -o lois/MatBuilder_matrices/2D_0m2net_"<>i2s[itrial]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
+			execString = "matbuilder -i "<>fname<>" -o lois/MatBuilder_matrices/2D_0m2net_"<>i2s[itrial]<>".dat --seed "<>ToString[RandomInteger[2^16] ]<>" > /dev/null";
         	returnCode = Run[execPrefix<>execString];
         	Print[execString -> returnCode];
 (*			mxTab = readMatBuilderMatrix["MatBuilder_matrices/"<>basename<>"_"<>i2s[i]<>".dat"];
