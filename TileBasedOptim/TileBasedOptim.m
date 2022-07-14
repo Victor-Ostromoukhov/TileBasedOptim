@@ -3486,7 +3486,7 @@ loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:256] :=
 				];
         	,{ilevel,0,nlevels,2}];
 			Export["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];*)
-		,{itrial,64,ntrials}];
+		,{itrial,1,ntrials}];
     ] (* loismakeMatBuilderMatrices *)
 
 
@@ -3520,13 +3520,17 @@ loismakeL2discrepancy[basename_:"net_t0", octaves_:{1,10,1}, setFromTo_:{1,256},
 			npts = base^pow;
 	        DiscrepancyTab = (Parallelize @ Table[
 	       			mxfname = "lois/MatBuilder_matrices/"<>basename<>"_"<>i2s[setNo]<>".dat";
-	       			If[!FileExistsQ[mxfname], Print[mxfname," does not exist."]; Abort[]  ];
+	       			If[!FileExistsQ[mxfname], 
+	       			Print[mxfname," does not exist."]; 
+	       			Nothing
+	       		,(*ELSE*)
 	       			depth = 19;
 	       			seed = RandomInteger[2^16];
 	       			pts = getMatBuiderPtsND[base^pow, mxfname, owenFlag, depth, nDims, base, seed ];
 		        	L2discrepancy = getL2discrepancy[pts,"",nDims]; 
 		        	Print[iOrdinalAbsolute, " ", resFname  -> L2discrepancy];
 					{npts,L2discrepancy}
+	       		];
         	,{setNo,setFrom,setTo}]);
 	 		DiscrepancyMean = Mean @ DiscrepancyTab;
 	 		DiscrepancyVariance = If[Length[DiscrepancyTab] <= 1, 0 , Variance @ (Last /@ DiscrepancyTab)];
