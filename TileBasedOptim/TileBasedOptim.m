@@ -3499,6 +3499,8 @@ loismakeL2discrepancy["net_t1"]
 loismakeL2discrepancy["net_t2"]
 loismakeL2discrepancy["net_t3"]
 loismakeL2discrepancy["net_t4"]
+
+loismakeL2discrepancy["net_t3",{1,10,1},{1,16}]
 *)
 
 loismakeL2discrepancy[basename_:"net_t0", octaves_:{1,10,1}, setFromTo_:{1,256}, innDims_:2, dbg_:False] :=
