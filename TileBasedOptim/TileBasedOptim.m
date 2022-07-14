@@ -3500,7 +3500,10 @@ loismakeL2discrepancy["net_t2"]
 loismakeL2discrepancy["net_t3"]
 loismakeL2discrepancy["net_t4"]
 
-loismakeL2discrepancy["net_t3",{1,10,1},{1,16}]
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+loismakeL2discrepancy["net_t3",{1,10,1},{1,10}]
 *)
 
 loismakeL2discrepancy[basename_:"net_t0", octaves_:{1,10,1}, setFromTo_:{1,256}, innDims_:2, dbg_:False] :=
@@ -3549,7 +3552,7 @@ loismakeL2discrepancy[basename_:"net_t0", octaves_:{1,10,1}, setFromTo_:{1,256},
 loisshowL2discrepancy[innDims_:2, dbg_:False] :=
     Module[ {},
 		fontSz = 14;
-		kPlusMinus = 1;
+		kPlusMinus = .7;
     	{powfrom,powto,powstep} = {2,16,1};
 
     	nDims = innDims;
@@ -3593,7 +3596,7 @@ loisshowL2discrepancy[innDims_:2, dbg_:False] :=
    			L2discrepancyt4 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
 		    alldata = {L2discrepancyWN, L2discrepancyStrat, L2discrepancyOwen01Pure,  L2discrepancyOwenPlus, L2discrepancyt0, L2discrepancyt1, L2discrepancyt2, L2discrepancyt3, L2discrepancyt4} ;
-	        legends = {"WN", "Strat", "Owen", "OwenPlus32", "t0", "t1", "t2", "t3", "t4"};
+	        legends = {"WN", "Strat", "Owen", "OwenPlus32", "MatBuilder/t0", "MatBuilder/t1", "MatBuilder/t2", "MatBuilder/t3", "MatBuilder/t4"};
 
 	        plotLabel = "L2discrepancy "<>ToString[nDims]<>"D"; 
 	        
