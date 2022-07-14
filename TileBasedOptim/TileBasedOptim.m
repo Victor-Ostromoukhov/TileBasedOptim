@@ -3489,7 +3489,7 @@ loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:256] :=
 				];
         	,{ilevel,0,nlevels,2}];
 			Export["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];*)
-		,{itrial,65,ntrials}];
+		,{itrial,253,ntrials}];
     ] (* loismakeMatBuilderMatrices *)
 
 
@@ -3504,7 +3504,7 @@ loismakeL2discrepancy["net_t3"]
 loismakeL2discrepancy["net_t4"]
 *)
 
-loismakeL2discrepancy[basename_:"net_t0", octaves_:{1,10,1}, setFromTo_:{1,16}, innDims_:2, dbg_:False] :=
+loismakeL2discrepancy[basename_:"net_t0", octaves_:{1,10,1}, setFromTo_:{1,256}, innDims_:2, dbg_:False] :=
     Module[ {},
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
     	nDims = innDims;
