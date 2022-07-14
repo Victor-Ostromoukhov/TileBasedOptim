@@ -3530,7 +3530,7 @@ loismakeL2discrepancy[basename_:"net_t0", octaves_:{1,10,1}, setFromTo_:{1,256},
 		        	L2discrepancy = getL2discrepancy[pts,"",nDims]; 
 		        	Print[iOrdinalAbsolute, " ", resFname  -> L2discrepancy];
 					{npts,L2discrepancy}
-	       		];
+	       		]
         	,{setNo,setFrom,setTo}]);
 	 		DiscrepancyMean = Mean @ DiscrepancyTab;
 	 		DiscrepancyVariance = If[Length[DiscrepancyTab] <= 1, 0 , Variance @ (Last /@ DiscrepancyTab)];
