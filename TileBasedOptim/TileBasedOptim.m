@@ -3457,9 +3457,6 @@ loismakeMatBuilderMatrices["net_t1"]
 loismakeMatBuilderMatrices["net_t2"]
 loismakeMatBuilderMatrices["net_t3"]
 loismakeMatBuilderMatrices["net_t4"]
-loismakeMatBuilderMatrices["net4D_t1_no_t0"]
-loismakeMatBuilderMatrices["net4D_t1_t0"]
-loismakeMatBuilderMatrices["nets"]
 *)
 
 loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:256] :=
@@ -3489,7 +3486,7 @@ loismakeMatBuilderMatrices[basename_:"net_t0",ntrials_:256] :=
 				];
         	,{ilevel,0,nlevels,2}];
 			Export["MatBuilder_matrices/2D_0m2net_"<>i2s[i]<>"_inv.dat", Flatten[#,1]& @ mxInvTab ];*)
-		,{itrial,253,ntrials}];
+		,{itrial,64,ntrials}];
     ] (* loismakeMatBuilderMatrices *)
 
 
