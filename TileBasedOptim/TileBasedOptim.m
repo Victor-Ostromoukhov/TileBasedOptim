@@ -3549,9 +3549,20 @@ loismakeL2discrepancy[basename_:"net_t0", octaves_:{1,10,1}, setFromTo_:{1,256},
 		Run["rm tmp/tmpdat"<>pid<>".dat"];
    ] (* loismakeL2discrepancy *)
 
-loisshowL2discrepancy[innDims_:2, dbg_:False] :=
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+loisshowL2discrepancy[]
+loisshowL2discrepancy["net_t0"]
+loisshowL2discrepancy["net_t1"]
+loisshowL2discrepancy["net_t2"]
+loisshowL2discrepancy["net_t3"]
+loisshowL2discrepancy["net_t4"]
+*)
+loisshowL2discrepancy[lbl_:"", innDims_:2, dbg_:False] :=
     Module[ {},
-		fontSz = 14;
+		fontSz = 36;
 		kPlusMinus = .7;
     	{powfrom,powto,powstep} = {2,16,1};
 
@@ -3565,51 +3576,36 @@ loisshowL2discrepancy[innDims_:2, dbg_:False] :=
 			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"Strat_L2Discrepancy.dat"]);
 			L2discrepancyStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"OwenPure_L2Discrepancy.dat"]);
-			L2discrepancyOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			L2discrepancyOwen01Pure = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data],4}];
 			L2discrepancyOwen01PureRaw = Table[{data[[i,1]],  data[[i,2]]},{i,Length[data]}];
 			data = (Drop[#,1]& @ Import[dirL2discrepancy<>"OwenPlus_L2Discrepancy.dat"]);
-			L2discrepancyOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			L2discrepancyOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data],4}];
 
-   	    	fname = dirL2discrepancy<>"net_t0.dat";
-        	If[ !FileExistsQ[fname], Print[fname," does not exist."]; Abort[]; ];
-	       	data = (Drop[#,1]& @ Import[fname]);
-   			L2discrepancyt0 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+			If[lbl =!= "",
+	   	    	fname = dirL2discrepancy<>lbl<>".dat";
+	        	If[ !FileExistsQ[fname], Print[fname," does not exist."]; Abort[]; ];
+		       	data = (Drop[#,1]& @ Import[fname]);
+	   			L2discrepancyMatBuilder = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+	        	legends = {"WN", "Strattified", "Sobol", "Owen tree depth=32", "MatBuilder, "<>lbl};
+	   		,(*ELSE*)
+	   			L2discrepancyMatBuilder = {{0,0}};
+	        	legends = {"White Noise", "Strat", "Owen", "OwenPlus32"};
+			];
 
-   	    	fname = dirL2discrepancy<>"net_t1.dat";
-        	If[ !FileExistsQ[fname], Print[fname," does not exist."]; Abort[]; ];
-	       	data = (Drop[#,1]& @ Import[fname]);
-   			L2discrepancyt1 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-
-   	    	fname = dirL2discrepancy<>"net_t2.dat";
-        	If[ !FileExistsQ[fname], Print[fname," does not exist."]; Abort[]; ];
-	       	data = (Drop[#,1]& @ Import[fname]);
-   			L2discrepancyt2 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-
-   	    	fname = dirL2discrepancy<>"net_t3.dat";
-        	If[ !FileExistsQ[fname], Print[fname," does not exist."]; Abort[]; ];
-	       	data = (Drop[#,1]& @ Import[fname]);
-   			L2discrepancyt3 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-
-   	    	fname = dirL2discrepancy<>"net_t4.dat";
-        	If[ !FileExistsQ[fname], Print[fname," does not exist."]; Abort[]; ];
-	       	data = (Drop[#,1]& @ Import[fname]);
-   			L2discrepancyt4 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
-
-		    alldata = {L2discrepancyWN, L2discrepancyStrat, L2discrepancyOwen01Pure,  L2discrepancyOwenPlus, L2discrepancyt0, L2discrepancyt1, L2discrepancyt2, L2discrepancyt3, L2discrepancyt4} ;
-	        legends = {"WN", "Strat", "Owen", "OwenPlus32", "MatBuilder/t0", "MatBuilder/t1", "MatBuilder/t2", "MatBuilder/t3", "MatBuilder/t4"};
+		    alldata = {L2discrepancyWN, L2discrepancyStrat, L2discrepancyOwen01Pure,  L2discrepancyOwenPlus, L2discrepancyMatBuilder} ;
 
 	        plotLabel = "L2discrepancy "<>ToString[nDims]<>"D"; 
 	        
 			g = ListLogLogPlot[ alldata
-						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz]& /@ legends}
+						,PlotLegends -> Placed[#,{.3,.2}]& @  {Style[#,fontSz,Bold]& /@ legends}
 						,PlotStyle -> {
-							{Darker@Green,AbsoluteThickness[2]},
-							{Blue,AbsoluteThickness[2]},
-							{Black,AbsoluteThickness[2]},
-							{Red,AbsoluteThickness[2]},
+							{Red,AbsoluteThickness[3]},
+							{Blue,AbsoluteThickness[3]},
+							{Black,AbsoluteThickness[3]},
+							{Darker@Green,AbsoluteThickness[3]},
 							
-							{Darker@Green,Dashed,AbsoluteThickness[2]},
-							{Blue,Dashed,AbsoluteThickness[2]},
+							{Orange,Dashed,AbsoluteThickness[12]},
+							{Darker@Green,Dashed,AbsoluteThickness[10]},
 							{Black,Dashed,AbsoluteThickness[2]},
 							{Red,Dashed,AbsoluteThickness[2]},
 							{Gray,Dashed,AbsoluteThickness[2]}
@@ -3621,15 +3617,15 @@ loisshowL2discrepancy[innDims_:2, dbg_:False] :=
 			            ,PlotMarkers->{{\[FilledCircle],5} }
 			            ,Frame->True
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "L2discrepancy", fontSz] }
-		           		,ImageSize -> 3/2{1024,1024}
+		           		,ImageSize -> {1024,1024}
 		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ L2discrepancyOwenPlusRaw), Min @@ (second /@ L2discrepancyOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[2^pow,{pow,powfrom,powto,1}],None}
 		            	,GridLinesStyle->Directive[Darker@Gray, Dashed]
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
-		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
+		            	(*,PlotLabel -> Style[ plotLabel, Bold, 24] *)
 		            ];
 		    g//Print;	
-		    Export["g_lois.pdf", g];	
+		    Export["g_lois_"<>lbl<>".pdf", g];	
 
    ] (* loisshowL2discrepancy *)
