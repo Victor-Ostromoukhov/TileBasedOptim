@@ -3195,7 +3195,7 @@ prepSoftEllipses2D[setNo_:1, innbatches_:9] :=
 	        Run["cat "<> resfname<>" >> "<>cppfname];
 	        Run["echo ';' >> "<>cppfname];       
 	    ,{ibatch,nbatches}];
-        DeleteFile[resfname];
+        (*DeleteFile[resfname];*)
     ] (* prepSoftEllipses2D *)
 
 (*prepSoftEllipses2D[setNo_:1] :=
