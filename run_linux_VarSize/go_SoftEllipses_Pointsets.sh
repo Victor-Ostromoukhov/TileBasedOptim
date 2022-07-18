@@ -18,6 +18,7 @@ suffix="VarSize"
 #
 
 nthreads=32
+continueFlag=false
 
 inputDirs=(`ls ../Tiles_Pointsets_${suffix}/`)
 
