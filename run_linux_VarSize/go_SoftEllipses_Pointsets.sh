@@ -26,5 +26,6 @@ lst_length=${#inputDirs[@]}
 for (( ind=set_from ; ind <= set_to ; ind++ ))
 	do
         dir=${inputDirs[$((${ind} - 1))]}
+        echo "Processing " $ind ${dir} ${continueFlag}  ${nthreads}
        ./launcher_SoftEllipses_Pointsets.sh $ind ${dir} ${continueFlag}  ${nthreads}
 	done
