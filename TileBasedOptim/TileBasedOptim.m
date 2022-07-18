@@ -2645,7 +2645,7 @@ prepOptimDataPointsetsVarSize[inmag_:1.0, innoctaves_:6, insetNo_: 1, dbg_:False
 		mxTab = readMatBuilderMatrix[mxfname];
 		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
 		
-		targetList = {3^(noctaves-2), 3^noctaves};
+		targetList = {(*3^(noctaves-2),*) 3^noctaves};
 		
 		pts = getMatBuiderPtsND[base^noctaves, mxfname, owenFlag, depth, nDims, base, seed ];
 		{iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo} = {1,base^noctaves};
