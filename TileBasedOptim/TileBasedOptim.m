@@ -17,6 +17,7 @@ showstdOptimMSE[] :
 =========================== prep Optim Data
 prepOptimDataSequences[]
 prepOptimDataPointsets[]
+prepOptimDataPointsetsVarSize[]
 
 =========================== prepSoftEllipses2D[] & prepHeavisideND[]
 
@@ -2611,6 +2612,79 @@ prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] 
 			If[!dbg, Export[fname,Flatten/@(tlst)]; Print["Writing ",fname," done."] ];
 		,{ilst,Length[targetList]}];
 	] (* prepOptimDataPointsets *)
+
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+
+Do[prepOptimDataPointsetsVarSize[mag, 6, i, False], {mag, 1, 4, .1}, {i, 4}]
+
+
+*)
+prepOptimDataPointsetsVarSize[inmag_:1.0, innoctaves_:6, insetNo_: 1, dbg_:False] :=
+    Module[ {},
+        (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
+        mag = inmag;
+    	owenFlag = True;
+    	depth = 19;
+    	nDims = 2;
+    	base = 3;
+    	seed = RandomInteger[2^16];
+    	
+    	setNo = insetNo;
+		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
+    	frame={AbsoluteThickness[3],Green,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
+    	noctaves = innoctaves;
+    	tilesDir = "Tiles_Pointsets_VarSize/SetNo_"<>i2s[setNo]<>"_mag_"<>r2s[mag, 2,1]<>"/" ;
+   		tilesDirFigs = "Tiles_Pointsets_VarSize_Figs/SetNo_"<>i2s[setNo]<>"_mag_"<>r2s[mag, 2,1]<>"/" ;
+    	If[ !FileExistsQ[tilesDir] && !dbg, CreateDirectory[tilesDir] ];
+    	If[ !FileExistsQ[tilesDirFigs] && dbg, CreateDirectory[tilesDirFigs] ];
+    	
+    	mxfname = "MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>".dat";
+		mxTab = readMatBuilderMatrix[mxfname];
+		mxInvTab = readMatBuilderInvMatrices["MatBuilder_matrices/2D_0m2net_"<>i2s[setNo]<>"_inv.dat"];
+		
+		targetList = {3^(noctaves-2), 3^noctaves};
+		
+		pts = getMatBuiderPtsND[base^noctaves, mxfname, owenFlag, depth, nDims, base, seed ];
+		{iOrdinalAbsoluteFrom,iOrdinalAbsoluteTo} = {1,base^noctaves};
+		Do[
+			iOrdinalAbsolute = targetList[[ilst]];
+			tlst = (*Parallelize @*) Table[
+				ioctave = Floor @ Log[base,iOrdinalAbsolute];
+				gl = {};
+				npts = base^ioctave;
+				{x,y} = npts pts[[iWithinSet]];
+					{ix,iy} = Quotient[{x,y}, base^((ioctave)/2)];
+					k = base^((ioctave)/2);
+					{v1,v2} = {{1/k,0},{0,1/k}} ;
+					{refx,refy} = Quotient[{x,y}, {k,k}] / {k,k};
+					center = {refx,refy} + (v1+v2)/2;
+					{bottomLeftx,bottomLefty} = center - mag (v1+v2)/2;
+					bottomLeftx = Max[0,bottomLeftx];
+					bottomLefty = Max[0,bottomLefty];
+					{topRightx,topRighty} = center + mag (v1+v2)/2;
+					topRightx = Min[1,topRightx];
+					topRighty = Min[1,topRighty];
+					If[dbg && iWithinSet == iOrdinalAbsolute,
+						(*AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ] } ];*)
+						AppendTo[gl,{LightYellow,Rectangle[{bottomLeftx,bottomLefty}, {topRightx,topRighty}] } ];
+					];
+					{iWithinSet-1,{x,y}/npts,N@{bottomLeftx,bottomLefty},N@{{topRightx-bottomLeftx,0},{0,topRighty-bottomLefty}}}
+			,{iWithinSet,1,iOrdinalAbsolute}];
+			If[dbg,
+				ngrid = base^Floor[ioctave/2]; ngridstep = 1/ngrid;
+				octaveGrid={Cyan,Table[Line[{{i ngridstep,0},{i ngridstep,1}}],{i,0,ngrid}],Table[Line[{{0,i ngridstep},{1,i ngridstep}}],{i,0,ngrid}]};
+				p = Graphics[ {frame,octaveGrid,gl,AbsolutePointSize[5],Point/@pts[[;;iOrdinalAbsolute]],
+					Table[Text[Style[i-1,14],pts[[i]],{-1,-1}],{i,iOrdinalAbsolute}]}, PlotLabel-> {{ioctave,Floor[ioctave/2]}->iOrdinalAbsolute} ];
+				p//Print;
+				Export[tilesDirFigs<>"2D_0m2net_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".png", p];
+			];
+			fname = tilesDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>i2s[iOrdinalAbsolute]<>".dat";
+			If[!dbg, Export[fname,Flatten/@(tlst)]; Print["Writing ",fname," done."] ];
+		,{ilst,Length[targetList]}];
+	] (* prepOptimDataPointsetsVarSize *)
 
 selectBase3SFC2DTilesMatBuilderOnly[tlst_,intensityInt_] := Select[tlst, second[#] < intensityInt & ]
 
