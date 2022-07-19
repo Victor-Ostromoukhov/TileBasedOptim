@@ -3078,8 +3078,8 @@ optimTypeMSEOptimisationHeaviside = 3;
 		(*integrandTypeLabel = "Heaviside";*)
 		
 		optimTypeL2OptimisationLabel = "MSEOptimisationSoftEllipses";
-		integrandTypeLabel = "SoftEllipses";
 		integrandTypeLabel = "Heaviside";
+		integrandTypeLabel = "SoftEllipses";
 		(*Manipulate[*)
 		
 	        plotLabel = "Optim vs. Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
