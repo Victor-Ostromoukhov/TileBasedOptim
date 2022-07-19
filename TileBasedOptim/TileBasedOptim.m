@@ -1766,7 +1766,7 @@ math
 <<TileBasedOptim/TileBasedOptim.m
 nintegrands = 256 1024;
 nDims = 2;
-integrandType=2;
+integrandType=1;
 nPointsets=1;
 makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 
@@ -2854,6 +2854,14 @@ makeOptimMSESeq[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType
         ,{iOrdinalAbsolute,Length[counters]}];
    ] (* makeOptimMSESeq *)
 
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+	makeOptimMSEPointSets[]
+
+*)
+
 makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:1, setFromTo_:{1,19}, octaves_:{1,7,1}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
@@ -3071,6 +3079,8 @@ optimTypeMSEOptimisationHeaviside = 3;
 		
 		optimTypeL2OptimisationLabel = "MSEOptimisationSoftEllipses";
 		integrandTypeLabel = "SoftEllipses";
+		integrandTypeLabel = "Heaviside";
+		(*Manipulate[*)
 		
 	        plotLabel = "Optim vs. Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
 
@@ -3130,7 +3140,7 @@ optimTypeMSEOptimisationHeaviside = 3;
 			            ,PlotMarkers->{{\[FilledCircle],5} }
 			            ,Frame->True
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
-		           		,ImageSize -> 2 {1024,1024}
+		           		,ImageSize -> 3/2 {1024,1024}
 		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,PlotRange->{{3^powfrom,3^powto}, Automatic } (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[3^pow,{pow,1,8,1}],None}
@@ -3138,11 +3148,16 @@ optimTypeMSEOptimisationHeaviside = 3;
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
-		            ]	;		
+		            ];
+		            
+			(*,Control[{{optimTypeL2OptimisationLabel,"MSEOptimisationSoftEllipses"},{"L2Optimisation","MSEOptimisationHeaviside","MSEOptimisationSoftEllipses"
+				(*,"MSEOptimisationHardRectangles","MSEOptimisationSoftRectangles","MSEOptimisationHardEllipses"*)} } ]*)
+			(*,Control[{{integrandTypeLabel,"Heaviside"},{"Heaviside", "SoftEllipses"	(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
+         ]*)
 			Export["p_MSE.pdf",p];
 			p//Print;
 			
- 
+
      ] (* showstdOptimMSE *)
      
      
