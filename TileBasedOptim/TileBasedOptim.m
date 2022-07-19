@@ -1761,6 +1761,15 @@ nDims = 2;
 	makeMSEref[12, nPointsets, {1,16,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {1,16,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
 
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+nintegrands = 256 1024;
+nDims = 2;
+integrandType=2;
+nPointsets=32;
+
+	makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 
 
 *)
@@ -3051,7 +3060,7 @@ optimTypeMSEOptimisationHeaviside = 3;
 
  
  showstdOptimMSE[octaves_:{1,8,1}] :=
-    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata},
+    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends(*,alldata*)},
     	consecutiveFlag = False;
 		fontSz = 14;
 		kPlusMinus = 1/2.;
@@ -3069,6 +3078,9 @@ optimTypeMSEOptimisationHeaviside = 3;
 			mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"Strat_"<>integrandTypeLabel<>".dat"]), #[[1]] <= 3^(powto+1) &];
 			mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data],8}];
+
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"PMJ02_"<>integrandTypeLabel<>".dat"]), #[[1]] <= 3^(powto+1) &];
+			msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data],8}];
 
 			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"OwenPlus_"<>integrandTypeLabel<>".dat"]),  #[[1]] <= 3^(powto+1) &];
 			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data],8}];
@@ -3091,9 +3103,9 @@ optimTypeMSEOptimisationHeaviside = 3;
 			mseOptimPointsets = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
 			 
-		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, mseOptimSeq, mseOptimPointsets} ;
-	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat",  "OwenMaxDepth", "MatBuiderMaxDepth",
-	        	"MB++ Seq", "MB++ Pointsets"} ] ];
+		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, msePMJ02, mseOptimSeq, mseOptimPointsets} ;
+	        (*legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat",  "OwenMaxDepth", "MatBuiderMaxDepth", "MB++ Seq", "MB++ Pointsets"} ] ];*)
+	        legends = {"WN", "Strat",  "OwenMaxDepth", "MatBuiderMaxDepth", "PMJ02", "MB++ Seq", "MB++ Pointsets"} ;
 	        
 	        
 			p = ListLogLogPlot[ alldata
@@ -3103,6 +3115,8 @@ optimTypeMSEOptimisationHeaviside = 3;
 							{Blue,AbsoluteThickness[2]},
 							{Black,AbsoluteThickness[2]},
 							{Orange,AbsoluteThickness[4]},
+							{Darker@Green,AbsoluteThickness[4]},
+							
 							{Red,Dashed,AbsoluteThickness[3], Dashed},
 							{Blue,Dashed,AbsoluteThickness[3]},
 							{Darker@Green,AbsoluteThickness[2], Dashed},
