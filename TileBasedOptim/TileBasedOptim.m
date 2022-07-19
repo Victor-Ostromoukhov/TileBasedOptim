@@ -1761,6 +1761,14 @@ nDims = 2;
 	makeMSEref[12, nPointsets, {1,16,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
 	makeMSEref[11, nPointsets, {1,16,1/8.}, integrandType, nDims, nintegrands];                                                                                                                               
 
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+nintegrands = 256 1024;
+nDims = 2;
+integrandType=1;
+nPointsets=1;
+makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 
 
 *)
@@ -2754,17 +2762,6 @@ getMSE[pts_, inptsfname_:"", innDims_:2, inIntegrandType_:2, dbg_:False] :=
    ] (* getMSE *)
 
 
-optimTypeL2Optimisation = 1;
-optimTypeMSEOptimisationSoftEllipses = 2;
-optimTypeMSEOptimisationHeaviside = 3;
-(*
-gitpull
-math
-<<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSE[]
-
-*)
-
 doubleCheck[] :=
     Module[ {},
     	nDims = 2;
@@ -2775,7 +2772,19 @@ doubleCheck[] :=
         Print[npts -> mse];
     ]
 
-makeOptimMSESeq[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,64}, octaves_:{1,7,1}, suffix_:"Seq_PrevLevel", innDims_:2, dbg_:False] :=
+optimTypeL2Optimisation = 1;
+optimTypeMSEOptimisationSoftEllipses = 2;
+optimTypeMSEOptimisationHeaviside = 3;
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+	makeOptimMSESeq[]
+	makeOptimMSEPointSets[]
+
+*)
+
+makeOptimMSESeq[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:1, setFromTo_:{1,64}, octaves_:{1,7,1}, suffix_:"Seq_PrevLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -2845,7 +2854,15 @@ makeOptimMSESeq[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType
         ,{iOrdinalAbsolute,Length[counters]}];
    ] (* makeOptimMSESeq *)
 
-makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,19}, octaves_:{1,7,1}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+	makeOptimMSEPointSets[]
+
+*)
+
+makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:1, setFromTo_:{1,19}, octaves_:{1,7,1}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -3051,7 +3068,7 @@ optimTypeMSEOptimisationHeaviside = 3;
 
  
  showstdOptimMSE[octaves_:{1,8,1}] :=
-    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends,alldata},
+    Module[ {powfrom,powto,powstep,kPlusMinus,data,plotLabel,legends(*,alldata*)},
     	consecutiveFlag = False;
 		fontSz = 14;
 		kPlusMinus = 1/2.;
@@ -3062,6 +3079,8 @@ optimTypeMSEOptimisationHeaviside = 3;
 		
 		optimTypeL2OptimisationLabel = "MSEOptimisationSoftEllipses";
 		integrandTypeLabel = "SoftEllipses";
+		integrandTypeLabel = "Heaviside";
+		(*Manipulate[*)
 		
 	        plotLabel = "Optim vs. Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
 
@@ -3069,6 +3088,9 @@ optimTypeMSEOptimisationHeaviside = 3;
 			mseWN = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"Strat_"<>integrandTypeLabel<>".dat"]), #[[1]] <= 3^(powto+1) &];
 			mseStrat = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data],8}];
+
+			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"PMJ02_"<>integrandTypeLabel<>".dat"]), #[[1]] <= 3^(powto+1) &];
+			msePMJ02 = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data]}];
 
 			data = Select[(Drop[#,1]& @ Import["data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/"<>"OwenPlus_"<>integrandTypeLabel<>".dat"]),  #[[1]] <= 3^(powto+1) &];
 			mseOwenPlus = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,1,Length[data],8}];
@@ -3091,9 +3113,9 @@ optimTypeMSEOptimisationHeaviside = 3;
 			mseOptimPointsets = Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 
 			 
-		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, mseOptimSeq, mseOptimPointsets} ;
-	        legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat",  "OwenMaxDepth", "MatBuiderMaxDepth",
-	        	"MB++ Seq", "MB++ Pointsets"} ] ];
+		    alldata = {mseWN, mseStrat, mseOwenPlus, mseMatBuiderMaxDepth, msePMJ02, mseOptimSeq, mseOptimPointsets} ;
+	        (*legends = Join[ StringJoin[#, (" dims "<>Switch[nDims,2,"01",3,"012",4,"0123"])] & /@ Join[{"WN", "Strat",  "OwenMaxDepth", "MatBuiderMaxDepth", "MB++ Seq", "MB++ Pointsets"} ] ];*)
+	        legends = {"WN", "Strat",  "OwenMaxDepth", "MatBuiderMaxDepth", "PMJ02", "MB++ Seq", "MB++ Pointsets"} ;
 	        
 	        
 			p = ListLogLogPlot[ alldata
@@ -3103,6 +3125,8 @@ optimTypeMSEOptimisationHeaviside = 3;
 							{Blue,AbsoluteThickness[2]},
 							{Black,AbsoluteThickness[2]},
 							{Orange,AbsoluteThickness[4]},
+							{Darker@Green,AbsoluteThickness[4]},
+							
 							{Red,Dashed,AbsoluteThickness[3], Dashed},
 							{Blue,Dashed,AbsoluteThickness[3]},
 							{Darker@Green,AbsoluteThickness[2], Dashed},
@@ -3116,7 +3140,7 @@ optimTypeMSEOptimisationHeaviside = 3;
 			            ,PlotMarkers->{{\[FilledCircle],5} }
 			            ,Frame->True
 		 	            ,FrameLabel-> {Style[ "Number of Samples", fontSz],Style[ "MSE", fontSz] }
-		           		,ImageSize -> 2 {1024,1024}
+		           		,ImageSize -> 3/2 {1024,1024}
 		            	(*,PlotRange->{{2^powfrom,2^powto},{Max @@ (second /@ mseOwenPlusRaw), Min @@ (second /@ mseOwenPlusRaw) }} *)(*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,PlotRange->{{3^powfrom,3^powto}, Automatic } (*{{4,2^powto},Automatic}*)	(* {{2^5,2^12},Automatic} *)
 		            	,GridLines->{Table[3^pow,{pow,1,8,1}],None}
@@ -3124,11 +3148,16 @@ optimTypeMSEOptimisationHeaviside = 3;
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
-		            ]	;		
+		            ];
+		            
+			(*,Control[{{optimTypeL2OptimisationLabel,"MSEOptimisationSoftEllipses"},{"L2Optimisation","MSEOptimisationHeaviside","MSEOptimisationSoftEllipses"
+				(*,"MSEOptimisationHardRectangles","MSEOptimisationSoftRectangles","MSEOptimisationHardEllipses"*)} } ]*)
+			(*,Control[{{integrandTypeLabel,"Heaviside"},{"Heaviside", "SoftEllipses"	(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
+         ]*)
 			Export["p_MSE.pdf",p];
 			p//Print;
 			
- 
+
      ] (* showstdOptimMSE *)
      
      
