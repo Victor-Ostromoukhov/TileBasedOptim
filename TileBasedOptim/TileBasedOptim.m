@@ -1767,9 +1767,8 @@ math
 nintegrands = 256 1024;
 nDims = 2;
 integrandType=2;
-nPointsets=32;
-
-	makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
+nPointsets=1;
+makeMSEref[208, nPointsets, {2,16,1}, integrandType, nDims, nintegrands];                                                                                                                               
 
 
 *)
@@ -2763,17 +2762,6 @@ getMSE[pts_, inptsfname_:"", innDims_:2, inIntegrandType_:2, dbg_:False] :=
    ] (* getMSE *)
 
 
-optimTypeL2Optimisation = 1;
-optimTypeMSEOptimisationSoftEllipses = 2;
-optimTypeMSEOptimisationHeaviside = 3;
-(*
-gitpull
-math
-<<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSE[]
-
-*)
-
 doubleCheck[] :=
     Module[ {},
     	nDims = 2;
@@ -2784,7 +2772,19 @@ doubleCheck[] :=
         Print[npts -> mse];
     ]
 
-makeOptimMSESeq[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,64}, octaves_:{1,7,1}, suffix_:"Seq_PrevLevel", innDims_:2, dbg_:False] :=
+optimTypeL2Optimisation = 1;
+optimTypeMSEOptimisationSoftEllipses = 2;
+optimTypeMSEOptimisationHeaviside = 3;
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+	makeOptimMSESeq[]
+	makeOptimMSEPointSets[]
+
+*)
+
+makeOptimMSESeq[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:1, setFromTo_:{1,64}, octaves_:{1,7,1}, suffix_:"Seq_PrevLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
@@ -2854,7 +2854,7 @@ makeOptimMSESeq[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType
         ,{iOrdinalAbsolute,Length[counters]}];
    ] (* makeOptimMSESeq *)
 
-makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:2, setFromTo_:{1,19}, octaves_:{1,7,1}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
+makeOptimMSEPointSets[optimType_:optimTypeMSEOptimisationSoftEllipses, inIntegrandType_:1, setFromTo_:{1,19}, octaves_:{1,7,1}, suffix_:"Pointsets_PrevLevel", innDims_:2, dbg_:False] :=
     Module[ {},
         If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
        	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
