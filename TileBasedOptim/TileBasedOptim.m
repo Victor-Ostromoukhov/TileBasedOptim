@@ -3391,6 +3391,8 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
 		nbatches = innbatches; 
 		nmus1D = 256;
 		(* Nintegrands = nbatches*nmus1D*nmus1D = 256K == 524288 *)
+		batchsz = nmus1D^2;
+		nIntegrands = nbatches * batchsz;
 
 		integrandTypeLabel = "Heaviside";
 		suffix = integrandTypeLabel<>"_setNo"<>ToString[setNo];
