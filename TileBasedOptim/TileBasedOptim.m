@@ -2447,7 +2447,7 @@ math
 Parallelize @ Do[prepOptimDataSequences[10, i, True, False], {i, 65,256}]
 
 *)
-prepOptimDataSequences[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:True] :=
+prepOptimDataSequences[innoctaves_:5, insetNo_: 1, prevFlag_: True, dbg_:True] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         
@@ -2539,7 +2539,7 @@ math
 Do[prepOptimDataPointsets[10, i, True, False], {i, 65,256}]
 
 *)
-prepOptimDataPointsets[innoctaves_:4, insetNo_: 1, prevFlag_: True, dbg_:False] :=
+prepOptimDataPointsets[innoctaves_:5, insetNo_: 1, prevFlag_: True, dbg_:True] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         
@@ -2626,11 +2626,12 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 
-Do[prepOptimDataPointsetsVarSize[mag, 5, i, False], {mag, .7, 4, .1}, {i, 4}]
+Do[prepOptimDataPointsetsVarSize[mag, 5, i, False], {mag, .7, 2, .01}, {i, 10}]
+Do[prepOptimDataPointsetsVarSize[mag, 6, i, False], {mag, .7, 2, .01}, {i, 10}]
 
 
 *)
-prepOptimDataPointsetsVarSize[inmag_:1.0, innoctaves_:6, insetNo_: 1, dbg_:False] :=
+prepOptimDataPointsetsVarSize[inmag_:1.0, innoctaves_:5, insetNo_: 1, dbg_:True] :=
     Module[ {},
         (*If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];*)
         mag = inmag;
@@ -2644,8 +2645,8 @@ prepOptimDataPointsetsVarSize[inmag_:1.0, innoctaves_:6, insetNo_: 1, dbg_:False
 		background = {LightYellow, Polygon[{{0,0},{0,1},{1,1},{1,0},{0,0}}]};
     	frame={AbsoluteThickness[3],Green,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}] };
     	noctaves = innoctaves;
-    	tilesDir = "Tiles_Pointsets_VarSize/SetNo_"<>i2s[setNo]<>"_mag_"<>r2s[mag, 2,1]<>"/" ;
-   		tilesDirFigs = "Tiles_Pointsets_VarSize_Figs/SetNo_"<>i2s[setNo]<>"_mag_"<>r2s[mag, 2,1]<>"/" ;
+    	tilesDir = "Tiles_Pointsets_VarSize/SetNo_"<>i2s[setNo]<>"_mag_"<>r2s[mag, 3,2]<>"/" ;
+   		tilesDirFigs = "Tiles_Pointsets_VarSize_Figs/SetNo_"<>i2s[setNo]<>"_mag_"<>r2s[mag, 3,2]<>"/" ;
     	If[ !FileExistsQ[tilesDir] && !dbg, CreateDirectory[tilesDir] ];
     	If[ !FileExistsQ[tilesDirFigs] && dbg, CreateDirectory[tilesDirFigs] ];
     	
@@ -2664,22 +2665,32 @@ prepOptimDataPointsetsVarSize[inmag_:1.0, innoctaves_:6, insetNo_: 1, dbg_:False
 				gl = {};
 				npts = base^ioctave;
 				{x,y} = npts pts[[iWithinSet]];
-					{ix,iy} = Quotient[{x,y}, base^((ioctave)/2)];
-					k = base^((ioctave)/2);
-					{v1,v2} = {{1/k,0},{0,1/k}} ;
-					{refx,refy} = Quotient[{x,y}, {k,k}] / {k,k};
+				{ix,iy} = Quotient[{x,y}, base^((ioctave)/2)];
+				k = base^((ioctave)/2);
+				{v1,v2} = {{1/k,0},{0,1/k}} ;
+				{refx,refy} = Quotient[{x,y}, {k,k}] / {k,k};
+				center = {refx,refy} + (v1+v2)/2;
+				{bottomLeftx,bottomLefty} = center - mag (v1+v2)/2;
+				{topRightx,topRighty} = center + mag (v1+v2)/2;
+					
+				If[OddQ[ioctave],
+					{ix,iy} = Quotient[{x,y}, base^((ioctave+1)/2)];
+					{k1,k2} = If[EvenQ[ix+iy], {base^((ioctave-1)/2),base^((ioctave+1)/2)}, {base^((ioctave+1)/2),base^((ioctave-1)/2)}];
+					{v1,v2} = {{1/k1,0},{0,1/k2}} ;
+					{refx,refy} = Quotient[{x,y}, {k2,k1}] / {k1,k2};
 					center = {refx,refy} + (v1+v2)/2;
-					{bottomLeftx,bottomLefty} = center - mag (v1+v2)/2;
-					bottomLeftx = Max[0,bottomLeftx];
-					bottomLefty = Max[0,bottomLefty];
-					{topRightx,topRighty} = center + mag (v1+v2)/2;
-					topRightx = Min[1,topRightx];
-					topRighty = Min[1,topRighty];
-					If[dbg && iWithinSet == iOrdinalAbsolute,
-						(*AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ] } ];*)
-						AppendTo[gl,{LightYellow,Rectangle[{bottomLeftx,bottomLefty}, {topRightx,topRighty}] } ];
-					];
-					{iWithinSet-1,{x,y}/npts,N@{bottomLeftx,bottomLefty},N@{{topRightx-bottomLeftx,0},{0,topRighty-bottomLefty}}}
+					{bottomLeftx,bottomLefty} = center - mag Sqrt[Det[{v1, v2}]]/2;
+					{topRightx,topRighty} = center + mag Sqrt[Det[{v1, v2}]]/2;
+				];					
+				bottomLeftx = Max[0,bottomLeftx];
+				bottomLefty = Max[0,bottomLefty];
+				topRightx = Min[1,topRightx];
+				topRighty = Min[1,topRighty];
+				If[dbg && iWithinSet == iOrdinalAbsolute,
+					(*AppendTo[gl,{LightYellow,Rectangle[{refx,refy}, {refx,refy}+v1+v2],Red,Line[{{refx,refy}, {refx,refy}+v1,{refx,refy}+v1+v2,{refx,refy}+v2, {refx,refy}} ] } ];*)
+					AppendTo[gl,{LightYellow,Rectangle[{bottomLeftx,bottomLefty}, {topRightx,topRighty}] ,Red,Point@ center} ];
+				];
+				{iWithinSet-1,{x,y}/npts,N@{bottomLeftx,bottomLefty},N@{{topRightx-bottomLeftx,0},{0,topRighty-bottomLefty}}}
 			,{iWithinSet,1,iOrdinalAbsolute}];
 			If[dbg,
 				ngrid = base^Floor[ioctave/2]; ngridstep = 1/ngrid;
