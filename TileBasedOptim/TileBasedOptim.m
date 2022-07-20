@@ -3429,7 +3429,7 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
 							TimeConstrained[ NIntegrate[getHeavisideND[Table[x[i],{i,nDims}],{muDiscotinuity,normVector}], ##] & @@ Table[{x[i],0,1},{i,nDims} ], maxtime,0]
 						]
 					];
-					Print[suffix -> mf[{{ibatch,nbatches},{ixmu,nmus1D},{iymu,nmus1D}}] -> mf[{mu,sigma}] -> integral];
+					Print[suffix -> mf[{{ibatch,nbatches},{ixmu,nmus1D},{iymu,nmus1D}}] -> mf[{muDiscotinuity,normVector}] -> integral];
 					If[integral < eps, Print["Bad trial " -> suffix -> mf[{{ibatch,nbatches},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{muDiscotinuity,normVector}]  -> integral] ];
 					If[integral > eps, Break[] ];
 	        	];
@@ -3446,7 +3446,7 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
         (*DeleteFile[resfname];*)
     ] (* prepHeavisideND *)
 
-(*prepHeavisideND[innDims_:2, setNo_:1] :=
+prepHeavisideND[innDims_:2, setNo_:1] :=
     Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector,alpha,j,
     	integrandTypeLabel,hppsuffix,cppsuffix,varName},
     	nIntegrands = 9 256 256;
@@ -3526,7 +3526,7 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
         Run["echo ';' >> "<>hppfname];       
         DeleteFile[resfname];
     ] (* prepHeavisideND *)
-*)
+
 getUniformDirsND[nDims_:6]:= 
 Module[{v0 = Table[1.,{nDims}]/Sqrt[nDims]},
 	RandomVariate[CircularRealMatrixDistribution[nDims]].v0
