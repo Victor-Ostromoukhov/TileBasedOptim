@@ -17,7 +17,7 @@ suffix="VarSize"
 #fi
 #
 
-nthreads=32
+nthreads=64
 continueFlag=false
 
 inputDirs=(`ls ../Tiles_Pointsets_${suffix}/`)
