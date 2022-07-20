@@ -3406,6 +3406,7 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
 		       	While[True,
 		    		muDiscotinuity = {(ixmu-1+(RandomReal[]))/nmus1D,(iymu-1+(RandomReal[]))/nmus1D};
 					normVector = If[nDims == 2,
+						i = (iymu-1)*nmus1D + (ixmu-1);
 		    			j = (ibatch-1)*batchsz + (i-1);
 		    			alpha = 2*PI*(j+RandomReal[])/nIntegrands;
 		    			{Cos[alpha], Sin[alpha]}
