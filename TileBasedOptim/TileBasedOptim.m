@@ -2626,7 +2626,7 @@ gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
 
-Do[prepOptimDataPointsetsVarSize[mag, 6, i, False], {mag, .7, 4, .1}, {i, 4}]
+Do[prepOptimDataPointsetsVarSize[mag, 5, i, False], {mag, .7, 4, .1}, {i, 4}]
 
 
 *)

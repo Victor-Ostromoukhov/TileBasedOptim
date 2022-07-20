@@ -27,7 +27,8 @@ echo TracesDir=$TracesDir
 # counters...
 #lst=(1 3    9    27    81    243    729   2187   6561 19683 59049)
 #lst=(1 3    9    27    81    243    729)
-lst=(81 729)
+#lst=(81 729)
+lst=(81 243)
 
 nIterations=128
 nItegrandsPerIteration=65536
