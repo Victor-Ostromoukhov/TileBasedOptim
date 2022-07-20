@@ -3404,7 +3404,8 @@ prepHeavisideND[innDims_:2, setNo_:1] :=
 		       	While[True,
 		       		trial++;
 		    		(*muDiscotinuity = Table[.5,{nDims}] + .1 getUniformDirsND[nDims];*)
-		    		muDiscotinuity = Table[.5 - (RandomReal[]-.5)/2,{nDims}];
+		    		(*muDiscotinuity = Table[.5 - (RandomReal[]-.5)/2,{nDims}];*)
+		    		muDiscotinuity = Table[RandomReal[],{nDims}];
 					normVector = If[nDims == 2,
 		    			j = (ibatch-1)*batchsz + (i-1);
 		    			alpha = 2*PI*(j+RandomReal[])/nIntegrands;
