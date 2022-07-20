@@ -3366,11 +3366,87 @@ prepSoftEllipses2D[setNo_:1, innbatches_:9] :=
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-prepHeavisideND[2, 0]
-prepHeavisideND[2, 1]
+prepHeavisideND[91, 9]
+prepHeavisideND[92, 9]
 
 *)
-prepHeavisideND[innDims_:2, setNo_:1] :=
+
+prepHeavisideND[setNo_:1, innbatches_:9] :=
+    Module[ {},
+        If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
+        nDims = 2;
+     	maxtime = 10;
+        dir = "integrands/";
+        If[ !FileExistsQ[dir], CreateDirectory[dir] ];
+		{precision,maxRecursion} = Switch[nDims
+			,1,{20,10000}
+			,2,{18,10000}
+			,3,{18,10000}
+			,4,{18,10000}
+			,5,{14,10000}
+			,6,{11,10000}
+			,_,{10,10000}
+		];
+
+		nbatches = innbatches; 
+		nmus1D = 256;
+		(* Nintegrands = nbatches*nmus1D*nmus1D = 256K == 524288 *)
+
+		integrandTypeLabel = "Heaviside";
+		suffix = integrandTypeLabel<>"_setNo"<>ToString[setNo];
+		hppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
+		cppsuffix = "t_Heaviside"<>ToString[nDims]<>"D" ;
+		varName = "tab_Heaviside"<>ToString[nDims]<>"D" ;
+        resfname = dir<>suffix<>".dat";
+		cppfname = dir<>suffix<>".cpp";		
+
+        res = {};
+        Do[
+          	partial = RandomSample @ (Flatten[#,1]& @ (Parallelize @  Table[
+		       	While[True,
+		    		muDiscotinuity = {(ixmu-1+(RandomReal[]))/nmus1D,(iymu-1+(RandomReal[]))/nmus1D};
+					normVector = If[nDims == 2,
+		    			j = (ibatch-1)*batchsz + (i-1);
+		    			alpha = 2*PI*(j+RandomReal[])/nIntegrands;
+		    			{Cos[alpha], Sin[alpha]}
+					,(*ELSE*)
+						getUniformDirsND[nDims]
+					];
+					Off[NIntegrate::slwcon];
+					Off[NIntegrate::eincr];
+					Off[NIntegrate::precw];
+					Off[NIntegrate::maxp];
+					Off[NIntegrate::inumr];
+					Off[General::stop];
+					Off[NIntegrate`SymbolicPiecewiseSubdivision::maxpwc];
+					integral = If[nDims == 3,
+						TimeConstrained[ NIntegrate[getHeavisideND[Table[x[i],{i,nDims}],{muDiscotinuity,normVector}], ##, Method->"LocalAdaptive", PrecisionGoal->precision ] & @@ Table[{x[i],0,1},{i,nDims}], maxtime,0]
+					,(*ELSE*)
+						If[nDims < 8,
+							TimeConstrained[ NIntegrate[getHeavisideND[Table[x[i],{i,nDims}],{muDiscotinuity,normVector}], ## , MaxRecursion->maxRecursion, 
+								PrecisionGoal->precision, WorkingPrecision->precision, AccuracyGoal->precision] & @@ Table[{x[i],0,1},{i,nDims} ], maxtime,0]
+						,(*ELSE*)
+							TimeConstrained[ NIntegrate[getHeavisideND[Table[x[i],{i,nDims}],{muDiscotinuity,normVector}], ##] & @@ Table[{x[i],0,1},{i,nDims} ], maxtime,0]
+						]
+					];
+					Print[suffix -> mf[{{ibatch,nbatches},{ixmu,nmus1D},{iymu,nmus1D}}] -> mf[{mu,sigma}] -> integral];
+					If[integral < eps, Print["Bad trial " -> suffix -> mf[{{ibatch,nbatches},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{mu,sigma}]  -> integral] ];
+					If[integral > eps, Break[] ];
+	        	];
+				Flatten@{integral,mu,mxCInv}
+	        ,{ixmu,nmus1D},{iymu,nmus1D}]) );
+	        res = Join[res,partial];
+			finalLength = Length[res];
+			Put[(CForm /@ #) & /@ SetPrecision[res,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
+			Print["output into ",cppfname];		
+	        Run["echo ' "<>cpptype<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' > "<>cppfname ];
+	        Run["cat "<> resfname<>" >> "<>cppfname];
+	        Run["echo ';' >> "<>cppfname];       
+	    ,{ibatch,nbatches}];
+        (*DeleteFile[resfname];*)
+    ] (* prepHeavisideND *)
+
+(*prepHeavisideND[innDims_:2, setNo_:1] :=
     Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector,alpha,j,
     	integrandTypeLabel,hppsuffix,cppsuffix,varName},
     	nIntegrands = 9 256 256;
@@ -3450,7 +3526,7 @@ prepHeavisideND[innDims_:2, setNo_:1] :=
         Run["echo ';' >> "<>hppfname];       
         DeleteFile[resfname];
     ] (* prepHeavisideND *)
-
+*)
 getUniformDirsND[nDims_:6]:= 
 Module[{v0 = Table[1.,{nDims}]/Sqrt[nDims]},
 	RandomVariate[CircularRealMatrixDistribution[nDims]].v0
