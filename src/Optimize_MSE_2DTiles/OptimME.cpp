@@ -44,9 +44,11 @@ struct t_Heaviside2D {
 
 // Déclaration des tableaux d'intégrandes
 extern t_Heaviside2D tab_Heaviside2D[INTEGRAND_TYPE_HEAVISIDE_NUMBER];
-extern t_GaussianStruct2D tab_SoftEllipses2D[INTEGRAND_TYPE_SOFTELLIPSES_NUMBER];
+//extern t_GaussianStruct2D tab_SoftEllipses2D[INTEGRAND_TYPE_SOFTELLIPSES_NUMBER];
 
 #include "Lib/Integrands/SoftEllipses2D_18x256x256_optimSet_part1.hpp"
+#include "Lib/Integrands/SoftEllipses2D_18x256x256_optimSet_part2.hpp"
+
 /* ----------- Déclaration des structures et leur "méthodes" ----------- */
 
 template<int dimension>
