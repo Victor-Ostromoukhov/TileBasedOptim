@@ -3078,9 +3078,9 @@ optimTypeMSEOptimisationHeaviside = 3;
 		(*integrandTypeLabel = "Heaviside";*)
 		
 		optimTypeL2OptimisationLabel = "MSEOptimisationSoftEllipses";
-		integrandTypeLabel = "Heaviside";
-		integrandTypeLabel = "SoftEllipses";
-		(*Manipulate[*)
+		(*integrandTypeLabel = "Heaviside";
+		integrandTypeLabel = "SoftEllipses";*)
+		Manipulate[
 		
 	        plotLabel = "Optim vs. Ref MSE "<>ToString[nDims]<>"D   integrandType = "<>integrandTypeLabel;
 
@@ -3148,14 +3148,14 @@ optimTypeMSEOptimisationHeaviside = 3;
 		            	,AspectRatio->1
 		            	,InterpolationOrder -> 1, IntervalMarkers -> "Bands", Sequence[PlotTheme -> "Scientific", PlotRange -> All]
 		            	,PlotLabel -> Style[ plotLabel, Bold, 24] 
-		            ];
+		            ]
 		            
 			(*,Control[{{optimTypeL2OptimisationLabel,"MSEOptimisationSoftEllipses"},{"L2Optimisation","MSEOptimisationHeaviside","MSEOptimisationSoftEllipses"
 				(*,"MSEOptimisationHardRectangles","MSEOptimisationSoftRectangles","MSEOptimisationHardEllipses"*)} } ]*)
-			(*,Control[{{integrandTypeLabel,"Heaviside"},{"Heaviside", "SoftEllipses"	(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
-         ]*)
-			Export["p_MSE.pdf",p];
-			p//Print;
+			,Control[{{integrandTypeLabel,"SoftEllipses"},{"Heaviside", "SoftEllipses"	(*, "Ellipses", "Rectangles", "SoftEllipses_noRot" *)}}]
+         ]
+			(*Export["p_MSE.pdf",p];
+			p//Print;*)
 			
 
      ] (* showstdOptimMSE *)
