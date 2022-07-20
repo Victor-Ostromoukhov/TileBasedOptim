@@ -3260,8 +3260,8 @@ prepSoftEllipses2D[setNo_:1, innbatches_:9] :=
 		integrandTypeLabel = "SoftEllipses";
 		suffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
         resfname = dir<>suffix<>".dat";
-		cppfname = dir<>suffix<>".cpp";		
-        Print["prepSoftEllipses2D" -> cppfname];
+		hppfname = dir<>suffix<>".hpp";		
+        Print["prepSoftEllipses2D" -> hppfname];
 		cpptype = "t_GaussianStruct2D" ;
 		varName = "tab_SoftEllipses2D" ;
         res = {};
@@ -3293,10 +3293,10 @@ prepSoftEllipses2D[setNo_:1, innbatches_:9] :=
 	        res = Join[res,partial];
 			finalLength = Length[res];
 			Put[(CForm /@ #) & /@ SetPrecision[res,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
-			Print["output into ",cppfname];		
-	        Run["echo ' "<>cpptype<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' > "<>cppfname ];
-	        Run["cat "<> resfname<>" >> "<>cppfname];
-	        Run["echo ';' >> "<>cppfname];       
+			Print["output into ",hppfname];		
+	        Run["echo ' "<>cpptype<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' > "<>hppfname ];
+	        Run["cat "<> resfname<>" >> "<>hppfname];
+	        Run["echo ';' >> "<>hppfname];       
 	    ,{ibatch,nbatches}];
         (*DeleteFile[resfname];*)
     ] (* prepSoftEllipses2D *)
@@ -3397,10 +3397,10 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
 		integrandTypeLabel = "Heaviside";
 		suffix = integrandTypeLabel<>"_setNo"<>ToString[setNo];
 		hppsuffix = integrandTypeLabel<>ToString[nDims]<>"D"<>"_setNo"<>ToString[setNo];
-		cppsuffix = "t_Heaviside"<>ToString[nDims]<>"D" ;
+		cpptype = "t_Heaviside"<>ToString[nDims]<>"D" ;
 		varName = "tab_Heaviside"<>ToString[nDims]<>"D" ;
         resfname = dir<>suffix<>".dat";
-		cppfname = dir<>suffix<>".cpp";		
+		hppfname = dir<>suffix<>".hpp";		
 
         res = {};
         Do[
@@ -3441,10 +3441,10 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
 	        res = Join[res,partial];
 			finalLength = Length[res];
 			Put[(CForm /@ #) & /@ SetPrecision[res,precision], resfname]; (* e^-10 rather than 2.5*^-10 *) 
-			Print["output into ",cppfname];		
-	        Run["echo ' "<>cpptype<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' > "<>cppfname ];
-	        Run["cat "<> resfname<>" >> "<>cppfname];
-	        Run["echo ';' >> "<>cppfname];       
+			Print["output into ",hppfname];		
+	        Run["echo ' "<>cpptype<>" "<>varName<>"["<>ToString[finalLength]<>"] = ' > "<>hppfname ];
+	        Run["cat "<> resfname<>" >> "<>hppfname];
+	        Run["echo ';' >> "<>hppfname];       
 	    ,{ibatch,nbatches}];
         (*DeleteFile[resfname];*)
     ] (* prepHeavisideND *)
