@@ -3445,7 +3445,7 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
 	    ,{ibatch,nbatches}];
         (*DeleteFile[resfname];*)
     ] (* prepHeavisideND *)
-
+(*
 prepHeavisideND[innDims_:2, setNo_:1] :=
     Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector,alpha,j,
     	integrandTypeLabel,hppsuffix,cppsuffix,varName},
@@ -3526,7 +3526,7 @@ prepHeavisideND[innDims_:2, setNo_:1] :=
         Run["echo ';' >> "<>hppfname];       
         DeleteFile[resfname];
     ] (* prepHeavisideND *)
-
+*)
 getUniformDirsND[nDims_:6]:= 
 Module[{v0 = Table[1.,{nDims}]/Sqrt[nDims]},
 	RandomVariate[CircularRealMatrixDistribution[nDims]].v0
