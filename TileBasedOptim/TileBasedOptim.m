@@ -3436,7 +3436,7 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
 					If[integral < eps, Print["Bad trial " -> suffix -> mf[{{ibatch,nbatches},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{muDiscotinuity,normVector}]  -> integral] ];
 					If[integral > eps, Break[] ];
 	        	];
-				Flatten@{integral,mu,mxCInv}
+				Flatten@{integral,muDiscotinuity,normVector}
 	        ,{ixmu,nmus1D},{iymu,nmus1D}]) );
 	        res = Join[res,partial];
 			finalLength = Length[res];
