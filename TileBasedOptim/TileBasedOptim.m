@@ -3369,9 +3369,6 @@ math
 prepHeavisideND[2, 0]
 prepHeavisideND[2, 1]
 
-Do[
-	prepHeavisideND[2, isetNo]
-,{isetNo,256}]
 *)
 prepHeavisideND[innDims_:2, setNo_:1] :=
     Module[ {nIntegrands,nDims,suffix,maxtime,dir,precision,maxRecursion,batchsz,nbatches,res1024,res,trial,finalLength,resfname,alldata,hppfname,integral,muDiscotinuity,normVector,alpha,j,
