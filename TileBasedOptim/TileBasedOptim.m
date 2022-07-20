@@ -3430,7 +3430,7 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
 						]
 					];
 					Print[suffix -> mf[{{ibatch,nbatches},{ixmu,nmus1D},{iymu,nmus1D}}] -> mf[{mu,sigma}] -> integral];
-					If[integral < eps, Print["Bad trial " -> suffix -> mf[{{ibatch,nbatches},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{mu,sigma}]  -> integral] ];
+					If[integral < eps, Print["Bad trial " -> suffix -> mf[{{ibatch,nbatches},{ixsigma,iysigma},{ixmu,iymu}}] -> mf[{muDiscotinuity,normVector}]  -> integral] ];
 					If[integral > eps, Break[] ];
 	        	];
 				Flatten@{integral,mu,mxCInv}
