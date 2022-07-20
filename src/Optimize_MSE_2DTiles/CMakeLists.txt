@@ -35,16 +35,14 @@ endif()
 find_package(OpenMP REQUIRED)
 
 #set(INTEGRANDS Lib/Integrands/Heaviside2D_nIntegrands589824_optimSet.cpp Lib/Integrands/SoftEllipses2D_9x256x256_optimSet.cpp )
-set(INTEGRANDS Lib/Integrands/Heaviside2D_nIntegrands589824_optimSet.cpp )
-
-add_library(Integrands STATIC ${INTEGRANDS} )
-
-set(INTEGRANDS)
+#add_library(Integrands STATIC ${INTEGRANDS} )
+#set(INTEGRANDS)
 
 set(EXECUTABLE_OUTPUT_PATH ./bin)
 
 add_executable(${PROJECT_NAME} OptimME.cpp)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE MatXDynamic Integrands OpenMP::OpenMP_CXX)
+#target_link_libraries(${PROJECT_NAME} PRIVATE MatXDynamic Integrands OpenMP::OpenMP_CXX)
+target_link_libraries(${PROJECT_NAME} PRIVATE MatXDynamic OpenMP::OpenMP_CXX)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ~/bin)

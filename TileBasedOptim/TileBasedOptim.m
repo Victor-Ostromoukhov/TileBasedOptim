@@ -3298,7 +3298,7 @@ prepSoftEllipses2D[setNo_:1, innbatches_:9] :=
 	        Run["cat "<> resfname<>" >> "<>hppfname];
 	        Run["echo ';' >> "<>hppfname];       
 	    ,{ibatch,nbatches}];
-        (*DeleteFile[resfname];*)
+        DeleteFile[resfname];
     ] (* prepSoftEllipses2D *)
 
 (*prepSoftEllipses2D[setNo_:1] :=
@@ -3446,7 +3446,7 @@ prepHeavisideND[setNo_:1, innbatches_:9] :=
 	        Run["cat "<> resfname<>" >> "<>hppfname];
 	        Run["echo ';' >> "<>hppfname];       
 	    ,{ibatch,nbatches}];
-        (*DeleteFile[resfname];*)
+        DeleteFile[resfname];
     ] (* prepHeavisideND *)
 (*
 prepHeavisideND[innDims_:2, setNo_:1] :=

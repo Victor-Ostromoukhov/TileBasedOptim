@@ -20,8 +20,8 @@
 #define INTEGRAND_TYPE_HEAVISIDE 1
 #define INTEGRAND_TYPE_SOFTELLIPSES 2
 
-#define INTEGRAND_TYPE_HEAVISIDE_NUMBER 589824		// 9x256x256
-#define INTEGRAND_TYPE_SOFTELLIPSES_NUMBER 589824	// 9x256x256
+#define INTEGRAND_TYPE_HEAVISIDE_NUMBER 1179648		// 18x256x256
+#define INTEGRAND_TYPE_SOFTELLIPSES_NUMBER 1179648	// 18x256x256
 
 // Declaration des variables globales
 
@@ -43,11 +43,14 @@ struct t_Heaviside2D {
 
 
 // Déclaration des tableaux d'intégrandes
-extern t_Heaviside2D tab_Heaviside2D[INTEGRAND_TYPE_HEAVISIDE_NUMBER];
+//extern t_Heaviside2D tab_Heaviside2D[INTEGRAND_TYPE_HEAVISIDE_NUMBER];
 //extern t_GaussianStruct2D tab_SoftEllipses2D[INTEGRAND_TYPE_SOFTELLIPSES_NUMBER];
 
 #include "Lib/Integrands/SoftEllipses2D_18x256x256_optimSet_part1.hpp"
 #include "Lib/Integrands/SoftEllipses2D_18x256x256_optimSet_part2.hpp"
+
+#include "Lib/Integrands/Heaviside2D_18x256x256_optimSet_part1.hpp"
+#include "Lib/Integrands/Heaviside2D_18x256x256_optimSet_part2.hpp"
 
 /* ----------- Déclaration des structures et leur "méthodes" ----------- */
 
