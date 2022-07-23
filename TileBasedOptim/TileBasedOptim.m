@@ -2705,6 +2705,89 @@ prepOptimDataPointsetsVarSize[inmag_:1.0, innoctaves_:5, insetNo_: 1, dbg_:True]
 		,{ilst,Length[targetList]}];
 	] (* prepOptimDataPointsetsVarSize *)
 
+(*
+gitpull
+math
+<<TileBasedOptim/TileBasedOptim.m
+	makeOptimMSEVarSize[3^6, {1,1}]
+	showOptimMSEVarSize[3^6]
+*)
+makeOptimMSEVarSize[innpts_:3^5, setFromTo_:{1,10}, suffix_:"VarSize", innDims_:2, dbg_:False] :=
+    Module[ {},
+        If[ $ProcessorCount != 10 && Length[Kernels[]] < $ProcessorCount*2, LaunchKernels[$ProcessorCount*2] ];
+       	header = "#Nbpts	#Mean	#Var	#Min	#Max	#VOID	#VOID	#NbPtsets	#VOID\n";
+    	nDims = innDims;
+        dtab = {};
+        setNo = 1;
+    	integrandType = 2;
+    	npts=innpts;
+    	{setFrom,setTo} = setFromTo;
+    	optimType = optimTypeMSEOptimisationSoftEllipses;
+		integrandTypeLabel = Switch[integrandType,  1,"Heaviside", 2,"SoftEllipses", 3,"Rectangles", 4,"Ellipses", 5,"SoftEllipses_noRot" ];
+		optimTypeL2OptimisationLabel = Switch[optimType
+			,optimTypeL2Optimisation,"L2Optimisation"
+			,optimTypeMSEOptimisationHeaviside,"MSEOptimisationHeaviside"
+			,optimTypeMSEOptimisationSoftEllipses,"MSEOptimisationSoftEllipses"];
+        
+		dirMSE = "data_MSE/"<>ToString[nDims]<>"D/"<>integrandTypeLabel<>"/";
+        If[ !FileExistsQ[dirMSE], CreateDirectory[dirMSE] ];
+        If[ !FileExistsQ["tmp/"], CreateDirectory["tmp/"] ];
+		datamse = {};
+   	    resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>"_level_"<>i2s[npts]<>".dat";
+   	    
+   	    	
+		Do[
+        	mseTab = Parallelize @ Table[
+	        	setNo = isetNo;
+	    		dataDir = "Output/Tiles_Pointsets_VarSize/SetNo_"<>i2s[setNo]<>"_mag_"<>r2s[mag, 3,2]<>"/" ;
+	       		fname = dataDir<>"2D_0m2net_set_"<>i2s[setNo]<>"_level_"<>i2s[npts]<>".dat";
+	       		If[FileExistsQ[fname],
+	       			data = Import[fname];
+	       			If[Length[data] >= npts,
+						pts = data[[;;npts, 2;;3]];
+						If[dbg, ipts = Round[ npts pts ];Print[Graphics[{{Cyan,Line[{{0,0},{0,1},{1,1},{1,0},{0,0}}]},AbsolutePointSize[10],Point/@pts}, ImageSize->{1024,1024}/2, PlotLabel->{ilevel,npts,testDyadicPartitioningNDFull@ipts}]]];
+		    	    	mse = getMSE[pts,"",nDims,integrandType];
+		    	    	Print[{npts,mag,setNo} -> mse];
+						{mag,mse}
+	       			,(*ELSE*)
+	       				Nothing
+	       			]
+				,(*ELSE*)
+					Print[fname, " does not exist"];
+					Nothing
+	       		]
+			,{isetNo,setFrom,setTo}];
+	 		mseMean = Mean @ mseTab;
+	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
+	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
+		    Print[iOrdinalAbsolute, " ", resFname  -> mf[{{mseMean,mseVariance},{mseMin,mseMax}}] -> Length[mseTab] ];			
+	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,Length[mseTab],0}];	
+			Export[dirMSE<>resFname,header,"TEXT"];
+			Export["tmp/tmpdat"<>pid<>".dat",datamse];
+			Run["cat tmp/tmpdat"<>pid<>".dat >> "<>dirMSE<>resFname];
+			Print[dirMSE<>resFname, " written."];
+			mseTab
+		,{mag, 0.7, 2, 0.01}];
+   ] (* makeOptimMSEVarSize *)
+
+ showOptimMSEVarSize[npts_:3^5] :=
+    Module[ {},
+    	kPlusMinus = 1;
+    	suffix = "VarSize";
+    	integrandTypeLabel="SoftEllipses";
+    	optimTypeL2OptimisationLabel="MSEOptimisationSoftEllipses";
+		dirMSE = "data_MSE/2D/"<>integrandTypeLabel<>"/";
+		resFname = optimTypeL2OptimisationLabel<>"_"<>integrandTypeLabel<>"_"<>suffix<>"_level_"<>i2s[npts]<>".dat";
+		data = Import[dirMSE<>resFname];
+		msedata = Drop[#,1]& @ Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
+		msedata//mf//Print;
+		ListPlot[msedata, ImageSize -> {2 1024, Automatic}]
+		(* 243 pts :
+			1.34	(4.3\[PlusMinus]1.1)*10^-10 
+			1.45	(4.2\[PlusMinus]1.3)*10^-10
+		*)
+] (* showOptimMSEVarSize *)
+    
 selectBase3SFC2DTilesMatBuilderOnly[tlst_,intensityInt_] := Select[tlst, second[#] < intensityInt & ]
 
 prepOptimDataBase3PointSets2DFromMatBuilder[innlevels_:6, dbg_:False] :=
@@ -2736,6 +2819,7 @@ prepOptimDataBase3PointSets2DFromMatBuilder[innlevels_:6, dbg_:False] :=
 			,{iOrdinalAbsolute,3^(ilevel-1)+1,3^ilevel}];
 		,{ilevel,nlevels}];
 	] (* prepOptimDataBase3SFCMatBuilderOnly2D *)
+
 
 exportSelectionBase3SFC2D[fname_, seltlst_] :=
 Module[{newtlst,tileType,matBuilderIndex,samplingPt,prevrefPt,prevv1,prevv2,refPt,v1,v2,xcode,ycode,fcode},
