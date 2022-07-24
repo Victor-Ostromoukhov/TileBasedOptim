@@ -17,7 +17,11 @@ showstdOptimMSE[] :
 =========================== prep Optim Data
 prepOptimDataSequences[]
 prepOptimDataPointsets[]
-prepOptimDataPointsetsVarSize[]
+
+=========================== experiment VarSize
+	prepOptimDataPointsetsVarSize[]
+	makeOptimMSEVarSize[3^6, {1,1}]
+	showOptimMSEVarSize[3^6]
 
 =========================== prepSoftEllipses2D[] & prepHeavisideND[]
 
@@ -2709,7 +2713,7 @@ prepOptimDataPointsetsVarSize[inmag_:1.0, innoctaves_:5, insetNo_: 1, dbg_:True]
 gitpull
 math
 <<TileBasedOptim/TileBasedOptim.m
-	makeOptimMSEVarSize[3^6, {1,1}]
+	makeOptimMSEVarSize[3^6, {1,2}]
 	showOptimMSEVarSize[3^6]
 *)
 makeOptimMSEVarSize[innpts_:3^5, setFromTo_:{1,10}, suffix_:"VarSize", innDims_:2, dbg_:False] :=
@@ -2760,7 +2764,7 @@ makeOptimMSEVarSize[innpts_:3^5, setFromTo_:{1,10}, suffix_:"VarSize", innDims_:
 	 		mseMean = Mean @ mseTab;
 	 		mseVariance = If[Length[mseTab] <= 1, 0 , Variance @ (Last /@ mseTab)];
 	 		{mseMin,mseMax} = {Min@(Last /@ mseTab), Max@(Last /@ mseTab)};
-		    Print[iOrdinalAbsolute, " ", resFname  -> mf[{{mseMean,mseVariance},{mseMin,mseMax}}] -> Length[mseTab] ];			
+		    Print[mag, " ", resFname  -> mf[{{mseMean,mseVariance},{mseMin,mseMax}}] -> Length[mseTab] ];			
 	 		AppendTo[datamse,Flatten @ {mseMean,mseVariance,mseMin,mseMax,0,0,Length[mseTab],0}];	
 			Export[dirMSE<>resFname,header,"TEXT"];
 			Export["tmp/tmpdat"<>pid<>".dat",datamse];
@@ -2781,8 +2785,12 @@ makeOptimMSEVarSize[innpts_:3^5, setFromTo_:{1,10}, suffix_:"VarSize", innDims_:
 		data = Import[dirMSE<>resFname];
 		msedata = Drop[#,1]& @ Table[{data[[i,1]], Around[ data[[i,2]], kPlusMinus Sqrt@data[[i,3]] ] },{i,Length[data]}];
 		msedata//mf//Print;
-		ListPlot[msedata, ImageSize -> {2 1024, Automatic}]
+		ListLogPlot[msedata, ImageSize -> {2 1024, Automatic}
+			(*,PlotRange->{{.7,2},Automatic}*)
+			,Ticks->{Table[k,{k,.7,2,.1}],Automatic}
+    	]
 		(* 243 pts :
+			1.19	(4.6\[PlusMinus]1.7)*10^-10
 			1.34	(4.3\[PlusMinus]1.1)*10^-10 
 			1.45	(4.2\[PlusMinus]1.3)*10^-10
 		*)
